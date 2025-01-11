@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
-import SmallCardWrapper from "../_components/overview-card-wrapper";
+import SmallCardWrapper from "./overview-card-wrapper";
 import { Luggage, PlusIcon, Sparkles, Video } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import LoadingSpaceCard from "../_components/loading-space-card-wrapper";
-import SpaceCard from "../_components/space-card";
+import LoadingSpaceCard from "./loading-space-card-wrapper";
+import SpaceCard from "./space-card";
 
 export default function DashboardPage() {
   const [spaces, setSpaces] = React.useState([]);
