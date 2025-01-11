@@ -1,7 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { DefaultSession } from "next-auth";
 import { db, Role } from "@/lib/db";
-import Google from "next-auth/providers/google";
 import { getUserById } from "@/data/user";
 import authConfig from "./auth.config";
 

@@ -1,37 +1,45 @@
-"use client";
 import Image from "next/image";
 import React from "react";
 import { Button } from "./ui/button";
-import { signIn } from "next-auth/react";
 import { ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { auth } from "@/lib/auth";
+import Link from "next/link";
+import AvatarDropDownMenu from "./AvatarDropdownMenu";
 
-export default function Navbar() {
-  const router = useRouter();
+export default async function Navbar() {
+  const session = await auth();
   return (
     <div className="w-full h-max absolute top-0">
-      <nav className="w-full bg-transparent text-foreground  lg:w-[1000px] h-10 flex justify-center px-2 shadow mx-auto font-sans">
+      <nav className="w-full bg-transparent text-foreground  lg:w-[1000px] h-max flex justify-center px-2 shadow mx-auto font-sans ">
         <div className="flex items-center justify-between h-min w-full py-5">
-          <div className="flex items-center space-x-2 font-bold gap-2">
+          <div className="flex space-x-2 font-bold gap-2">
             <Image src={"/logo.svg"} alt="Logo" width={30} height={30} />
-            <h2 className="text-center font-dm_serif sm:text-3xl">
+            <h2 className="text-center font-poppins sm:text-3xl flex items-center">
               100xTestimonials
             </h2>
           </div>
-          <Button
-            onClick={() => {
-              router.push("/auth/signin");
-            }}
-            className="group"
-          >
-            Sign In
-            <ArrowRight
-              className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5"
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
+          {!session?.user ? (
+            <Button className="group">
+              <Link
+                href="/api/auth/signin"
+                className="flex items-center space-x-1"
+              >
+                Sign In
+                <ArrowRight
+                  className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5"
+                  size={16}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+              </Link>
+            </Button>
+          ) : (
+            <AvatarDropDownMenu
+              name={session.user.name || "User"}
+              email={session.user.email || "example@gmail.com"}
+              imageUrl={session.user.image || "/avatar.svg"}
             />
-          </Button>
+          )}
         </div>
       </nav>
     </div>

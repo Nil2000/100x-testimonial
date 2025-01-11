@@ -61,6 +61,7 @@ export default {
         serif: "var(--font-serif)",
         mono: "var(--font-geist-mono)",
         dm_serif: ["var(--font-dm-serif)", "sans-serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
       },
     },
   },

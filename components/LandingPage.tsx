@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import WordRotate from "./ui/word-rotate";
 import Navbar from "./Navbar";
@@ -7,7 +6,7 @@ export default function LandingPage() {
   return (
     <>
       <Navbar />
-      <div className="w-full h-[calc(100vh-2.5rem)] flex items-center justify-center font-sans">
+      <div className="w-full min-h-screen flex items-center justify-center font-sans pt-[5rem]">
         <WordRotate
           words={[
             "Empowering journeys, one testimonial at a time.",
