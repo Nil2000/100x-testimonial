@@ -63,6 +63,10 @@ export default {
         dm_serif: ["var(--font-dm-serif)", "sans-serif"],
         poppins: ["var(--font-poppins)", "sans-serif"],
       },
+      listStyleType: {
+        square: "square",
+        roman: "upper-roman",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
