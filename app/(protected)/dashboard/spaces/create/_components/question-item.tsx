@@ -10,10 +10,12 @@ export default function QuestionItem({
   question,
   maxLength,
   handleDelete,
+  handleInputChange,
 }: {
   maxLength: number;
   question: string;
   handleDelete: () => void;
+  handleInputChange: (value: string) => void;
 }) {
   const id = useId();
   const {
@@ -22,6 +24,11 @@ export default function QuestionItem({
     handleChange,
     maxLength: limit,
   } = useCharacterLimit({ maxLength, initialValue: question });
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e.target.value);
+    handleChange(e);
+  };
 
   return (
     <div className="flex items-center space-x-3">
@@ -37,7 +44,7 @@ export default function QuestionItem({
           type="text"
           value={value}
           maxLength={maxLength}
-          onChange={handleChange}
+          onChange={handleInput}
           aria-describedby={`${id}-description`}
           placeholder="Keep it short"
         />

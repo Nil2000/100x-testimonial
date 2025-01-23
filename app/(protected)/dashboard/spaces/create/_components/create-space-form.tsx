@@ -17,6 +17,8 @@ import React from "react";
 import QuestionItem from "./question-item";
 import DragAndDropQuestions from "./drag-and-drop-questions";
 import { useForm, Controller } from "react-hook-form";
+import { Form } from "@/components/ui/form";
+import { sampleQuestions } from "@/lib/constants";
 
 const dropDownItems = [
   { id: 1, name: "Text only" },
@@ -27,30 +29,23 @@ const dropDownItems = [
 export default function CreateSpaceForm({
   setFileSelected,
   isFileSelected,
+  setHeaderTitlePreview,
+  setCustomMessagePreview,
+  setQuestionsPreview,
 }: {
   setFileSelected: React.Dispatch<React.SetStateAction<File | null>>;
   isFileSelected: File | null;
+  setHeaderTitlePreview: React.Dispatch<React.SetStateAction<string>>;
+  setCustomMessagePreview: React.Dispatch<React.SetStateAction<string>>;
+  setQuestionsPreview: React.Dispatch<
+    React.SetStateAction<{ id: string; question: string; maxLength: number }[]>
+  >;
 }) {
   const { control, handleSubmit, setValue } = useForm();
-  const [questions, setQuestions] = React.useState<
-    { id: string; question: string; maxLength: number }[]
-  >([
-    {
-      id: "1",
-      question: "Who are you / what are you working on?",
-      maxLength: 50,
-    },
-    {
-      id: "2",
-      question: "What is the best thing about [our product / service]",
-      maxLength: 50,
-    },
-    {
-      id: "3",
-      question: "How has [our product / service] helped you?",
-      maxLength: 50,
-    },
-  ]);
+  const [questions, setQuestions] =
+    React.useState<{ id: string; question: string; maxLength: number }[]>(
+      sampleQuestions
+    );
   const [checked, setChecked] = React.useState<boolean>(true);
 
   const onSubmit = (data: any) => {
@@ -58,14 +53,22 @@ export default function CreateSpaceForm({
   };
   const handleNewQuestion = () => {
     const question = {
-      id: (questions.length + 1).toString(),
+      id: Math.random().toString(36),
       question: "",
       maxLength: 50,
     };
     setQuestions((prev) => [...prev, question]);
+    setQuestionsPreview((prev) => [...prev, question]);
+  };
+  const handleQuestionsSequenceChange = (
+    items: { id: string; question: string; maxLength: number }[]
+  ) => {
+    setQuestions(items);
+    setQuestionsPreview(items);
   };
 
   return (
+    // <Form>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 pr-8 mt-2">
       <div className="space-y-2">
         <Label htmlFor="spaceName">
@@ -75,7 +78,15 @@ export default function CreateSpaceForm({
           name="spaceName"
           control={control}
           defaultValue=""
-          render={({ field }) => <Input placeholder="Space name" {...field} />}
+          render={({ field }) => (
+            <>
+              <Input placeholder="Space name" {...field} />
+              <h1 className="text-muted-foreground text-sm">
+                Public url will be testimonial.to/
+                {field.value || "your-space-name"}
+              </h1>
+            </>
+          )}
         />
       </div>
       <div className="space-y-2">
@@ -133,7 +144,11 @@ export default function CreateSpaceForm({
           render={({ field }) => (
             <Input
               placeholder="Would you like to give a shoutout for xyz?"
-              {...field}
+              onChange={(e) => {
+                field.onChange(e);
+                setHeaderTitlePreview(field.value);
+              }}
+              // {...field}
             />
           )}
         />
@@ -147,13 +162,23 @@ export default function CreateSpaceForm({
           control={control}
           defaultValue=""
           render={({ field }) => (
-            <Textarea placeholder="Leave a message" required {...field} />
+            <Textarea
+              placeholder="Leave a message"
+              required
+              onChange={(e) => {
+                field.onChange(e);
+                setCustomMessagePreview(e.target.value);
+              }}
+            />
           )}
         />
       </div>
       <div className="h-max space-y-2">
         <Label htmlFor="">Questions</Label>
-        <DragAndDropQuestions items={questions} setItems={setQuestions} />
+        <DragAndDropQuestions
+          items={questions}
+          setItems={handleQuestionsSequenceChange}
+        />
         <Button
           variant={"outline"}
           onClick={handleNewQuestion}
@@ -210,7 +235,10 @@ export default function CreateSpaceForm({
           />
         </div>
       </div>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" className="my-4">
+        Create new space
+      </Button>
     </form>
+    // </Form>
   );
 }

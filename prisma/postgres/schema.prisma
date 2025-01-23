@@ -68,3 +68,52 @@ model PasswordResetToken {
   @@unique([email, token])
   @@map("password_reset_tokens")
 }
+
+enum CollectionType {
+  TEXT
+  VIDEO
+  TEXT_AND_VIDEO
+}
+
+model Space {
+  id             String         @id @default(cuid())
+  name           String
+  logo           String?
+  headerTitle    String
+  headerSubtitle String
+  questions      Question[]
+  collectionType CollectionType
+  collectStar    Boolean
+  themeId        String         @unique
+  theme          Theme          @relation(fields: [themeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  id      String @id @default(cuid())
+  spaceId String
+  title   String
+  order   Int
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
+
+model Theme {
+  id              String   @id @default(cuid())
+  name            String
+  primaryColor    String
+  secondaryColor  String
+  tertiaryColor   String
+  quaternaryColor String
+  quinaryColor    String
+  senaryColor     String
+  septenaryColor  String
+  octonaryColor   String
+  nonaryColor     String
+  denaryColor     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  space           Space?
+}

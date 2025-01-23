@@ -5,9 +5,9 @@ import QuestionItem from "./question-item";
 
 interface DragAndDropQuestionsProps {
   items: { id: string; question: string; maxLength: number }[];
-  setItems: React.Dispatch<
-    React.SetStateAction<{ id: string; question: string; maxLength: number }[]>
-  >;
+  setItems: (
+    items: { id: string; question: string; maxLength: number }[]
+  ) => void;
 }
 
 export default function DragAndDropQuestions({
@@ -48,6 +48,12 @@ export default function DragAndDropQuestions({
                       handleDelete={() => {
                         const updatedItems = items.filter(
                           (i) => i.id !== item.id
+                        );
+                        setItems(updatedItems);
+                      }}
+                      handleInputChange={(value: string) => {
+                        const updatedItems = items.map((i) =>
+                          i.id === item.id ? { ...i, question: value } : i
                         );
                         setItems(updatedItems);
                       }}
