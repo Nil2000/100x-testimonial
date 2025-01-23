@@ -1,3 +1,4 @@
+"use client";
 import { Card } from "@/components/ui/card";
 import React from "react";
 import LivePreviewbadge from "./live-preview-badge";
@@ -5,12 +6,25 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
 
-export default function PreviewSpace() {
+export default function PreviewSpace({
+  selectedFile,
+}: {
+  selectedFile: File | null;
+}) {
   return (
     <Card className="relative w-full h-full">
       <LivePreviewbadge location="Testimonial" />
       <div className="flex flex-col items-center h-full gap-4 py-4">
-        <Image src={"/logo.svg"} width={60} height={60} alt="logo" />
+        {selectedFile ? (
+          <Image
+            src={URL.createObjectURL(selectedFile).toString()}
+            width={60}
+            height={60}
+            alt="company_logo"
+          />
+        ) : (
+          <Image src={"/logo.svg"} width={60} height={60} alt="logo" />
+        )}
         <h1 className="text-3xl font-semibold">Header goes here...</h1>
         <p className="text-center text-foreground/40">
           Your custom message goes here...

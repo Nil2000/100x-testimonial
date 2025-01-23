@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, XCircle } from "lucide-react";
 import React from "react";
 import QuestionItem from "./question-item";
 import DragAndDropQuestions from "./drag-and-drop-questions";
@@ -24,8 +24,14 @@ const dropDownItems = [
   { id: 3, name: "Text and Video both" },
 ];
 
-export default function CreateSpaceForm() {
-  const { control, handleSubmit } = useForm();
+export default function CreateSpaceForm({
+  setFileSelected,
+  isFileSelected,
+}: {
+  setFileSelected: React.Dispatch<React.SetStateAction<File | null>>;
+  isFileSelected: File | null;
+}) {
+  const { control, handleSubmit, setValue } = useForm();
   const [questions, setQuestions] = React.useState<
     { id: string; question: string; maxLength: number }[]
   >([
@@ -80,12 +86,39 @@ export default function CreateSpaceForm() {
           name="spaceLogo"
           control={control}
           render={({ field }) => (
-            <Input
-              id="file"
-              className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
-              type="file"
-              {...field}
-            />
+            <>
+              <Input
+                id="file"
+                className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  field.onChange(e);
+                  if (e.target.files && e.target.files[0]) {
+                    setFileSelected(e.target.files[0]);
+                  }
+                }}
+                // {...field}
+              />
+              {isFileSelected && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setFileSelected(null);
+                    // field.onChange(null);
+                    setValue("spaceLogo", null);
+                    const node = document.getElementById(
+                      "file"
+                    ) as HTMLInputElement;
+                    if (node) node.value = "";
+                  }}
+                  className="text-muted-foreground hover:text-red-500 "
+                >
+                  <XCircle size={16} className="-ms-1 me-2 opacity-60" />
+                  Remove
+                </Button>
+              )}
+            </>
           )}
         />
       </div>
@@ -121,7 +154,12 @@ export default function CreateSpaceForm() {
       <div className="h-max space-y-2">
         <Label htmlFor="">Questions</Label>
         <DragAndDropQuestions items={questions} setItems={setQuestions} />
-        <Button variant={"outline"} onClick={handleNewQuestion} type="button">
+        <Button
+          variant={"outline"}
+          onClick={handleNewQuestion}
+          type="button"
+          className="text-muted-foreground"
+        >
           <PlusCircle size={16} className="-ms-1 me-2 opacity-60" />
           Add one more
         </Button>

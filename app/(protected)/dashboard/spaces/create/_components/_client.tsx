@@ -7,6 +7,7 @@ import { Loader } from "lucide-react";
 
 export default function CreateSpacePage() {
   const [isMounted, setIsMounted] = React.useState(false);
+  const [fileSelected, setFileSelected] = React.useState<File | null>(null);
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -24,8 +25,11 @@ export default function CreateSpacePage() {
         collecting testimonials.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 px-6 mt-5 gap-8">
-        <PreviewSpace />
-        <CreateSpaceForm />
+        <PreviewSpace selectedFile={fileSelected} />
+        <CreateSpaceForm
+          setFileSelected={setFileSelected}
+          isFileSelected={fileSelected}
+        />
       </div>
       <div className="w-full flex justify-center">
         <Button className="mt-4 sm:w-1/3 w-full">Create Space</Button>
