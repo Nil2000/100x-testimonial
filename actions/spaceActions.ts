@@ -1,4 +1,5 @@
 "use server";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSpaceSchema } from "@/schema/createSpaceSchema";
 import * as z from "zod";
@@ -6,6 +7,13 @@ import * as z from "zod";
 export const createSpace = async (
   values: z.infer<typeof createSpaceSchema>
 ) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
   const validateFields = createSpaceSchema.safeParse(values);
 
   if (validateFields.error) {
@@ -44,7 +52,6 @@ export const createSpace = async (
             data: questionList.map((question, index) => {
               return {
                 title: question.question,
-                maxLength: question.maxLength,
                 order: index,
               };
             }),
@@ -55,14 +62,19 @@ export const createSpace = async (
         logo: spaceLogoUrl || "",
         createdAt: new Date(Date.now()),
         updatedAt: new Date(Date.now()),
+        createdBy: {
+          connect: {
+            id: session.user.id,
+          },
+        },
       },
     });
     return {
-      success: "Space created successfully",
+      message: "Space created successfully",
     };
   } catch (error) {
     return {
-      error: "Failed to create space",
+      error: error,
     };
   }
 };

@@ -6,17 +6,40 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import LoadingSpaceCard from "./loading-space-card-wrapper";
 import SpaceCard from "./space-card";
+import axios from "axios";
+
+interface Space {
+  id: string;
+  name: string;
+}
 
 export default function DashboardPage() {
-  const [spaces, setSpaces] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [spaces, setSpaces] = React.useState<Space[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const fetchSpaces = async () => {
+    axios
+      .get("/api/spaces")
+      .then((res) => {
+        setSpaces(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
+  React.useEffect(() => {
+    fetchSpaces();
+  }, []);
   return (
     <div className="flex flex-col gap-6 px-3">
       <h1 className="text-2xl font-bold">Overview</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <SmallCardWrapper
           smallText="Total Spaces"
-          largeText="0/2"
+          largeText={`${spaces.length}/2`}
           icon={Sparkles}
         />
         <SmallCardWrapper
@@ -55,19 +78,30 @@ export default function DashboardPage() {
             </Link>
           </div>
         )} */}
-        {loading && (
+        {loading ? (
           <div className="w-full flex gap-4 flex-col md:flex-row md:flex-wrap">
             <LoadingSpaceCard />
             <LoadingSpaceCard />
             <LoadingSpaceCard />
           </div>
+        ) : (
+          <div className="w-full flex gap-4 flex-col md:flex-row md:flex-wrap">
+            {/* {<SpaceCard
+              name="Space 1"
+              imgUrl="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+              />} */}
+            {spaces.map((space, index) => {
+              return (
+                <SpaceCard
+                  key={index}
+                  id={space.id}
+                  name={space.name}
+                  imgUrl="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                />
+              );
+            })}
+          </div>
         )}
-        <div className="w-full flex gap-4 flex-col md:flex-row md:flex-wrap">
-          <SpaceCard
-            name="Space 1"
-            imgUrl="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-          />
-        </div>
       </div>
     </div>
   );

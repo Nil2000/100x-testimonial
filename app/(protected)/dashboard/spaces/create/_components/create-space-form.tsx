@@ -290,7 +290,7 @@ export default function CreateSpaceForm({
           />
         </div> */}
       </div>
-      <Button type="submit" className="my-4">
+      <Button type="submit" className="my-4" disabled={isPending}>
         Create new space
       </Button>
     </form>
