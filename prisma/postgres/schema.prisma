@@ -84,11 +84,11 @@ model Space {
   questions      Question[]
   collectionType CollectionType
   collectStar    Boolean
-  themeId        String         @unique
-  theme          Theme          @relation(fields: [themeId], references: [id])
+  // themeId        String         @unique
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // theme          Theme          @relation(fields: [themeId], references: [id])
 }
 
 model Question {
@@ -115,5 +115,5 @@ model Theme {
   denaryColor     String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  space           Space?
+  // space           Space?
 }

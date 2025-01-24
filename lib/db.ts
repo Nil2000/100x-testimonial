@@ -6,4 +6,4 @@ export const db = globalForPrisma.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
-export { Role } from "@prisma-db-postgres/client";
+export { Role, CollectionType } from "@prisma-db-postgres/client";

@@ -5,6 +5,7 @@ import LivePreviewbadge from "./live-preview-badge";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
+import ImagePrview from "./image-preview";
 
 export default function PreviewSpace({
   selectedFile,
@@ -22,16 +23,7 @@ export default function PreviewSpace({
       <Card className="relative w-full h-max pb-4">
         <LivePreviewbadge location="Testimonial" />
         <div className="flex flex-col items-center h-full gap-4 py-4">
-          {selectedFile ? (
-            <Image
-              src={URL.createObjectURL(selectedFile).toString()}
-              width={60}
-              height={60}
-              alt="company_logo"
-            />
-          ) : (
-            <Image src={"/logo.svg"} width={60} height={60} alt="logo" />
-          )}
+          <ImagePrview selectedFile={selectedFile} />
           <h1 className="text-3xl font-semibold">
             {headerTitle || "Header goes here..."}
           </h1>

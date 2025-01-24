@@ -13,17 +13,22 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle, XCircle } from "lucide-react";
-import React from "react";
+import React, { startTransition, useActionState, useTransition } from "react";
 import QuestionItem from "./question-item";
 import DragAndDropQuestions from "./drag-and-drop-questions";
 import { useForm, Controller } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { sampleQuestions } from "@/lib/constants";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createSpaceSchema } from "@/schema/createSpaceSchema";
+import { CollectionType } from "@/lib/db";
+import { z } from "zod";
+import { createSpace } from "@/actions/spaceActions";
 
 const dropDownItems = [
-  { id: 1, name: "Text only" },
-  { id: 2, name: "Video only" },
-  { id: 3, name: "Text and Video both" },
+  { id: 1, name: "Text only", value: CollectionType.TEXT },
+  { id: 2, name: "Video only", value: CollectionType.VIDEO },
+  { id: 3, name: "Text and Video both", value: CollectionType.TEXT_AND_VIDEO },
 ];
 
 export default function CreateSpaceForm({
@@ -41,16 +46,31 @@ export default function CreateSpaceForm({
     React.SetStateAction<{ id: string; question: string; maxLength: number }[]>
   >;
 }) {
-  const { control, handleSubmit, setValue } = useForm();
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<z.infer<typeof createSpaceSchema>>({
+    resolver: zodResolver(createSpaceSchema),
+    defaultValues: {
+      spaceName: "",
+      headerTitle: "",
+      customMessage: "",
+      questionList: sampleQuestions,
+      collectionType: CollectionType.TEXT,
+      collectStarRating: false,
+      // chooseTheme: false,
+      spaceLogoUrl: "",
+    },
+  });
   const [questions, setQuestions] =
     React.useState<{ id: string; question: string; maxLength: number }[]>(
       sampleQuestions
     );
   const [checked, setChecked] = React.useState<boolean>(true);
+  const [isPending, startTransition] = useTransition();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
   const handleNewQuestion = () => {
     const question = {
       id: Math.random().toString(36),
@@ -60,11 +80,30 @@ export default function CreateSpaceForm({
     setQuestions((prev) => [...prev, question]);
     setQuestionsPreview((prev) => [...prev, question]);
   };
+
   const handleQuestionsSequenceChange = (
     items: { id: string; question: string; maxLength: number }[]
   ) => {
     setQuestions(items);
     setQuestionsPreview(items);
+    setValue("questionList", items);
+  };
+
+  const onSubmit = (data: z.infer<typeof createSpaceSchema>) => {
+    console.log(data);
+    startTransition(() => {
+      createSpace(data)
+        .then((res: any) => {
+          if (res.error) {
+            throw new Error(res.error);
+          }
+          console.log(res.message);
+          //redirect to the newly created space
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    });
   };
 
   return (
@@ -85,16 +124,19 @@ export default function CreateSpaceForm({
                 Public url will be testimonial.to/
                 {field.value || "your-space-name"}
               </h1>
+              <p className="text-destructive text-xs">
+                {errors.spaceName && errors.spaceName.message}
+              </p>
             </>
           )}
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="spaceLogo">
+        <Label htmlFor="spaceLogoUrl">
           Space logo <span className="text-destructive">*</span>
         </Label>
         <Controller
-          name="spaceLogo"
+          name="spaceLogoUrl"
           control={control}
           render={({ field }) => (
             <>
@@ -117,7 +159,7 @@ export default function CreateSpaceForm({
                   onClick={() => {
                     setFileSelected(null);
                     // field.onChange(null);
-                    setValue("spaceLogo", null);
+                    setValue("spaceLogoUrl", "");
                     const node = document.getElementById(
                       "file"
                     ) as HTMLInputElement;
@@ -142,14 +184,19 @@ export default function CreateSpaceForm({
           control={control}
           defaultValue=""
           render={({ field }) => (
-            <Input
-              placeholder="Would you like to give a shoutout for xyz?"
-              onChange={(e) => {
-                field.onChange(e);
-                setHeaderTitlePreview(field.value);
-              }}
-              // {...field}
-            />
+            <>
+              <Input
+                placeholder="Would you like to give a shoutout for xyz?"
+                onChange={(e) => {
+                  field.onChange(e);
+                  setHeaderTitlePreview(e.target.value);
+                }}
+                // {...field}
+              />
+              <p className="text-destructive text-xs">
+                {errors.headerTitle && errors.headerTitle.message}
+              </p>
+            </>
           )}
         />
       </div>
@@ -162,14 +209,19 @@ export default function CreateSpaceForm({
           control={control}
           defaultValue=""
           render={({ field }) => (
-            <Textarea
-              placeholder="Leave a message"
-              required
-              onChange={(e) => {
-                field.onChange(e);
-                setCustomMessagePreview(e.target.value);
-              }}
-            />
+            <>
+              <Textarea
+                placeholder="Leave a message"
+                required
+                onChange={(e) => {
+                  field.onChange(e);
+                  setCustomMessagePreview(e.target.value);
+                }}
+              />
+              <p className="text-destructive text-xs">
+                {errors.customMessage && errors.customMessage.message}
+              </p>
+            </>
           )}
         />
       </div>
@@ -194,15 +246,14 @@ export default function CreateSpaceForm({
         <Controller
           name="collectionType"
           control={control}
-          defaultValue={dropDownItems[0].name}
           render={({ field }) => (
-            <Select {...field}>
+            <Select onValueChange={field.onChange} value={field.value}>
               <SelectTrigger name="options" className="w-full md:w-56">
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="font-sans">
                 {dropDownItems.map((item) => (
-                  <SelectItem key={item.id} value={item.name}>
+                  <SelectItem key={item.id} value={item.value}>
                     {item.name}
                   </SelectItem>
                 ))}
@@ -215,15 +266,19 @@ export default function CreateSpaceForm({
         <div className="flex flex-col gap-y-2">
           <Label htmlFor="collectStarRatings">Collect star ratings</Label>
           <Controller
-            name="collectStarRatings"
+            name="collectStarRating"
             control={control}
             defaultValue={false}
             render={({ field }) => (
-              <Switch className="rounded-md [&_span]:rounded" {...field} />
+              <Switch
+                className="rounded-md [&_span]:rounded"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
             )}
           />
         </div>
-        <div className="flex flex-col gap-y-2">
+        {/* <div className="flex flex-col gap-y-2">
           <Label htmlFor="chooseTheme">Choose theme</Label>
           <Controller
             name="chooseTheme"
@@ -233,7 +288,7 @@ export default function CreateSpaceForm({
               <Switch className="rounded-md [&_span]:rounded" {...field} />
             )}
           />
-        </div>
+        </div> */}
       </div>
       <Button type="submit" className="my-4">
         Create new space

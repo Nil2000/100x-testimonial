@@ -1,3 +1,4 @@
+import { CollectionType } from "@/lib/db";
 import * as z from "zod";
 export const createSpaceSchema = z.object({
   spaceName: z.string().nonempty("Space name is required"),
@@ -6,10 +7,16 @@ export const createSpaceSchema = z.object({
   customMessage: z.string().nonempty("Custom message is required"),
   questionList: z.array(
     z.object({
+      id: z.string(),
       question: z.string().nonempty("Question is required"),
+      maxLength: z.number().int(),
     })
   ),
-  collectionType: z.enum(["Text only", "Video only", "Text and Video both"]),
+  collectionType: z.enum([
+    CollectionType.TEXT,
+    CollectionType.VIDEO,
+    CollectionType.TEXT_AND_VIDEO,
+  ]),
   collectStarRating: z.boolean(),
-  darkTheme: z.boolean().default(false),
+  // darkTheme: z.boolean().default(false),
 });
