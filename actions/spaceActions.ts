@@ -1,12 +1,10 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { createSpaceSchema } from "@/schema/createSpaceSchema";
+import { spaceSchema } from "@/schema/spaceSchema";
 import * as z from "zod";
 
-export const createSpace = async (
-  values: z.infer<typeof createSpaceSchema>
-) => {
+export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
   const session = await auth();
 
   if (!session || !session.user) {
@@ -14,7 +12,7 @@ export const createSpace = async (
       error: "Unauthorized",
     };
   }
-  const validateFields = createSpaceSchema.safeParse(values);
+  const validateFields = spaceSchema.safeParse(values);
 
   if (validateFields.error) {
     return {

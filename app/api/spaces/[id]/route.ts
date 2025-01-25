@@ -22,7 +22,7 @@ export async function GET(
         questions: true,
       },
     });
-    return NextResponse.json({ data: space }, { status: 200 });
+    return NextResponse.json({ space }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 400 });
   }

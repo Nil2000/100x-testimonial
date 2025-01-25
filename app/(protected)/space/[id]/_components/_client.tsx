@@ -3,16 +3,21 @@ import Loading from "@/components/loader";
 import axios from "axios";
 import React from "react";
 import HorizontalTabs from "./horizontal-tabs";
+import { useSpaceStore } from "@/store/spaceStore";
 
 export default function SpacePage({ id }: { id: string }) {
   const [isMounted, setIsMounted] = React.useState(false);
-  const [spaceInfo, setSpaceInfo] = React.useState<any | null>(null);
+  const { setSpaceInfo } = useSpaceStore();
+
   const fetchSpaceInfo = async () => {
-    axios.get(`/api/spaces/${id}`).then((res) => {
-      console.log(res.data);
-      setSpaceInfo(res.data);
-      setIsMounted(true);
-    });
+    try {
+      const res = await axios.get(`/api/spaces/${id}`);
+      console.log("Space info", res.data);
+      setSpaceInfo(res.data.space);
+    } catch (error) {
+      console.log("Failed to fetch space info", error);
+    }
+    setIsMounted(true);
   };
 
   React.useEffect(() => {
@@ -25,7 +30,7 @@ export default function SpacePage({ id }: { id: string }) {
 
   return (
     <div className="px-2 h-full">
-      <HorizontalTabs spaceInfo={spaceInfo} />
+      <HorizontalTabs />
     </div>
   );
 }

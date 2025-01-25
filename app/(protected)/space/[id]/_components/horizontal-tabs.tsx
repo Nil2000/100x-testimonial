@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Edit, FileStack } from "lucide-react";
 import EditSpaceContent from "./edit-space-content";
 
-export default function HorizontalTabs({ spaceInfo }: { spaceInfo: any }) {
+export default function HorizontalTabs() {
   return (
     <Tabs defaultValue="tab-1">
       <TabsList className="relative h-auto w-full gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-border justify-start">
@@ -26,7 +26,7 @@ export default function HorizontalTabs({ spaceInfo }: { spaceInfo: any }) {
         {/* <p className="p-4 text-center text-xs text-muted-foreground">
           Content for Tab 1
         </p> */}
-        <EditSpaceContent spaceInfo={spaceInfo} />
+        <EditSpaceContent />
       </TabsContent>
       <TabsContent value="tab-2">
         <p className="p-4 text-center text-xs text-muted-foreground">

@@ -20,7 +20,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { sampleQuestions } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createSpaceSchema } from "@/schema/createSpaceSchema";
+import { spaceSchema } from "@/schema/spaceSchema";
 import { CollectionType } from "@/lib/db";
 import { z } from "zod";
 import { createSpace } from "@/actions/spaceActions";
@@ -51,8 +51,8 @@ export default function CreateSpaceForm({
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<z.infer<typeof createSpaceSchema>>({
-    resolver: zodResolver(createSpaceSchema),
+  } = useForm<z.infer<typeof spaceSchema>>({
+    resolver: zodResolver(spaceSchema),
     defaultValues: {
       spaceName: "",
       headerTitle: "",
@@ -89,7 +89,7 @@ export default function CreateSpaceForm({
     setValue("questionList", items);
   };
 
-  const onSubmit = (data: z.infer<typeof createSpaceSchema>) => {
+  const onSubmit = (data: z.infer<typeof spaceSchema>) => {
     console.log(data);
     startTransition(() => {
       createSpace(data)

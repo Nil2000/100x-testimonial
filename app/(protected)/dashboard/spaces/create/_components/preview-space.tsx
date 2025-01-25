@@ -1,11 +1,12 @@
 "use client";
 import { Card } from "@/components/ui/card";
 import React from "react";
-import LivePreviewbadge from "./live-preview-badge";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
 import ImagePrview from "./image-preview";
+import LivePreviewbadge from "@/components/live-preview-badge";
 
 export default function PreviewSpace({
   selectedFile,
