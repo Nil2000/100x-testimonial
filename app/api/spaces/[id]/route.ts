@@ -18,6 +18,9 @@ export async function GET(
         id,
         createdById: session.user.id,
       },
+      include: {
+        questions: true,
+      },
     });
     return NextResponse.json({ data: space }, { status: 200 });
   } catch (error) {
