@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import PreviewSpace from "./preview-space";
 import { Loader } from "lucide-react";
 import { sampleQuestions } from "@/lib/constants";
+import { CreateSpaceQuestion } from "@/lib/types";
 
 export default function CreateSpacePage() {
   const [isMounted, setIsMounted] = React.useState(false);
@@ -14,9 +15,7 @@ export default function CreateSpacePage() {
   const [customMessagePreview, setCustomMessagePreview] =
     React.useState<string>("");
   const [questionsPreview, setQuestionsPreview] =
-    React.useState<{ id: string; question: string; maxLength: number }[]>(
-      sampleQuestions
-    );
+    React.useState<CreateSpaceQuestion[]>(sampleQuestions);
 
   React.useEffect(() => {
     setIsMounted(true);

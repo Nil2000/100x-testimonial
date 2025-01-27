@@ -1,18 +1,30 @@
+"use client";
 import { useSpaceStore } from "@/store/spaceStore";
-import React from "react";
+import React, { useTransition } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { z } from "zod";
 import { spaceSchema } from "@/schema/spaceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import DragAndDropQuestions from "@/components/drag-and-drop-questions";
+import { Loader2, PlusCircle } from "lucide-react";
+import { dropDownOptionsTextVideo } from "@/lib/constants";
+import { Switch } from "@/components/ui/switch";
+import { updateSpace } from "@/actions/spaceActions";
 
 export default function TestimonialEditFormView() {
-  const { spaceInfo } = useSpaceStore();
-  console.log("Space Info", spaceInfo);
+  const { spaceInfo, updateSpaceField } = useSpaceStore();
+  const [isPending, startTransition] = useTransition();
 
   const {
     control,
@@ -22,21 +34,45 @@ export default function TestimonialEditFormView() {
   } = useForm<z.infer<typeof spaceSchema>>({
     resolver: zodResolver(spaceSchema),
     defaultValues: {
-      spaceName: spaceInfo.spaceName,
+      spaceName: spaceInfo.name,
       headerTitle: spaceInfo.headerTitle,
       customMessage: spaceInfo.headerSubtitle,
       questionList: spaceInfo.questions,
       collectionType: spaceInfo.collectionType,
-      collectStarRating: spaceInfo.collectStarRating,
+      collectStarRating: spaceInfo.collectStar,
     },
   });
 
+  const handleQuestionsSequenceChange = (items: any) => {
+    setValue("questionList", items);
+    updateSpaceField("questions", items);
+  };
+
+  const handleNewQuestion = () => {
+    const newQuestion = {
+      id: Math.random().toString(36).substring(7),
+      title: "",
+      maxLength: 100,
+    };
+    setValue("questionList", [...spaceInfo.questions, newQuestion]);
+    updateSpaceField("questions", [...spaceInfo.questions, newQuestion]);
+  };
+
   const onSubmit = (data: z.infer<typeof spaceSchema>) => {
-    console.log(data);
+    console.log(spaceInfo.id, data);
+    startTransition(() => {
+      updateSpace(spaceInfo.id, data).then((res) => {
+        if (res.error) {
+          console.error(res.error);
+        } else {
+          console.log(res.message);
+        }
+      });
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 pr-8 mt-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
       <div className="space-y-2">
         <Label htmlFor="spaceName">
           Space name <span className="text-destructive">*</span>
@@ -44,10 +80,9 @@ export default function TestimonialEditFormView() {
         <Controller
           name="spaceName"
           control={control}
-          defaultValue=""
           render={({ field }) => (
             <>
-              <Input placeholder="Space name" {...field} />
+              <Input placeholder="Space name" {...field} disabled />
               <h1 className="text-muted-foreground text-sm">
                 Public url will be testimonial.to/
                 {field.value || "your-space-name"}
@@ -68,7 +103,7 @@ export default function TestimonialEditFormView() {
           control={control}
           render={({ field }) => (
             <>
-              <Input
+              {/* <Input
                 id="file"
                 className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
                 type="file"
@@ -80,8 +115,8 @@ export default function TestimonialEditFormView() {
                   }
                 }}
                 // {...field}
-              />
-              {isFileSelected && (
+              /> */}
+              {/* {isFileSelected && (
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -98,7 +133,7 @@ export default function TestimonialEditFormView() {
                   <XCircle size={16} className="-ms-1 me-2 opacity-60" />
                   Remove
                 </Button>
-              )}
+              )} */}
             </>
           )}
         />
@@ -110,15 +145,15 @@ export default function TestimonialEditFormView() {
         <Controller
           name="headerTitle"
           control={control}
-          defaultValue=""
           render={({ field }) => (
             <>
               <Input
                 placeholder="Would you like to give a shoutout for xyz?"
                 onChange={(e) => {
                   field.onChange(e);
-                  setHeaderTitlePreview(e.target.value);
+                  updateSpaceField("headerTitle", e.target.value);
                 }}
+                defaultValue={spaceInfo.headerTitle}
                 // {...field}
               />
               <p className="text-destructive text-xs">
@@ -135,7 +170,6 @@ export default function TestimonialEditFormView() {
         <Controller
           name="customMessage"
           control={control}
-          defaultValue=""
           render={({ field }) => (
             <>
               <Textarea
@@ -143,8 +177,9 @@ export default function TestimonialEditFormView() {
                 required
                 onChange={(e) => {
                   field.onChange(e);
-                  setCustomMessagePreview(e.target.value);
+                  updateSpaceField("headerSubtitle", e.target.value);
                 }}
+                defaultValue={spaceInfo.headerSubtitle}
               />
               <p className="text-destructive text-xs">
                 {errors.customMessage && errors.customMessage.message}
@@ -156,8 +191,9 @@ export default function TestimonialEditFormView() {
       <div className="h-max space-y-2">
         <Label htmlFor="">Questions</Label>
         <DragAndDropQuestions
-          items={questions}
+          items={spaceInfo.questions}
           setItems={handleQuestionsSequenceChange}
+          handleDeleteItem={(index) => {}}
         />
         <Button
           variant={"outline"}
@@ -175,12 +211,18 @@ export default function TestimonialEditFormView() {
           name="collectionType"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={(e) => {
+                field.onChange(e);
+                updateSpaceField("collectionType", field.value);
+              }}
+              value={field.value}
+            >
               <SelectTrigger name="options" className="w-full md:w-56">
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="font-sans">
-                {dropDownItems.map((item) => (
+                {dropDownOptionsTextVideo.map((item) => (
                   <SelectItem key={item.id} value={item.value}>
                     {item.name}
                   </SelectItem>
@@ -201,7 +243,10 @@ export default function TestimonialEditFormView() {
               <Switch
                 className="rounded-md [&_span]:rounded"
                 checked={field.value}
-                onCheckedChange={field.onChange}
+                onCheckedChange={(e) => {
+                  field.onChange(e);
+                  updateSpaceField("collectStar", field.value);
+                }}
               />
             )}
           />
@@ -219,7 +264,7 @@ export default function TestimonialEditFormView() {
         </div> */}
       </div>
       <Button type="submit" className="my-4" disabled={isPending}>
-        Create new space
+        {isPending ? <Loader2 className="animate-spin" /> : "Update space"}
       </Button>
     </form>
   );

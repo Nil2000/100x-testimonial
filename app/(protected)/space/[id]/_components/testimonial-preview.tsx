@@ -7,7 +7,7 @@ import { useSpaceStore } from "@/store/spaceStore";
 
 export default function TestimonialPreview() {
   const { spaceInfo } = useSpaceStore();
-  const { headerTitle, headerSubTitle, questions } = spaceInfo;
+  const { headerTitle, headerSubtitle, questions } = spaceInfo;
   return (
     <div className="pt-4">
       <Card className="relative w-full h-max pb-4">
@@ -18,7 +18,7 @@ export default function TestimonialPreview() {
             {headerTitle || "Header goes here..."}
           </h1>
           <p className="text-center text-foreground/40">
-            {headerSubTitle || "Your custom message goes here..."}
+            {headerSubtitle || "Your custom message goes here..."}
           </p>
           <div className="flex flex-col gap-4 w-full px-7">
             <h2 className="text-xl uppercase">Let us know</h2>

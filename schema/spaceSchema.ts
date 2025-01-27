@@ -8,7 +8,7 @@ export const spaceSchema = z.object({
   questionList: z.array(
     z.object({
       id: z.string(),
-      question: z.string().nonempty("Question is required"),
+      title: z.string().nonempty("Question is required"),
       maxLength: z.number().int(),
     })
   ),
@@ -19,4 +19,8 @@ export const spaceSchema = z.object({
   ]),
   collectStarRating: z.boolean(),
   // darkTheme: z.boolean().default(false),
+});
+export const updateThankYouSchema = z.object({
+  thankYouTitle: z.string().nonempty("Title is required"),
+  thankYouMessage: z.string().nonempty("Message is required"),
 });

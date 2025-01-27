@@ -19,7 +19,15 @@ export async function GET(
         createdById: session.user.id,
       },
       include: {
-        questions: true,
+        questions: {
+          select: {
+            id: true,
+            title: true,
+          },
+          orderBy: {
+            order: "asc",
+          },
+        },
       },
     });
     return NextResponse.json({ space }, { status: 200 });

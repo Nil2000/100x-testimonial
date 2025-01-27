@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
 import ImagePrview from "./image-preview";
 import LivePreviewbadge from "@/components/live-preview-badge";
+import { CreateSpaceQuestion } from "@/lib/types";
 
 export default function PreviewSpace({
   selectedFile,
@@ -17,7 +18,7 @@ export default function PreviewSpace({
   selectedFile: File | null;
   headerTitle: string;
   customMessage: string;
-  questions: { id: string; question: string; maxLength: number }[];
+  questions: CreateSpaceQuestion[];
 }) {
   return (
     <div>
@@ -35,7 +36,7 @@ export default function PreviewSpace({
             <h2 className="text-xl uppercase">Let us know</h2>
             <ul className="space-y-2 list-square list-inside text-muted-foreground">
               {questions.map((question) => (
-                <li key={question.id}>{question.question}</li>
+                <li key={question.id}>{question.title}</li>
               ))}
             </ul>
           </div>

@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import QuestionItem from "./question-item";
+import QuestionItem from "../app/(protected)/dashboard/spaces/create/_components/question-item";
+import { CreateSpaceQuestion } from "@/lib/types";
 
 interface DragAndDropQuestionsProps {
-  items: { id: string; question: string; maxLength: number }[];
-  setItems: (
-    items: { id: string; question: string; maxLength: number }[]
-  ) => void;
+  items: CreateSpaceQuestion[];
+  setItems: (items: CreateSpaceQuestion[]) => void;
+  handleDeleteItem?: (id: string) => void;
 }
 
 export default function DragAndDropQuestions({
@@ -33,7 +33,7 @@ export default function DragAndDropQuestions({
             ref={provided.innerRef}
             style={{ listStyleType: "none", padding: 0 }}
           >
-            {items.map((item: any, index: number) => (
+            {items.map((item, index: number) => (
               <Draggable key={item.id} draggableId={item.id} index={index}>
                 {(provided) => (
                   <li
@@ -43,7 +43,7 @@ export default function DragAndDropQuestions({
                     className="py-1"
                   >
                     <QuestionItem
-                      question={item.question}
+                      question={item.title}
                       maxLength={item.maxLength}
                       handleDelete={() => {
                         const updatedItems = items.filter(
@@ -53,7 +53,7 @@ export default function DragAndDropQuestions({
                       }}
                       handleInputChange={(value: string) => {
                         const updatedItems = items.map((i) =>
-                          i.id === item.id ? { ...i, question: value } : i
+                          i.id === item.id ? { ...i, title: value } : i
                         );
                         setItems(updatedItems);
                       }}

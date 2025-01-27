@@ -14,22 +14,16 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle, XCircle } from "lucide-react";
 import React, { startTransition, useActionState, useTransition } from "react";
-import QuestionItem from "./question-item";
-import DragAndDropQuestions from "./drag-and-drop-questions";
+import DragAndDropQuestions from "../../../../../../components/drag-and-drop-questions";
 import { useForm, Controller } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import { sampleQuestions } from "@/lib/constants";
+import { dropDownOptionsTextVideo, sampleQuestions } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { spaceSchema } from "@/schema/spaceSchema";
 import { CollectionType } from "@/lib/db";
 import { z } from "zod";
 import { createSpace } from "@/actions/spaceActions";
-
-const dropDownItems = [
-  { id: 1, name: "Text only", value: CollectionType.TEXT },
-  { id: 2, name: "Video only", value: CollectionType.VIDEO },
-  { id: 3, name: "Text and Video both", value: CollectionType.TEXT_AND_VIDEO },
-];
+import { CreateSpaceQuestion } from "@/lib/types";
 
 export default function CreateSpaceForm({
   setFileSelected,
@@ -43,7 +37,7 @@ export default function CreateSpaceForm({
   setHeaderTitlePreview: React.Dispatch<React.SetStateAction<string>>;
   setCustomMessagePreview: React.Dispatch<React.SetStateAction<string>>;
   setQuestionsPreview: React.Dispatch<
-    React.SetStateAction<{ id: string; question: string; maxLength: number }[]>
+    React.SetStateAction<CreateSpaceQuestion[]>
   >;
 }) {
   const {
@@ -65,25 +59,21 @@ export default function CreateSpaceForm({
     },
   });
   const [questions, setQuestions] =
-    React.useState<{ id: string; question: string; maxLength: number }[]>(
-      sampleQuestions
-    );
+    React.useState<CreateSpaceQuestion[]>(sampleQuestions);
   const [checked, setChecked] = React.useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
 
   const handleNewQuestion = () => {
     const question = {
       id: Math.random().toString(36),
-      question: "",
+      title: "",
       maxLength: 50,
     };
     setQuestions((prev) => [...prev, question]);
     setQuestionsPreview((prev) => [...prev, question]);
   };
 
-  const handleQuestionsSequenceChange = (
-    items: { id: string; question: string; maxLength: number }[]
-  ) => {
+  const handleQuestionsSequenceChange = (items: CreateSpaceQuestion[]) => {
     setQuestions(items);
     setQuestionsPreview(items);
     setValue("questionList", items);
@@ -252,7 +242,7 @@ export default function CreateSpaceForm({
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="font-sans">
-                {dropDownItems.map((item) => (
+                {dropDownOptionsTextVideo.map((item) => (
                   <SelectItem key={item.id} value={item.value}>
                     {item.name}
                   </SelectItem>

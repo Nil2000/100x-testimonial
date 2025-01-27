@@ -90,6 +90,7 @@ model Space {
   updatedAt      DateTime       @updatedAt
   createdById    String
   createdBy      User           @relation(fields: [createdById], references: [id])
+  thankyouSpace  ThankYouSpace?
 
   // theme          Theme          @relation(fields: [themeId], references: [id])
 }
@@ -119,4 +120,15 @@ model Theme {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   // space           Space?
+}
+
+model ThankYouSpace {
+  id        String   @id @default(cuid())
+  spaceId   String   @unique
+  title     String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

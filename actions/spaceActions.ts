@@ -49,7 +49,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
           createMany: {
             data: questionList.map((question, index) => {
               return {
-                title: question.question,
+                title: question.title,
                 order: index,
               };
             }),
@@ -69,6 +69,67 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
     });
     return {
       message: "Space created successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};
+
+export const updateSpace = async (
+  id: string,
+  values: z.infer<typeof spaceSchema>
+) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  const validateFields = spaceSchema.safeParse(values);
+  if (validateFields.error) {
+    return {
+      error: "Invalid fields",
+    };
+  }
+  const {
+    spaceName,
+    headerTitle,
+    customMessage,
+    questionList,
+    collectionType,
+    collectStarRating,
+    spaceLogoUrl,
+  } = validateFields.data;
+  try {
+    await db.space.update({
+      where: {
+        id,
+      },
+      data: {
+        name: spaceName,
+        headerTitle,
+        headerSubtitle: customMessage,
+        questions: {
+          deleteMany: {},
+          createMany: {
+            data: questionList.map((question, index) => {
+              return {
+                title: question.title,
+                order: index,
+              };
+            }),
+          },
+        },
+        collectionType,
+        collectStar: collectStarRating,
+        logo: spaceLogoUrl || "",
+        updatedAt: new Date(Date.now()),
+      },
+    });
+    return {
+      message: "Space updated successfully",
     };
   } catch (error) {
     return {

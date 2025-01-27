@@ -1,17 +1,24 @@
+import { CollectionType } from "./db";
+
 export const sampleQuestions = [
   {
     id: "1",
-    question: "Who are you / what are you working on?",
+    title: "Who are you / what are you working on?",
     maxLength: 50,
   },
   {
     id: "2",
-    question: "What is the best thing about [our product / service]",
+    title: "What is the best thing about [our product / service]",
     maxLength: 50,
   },
   {
     id: "3",
-    question: "How has [our product / service] helped you?",
+    title: "How has [our product / service] helped you?",
     maxLength: 50,
   },
+];
+export const dropDownOptionsTextVideo = [
+  { id: 1, name: "Text only", value: CollectionType.TEXT },
+  { id: 2, name: "Video only", value: CollectionType.VIDEO },
+  { id: 3, name: "Text and Video both", value: CollectionType.TEXT_AND_VIDEO },
 ];
