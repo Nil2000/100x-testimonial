@@ -2,6 +2,7 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TestimonialView from "./testimonial-view";
+import ThankYouView from "./thankyou-view";
 
 export default function VerticalTabsWrapper() {
   return (
@@ -23,9 +24,7 @@ export default function VerticalTabsWrapper() {
           <TestimonialView />
         </TabsContent>
         <TabsContent value="tab-2">
-          <p className="px-4 py-1.5 text-xs text-muted-foreground">
-            Vertical tab Content for Tab 2
-          </p>
+          <ThankYouView />
         </TabsContent>
       </div>
     </Tabs>

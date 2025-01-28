@@ -20,7 +20,8 @@ export const spaceSchema = z.object({
   collectStarRating: z.boolean(),
   // darkTheme: z.boolean().default(false),
 });
-export const updateThankYouSchema = z.object({
-  thankYouTitle: z.string().nonempty("Title is required"),
-  thankYouMessage: z.string().nonempty("Message is required"),
+export const thankyouSchema = z.object({
+  id: z.string().nonempty("ID is required"),
+  title: z.string().nonempty("Title is required"),
+  message: z.string().nonempty("Message is required"),
 });

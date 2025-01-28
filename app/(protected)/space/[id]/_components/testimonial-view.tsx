@@ -5,7 +5,7 @@ import TestimonialEditFormView from "./testimonial-edit-form";
 
 export default function TestimonialView() {
   return (
-    <div className="px-4 grid grid-cols-1 md:grid-cols-2 mx-auto">
+    <div className="px-2 grid grid-cols-1 md:grid-cols-2 mx-auto gap-2">
       <TestimonialEditFormView />
       <TestimonialPreview />
     </div>

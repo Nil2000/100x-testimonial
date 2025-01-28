@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { spaceSchema } from "@/schema/spaceSchema";
+import { spaceSchema, thankyouSchema } from "@/schema/spaceSchema";
 import * as z from "zod";
 
 export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
@@ -63,6 +63,12 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
         createdBy: {
           connect: {
             id: session.user.id,
+          },
+        },
+        thankyouSpace: {
+          create: {
+            title: "Thank you",
+            message: "Thank you for your feedback",
           },
         },
       },
@@ -130,6 +136,42 @@ export const updateSpace = async (
     });
     return {
       message: "Space updated successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};
+
+export const updateThanksSpace = async (
+  values: z.infer<typeof thankyouSchema>
+) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  const validateFields = thankyouSchema.safeParse(values);
+  if (validateFields.error) {
+    return {
+      error: "Invalid fields",
+    };
+  }
+  const { id, title, message } = validateFields.data;
+  try {
+    await db.thankYouSpace.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        message,
+      },
+    });
+    return {
+      message: "Thank you space updated successfully",
     };
   } catch (error) {
     return {

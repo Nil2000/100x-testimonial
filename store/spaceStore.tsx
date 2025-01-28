@@ -16,12 +16,18 @@ type SpaceInfo = {
   logo: string;
   name: string;
   questions: Question[];
+  thanksSpace: {
+    id: string;
+    title: string;
+    message: string;
+  };
 };
 
 interface SpaceStore {
   spaceInfo: SpaceInfo;
   setSpaceInfo: (info: SpaceInfo) => void;
   updateSpaceField: (field: any, value: any) => void;
+  updateThanksField: (field: any, value: any) => void;
 }
 
 export const useSpaceStore = create<SpaceStore>((set) => ({
@@ -34,6 +40,11 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
     logo: "",
     name: "",
     questions: [],
+    thanksSpace: {
+      id: "",
+      title: "",
+      message: "",
+    },
   },
   setSpaceInfo: (info: any) =>
     set({
@@ -44,6 +55,11 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
           title: q.title,
           maxLength: 50,
         })),
+        thanksSpace: {
+          id: info.thankyouSpace.id,
+          title: info.thankyouSpace.title,
+          message: info.thankyouSpace.message,
+        },
       },
     }),
   updateSpaceField: (field: any, value: any) =>
@@ -51,6 +67,16 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
       spaceInfo: {
         ...state.spaceInfo,
         [field]: value,
+      },
+    })),
+  updateThanksField: (field: any, value: any) =>
+    set((state) => ({
+      spaceInfo: {
+        ...state.spaceInfo,
+        thanksSpace: {
+          ...state.spaceInfo.thanksSpace,
+          [field]: value,
+        },
       },
     })),
 }));

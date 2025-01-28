@@ -28,6 +28,13 @@ export async function GET(
             order: "asc",
           },
         },
+        thankyouSpace: {
+          select: {
+            id: true,
+            title: true,
+            message: true,
+          },
+        },
       },
     });
     return NextResponse.json({ space }, { status: 200 });

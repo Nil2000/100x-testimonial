@@ -263,9 +263,15 @@ export default function TestimonialEditFormView() {
           />
         </div> */}
       </div>
-      <Button type="submit" className="my-4" disabled={isPending}>
-        {isPending ? <Loader2 className="animate-spin" /> : "Update space"}
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          type="submit"
+          className="w-full sm:max-w-[300px]"
+          disabled={isPending}
+        >
+          {isPending ? <Loader2 className="animate-spin" /> : "Update space"}
+        </Button>
+      </div>
     </form>
   );
 }
