@@ -10,7 +10,7 @@ export default function TestimonialPreview() {
   const { headerTitle, headerSubtitle, questions } = spaceInfo;
   return (
     <div className="pt-4 sm:max-w-[400px] w-full mx-auto">
-      <Card className="relative w-full h-max pb-4">
+      <Card className="relative w-full h-max pb-4 rounded-md">
         <CardContent>
           <LivePreviewbadge location="Testimonial" />
           <div className="flex flex-col items-center h-full gap-4 py-4">

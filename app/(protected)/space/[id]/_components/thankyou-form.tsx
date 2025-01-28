@@ -44,7 +44,10 @@ export default function ThankYouForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 mt-2 w-full sm:max-w-[400px] mx-auto"
+    >
       <div className="space-y-2">
         <Label htmlFor="title">
           Thank you title<span className="text-destructive">*</span>
