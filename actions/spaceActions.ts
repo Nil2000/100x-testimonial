@@ -179,3 +179,28 @@ export const updateThanksSpace = async (
     };
   }
 };
+export const changeSpaceStatus = async (id: string, status: boolean) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  try {
+    await db.space.update({
+      where: {
+        id,
+      },
+      data: {
+        isPublished: status,
+      },
+    });
+    return {
+      message: "Space status updated successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};

@@ -16,6 +16,7 @@ type SpaceInfo = {
   logo: string;
   name: string;
   questions: Question[];
+  isPublished?: boolean;
   thanksSpace: {
     id: string;
     title: string;
@@ -40,6 +41,7 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
     logo: "",
     name: "",
     questions: [],
+    isPublished: false,
     thanksSpace: {
       id: "",
       title: "",
