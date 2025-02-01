@@ -4,8 +4,8 @@ import PublicSpaceView from "./_components/_client";
 export default async function page({
   params,
 }: {
-  params: Promise<{ spaceId: string }>;
+  params: Promise<{ spaceName: string }>;
 }) {
-  const { spaceId } = await params;
-  return <PublicSpaceView spaceId={spaceId} />;
+  const { spaceName } = await params;
+  return <PublicSpaceView spaceName={spaceName} />;
 }
