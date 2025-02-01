@@ -179,6 +179,7 @@ export const updateThanksSpace = async (
     };
   }
 };
+
 export const changeSpaceStatus = async (id: string, status: boolean) => {
   const session = await auth();
   if (!session || !session.user) {
@@ -203,4 +204,22 @@ export const changeSpaceStatus = async (id: string, status: boolean) => {
       error: error,
     };
   }
+};
+
+export const spaceExists = async (spaceName: string) => {
+  const existingSpace = await db.space.findFirst({
+    where: {
+      name: spaceName,
+    },
+  });
+
+  if (!existingSpace) {
+    return false;
+  }
+
+  if (!existingSpace.isPublished) {
+    return false;
+  }
+
+  return true;
 };

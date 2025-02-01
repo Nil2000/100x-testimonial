@@ -4,31 +4,31 @@ import Image from "next/image";
 import React from "react";
 import LoadingPublicView from "./loading-public-view";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 
 export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
   const [loading, setIsLoading] = React.useState(false);
   const router = useRouter();
-
   const fetchSpaceInfo = async () => {
     try {
+      setIsLoading(true);
       const { data } = await axios.get(`/api/public-space/${spaceName}`);
 
       if (data.error) {
-        console.error("Failed to fetch space info", data.error);
         router.push("/not-found");
-      } else {
-        console.log("Space info", data.space);
+        return;
       }
+      console.log("Space info", data.space);
+      setIsLoading(true);
     } catch (error) {
       console.error("Failed to fetch space info", error);
+      router.push("/not-found");
     }
-    setIsLoading(true);
   };
 
   React.useEffect(() => {
     fetchSpaceInfo();
-  }, []);
+  }, [spaceName]);
 
   if (!loading) {
     return <LoadingPublicView />;

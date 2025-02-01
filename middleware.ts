@@ -7,6 +7,7 @@ import {
   DEFAULT_REDIRECT,
   publicRoutes,
 } from "./lib/routes";
+import { notFound } from "next/navigation";
 
 const { auth } = NextAuth(authConfig);
 
@@ -17,6 +18,10 @@ export default auth((req) => {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isApiAuthRoutes = nextUrl.pathname.startsWith(authPrefix);
+
+  if (nextUrl.pathname === "/not-found") {
+    return NextResponse.redirect(new URL("/404", nextUrl));
+  }
 
   if (isApiAuthRoutes) {
     return NextResponse.next();

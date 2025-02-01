@@ -51,7 +51,7 @@ export async function GET(
     if (!existingSpace.isPublished) {
       return NextResponse.json(
         { error: "Space not published" },
-        { status: 404 }
+        { status: 400 }
       );
     }
 
