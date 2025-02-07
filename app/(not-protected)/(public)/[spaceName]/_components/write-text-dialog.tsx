@@ -117,7 +117,7 @@ export default function WriteTextDialog({ space }: { space: any }) {
             control={control}
             render={({ field }) => (
               <>
-                <CollectStarRatings {...field} />
+                <CollectStarRatings field={field} />
                 {errors.rating && (
                   <p className="text-destructive text-xs">
                     {errors.rating.message}
@@ -132,16 +132,14 @@ export default function WriteTextDialog({ space }: { space: any }) {
               control={control}
               render={({ field }) => (
                 <>
-                  <Checkbox id="permission" {...field} />
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                   <Label htmlFor="permission">
                     I give permission to use this testimonial across social
                     channels and other marketing efforts
                   </Label>
-                  {errors.permission && (
-                    <p className="text-destructive text-xs">
-                      {errors.permission.message}
-                    </p>
-                  )}
                 </>
               )}
             />
