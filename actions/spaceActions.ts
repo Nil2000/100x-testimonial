@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { spaceSchema, thankyouSchema } from "@/schema/spaceSchema";
+import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
 import * as z from "zod";
 
 export const createSpace = async (values: z.infer<typeof spaceSchema>) => {

@@ -19,7 +19,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { dropDownOptionsTextVideo, sampleQuestions } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { spaceSchema } from "@/schema/spaceSchema";
+import { spaceSchema } from "@/schemas/spaceSchema";
 import { CollectionType } from "@/lib/db";
 import { z } from "zod";
 import { createSpace } from "@/actions/spaceActions";

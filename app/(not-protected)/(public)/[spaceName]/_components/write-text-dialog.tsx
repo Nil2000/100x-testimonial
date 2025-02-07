@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +8,36 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Pen } from "lucide-react";
 import React from "react";
+import CollectStarRatings from "./collect-start-rating";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import feedbackSchema from "@/schemas/feedbackSchema";
 
 export default function WriteTextDialog({ space }: { space: any }) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(feedbackSchema),
+    defaultValues: {
+      rating: 0,
+      permission: false,
+      answer: "",
+      name: "",
+      email: "",
+    },
+  });
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -27,23 +54,102 @@ export default function WriteTextDialog({ space }: { space: any }) {
           <h2>Write as text</h2>
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>
-          <h2>Write as text</h2>
-        </DialogTitle>
-      </DialogContent>
       <DialogContent className="font-sans">
         <DialogHeader>
           <DialogTitle>Write text testimonial to</DialogTitle>
-          <DialogDescription>
-            Questions
-            {space.questions.map((question: any) => (
-              <li key={question.id} className="text-muted-foreground">
-                {question.title}
-              </li>
-            ))}
-          </DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
+        <h2 className="font-bold text-muted-foreground">Questions</h2>
+        <ul className="list-disc list-inside">
+          {space.questions.map((question: any) => (
+            <li key={question.id} className="text-muted-foreground">
+              {question.title}
+            </li>
+          ))}
+        </ul>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="answer"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Textarea placeholder="Write your answer here" {...field} />
+                {errors.answer && (
+                  <p className="text-destructive text-xs">
+                    {errors.answer.message}
+                  </p>
+                )}
+              </>
+            )}
+          />
+          <Label htmlFor="name">Your name</Label>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input placeholder="Tommy Shelby" {...field} required />
+                {errors.name && (
+                  <p className="text-destructive text-xs">
+                    {errors.name.message}
+                  </p>
+                )}
+              </>
+            )}
+          />
+          <Label htmlFor="email">Your email</Label>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input placeholder="tommy@gmail.com" {...field} required />
+                {errors.email && (
+                  <p className="text-destructive text-xs">
+                    {errors.email.message}
+                  </p>
+                )}
+              </>
+            )}
+          />
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field }) => (
+              <>
+                <CollectStarRatings {...field} />
+                {errors.rating && (
+                  <p className="text-destructive text-xs">
+                    {errors.rating.message}
+                  </p>
+                )}
+              </>
+            )}
+          />
+          <div className="flex gap-2">
+            <Controller
+              name="permission"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <Checkbox id="permission" {...field} />
+                  <Label htmlFor="permission">
+                    I give permission to use this testimonial across social
+                    channels and other marketing efforts
+                  </Label>
+                  {errors.permission && (
+                    <p className="text-destructive text-xs">
+                      {errors.permission.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+          </div>
+          <Button className="w-full mt-4" type="submit">
+            Submit
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );

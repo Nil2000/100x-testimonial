@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
-import { spaceSchema } from "@/schema/spaceSchema";
+import { spaceSchema } from "@/schemas/spaceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DragAndDropQuestions from "@/components/drag-and-drop-questions";
 import { Loader2, PlusCircle } from "lucide-react";

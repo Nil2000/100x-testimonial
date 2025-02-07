@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { thankyouSchema } from "@/schema/spaceSchema";
+import { thankyouSchema } from "@/schemas/spaceSchema";
 import { useSpaceStore } from "@/store/spaceStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";

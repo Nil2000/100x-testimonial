@@ -50,7 +50,7 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
       <p className="text-center text-xl text-muted-foreground">
         {space.headerSubtitle}
       </p>
-      <ul className="w-3/4 mx-auto list-square list-inside">
+      <ul className="sm:w-2/4 w-full mx-auto list-square list-inside">
         <h2 className="uppercase font-semibold leading-6 mb-4">Questions</h2>
         {space.questions.map((question: any) => (
           <li key={question.id} className="text-muted-foreground">
