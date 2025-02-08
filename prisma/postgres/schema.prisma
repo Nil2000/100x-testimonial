@@ -92,7 +92,7 @@ model Space {
   createdBy      User           @relation(fields: [createdById], references: [id])
   thankyouSpace  ThankYouSpace?
   isPublished    Boolean        @default(false)
-
+  feedbacks      Feedback[]
   // theme          Theme          @relation(fields: [themeId], references: [id])
 }
 
@@ -130,6 +130,20 @@ model ThankYouSpace {
   message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  answer     String
+  name       String
+  email      String
+  rating     Int
+  permission Boolean
+  spaceId    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

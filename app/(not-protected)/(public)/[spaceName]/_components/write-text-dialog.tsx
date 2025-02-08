@@ -7,22 +7,29 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Pen } from "lucide-react";
-import React from "react";
+import { Loader2, Pen } from "lucide-react";
+import React, { useTransition } from "react";
 import CollectStarRatings from "./collect-start-rating";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import feedbackSchema from "@/schemas/feedbackSchema";
+import { submitTextFeedback } from "@/actions/feedbackActions";
+import { form } from "motion/react-client";
 
 export default function WriteTextDialog({ space }: { space: any }) {
+  const [isPending, startTransition] = useTransition();
+  const [open, setOpen] = React.useState(false);
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
@@ -35,11 +42,34 @@ export default function WriteTextDialog({ space }: { space: any }) {
   });
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    if (Object.keys(errors).length === 0) {
+      startTransition(() => {
+        submitTextFeedback(space.id, data)
+          .then((res) => {
+            if (res.error) {
+              console.error(res.error);
+              return;
+            }
+            console.log(res.message);
+          })
+          .finally(() => {
+            setOpen(false);
+            reset();
+          });
+      });
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (isOpen) {
+          reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           className="w-full sm:max-w-40 group flex gap-1"
@@ -67,7 +97,13 @@ export default function WriteTextDialog({ space }: { space: any }) {
             </li>
           ))}
         </ul>
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            handleSubmit(onSubmit)();
+            e.preventDefault();
+          }}
+        >
           <Controller
             name="answer"
             control={control}
@@ -131,22 +167,37 @@ export default function WriteTextDialog({ space }: { space: any }) {
               name="permission"
               control={control}
               render={({ field }) => (
-                <>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <Label htmlFor="permission">
-                    I give permission to use this testimonial across social
-                    channels and other marketing efforts
-                  </Label>
-                </>
+                <div>
+                  <div className="flex gap-2">
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <Label htmlFor="permission">
+                      I give permission to use this testimonial across social
+                      channels and other marketing efforts
+                    </Label>
+                  </div>
+                  <p>
+                    {errors.permission && (
+                      <span className="text-destructive text-xs">
+                        {errors.permission.message}
+                      </span>
+                    )}
+                  </p>
+                </div>
               )}
             />
           </div>
-          <Button className="w-full mt-4" type="submit">
-            Submit
-          </Button>
+          <DialogFooter>
+            <Button
+              className="mt-4 w-full sm:w-24"
+              type="submit"
+              disabled={isPending}
+            >
+              {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
