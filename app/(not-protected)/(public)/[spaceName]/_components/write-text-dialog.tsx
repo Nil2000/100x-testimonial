@@ -26,7 +26,7 @@ export default function WriteTextDialog({ space }: { space: any }) {
   } = useForm({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
-      rating: 0,
+      rating: 3,
       permission: false,
       answer: "",
       name: "",
@@ -54,7 +54,7 @@ export default function WriteTextDialog({ space }: { space: any }) {
           <h2>Write as text</h2>
         </Button>
       </DialogTrigger>
-      <DialogContent className="font-sans">
+      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Write text testimonial to</DialogTitle>
           <DialogDescription></DialogDescription>
