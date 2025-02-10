@@ -2,6 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Edit, FileStack } from "lucide-react";
 import EditSpaceContent from "./edit-space-content";
+import MangeTestimonailsTabContent from "./manage-testimonials";
 
 export default function HorizontalTabs() {
   return (
@@ -29,9 +30,7 @@ export default function HorizontalTabs() {
         <EditSpaceContent />
       </TabsContent>
       <TabsContent value="tab-2">
-        <p className="p-4 text-center text-xs text-muted-foreground">
-          Content for Tab 2
-        </p>
+        <MangeTestimonailsTabContent />
       </TabsContent>
     </Tabs>
   );

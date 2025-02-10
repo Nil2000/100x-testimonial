@@ -8,7 +8,6 @@ import {
   DialogTrigger,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +19,6 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import feedbackSchema from "@/schemas/feedbackSchema";
 import { submitTextFeedback } from "@/actions/feedbackActions";
-import { form } from "motion/react-client";
 
 export default function WriteTextDialog({ space }: { space: any }) {
   const [isPending, startTransition] = useTransition();

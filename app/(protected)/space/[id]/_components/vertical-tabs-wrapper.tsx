@@ -1,11 +1,17 @@
 "use client";
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import TestimonialView from "./testimonial-view";
-import ThankYouView from "./thankyou-view";
-import PublishView from "./publish-view";
 
-export default function VerticalTabsWrapper() {
+type VerticalTabsWrapperProps = {
+  tabTitle: string;
+  tabContent: React.ReactNode;
+}[];
+
+export default function VerticalTabsWrapper({
+  tabs,
+}: {
+  tabs: VerticalTabsWrapperProps;
+}) {
   return (
     <Tabs
       defaultValue="tab-1"
@@ -13,26 +19,18 @@ export default function VerticalTabsWrapper() {
       className="flex w-full gap-2"
     >
       <TabsList className="flex-col justify-start">
-        <TabsTrigger value="tab-1" className="w-full hover:bg-primary/5">
-          Testimonial view
-        </TabsTrigger>
-        <TabsTrigger value="tab-2" className="w-full hover:bg-primary/5">
-          Thank you view
-        </TabsTrigger>
-        <TabsTrigger value="tab-3" className="w-full hover:bg-primary/5">
-          Publish view
-        </TabsTrigger>
+        {tabs.map((tab, index) => (
+          <TabsTrigger value={`tab-${index + 1}`} key={`tab-${index + 1}`}>
+            {tab.tabTitle}
+          </TabsTrigger>
+        ))}
       </TabsList>
       <div className="grow rounded-lg border border-border text-start min-h-[calc(100vh-8rem)]">
-        <TabsContent value="tab-1">
-          <TestimonialView />
-        </TabsContent>
-        <TabsContent value="tab-2">
-          <ThankYouView />
-        </TabsContent>
-        <TabsContent value="tab-3">
-          <PublishView />
-        </TabsContent>
+        {tabs.map((tab, index) => (
+          <TabsContent value={`tab-${index + 1}`} key={`tab-${index + 1}`}>
+            {tab.tabContent}
+          </TabsContent>
+        ))}
       </div>
     </Tabs>
   );
