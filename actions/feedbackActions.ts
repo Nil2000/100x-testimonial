@@ -9,9 +9,9 @@ export const submitTextFeedback = async (
   values: Feedback,
   feedbackType: FeedbackType
 ) => {
-  const sesssion = await auth();
+  const session = await auth();
 
-  if (!sesssion || !sesssion.user) {
+  if (!session || !session.user) {
     return {
       error: "Unauthorized",
     };
@@ -44,6 +44,34 @@ export const submitTextFeedback = async (
     console.error("TEXT_FEEDBACK_SUBMISSION_ERROR", error);
     return {
       error: "Failed to submit feedback",
+    };
+  }
+};
+
+export const toggleWallOfLove = async (
+  feedbackId: string,
+  addToWallOfLove: boolean
+) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    await db.feedback.update({
+      where: { id: feedbackId },
+      data: { addToWallOfLove },
+    });
+    return {
+      message: "Feedback updated successfully",
+    };
+  } catch (error) {
+    console.error("TOGGLE_WALL_OF_LOVE_ERROR", error);
+    return {
+      error: "Failed to update feedback",
     };
   }
 };

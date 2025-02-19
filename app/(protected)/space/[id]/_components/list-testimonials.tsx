@@ -3,6 +3,7 @@ import React from "react";
 import axios from "axios";
 import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
+import TestimonialCard from "./manage-testimonials/testimonial-card";
 export default function ListTestimonials({ category }: { category?: string }) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState([]);
@@ -29,10 +30,15 @@ export default function ListTestimonials({ category }: { category?: string }) {
   }
 
   return (
-    <div key={`list-testimonials-${category}`}>
+    <div
+      key={`list-testimonials-${category}`}
+      className="max-w-full p-3 space-y-3"
+    >
       ListTestimonials the
       {category && <div>Category: {category}</div>}
-      {JSON.stringify(testimonials)}
+      {testimonials.map((testimonial: any) => (
+        <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+      ))}
     </div>
   );
 }

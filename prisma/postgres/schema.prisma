@@ -141,16 +141,17 @@ enum FeedbackType {
 }
 
 model Feedback {
-  id           String       @id @default(cuid())
-  answer       String
-  name         String
-  email        String
-  rating       Int
-  permission   Boolean
-  spaceId      String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  feedbackType FeedbackType
+  id              String       @id @default(cuid())
+  answer          String
+  name            String
+  email           String
+  rating          Int
+  permission      Boolean
+  spaceId         String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  feedbackType    FeedbackType
+  addToWallOfLove Boolean      @default(false)
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }
