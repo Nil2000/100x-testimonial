@@ -1,4 +1,4 @@
-import { CollectionType } from "./db";
+import { CollectionType, FeedbackType } from "./db";
 
 export const sampleQuestions = [
   {

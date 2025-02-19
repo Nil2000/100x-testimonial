@@ -16,7 +16,7 @@ export default function ManageSidebar() {
       orientation="vertical"
       className="flex w-full gap-2 flex-col sm:flex-row"
     >
-      <TabsList className="flex-col justify-start sm:w-36 mx-auto w-full">
+      <TabsList className="flex-col justify-start sm:w-44 mx-auto w-full">
         <AccordionMenuList items={manageTestimonialsSidebarElements} />
       </TabsList>
       <div className="grow rounded-lg border border-border text-start min-h-[calc(100vh-8rem)]">

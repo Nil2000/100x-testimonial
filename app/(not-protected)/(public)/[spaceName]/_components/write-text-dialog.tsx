@@ -19,6 +19,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import feedbackSchema from "@/schemas/feedbackSchema";
 import { submitTextFeedback } from "@/actions/feedbackActions";
+import { FeedbackType } from "@/lib/db";
 
 export default function WriteTextDialog({ space }: { space: any }) {
   const [isPending, startTransition] = useTransition();
@@ -42,7 +43,7 @@ export default function WriteTextDialog({ space }: { space: any }) {
   const onSubmit = (data: any) => {
     if (Object.keys(errors).length === 0) {
       startTransition(() => {
-        submitTextFeedback(space.id, data)
+        submitTextFeedback(space.id, data, FeedbackType.TEXT)
           .then((res) => {
             if (res.error) {
               console.error(res.error);

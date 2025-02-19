@@ -1,10 +1,14 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { db, FeedbackType } from "@/lib/db";
 import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 
-export const submitTextFeedback = async (spaceId: string, values: Feedback) => {
+export const submitTextFeedback = async (
+  spaceId: string,
+  values: Feedback,
+  feedbackType: FeedbackType
+) => {
   const sesssion = await auth();
 
   if (!sesssion || !sesssion.user) {
@@ -25,6 +29,7 @@ export const submitTextFeedback = async (spaceId: string, values: Feedback) => {
     await db.feedback.create({
       data: {
         ...values,
+        feedbackType,
         space: {
           connect: {
             id: spaceId,

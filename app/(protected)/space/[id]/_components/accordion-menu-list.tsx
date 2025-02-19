@@ -59,7 +59,7 @@ export default function AccordionMenuList({
               >
                 <div className="flex gap-2 w-full">
                   <content.icon size={20} />
-                  <span>{content.title}</span>
+                  <h3>{content.title}</h3>
                 </div>
               </TabsTrigger>
             ))}

@@ -1,0 +1,34 @@
+import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  const params = req.nextUrl.searchParams;
+  const category = params.get("category") as "TEXT" | "VIDEO";
+  const spaceId = params.get("spaceId");
+
+  if (!spaceId) {
+    return NextResponse.json({ error: "SpaceId is required" }, { status: 400 });
+  }
+
+  try {
+    let feedbacks;
+    if (category) {
+      feedbacks = await db.feedback.findMany({
+        where: {
+          spaceId: spaceId,
+          feedbackType: category,
+        },
+      });
+      return NextResponse.json(feedbacks);
+    }
+
+    feedbacks = await db.feedback.findMany({
+      where: {
+        spaceId: spaceId,
+      },
+    });
+    return NextResponse.json(feedbacks);
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
