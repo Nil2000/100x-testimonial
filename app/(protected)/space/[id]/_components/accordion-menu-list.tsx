@@ -23,7 +23,12 @@ export default function AccordionMenuList({
   items: AccordionMenuListProps;
 }) {
   return (
-    <Accordion type="single" collapsible className="border-none w-full">
+    <Accordion
+      type="single"
+      collapsible
+      className="border-none w-full"
+      defaultValue="Inbox"
+    >
       {/* {<AccordionItem
         value={header}
         key={header}

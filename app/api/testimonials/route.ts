@@ -5,6 +5,7 @@ export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   const category = params.get("category") as "TEXT" | "VIDEO";
   const spaceId = params.get("spaceId");
+  const addToWallOfLove = params.get("addToWallOfLove");
 
   if (!spaceId) {
     return NextResponse.json({ error: "SpaceId is required" }, { status: 400 });
@@ -17,6 +18,16 @@ export async function GET(req: NextRequest) {
         where: {
           spaceId: spaceId,
           feedbackType: category,
+        },
+      });
+      return NextResponse.json(feedbacks);
+    }
+
+    if (addToWallOfLove) {
+      feedbacks = await db.feedback.findMany({
+        where: {
+          spaceId: spaceId,
+          addToWallOfLove: addToWallOfLove === "true",
         },
       });
       return NextResponse.json(feedbacks);

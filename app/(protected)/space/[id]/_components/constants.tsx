@@ -32,7 +32,7 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "Liked",
           icon: HandHeart,
-          tabContent: <ListTestimonials category="liked" />,
+          tabContent: <ListTestimonials wallOfLove="true" />,
         },
       ],
     },

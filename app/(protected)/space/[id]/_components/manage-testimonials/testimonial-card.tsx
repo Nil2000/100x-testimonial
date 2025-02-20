@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Star } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { toggleWallOfLove } from "@/actions/feedbackActions";
+import BadgeOfTestimonials from "./badge-testimonial-type";
 
 export default function TestimonialCard({ testimonial }: { testimonial: any }) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
@@ -22,7 +23,9 @@ export default function TestimonialCard({ testimonial }: { testimonial: any }) {
   return (
     <Card className="p-3 flex flex-col space-y-2">
       <div className="flex justify-between">
-        <div>{testimonial.feedbackType}</div>
+        <div>
+          <BadgeOfTestimonials category={testimonial.feedbackType} />
+        </div>
         <button onClick={toggleLike}>
           <Heart
             size={24}
@@ -33,7 +36,7 @@ export default function TestimonialCard({ testimonial }: { testimonial: any }) {
       </div>
       <div className="flex">{renderStars(testimonial.rating)}</div>
       <div className="text-sm">{testimonial.answer}</div>
-      <div className="text-xs">
+      <div className="text-xs italic text-muted-foreground">
         <h3>{testimonial.name}</h3>
         <h4>{testimonial.email}</h4>
         <div>{renderDate(testimonial.createdAt)}</div>
