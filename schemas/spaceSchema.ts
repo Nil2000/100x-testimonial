@@ -2,7 +2,7 @@ import { CollectionType } from "@/lib/db";
 import * as z from "zod";
 export const spaceSchema = z.object({
   spaceName: z.string().nonempty("Space name is required"),
-  spaceLogoUrl: z.string().nonempty("Space logo is required").optional(),
+  spaceLogoKey: z.string().nonempty("Space logo is required").optional(),
   headerTitle: z.string().nonempty("Header title is required"),
   customMessage: z.string().nonempty("Custom message is required"),
   questionList: z.array(

@@ -79,7 +79,7 @@ enum CollectionType {
 model Space {
   id             String         @id @default(cuid())
   name           String
-  logo           String?
+  logoObjectKey  String?
   headerTitle    String
   headerSubtitle String
   questions      Question[]

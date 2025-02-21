@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { PlusCircle, XCircle } from "lucide-react";
+import { Loader2, PlusCircle, XCircle } from "lucide-react";
 import React, { startTransition, useActionState, useTransition } from "react";
 import DragAndDropQuestions from "../../../../../../components/drag-and-drop-questions";
 import { useForm, Controller } from "react-hook-form";
@@ -24,6 +24,8 @@ import { CollectionType } from "@/lib/db";
 import { z } from "zod";
 import { createSpace } from "@/actions/spaceActions";
 import { CreateSpaceQuestion } from "@/lib/types";
+import { uploadFileToBucket } from "@/actions/fileAction";
+import { createId } from "@paralleldrive/cuid2";
 
 export default function CreateSpaceForm({
   setFileSelected,
@@ -55,7 +57,7 @@ export default function CreateSpaceForm({
       collectionType: CollectionType.TEXT,
       collectStarRating: false,
       // chooseTheme: false,
-      spaceLogoUrl: "",
+      spaceLogoKey: "",
     },
   });
   const [questions, setQuestions] =
@@ -79,8 +81,36 @@ export default function CreateSpaceForm({
     setValue("questionList", items);
   };
 
+  const uploadFile = async (file: File, spaceName: string) => {
+    if (!file) return;
+    console.log(file);
+    const url = await uploadFileToBucket({
+      file: file,
+      key: `space/${spaceName}/space-logo/${createId() + createId()}.${
+        file.type.split("/")[1]
+      }`,
+      mimeType: file.type,
+      size: file.size,
+    });
+    return url;
+  };
+
   const onSubmit = (data: z.infer<typeof spaceSchema>) => {
     console.log(data);
+    if (isFileSelected) {
+      console.log("file selected", isFileSelected);
+      uploadFile(isFileSelected, data.spaceName)
+        .then((msg: any) => {
+          if (msg.error) {
+            throw new Error(msg.error);
+          }
+          console.log(msg);
+          data.spaceLogoKey = msg.url;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
     startTransition(() => {
       createSpace(data)
         .then((res: any) => {
@@ -98,7 +128,10 @@ export default function CreateSpaceForm({
 
   return (
     // <Form>
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 pr-8 mt-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-2 pr-8 mt-2 pb-4"
+    >
       <div className="space-y-2">
         <Label htmlFor="spaceName">
           Space name <span className="text-destructive">*</span>
@@ -126,7 +159,7 @@ export default function CreateSpaceForm({
           Space logo <span className="text-destructive">*</span>
         </Label>
         <Controller
-          name="spaceLogoUrl"
+          name="spaceLogoKey"
           control={control}
           render={({ field }) => (
             <>
@@ -149,7 +182,7 @@ export default function CreateSpaceForm({
                   onClick={() => {
                     setFileSelected(null);
                     // field.onChange(null);
-                    setValue("spaceLogoUrl", "");
+                    setValue("spaceLogoKey", "");
                     const node = document.getElementById(
                       "file"
                     ) as HTMLInputElement;
@@ -280,8 +313,8 @@ export default function CreateSpaceForm({
           />
         </div> */}
       </div>
-      <Button type="submit" className="my-4" disabled={isPending}>
-        Create new space
+      <Button type="submit" className="my-4 w-36" disabled={isPending}>
+        {isPending ? <Loader2 className="animate-spin" /> : `Create new space`}
       </Button>
     </form>
     // </Form>
