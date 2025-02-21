@@ -21,7 +21,7 @@ services:
       sleep 10;
       /usr/bin/mc config host add minio http://minio:9000 minio minio123;
       /usr/bin/mc mb minio/100xtestimonials;
-      /usr/bin/mc anonymous set public minio/100xtestiomonials/public;
+      /usr/bin/mc anonymous set public minio/100xtestimonials/public;
       exit 0;
       "
 
