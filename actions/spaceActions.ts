@@ -223,3 +223,26 @@ export const spaceExists = async (spaceName: string) => {
 
   return true;
 };
+
+export const getTestimonialsForWallOfLove = async (spaceName: string) => {
+  const space = await db.space.findFirst({
+    where: {
+      name: spaceName,
+    },
+  });
+  if (!space) {
+    return {
+      error: "Space not found",
+    };
+  }
+  const feedbacks = await db.feedback.findMany({
+    where: {
+      spaceId: space.id,
+      addToWallOfLove: true,
+    },
+  });
+  return {
+    error: null,
+    data: feedbacks,
+  };
+};
