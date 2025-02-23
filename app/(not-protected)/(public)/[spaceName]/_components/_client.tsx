@@ -9,10 +9,14 @@ import { CollectionType } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Pen, PenLine, Video } from "lucide-react";
 import WriteTextDialog from "./write-text-dialog";
+import ThankYouDialog from "./thanks-dialog";
+import { DialogDemo } from "./temp-dialog";
+import { SpaceResponse } from "@/lib/types";
 
 export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
   const [loading, setIsLoading] = React.useState(true);
-  const [space, setSpace] = React.useState<any>(null);
+  const [openThanks, setOpenThanks] = React.useState(false);
+  const [space, setSpace] = React.useState<SpaceResponse | null>(null);
   const router = useRouter();
   const fetchSpaceInfo = async () => {
     try {
@@ -31,15 +35,19 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
     fetchSpaceInfo();
   }, [spaceName]);
 
-  if (loading) {
+  if (loading || !space) {
     return <LoadingPublicView />;
   }
+
+  const showThanks = () => {
+    setOpenThanks(true);
+  };
 
   return (
     <div className="lg:max-w-[1000px] w-full px-4 flex flex-col justify-center mx-auto space-y-8 py-8">
       <div className="flex justify-center">
         <Image
-          src="https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={space.logoObjectKey}
           alt="Public space"
           width={100}
           height={100}
@@ -73,8 +81,16 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
         )}
         {(space.collectionType === CollectionType.TEXT ||
           space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
-          <WriteTextDialog space={space} />
+          <WriteTextDialog space={space} showThankYou={showThanks} />
         )}
+        <ThankYouDialog
+          open={openThanks}
+          onOpenChange={() => {
+            setOpenThanks(false);
+          }}
+          title={space.thankyouSpace.title}
+          message={space.thankyouSpace.message}
+        />
       </div>
     </div>
   );

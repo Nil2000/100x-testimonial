@@ -4,6 +4,7 @@ import LivePreviewbadge from "@/components/live-preview-badge";
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
 import { useSpaceStore } from "@/store/spaceStore";
+import Image from "next/image";
 
 export default function TestimonialPreview() {
   const { spaceInfo } = useSpaceStore();
@@ -15,6 +16,12 @@ export default function TestimonialPreview() {
           <LivePreviewbadge location="Testimonial" />
           <div className="flex flex-col items-center h-full gap-4 py-4">
             {/* <ImagePrview selectedFile={selectedFile} /> */}
+            <Image
+              src={spaceInfo.logo}
+              width={100}
+              height={100}
+              alt={spaceInfo.name}
+            />
             <h1 className="text-3xl font-semibold">
               {headerTitle || "Header goes here..."}
             </h1>

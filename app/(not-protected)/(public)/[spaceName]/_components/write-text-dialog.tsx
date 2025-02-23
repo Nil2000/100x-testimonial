@@ -21,7 +21,12 @@ import feedbackSchema from "@/schemas/feedbackSchema";
 import { submitTextFeedback } from "@/actions/feedbackActions";
 import { FeedbackType } from "@/lib/db";
 
-export default function WriteTextDialog({ space }: { space: any }) {
+type Props = {
+  space: any;
+  showThankYou: () => void;
+};
+
+export default function WriteTextDialog({ space, showThankYou }: Props) {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = React.useState(false);
   const {
@@ -54,6 +59,7 @@ export default function WriteTextDialog({ space }: { space: any }) {
           .finally(() => {
             setOpen(false);
             reset();
+            showThankYou();
           });
       });
     }

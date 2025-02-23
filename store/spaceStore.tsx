@@ -52,6 +52,7 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
     set({
       spaceInfo: {
         ...info,
+        logo: info.logoObjectKey,
         questions: info.questions.map((q: any, index: number) => ({
           id: q.id || index.toString(),
           title: q.title,
