@@ -39,3 +39,17 @@ export interface SpaceResponse {
   questions: Question[];
   thankyouSpace: ThankYouSpace;
 }
+
+export interface TestimonialResponse {
+  id: string;
+  answer: string;
+  name: string;
+  email: string;
+  rating: number;
+  permission: boolean;
+  spaceId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  feedbackType: string;
+  addToWallOfLove: boolean;
+}

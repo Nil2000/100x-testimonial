@@ -2,6 +2,8 @@ import { getTestimonialsForWallOfLove } from "@/actions/spaceActions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
+import BackgroundImage from "./_components/background-image";
+import WallOfLoveCard from "./_components/wall-of-love-card";
 
 export default async function page({
   params,
@@ -15,23 +17,21 @@ export default async function page({
   if (response.error) notFound();
 
   return (
-    <>
-      <div className="absolute top-0 -z-10 w-full">
-        <div className="relative h-max">
-          <Image
-            src="https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Wall of love"
-            width={1974}
-            height={400}
-            className="-z-20 object-cover w-full h-[40vh]"
-          />
-          <div className="absolute top-0 h-12 w-full z-10 bg-gradient-to-b from-zinc-900 via-zinc-900/30 to-transparent"></div>
-          <div className="absolute top-0 left-0 w-40 h-full z-10 bg-gradient-to-r from-zinc-900 via-zinc-900/40 to-transparent"></div>
-          <div className="absolute top-0 right-0 w-40 h-full z-10 bg-gradient-to-l from-zinc-900 via-zinc-900/30 to-transparent"></div>
-          <div className="absolute bottom-0 h-32 w-full z-10 bg-gradient-to-t from-zinc-900 via-zinc-900/80 to-transparent"></div>
-        </div>
+    <div className="lg:max-w-[1000px] mx-auto py-8 w-full">
+      <BackgroundImage />
+      <div className="flex flex-col items-center justify-end sm:h-[35vh] gap-4">
+        <h2 className="text-5xl font-dm_serif">Wall of love: {spaceName}</h2>
+        <h4 className="font-poppins w-3/4 text-center text-white/70 text-pretty">
+          A collection of heartfelt testimonials from our amazing community,
+          sharing their experiences and appreciation. Thank you for your
+          support!
+        </h4>
       </div>
-      Wall of love: {spaceName} {JSON.stringify(response.data)}
-    </>
+      <div className="flex flex-col items-center gap-4 mt-3 px-4">
+        {response.data?.map((testimonial) => (
+          <WallOfLoveCard testimonial={testimonial} />
+        ))}
+      </div>
+    </div>
   );
 }
