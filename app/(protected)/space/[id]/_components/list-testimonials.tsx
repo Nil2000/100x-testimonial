@@ -4,13 +4,17 @@ import axios from "axios";
 import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
 import TestimonialCard from "./manage-testimonials/testimonial-card";
+type Props = {
+  category?: string;
+  wallOfLove?: boolean;
+  archived?: boolean;
+};
+
 export default function ListTestimonials({
   category,
   wallOfLove,
-}: {
-  category?: string;
-  wallOfLove?: string;
-}) {
+  archived,
+}: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState([]);
   const { spaceInfo } = useSpaceStore();
@@ -22,6 +26,7 @@ export default function ListTestimonials({
             category,
             spaceId: spaceInfo.id,
             addToWallOfLove: wallOfLove,
+            archived,
           },
         });
         setTestimonials(response.data);
@@ -39,6 +44,14 @@ export default function ListTestimonials({
     return <Loading />;
   }
 
+  const removeFromWallOfLove = (id: string) => {
+    if (!id) return;
+
+    if (wallOfLove) {
+      setTestimonials((prev) => prev.filter((t: any) => t.id !== id));
+    }
+  };
+
   return (
     <div
       key={`list-testimonials-${category}`}
@@ -50,7 +63,11 @@ export default function ListTestimonials({
         </div>
       )}
       {testimonials.map((testimonial: any) => (
-        <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+        <TestimonialCard
+          key={testimonial.id}
+          testimonial={testimonial}
+          removeFromWallOfLove={removeFromWallOfLove}
+        />
       ))}
     </div>
   );

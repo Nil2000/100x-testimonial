@@ -3,6 +3,7 @@ import {
   HandHeart,
   Heart,
   LetterText,
+  MessageSquareWarningIcon,
   Send,
   Video,
   WalletCards,
@@ -32,7 +33,12 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "Liked",
           icon: HandHeart,
-          tabContent: <ListTestimonials wallOfLove="true" />,
+          tabContent: <ListTestimonials wallOfLove={true} />,
+        },
+        {
+          title: "Spam",
+          icon: MessageSquareWarningIcon,
+          tabContent: <ListTestimonials archived={true} />,
         },
       ],
     },

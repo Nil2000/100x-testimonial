@@ -1,10 +1,18 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Star } from "lucide-react";
+import { Heart, Loader2, Star } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { toggleWallOfLove } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
 
-export default function TestimonialCard({ testimonial }: { testimonial: any }) {
+type TestimonialCardProps = {
+  testimonial: any;
+  removeFromWallOfLove: (id: string) => void;
+};
+
+export default function TestimonialCard({
+  testimonial,
+  removeFromWallOfLove,
+}: TestimonialCardProps) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
   const [isPending, startTransition] = useTransition();
 
@@ -16,6 +24,9 @@ export default function TestimonialCard({ testimonial }: { testimonial: any }) {
           return;
         }
         setIsLiked(!isLiked);
+        if (testimonial.addToWallOfLove) {
+          removeFromWallOfLove(testimonial.id);
+        }
       });
     });
   };
@@ -27,11 +38,15 @@ export default function TestimonialCard({ testimonial }: { testimonial: any }) {
           <BadgeOfTestimonials category={testimonial.feedbackType} />
         </div>
         <button onClick={toggleLike}>
-          <Heart
-            size={24}
-            fill={isLiked ? "red" : "none"}
-            className={isLiked ? "text-red-500" : ""}
-          />
+          {isPending ? (
+            <Loader2 size={24} className="animate-spin text-muted-foreground" />
+          ) : (
+            <Heart
+              size={24}
+              fill={isLiked ? "red" : "none"}
+              className={isLiked ? "text-red-500" : ""}
+            />
+          )}
         </button>
       </div>
       <div className="flex">{renderStars(testimonial.rating)}</div>
