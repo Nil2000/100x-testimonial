@@ -12,6 +12,7 @@ import WriteTextDialog from "./write-text-dialog";
 import ThankYouDialog from "./thanks-dialog";
 import { DialogDemo } from "./temp-dialog";
 import { SpaceResponse } from "@/lib/types";
+import RecordVideoDialog from "./record-video-dialog";
 
 export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
   const [loading, setIsLoading] = React.useState(true);
@@ -69,15 +70,7 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
       <div className="flex justify-center space-x-2">
         {(space.collectionType === CollectionType.VIDEO ||
           space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
-          <Button className="w-full sm:max-w-40 group flex gap-1">
-            <Video
-              className="me-1 transition-transform group-hover:-translate-x-0.5"
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-            <h2>Record a video</h2>
-          </Button>
+          <RecordVideoDialog />
         )}
         {(space.collectionType === CollectionType.TEXT ||
           space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
