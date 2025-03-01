@@ -21,8 +21,20 @@ const stepContent = [
 
 export default function RecordVideoDialog() {
   const [step, setStep] = React.useState(0);
+  const [open, setOpen] = React.useState(false);
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          // Trigger stopTracks function when dialog closes
+          setOpen(false);
+        } else {
+          setStep(0);
+          setOpen(true);
+        }
+      }}
+    >
       <DialogTrigger asChild className="w-full sm:max-w-40 group flex gap-1">
         <Button>
           <Video
@@ -36,7 +48,7 @@ export default function RecordVideoDialog() {
       </DialogTrigger>
       <DialogContent className="font-sans">
         {/* <ChooseMethodOptionsDialogContent /> */}
-        <RecordVideoPermissions />
+        <RecordVideoPermissions dialogStatus={open} />
       </DialogContent>
     </Dialog>
   );
