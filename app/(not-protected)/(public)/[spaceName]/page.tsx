@@ -10,10 +10,10 @@ export default async function page({
 }) {
   const { spaceName } = await params;
 
-  const found = await spaceExists(spaceName);
+  const foundSpace = await spaceExists(spaceName);
 
-  if (!found) {
+  if (!foundSpace) {
     notFound();
   }
-  return <PublicSpaceView spaceName={spaceName} />;
+  return <PublicSpaceView space={foundSpace} />;
 }

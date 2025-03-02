@@ -207,21 +207,43 @@ export const changeSpaceStatus = async (id: string, status: boolean) => {
 };
 
 export const spaceExists = async (spaceName: string) => {
-  const existingSpace = await db.space.findFirst({
-    where: {
-      name: spaceName,
-    },
-  });
+  try {
+    const existingSpace = await db.space.findFirst({
+      where: {
+        name: spaceName,
+      },
+      include: {
+        questions: {
+          select: {
+            id: true,
+            title: true,
+          },
+          orderBy: {
+            order: "asc",
+          },
+        },
+        thankyouSpace: {
+          select: {
+            title: true,
+            message: true,
+          },
+        },
+      },
+    });
 
-  if (!existingSpace) {
-    return false;
+    if (!existingSpace) {
+      return null;
+    }
+
+    if (!existingSpace.isPublished) {
+      return null;
+    }
+
+    return existingSpace;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
-
-  if (!existingSpace.isPublished) {
-    return false;
-  }
-
-  return true;
 };
 
 export const getTestimonialsForWallOfLove = async (spaceName: string) => {

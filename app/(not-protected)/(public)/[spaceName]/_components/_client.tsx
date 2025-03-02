@@ -10,35 +10,25 @@ import { Button } from "@/components/ui/button";
 import { Pen, PenLine, Video } from "lucide-react";
 import WriteTextDialog from "./write-text-dialog";
 import ThankYouDialog from "./thanks-dialog";
-import { DialogDemo } from "./temp-dialog";
 import { SpaceResponse } from "@/lib/types";
 import RecordVideoDialog from "./record-video-dialog";
+import MediaDialog from "./newvideo-dialog";
+import FinalDialogComponent from "./final-dialog-choice";
 
-export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
-  const [loading, setIsLoading] = React.useState(true);
+type PublicSpaceViewProps = {
+  space: SpaceResponse;
+};
+
+export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
+  // const [loading, setIsLoading] = React.useState(true);
   const [openThanks, setOpenThanks] = React.useState(false);
-  const [space, setSpace] = React.useState<SpaceResponse | null>(null);
+  const [openRecord, setOpenRecord] = React.useState(false);
+  const [openCheckPermission, setOpenCheckPermission] = React.useState(false);
   const router = useRouter();
-  const fetchSpaceInfo = async () => {
-    try {
-      const { data } = await axios.get(`/api/public-space/${spaceName}`);
-      console.log("Space info", data.space);
-      setSpace(data.space);
-    } catch (error) {
-      console.error("Failed to fetch space info", error);
-      router.push("/not-found");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  React.useEffect(() => {
-    fetchSpaceInfo();
-  }, [spaceName]);
-
-  if (loading || !space) {
-    return <LoadingPublicView />;
-  }
+  // if (loading || !space) {
+  //   return <LoadingPublicView />;
+  // }
 
   const showThanks = () => {
     setOpenThanks(true);
@@ -47,13 +37,15 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
   return (
     <div className="lg:max-w-[1000px] w-full px-4 flex flex-col justify-center mx-auto space-y-8 py-8">
       <div className="flex justify-center">
-        <Image
-          src={space.logoObjectKey}
-          alt="Public space"
-          width={100}
-          height={100}
-          className="object-cover"
-        />
+        {space.logoObjectKey && (
+          <Image
+            src={space.logoObjectKey}
+            alt="Public space"
+            width={100}
+            height={100}
+            className="object-cover"
+          />
+        )}
       </div>
       <h1 className="text-4xl font-bold text-center">{space.headerTitle}</h1>
       <p className="text-center text-xl text-muted-foreground">
@@ -70,7 +62,31 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
       <div className="flex justify-center space-x-2">
         {(space.collectionType === CollectionType.VIDEO ||
           space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
-          <RecordVideoDialog />
+          <>
+            <Button onClick={() => setOpenRecord(true)} className="group">
+              <Video
+                className="me-1 transition-transform group-hover:-translate-x-0.5"
+                size={16}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+              <h2>Record a video</h2>
+            </Button>
+            {/* <RecordVideoDialog
+              open={openRecord}
+              onClose={() => {
+                setOpenRecord(false);
+              }}
+            /> */}
+            {/* <MediaDialog
+              isOpen={openRecord}
+              onClose={() => setOpenRecord(false)}
+            /> */}
+            <FinalDialogComponent
+              open={openRecord}
+              onClose={() => setOpenRecord(false)}
+            />
+          </>
         )}
         {(space.collectionType === CollectionType.TEXT ||
           space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
@@ -81,8 +97,8 @@ export default function PublicSpaceView({ spaceName }: { spaceName: string }) {
           onOpenChange={() => {
             setOpenThanks(false);
           }}
-          title={space.thankyouSpace.title}
-          message={space.thankyouSpace.message}
+          title={space.thankyouSpace!.title}
+          message={space.thankyouSpace!.message}
         />
       </div>
     </div>

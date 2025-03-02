@@ -23,3 +23,5 @@ export const dropDownOptionsTextVideo = [
   { id: 3, name: "Text and Video both", value: CollectionType.TEXT_AND_VIDEO },
 ];
 export const feedbackConstants = ["1", "2", "3", "4", "5"];
+
+export type StepType = "init" | "check-permission";

@@ -27,17 +27,17 @@ export interface ThankYouSpace {
 export interface SpaceResponse {
   id: string;
   name: string;
-  logoObjectKey: string;
+  logoObjectKey: string | null;
   headerTitle: string;
   headerSubtitle: string;
   collectionType: string;
   collectStar: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   createdById: string;
   isPublished: boolean;
   questions: Question[];
-  thankyouSpace: ThankYouSpace;
+  thankyouSpace: ThankYouSpace | null;
 }
 
 export interface TestimonialResponse {
