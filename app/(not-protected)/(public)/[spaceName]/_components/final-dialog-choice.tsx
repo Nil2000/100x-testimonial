@@ -21,6 +21,11 @@ export default function FinalDialogComponent({
   const [audioDevices, setAudioDevices] = React.useState<MediaDeviceInfo[]>([]);
   const [videoDevices, setVideoDevices] = React.useState<MediaDeviceInfo[]>([]);
   const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [startRecording, setStartRecording] = React.useState(false);
+  const [mediaRecorder, setMediaRecorder] =
+    React.useState<MediaRecorder | null>(null);
+  const [recording, setRecording] = React.useState(false);
+  const [recordedChunks, setRecordedChunks] = React.useState<Blob[]>([]);
 
   React.useEffect(() => {
     const getVideo = () => {
@@ -59,6 +64,30 @@ export default function FinalDialogComponent({
       }
     };
   }, [open]);
+
+  const handleStartRecording = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      const recorder = new MediaRecorder(stream);
+      setMediaRecorder(recorder);
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          setRecordedChunks((prev) => [...prev, event.data]);
+        }
+      };
+
+      recorder.start();
+      setRecording(true);
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setRecording(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
@@ -102,6 +131,17 @@ export default function FinalDialogComponent({
               options={audioDevices.map((device) => device.label)}
             />
           </div>
+        )}
+        {!checkingPermission && permissionGranted && (
+          <>
+            <Button onClick={handleStartRecording}>Start Recording</Button>
+            {recording && (
+              <>
+                <span className="record-badge">Recording...</span>
+                <Button onClick={handleStopRecording}>Stop Recording</Button>
+              </>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>
