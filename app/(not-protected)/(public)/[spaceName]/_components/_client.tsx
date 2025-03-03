@@ -14,6 +14,7 @@ import { SpaceResponse } from "@/lib/types";
 import RecordVideoDialog from "./record-video-dialog";
 import MediaDialog from "./newvideo-dialog";
 import FinalDialogComponent from "./final-dialog-choice";
+import UploadFileDialog from "./upload-file-dialog";
 
 type PublicSpaceViewProps = {
   space: SpaceResponse;
@@ -23,6 +24,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   // const [loading, setIsLoading] = React.useState(true);
   const [openThanks, setOpenThanks] = React.useState(false);
   const [openRecord, setOpenRecord] = React.useState(false);
+  const [openUpload, setOpenUpload] = React.useState(false);
   const [openCheckPermission, setOpenCheckPermission] = React.useState(false);
   const router = useRouter();
 
@@ -32,6 +34,11 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
 
   const showThanks = () => {
     setOpenThanks(true);
+  };
+
+  const handleUplaodFile = () => {
+    setOpenRecord(false);
+    setOpenUpload(true);
   };
 
   return (
@@ -85,6 +92,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
             <FinalDialogComponent
               open={openRecord}
               onClose={() => setOpenRecord(false)}
+              handleFileUpload={handleUplaodFile}
             />
           </>
         )}
@@ -99,6 +107,19 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           }}
           title={space.thankyouSpace!.title}
           message={space.thankyouSpace!.message}
+        />
+        {/* <Button
+          onClick={() => {
+            setOpenUpload(true);
+          }}
+        >
+          Upload file
+        </Button> */}
+        <UploadFileDialog
+          open={openUpload}
+          onClose={() => {
+            setOpenUpload(false);
+          }}
         />
       </div>
     </div>

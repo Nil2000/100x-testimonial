@@ -8,20 +8,22 @@ import {
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import React from "react";
 import SelectWrapper from "./select-wrapper";
+import { Badge } from "@/components/ui/badge";
 
 export default function FinalDialogComponent({
   open,
   onClose,
+  handleFileUpload,
 }: {
   open: boolean;
   onClose: () => void;
+  handleFileUpload: () => void;
 }) {
   const [checkingPermission, setCheckingPermission] = React.useState(true);
   const [permissionGranted, setPermissionGranted] = React.useState(false);
   const [audioDevices, setAudioDevices] = React.useState<MediaDeviceInfo[]>([]);
   const [videoDevices, setVideoDevices] = React.useState<MediaDeviceInfo[]>([]);
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [startRecording, setStartRecording] = React.useState(false);
   const [mediaRecorder, setMediaRecorder] =
     React.useState<MediaRecorder | null>(null);
   const [recording, setRecording] = React.useState(false);
@@ -30,7 +32,13 @@ export default function FinalDialogComponent({
   React.useEffect(() => {
     const getVideo = () => {
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+        .getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: true,
+        })
         .then((stream) => {
           if (videoRef.current) videoRef.current.srcObject = stream;
 
@@ -56,12 +64,14 @@ export default function FinalDialogComponent({
     }
     return () => {
       if (videoRef.current) {
-        (videoRef.current.srcObject as MediaStream)
-          .getTracks()
-          .forEach((track) => {
+        const stream = videoRef.current.srcObject as MediaStream;
+        if (stream) {
+          stream.getTracks().forEach((track) => {
             track.stop();
           });
+        }
       }
+      setRecording(false);
     };
   }, [open]);
 
@@ -70,13 +80,11 @@ export default function FinalDialogComponent({
       const stream = videoRef.current.srcObject as MediaStream;
       const recorder = new MediaRecorder(stream);
       setMediaRecorder(recorder);
-
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setRecordedChunks((prev) => [...prev, event.data]);
         }
       };
-
       recorder.start();
       setRecording(true);
     }
@@ -91,7 +99,14 @@ export default function FinalDialogComponent({
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
-      <DialogContent className="font-sans">
+      <DialogContent
+        className="font-sans sm:max-w-md sm:w-full sm:p-6 overflow-hidden"
+        onInteractOutside={(e) => {
+          if (recording) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Final Dialog</DialogTitle>
           <DialogDescription>
@@ -103,16 +118,27 @@ export default function FinalDialogComponent({
         {!checkingPermission && !permissionGranted && (
           <p className="text-destructive">Permission not granted. Try again</p>
         )}
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          className={`aspect-video ${
-            checkingPermission && !permissionGranted ? "hidden" : "block"
-          }`}
-        />
-        {videoDevices.length > 0 && (
+        <div className="aspect-w-16 aspect-h-9 relative">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            className={`aspect-video ${
+              checkingPermission && !permissionGranted ? "hidden" : "block"
+            }`}
+          />
+          {recording && (
+            <Badge className="absolute top-2 right-2 gap-1.5 animate-pulse text-red-500 bg-transparent border-red-500 font-bold border-2">
+              <span
+                className="size-1.5 rounded-full bg-red-500"
+                aria-hidden="true"
+              ></span>
+              Recording
+            </Badge>
+          )}
+        </div>
+        {!recording && videoDevices.length > 0 && (
           <div>
             <h2>Video Devices</h2>
             <SelectWrapper
@@ -122,7 +148,7 @@ export default function FinalDialogComponent({
             />
           </div>
         )}
-        {audioDevices.length > 0 && (
+        {!recording && audioDevices.length > 0 && (
           <div>
             <h2>Audio Devices</h2>
             <SelectWrapper
@@ -134,14 +160,17 @@ export default function FinalDialogComponent({
         )}
         {!checkingPermission && permissionGranted && (
           <>
-            <Button onClick={handleStartRecording}>Start Recording</Button>
-            {recording && (
-              <>
-                <span className="record-badge">Recording...</span>
-                <Button onClick={handleStopRecording}>Stop Recording</Button>
-              </>
+            {recording ? (
+              <Button onClick={handleStopRecording}>Stop Recording</Button>
+            ) : (
+              <Button onClick={handleStartRecording}>Start Recording</Button>
             )}
           </>
+        )}
+        {!recording && (
+          <Button variant={"link"} onClick={handleFileUpload}>
+            Upload file
+          </Button>
         )}
       </DialogContent>
     </Dialog>
