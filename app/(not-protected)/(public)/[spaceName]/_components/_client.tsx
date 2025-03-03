@@ -15,6 +15,7 @@ import RecordVideoDialog from "./record-video-dialog";
 import MediaDialog from "./newvideo-dialog";
 import FinalDialogComponent from "./final-dialog-choice";
 import UploadFileDialog from "./upload-file-dialog";
+import SubmitFeedbackDialog from "./submit-feedback-dialog";
 
 type PublicSpaceViewProps = {
   space: SpaceResponse;
@@ -25,6 +26,8 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openThanks, setOpenThanks] = React.useState(false);
   const [openRecord, setOpenRecord] = React.useState(false);
   const [openUpload, setOpenUpload] = React.useState(false);
+  const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
+  const [videoUrl, setVideoUrl] = React.useState("");
   const [openCheckPermission, setOpenCheckPermission] = React.useState(false);
   const router = useRouter();
 
@@ -93,6 +96,10 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               open={openRecord}
               onClose={() => setOpenRecord(false)}
               handleFileUpload={handleUplaodFile}
+              onSubmitFeedback={(url: string) => {
+                setOpenSubmitFeedback(true);
+                setVideoUrl(url);
+              }}
             />
           </>
         )}
@@ -120,6 +127,13 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           onClose={() => {
             setOpenUpload(false);
           }}
+        />
+        <SubmitFeedbackDialog
+          open={openSubmitFeedback}
+          onClose={() => {
+            setOpenSubmitFeedback(false);
+          }}
+          videoUrl={videoUrl}
         />
       </div>
     </div>

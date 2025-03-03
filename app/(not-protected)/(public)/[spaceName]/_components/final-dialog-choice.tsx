@@ -14,10 +14,12 @@ export default function FinalDialogComponent({
   open,
   onClose,
   handleFileUpload,
+  onSubmitFeedback,
 }: {
   open: boolean;
   onClose: () => void;
   handleFileUpload: () => void;
+  onSubmitFeedback: (url: string) => void;
 }) {
   const [checkingPermission, setCheckingPermission] = React.useState(true);
   const [permissionGranted, setPermissionGranted] = React.useState(false);
@@ -93,7 +95,13 @@ export default function FinalDialogComponent({
   const handleStopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
-      setRecording(false);
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(recordedChunks, { type: "video/webm" });
+        const url = URL.createObjectURL(audioBlob);
+        onSubmitFeedback(url);
+        setRecordedChunks([]);
+        setRecording(false);
+      };
     }
   };
 
