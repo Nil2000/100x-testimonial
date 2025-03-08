@@ -97,8 +97,9 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               onClose={() => setOpenRecord(false)}
               handleFileUpload={handleUplaodFile}
               onSubmitFeedback={(url: string) => {
-                setOpenSubmitFeedback(true);
                 setVideoUrl(url);
+                setOpenRecord(false);
+                setOpenSubmitFeedback(true);
               }}
             />
           </>

@@ -18,7 +18,7 @@ export default function SubmitFeedbackDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
-      <DialogContent>
+      <DialogContent className="font-sans">
         <DialogHeader>
           <DialogTitle>Submit feedback</DialogTitle>
           <DialogDescription></DialogDescription>

@@ -26,10 +26,51 @@ export default function FinalDialogComponent({
   const [audioDevices, setAudioDevices] = React.useState<MediaDeviceInfo[]>([]);
   const [videoDevices, setVideoDevices] = React.useState<MediaDeviceInfo[]>([]);
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [mediaRecorder, setMediaRecorder] =
-    React.useState<MediaRecorder | null>(null);
+  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const [recording, setRecording] = React.useState(false);
   const [recordedChunks, setRecordedChunks] = React.useState<Blob[]>([]);
+
+  const handleStartRecording = () => {
+    if (
+      videoRef.current &&
+      videoRef.current.srcObject &&
+      mediaRecorderRef.current
+    ) {
+      mediaRecorderRef.current.start();
+      console.log(mediaRecorderRef.current.state);
+      let tempChunks: Blob[] = [];
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          console.log(e.data);
+          tempChunks.push(e.data);
+        }
+      };
+      setRecordedChunks(tempChunks);
+      setRecording(true);
+    }
+  };
+
+  const setUpMediaRecorder = (stream: MediaStream) => {
+    console.log("Streams", stream);
+    mediaRecorderRef.current = new MediaRecorder(stream);
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.onstop = () => {
+        console.log(recordedChunks);
+        const blob = new Blob(recordedChunks, {
+          type: "video/x-matroska;codecs=avc1,opus",
+        });
+        const url = URL.createObjectURL(blob);
+        onSubmitFeedback(url);
+        setRecordedChunks([]);
+      };
+      console.log(mediaRecorderRef.current.state);
+      setRecording(false);
+    }
+  };
 
   React.useEffect(() => {
     const getVideo = () => {
@@ -42,8 +83,13 @@ export default function FinalDialogComponent({
           audio: true,
         })
         .then((stream) => {
+          // set up media recorder
+          setUpMediaRecorder(stream);
+
+          // set the video element source
           if (videoRef.current) videoRef.current.srcObject = stream;
 
+          // get audio and video devices
           navigator.mediaDevices.enumerateDevices().then((devices) => {
             setAudioDevices(
               devices.filter((device) => device.kind === "audioinput")
@@ -74,36 +120,10 @@ export default function FinalDialogComponent({
         }
       }
       setRecording(false);
+      setRecordedChunks([]);
+      mediaRecorderRef.current = null;
     };
   }, [open]);
-
-  const handleStartRecording = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      const recorder = new MediaRecorder(stream);
-      setMediaRecorder(recorder);
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          setRecordedChunks((prev) => [...prev, event.data]);
-        }
-      };
-      recorder.start();
-      setRecording(true);
-    }
-  };
-
-  const handleStopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(recordedChunks, { type: "video/webm" });
-        const url = URL.createObjectURL(audioBlob);
-        onSubmitFeedback(url);
-        setRecordedChunks([]);
-        setRecording(false);
-      };
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
