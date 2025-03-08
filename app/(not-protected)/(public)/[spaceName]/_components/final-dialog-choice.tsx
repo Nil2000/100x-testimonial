@@ -9,6 +9,7 @@ import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import React from "react";
 import SelectWrapper from "./select-wrapper";
 import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
 
 export default function FinalDialogComponent({
   open,
@@ -37,11 +38,9 @@ export default function FinalDialogComponent({
       mediaRecorderRef.current
     ) {
       mediaRecorderRef.current.start();
-      console.log(mediaRecorderRef.current.state);
       let tempChunks: Blob[] = [];
       mediaRecorderRef.current.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) {
-          console.log(e.data);
           tempChunks.push(e.data);
         }
       };
@@ -51,7 +50,6 @@ export default function FinalDialogComponent({
   };
 
   const setUpMediaRecorder = (stream: MediaStream) => {
-    console.log("Streams", stream);
     mediaRecorderRef.current = new MediaRecorder(stream);
   };
 
@@ -59,7 +57,6 @@ export default function FinalDialogComponent({
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.onstop = () => {
-        console.log(recordedChunks);
         const blob = new Blob(recordedChunks, {
           type: "video/x-matroska;codecs=avc1,opus",
         });
@@ -67,7 +64,6 @@ export default function FinalDialogComponent({
         onSubmitFeedback(url);
         setRecordedChunks([]);
       };
-      console.log(mediaRecorderRef.current.state);
       setRecording(false);
     }
   };
@@ -135,16 +131,19 @@ export default function FinalDialogComponent({
           }
         }}
       >
-        <DialogHeader>
-          <DialogTitle>Final Dialog</DialogTitle>
-          <DialogDescription>
-            This is the final dialog component. It will show a video element
-            that is recording the
-          </DialogDescription>
+        <DialogHeader className="w-full flex items-center">
+          <DialogTitle className="text-xl font-bold">Record video</DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
-        {checkingPermission && <p>Checking permission...</p>}
+        {checkingPermission && (
+          <div className="w-full">
+            <Loader2 className="mx-auto animate-spin" />
+          </div>
+        )}
         {!checkingPermission && !permissionGranted && (
-          <p className="text-destructive">Permission not granted. Try again</p>
+          <p className="text-destructive w-full text-center">
+            Permission not granted. Try again
+          </p>
         )}
         <div className="aspect-w-16 aspect-h-9 relative">
           <video
@@ -153,7 +152,7 @@ export default function FinalDialogComponent({
             muted
             playsInline
             className={`aspect-video ${
-              checkingPermission && !permissionGranted ? "hidden" : "block"
+              checkingPermission || !permissionGranted ? "hidden" : "block"
             }`}
           />
           {recording && (

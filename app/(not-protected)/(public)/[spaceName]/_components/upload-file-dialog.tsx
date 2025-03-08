@@ -11,22 +11,24 @@ import React, { useState } from "react";
 export default function UploadFileDialog({
   open,
   onClose,
+  onSubmitFeedback,
 }: {
   open: boolean;
   onClose: () => void;
+  onSubmitFeedback: (url: string) => void;
 }) {
-  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setFile(event.target.files[0]);
+      handleSubmitFile(event.target.files[0]);
     }
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
-      setFile(event.dataTransfer.files[0]);
+      handleSubmitFile(event.dataTransfer.files[0]);
     }
   };
 
@@ -34,14 +36,21 @@ export default function UploadFileDialog({
     event.preventDefault();
   };
 
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSubmitFile = (file: File) => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      onSubmitFeedback(url);
+      onClose();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
-      <DialogContent
-        className="font-sans"
-        onInteractOutside={(e) => {
-          e.preventDefault();
-        }}
-      >
+      <DialogContent className="font-sans">
         <DialogHeader className="flex flex-col items-center">
           <DialogTitle>Upload a video file</DialogTitle>
           <DialogDescription></DialogDescription>
@@ -60,11 +69,11 @@ export default function UploadFileDialog({
             onChange={handleFileChange}
             className="hidden"
             id="file-upload"
+            ref={fileInputRef}
           />
           <label htmlFor="file-upload" className="cursor-pointer">
-            <Button>Upload File</Button>
+            <Button onClick={handleButtonClick}>Upload File</Button>
           </label>
-          {file && <p className="mt-2">Selected file: {file.name}</p>}
         </div>
       </DialogContent>
     </Dialog>

@@ -128,6 +128,11 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           onClose={() => {
             setOpenUpload(false);
           }}
+          onSubmitFeedback={(url: string) => {
+            setVideoUrl(url);
+            setOpenUpload(false);
+            setOpenSubmitFeedback(true);
+          }}
         />
         <SubmitFeedbackDialog
           open={openSubmitFeedback}

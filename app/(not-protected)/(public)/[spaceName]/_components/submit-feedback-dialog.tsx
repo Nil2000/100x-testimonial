@@ -24,7 +24,7 @@ export default function SubmitFeedbackDialog({
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center">
-          <video src={videoUrl} controls className="w-full max-w-md"></video>
+          <video src={videoUrl} controls className="aspect-video"></video>
           <button
             onClick={() => {
               onClose();
