@@ -22,7 +22,7 @@ export default function SelectWrapper({
       defaultValue={defaultOption}
       onValueChange={(value) => changeSelectedOption(value)}
     >
-      <SelectTrigger>
+      <SelectTrigger className="h-max">
         <SelectValue></SelectValue>
       </SelectTrigger>
       <SelectContent className="font-sans">

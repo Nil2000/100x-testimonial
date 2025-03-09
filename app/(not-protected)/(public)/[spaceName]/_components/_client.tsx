@@ -12,8 +12,6 @@ import WriteTextDialog from "./write-text-dialog";
 import ThankYouDialog from "./thanks-dialog";
 import { SpaceResponse } from "@/lib/types";
 import RecordVideoDialog from "./record-video-dialog";
-import MediaDialog from "./newvideo-dialog";
-import FinalDialogComponent from "./final-dialog-choice";
 import UploadFileDialog from "./upload-file-dialog";
 import SubmitFeedbackDialog from "./submit-feedback-dialog";
 
@@ -22,7 +20,6 @@ type PublicSpaceViewProps = {
 };
 
 export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
-  // const [loading, setIsLoading] = React.useState(true);
   const [openThanks, setOpenThanks] = React.useState(false);
   const [openRecord, setOpenRecord] = React.useState(false);
   const [openUpload, setOpenUpload] = React.useState(false);
@@ -30,10 +27,6 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [videoUrl, setVideoUrl] = React.useState("");
   const [openCheckPermission, setOpenCheckPermission] = React.useState(false);
   const router = useRouter();
-
-  // if (loading || !space) {
-  //   return <LoadingPublicView />;
-  // }
 
   const showThanks = () => {
     setOpenThanks(true);
@@ -82,17 +75,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               />
               <h2>Record a video</h2>
             </Button>
-            {/* <RecordVideoDialog
-              open={openRecord}
-              onClose={() => {
-                setOpenRecord(false);
-              }}
-            /> */}
-            {/* <MediaDialog
-              isOpen={openRecord}
-              onClose={() => setOpenRecord(false)}
-            /> */}
-            <FinalDialogComponent
+            <RecordVideoDialog
               open={openRecord}
               onClose={() => setOpenRecord(false)}
               handleFileUpload={handleUplaodFile}
@@ -116,13 +99,6 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           title={space.thankyouSpace!.title}
           message={space.thankyouSpace!.message}
         />
-        {/* <Button
-          onClick={() => {
-            setOpenUpload(true);
-          }}
-        >
-          Upload file
-        </Button> */}
         <UploadFileDialog
           open={openUpload}
           onClose={() => {
