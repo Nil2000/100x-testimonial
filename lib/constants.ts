@@ -25,3 +25,15 @@ export const dropDownOptionsTextVideo = [
 export const feedbackConstants = ["1", "2", "3", "4", "5"];
 
 export type StepType = "init" | "check-permission";
+
+export const videoJSOptions = {
+  autoplay: false,
+  controls: true,
+  responsive: true,
+  fluid: true,
+  aspectRatio: "16:9",
+  controlBar: {
+    remainingTimeDisplay: false,
+    pictureInPictureToggle: false,
+  },
+};

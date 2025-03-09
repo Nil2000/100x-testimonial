@@ -179,7 +179,9 @@ export default function REcordVideoDialogComponent({
         }}
       >
         <DialogHeader className="w-full flex items-center">
-          <DialogTitle className="text-xl font-bold">Record video</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            {checkingPermission ? "Checking permission..." : "Record a video"}
+          </DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         {checkingPermission && (

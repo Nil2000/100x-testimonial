@@ -116,6 +116,9 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
             setOpenSubmitFeedback(false);
           }}
           videoUrl={videoUrl}
+          retakeVideo={() => {
+            setOpenRecord(true);
+          }}
         />
       </div>
     </div>
