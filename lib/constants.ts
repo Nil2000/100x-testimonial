@@ -32,6 +32,7 @@ export const videoJSOptions = {
   responsive: true,
   fluid: true,
   aspectRatio: "16:9",
+  preload: "auto",
   controlBar: {
     remainingTimeDisplay: false,
     pictureInPictureToggle: false,

@@ -15,7 +15,7 @@ export default function UploadFileDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  onSubmitFeedback: (url: string) => void;
+  onSubmitFeedback: (uploadFile: Blob) => void;
 }) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -40,10 +40,10 @@ export default function UploadFileDialog({
     fileInputRef.current?.click();
   };
 
-  const handleSubmitFile = (file: File) => {
+  const handleSubmitFile = (file: Blob) => {
     if (file) {
-      const url = URL.createObjectURL(file);
-      onSubmitFeedback(url);
+      // const url = URL.createObjectURL(file);
+      onSubmitFeedback(file);
       onClose();
     }
   };

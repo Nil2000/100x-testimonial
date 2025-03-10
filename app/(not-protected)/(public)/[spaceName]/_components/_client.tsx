@@ -24,7 +24,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openRecord, setOpenRecord] = React.useState(false);
   const [openUpload, setOpenUpload] = React.useState(false);
   const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
-  const [videoUrl, setVideoUrl] = React.useState("");
+  const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
   const [openCheckPermission, setOpenCheckPermission] = React.useState(false);
   const router = useRouter();
 
@@ -79,8 +79,8 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               open={openRecord}
               onClose={() => setOpenRecord(false)}
               handleFileUpload={handleUplaodFile}
-              onSubmitFeedback={(url: string) => {
-                setVideoUrl(url);
+              onSubmitFeedback={(uploadFile: Blob) => {
+                setVideoFileBlob(uploadFile);
                 setOpenRecord(false);
                 setOpenSubmitFeedback(true);
               }}
@@ -104,8 +104,8 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           onClose={() => {
             setOpenUpload(false);
           }}
-          onSubmitFeedback={(url: string) => {
-            setVideoUrl(url);
+          onSubmitFeedback={(uploadFile: Blob) => {
+            setVideoFileBlob(uploadFile);
             setOpenUpload(false);
             setOpenSubmitFeedback(true);
           }}
@@ -115,10 +115,13 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           onClose={() => {
             setOpenSubmitFeedback(false);
           }}
-          videoUrl={videoUrl}
+          videoFileBlob={videoFileBlob}
           retakeVideo={() => {
             setOpenRecord(true);
           }}
+          spaceName={space.name}
+          spaceId={space.id}
+          showThankYou={showThanks}
         />
       </div>
     </div>

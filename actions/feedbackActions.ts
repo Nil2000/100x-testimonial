@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db, FeedbackType } from "@/lib/db";
 import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
+import videoFeedbackSchema, { VideoFeedback } from "@/schemas/videoFeedbackSchema";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -75,3 +76,45 @@ export const toggleWallOfLove = async (
     };
   }
 };
+
+export const submitVideoFeedback = async (
+  spaceId: string,
+  values: VideoFeedback) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  const validateFields = videoFeedbackSchema.safeParse(values);
+
+  if (validateFields.error) {
+    return {
+      error: "Invalid fields",
+    };
+  }
+
+  try {
+    await db.feedback.create({
+      data: {
+        ...values,
+        feedbackType: FeedbackType.VIDEO,
+        space: {
+          connect: {
+            id: spaceId,
+          },
+        },
+      },
+    });
+    return {
+      message: "Feedback submitted",
+    };
+  } catch (error) {
+    console.error("VIDEO_FEEDBACK_SUBMISSION_ERROR", error);
+    return {
+      error: "Failed to submit feedback",
+    };
+  }
+}

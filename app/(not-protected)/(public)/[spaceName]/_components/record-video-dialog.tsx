@@ -20,7 +20,7 @@ export default function REcordVideoDialogComponent({
   open: boolean;
   onClose: () => void;
   handleFileUpload: () => void;
-  onSubmitFeedback: (url: string) => void;
+  onSubmitFeedback: (uploadFile: Blob) => void;
 }) {
   const [checkingPermission, setCheckingPermission] = React.useState(true);
   const [permissionGranted, setPermissionGranted] = React.useState(false);
@@ -61,8 +61,8 @@ export default function REcordVideoDialogComponent({
         const blob = new Blob(recordedChunks, {
           type: "video/x-matroska;codecs=avc1,opus",
         });
-        const url = URL.createObjectURL(blob);
-        onSubmitFeedback(url);
+        // const url = URL.createObjectURL(blob);
+        onSubmitFeedback(blob);
         setRecordedChunks([]);
       };
       setRecording(false);

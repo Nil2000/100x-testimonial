@@ -79,7 +79,7 @@ enum CollectionType {
 model Space {
   id             String         @id @default(cuid())
   name           String
-  logoObjectKey  String?
+  logo           String?
   headerTitle    String
   headerSubtitle String
   questions      Question[]
@@ -142,7 +142,7 @@ enum FeedbackType {
 
 model Feedback {
   id              String       @id @default(cuid())
-  answer          String
+  answer          String?
   name            String
   email           String
   rating          Int
@@ -152,6 +152,7 @@ model Feedback {
   updatedAt       DateTime     @updatedAt
   feedbackType    FeedbackType
   addToWallOfLove Boolean      @default(false)
+  videoUrl        String?
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }
