@@ -4,6 +4,8 @@ import axios from "axios";
 import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
 import TestimonialCard from "./manage-testimonials/testimonial-card";
+import { Virtuoso } from "react-virtuoso";
+
 type Props = {
   category?: string;
   wallOfLove?: boolean;
@@ -59,13 +61,23 @@ export default function ListTestimonials({
           No testimonials found
         </div>
       )}
-      {testimonials.map((testimonial: any) => (
+      {/* {testimonials.map((testimonial: any) => (
         <TestimonialCard
           key={testimonial.id}
           testimonial={testimonial}
           removeFromWallOfLove={removeFromWallOfLove}
         />
-      ))}
+      ))} */}
+      <Virtuoso
+        style={{ height: "calc(100vh - 10rem)" }}
+        totalCount={testimonials.length}
+        itemContent={(index: number) => (
+          <TestimonialCard
+            testimonial={testimonials[index]}
+            removeFromWallOfLove={removeFromWallOfLove}
+          />
+        )}
+      />
     </div>
   );
 }
