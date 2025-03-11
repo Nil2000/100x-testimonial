@@ -5,6 +5,14 @@ import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
 import TestimonialCard from "./manage-testimonials/testimonial-card";
 import { Virtuoso } from "react-virtuoso";
+import {
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { feedbackPerPage } from "@/lib/constants";
+import PaginationComponent from "@/components/pagination-component";
 
 type Props = {
   category?: string;
@@ -19,7 +27,24 @@ export default function ListTestimonials({
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState([]);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const totalPages = Math.ceil(testimonials.length / feedbackPerPage);
+  const [hasMore, setHasMore] = React.useState(true);
   const { spaceInfo } = useSpaceStore();
+
+  const handleNextPage = () => {
+    const isItemsLeft = testimonials.length - currentPage * feedbackPerPage > 0;
+    if (isItemsLeft) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   React.useEffect(() => {
     const fetchTestimonials = async () => {
       try {
@@ -54,6 +79,12 @@ export default function ListTestimonials({
     }
   };
 
+  const getTestimonialsByPage = () => {
+    const start = (currentPage - 1) * feedbackPerPage;
+    const end = start + feedbackPerPage;
+    return testimonials.slice(start, end);
+  };
+
   return (
     <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
       {!testimonials.length && (
@@ -61,23 +92,21 @@ export default function ListTestimonials({
           No testimonials found
         </div>
       )}
-      {/* {testimonials.map((testimonial: any) => (
+      {getTestimonialsByPage().map((testimonial: any) => (
         <TestimonialCard
           key={testimonial.id}
           testimonial={testimonial}
           removeFromWallOfLove={removeFromWallOfLove}
         />
-      ))} */}
-      <Virtuoso
-        style={{ height: "calc(100vh - 10rem)" }}
-        totalCount={testimonials.length}
-        itemContent={(index: number) => (
-          <TestimonialCard
-            testimonial={testimonials[index]}
-            removeFromWallOfLove={removeFromWallOfLove}
-          />
-        )}
-      />
+      ))}
+      <div className="w-full flex justify-center">
+        <PaginationComponent
+          totalPages={totalPages}
+          currentPage={currentPage}
+          handleNextPage={handleNextPage}
+          handlePrevPage={handlePrevPage}
+        />
+      </div>
     </div>
   );
 }

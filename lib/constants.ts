@@ -38,3 +38,5 @@ export const videoJSOptions = {
     pictureInPictureToggle: false,
   },
 };
+
+export const feedbackPerPage = 5;
