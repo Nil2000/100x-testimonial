@@ -53,10 +53,7 @@ export default function ListTestimonials({
   };
 
   return (
-    <div
-      key={`list-testimonials-${category}`}
-      className="max-w-full p-3 space-y-3"
-    >
+    <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
       {!testimonials.length && (
         <div className="w-full text-center text-muted-foreground text-sm italic">
           No testimonials found

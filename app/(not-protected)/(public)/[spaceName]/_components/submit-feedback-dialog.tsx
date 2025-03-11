@@ -10,7 +10,7 @@ import {
 import { videoJSOptions } from "@/lib/constants";
 import { Loader2, Video } from "lucide-react";
 import React, { useState, useTransition } from "react";
-import VideoCustomComponent from "./videojs-component";
+import VideoCustomComponent from "@/components/videojs-component";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import videoFeedbackSchema, {
@@ -152,7 +152,7 @@ export default function SubmitFeedbackDialog({
           <DialogTitle>Review your video</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col items-center ">
+        <div className="flex flex-col items-center">
           <VideoCustomComponent options={options} onReady={handlePlayerReady} />
         </div>
         <form

@@ -3,6 +3,9 @@ import { Heart, Loader2, Star } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { toggleWallOfLove } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
+import VideoCustomComponent from "@/components/videojs-component";
+import { div } from "motion/react-client";
+import { videoJSOptions } from "@/lib/constants";
 
 type TestimonialCardProps = {
   testimonial: any;
@@ -15,6 +18,7 @@ export default function TestimonialCard({
 }: TestimonialCardProps) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
   const [isPending, startTransition] = useTransition();
+  const playerRef = React.useRef<HTMLVideoElement>(null);
 
   const toggleLike = async () => {
     startTransition(() => {
@@ -29,6 +33,10 @@ export default function TestimonialCard({
         }
       });
     });
+  };
+
+  const handlePlayerReady = (player: any) => {
+    playerRef.current = player;
   };
 
   return (
@@ -49,8 +57,26 @@ export default function TestimonialCard({
           )}
         </button>
       </div>
+      {testimonial.feedbackType === "TEXT" ? (
+        <div className="text-sm">{testimonial.answer}</div>
+      ) : (
+        <div className="flex flex-col items-center relative w-1/2">
+          <VideoCustomComponent
+            options={{
+              ...videoJSOptions,
+              fill: true,
+              sources: [
+                {
+                  src: testimonial.videoUrl,
+                  type: "video/mp4",
+                },
+              ],
+            }}
+            onReady={handlePlayerReady}
+          />
+        </div>
+      )}
       <div className="flex">{renderStars(testimonial.rating)}</div>
-      <div className="text-sm">{testimonial.answer}</div>
       <div className="text-xs italic text-muted-foreground">
         <h3>{testimonial.name}</h3>
         <h4>{testimonial.email}</h4>
