@@ -24,9 +24,6 @@ export default function HorizontalTabs() {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="tab-1" className="min-h-[calc(100vh-8rem)]">
-        {/* <p className="p-4 text-center text-xs text-muted-foreground">
-          Content for Tab 1
-        </p> */}
         <EditSpaceContent />
       </TabsContent>
       <TabsContent value="tab-2">

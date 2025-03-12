@@ -25,7 +25,7 @@ export default function VerticalTabsWrapper({
           </TabsTrigger>
         ))}
       </TabsList>
-      <div className="grow rounded-lg border border-border text-start min-h-[calc(100vh-8rem)]">
+      <div className="grow text-start min-h-[calc(100vh-8rem)]">
         {tabs.map((tab, index) => (
           <TabsContent value={`tab-${index + 1}`} key={`tab-${index + 1}`}>
             {tab.tabContent}

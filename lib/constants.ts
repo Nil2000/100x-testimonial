@@ -40,3 +40,5 @@ export const videoJSOptions = {
 };
 
 export const feedbackPerPage = 5;
+
+export const debounceTime = 300;

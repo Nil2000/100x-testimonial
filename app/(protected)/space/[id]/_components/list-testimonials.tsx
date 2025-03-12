@@ -4,15 +4,12 @@ import axios from "axios";
 import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
 import TestimonialCard from "./manage-testimonials/testimonial-card";
-import { Virtuoso } from "react-virtuoso";
-import {
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useDebounce } from "@uidotdev/usehooks";
 import { feedbackPerPage } from "@/lib/constants";
 import PaginationComponent from "@/components/pagination-component";
+import { TestimonialResponse } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "lucide-react";
 
 type Props = {
   category?: string;
@@ -26,14 +23,17 @@ export default function ListTestimonials({
   archived,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [testimonials, setTestimonials] = React.useState([]);
+  const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
+    []
+  );
   const [currentPage, setCurrentPage] = React.useState(1);
-  const totalPages = Math.ceil(testimonials.length / feedbackPerPage);
-  const [hasMore, setHasMore] = React.useState(true);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { spaceInfo } = useSpaceStore();
 
   const handleNextPage = () => {
-    const isItemsLeft = testimonials.length - currentPage * feedbackPerPage > 0;
+    const isItemsLeft =
+      filteredTestimonials.length - currentPage * feedbackPerPage > 0;
     if (isItemsLeft) {
       setCurrentPage((prev) => prev + 1);
     }
@@ -79,15 +79,44 @@ export default function ListTestimonials({
     }
   };
 
+  const filteredTestimonials = testimonials.filter((testimonial) => {
+    return (
+      testimonial.answer
+        ?.toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase()) ||
+      testimonial.name
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase()) ||
+      testimonial.email
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase())
+    );
+  });
+
   const getTestimonialsByPage = () => {
     const start = (currentPage - 1) * feedbackPerPage;
     const end = start + feedbackPerPage;
-    return testimonials.slice(start, end);
+    return filteredTestimonials.slice(start, end);
   };
+
+  const totalPages = Math.ceil(filteredTestimonials.length / feedbackPerPage);
 
   return (
     <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
-      {!testimonials.length && (
+      <div className="w-full flex justify-between items-center">
+        <div className="relative w-1/2">
+          <Input
+            placeholder="Search testimonials..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full ps-9"
+          />
+          <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+            <SearchIcon size={16} />
+          </div>
+        </div>
+      </div>
+      {!filteredTestimonials.length && (
         <div className="w-full text-center text-muted-foreground text-sm italic">
           No testimonials found
         </div>
@@ -99,14 +128,16 @@ export default function ListTestimonials({
           removeFromWallOfLove={removeFromWallOfLove}
         />
       ))}
-      <div className="w-full flex justify-center">
-        <PaginationComponent
-          totalPages={totalPages}
-          currentPage={currentPage}
-          handleNextPage={handleNextPage}
-          handlePrevPage={handlePrevPage}
-        />
-      </div>
+      {filteredTestimonials.length > 0 && (
+        <div className="w-full flex justify-center">
+          <PaginationComponent
+            totalPages={totalPages}
+            currentPage={currentPage}
+            handleNextPage={handleNextPage}
+            handlePrevPage={handlePrevPage}
+          />
+        </div>
+      )}
     </div>
   );
 }

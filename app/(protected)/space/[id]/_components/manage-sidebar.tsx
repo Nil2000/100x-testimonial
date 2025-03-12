@@ -19,7 +19,7 @@ export default function ManageSidebar() {
       <TabsList className="flex-col justify-start sm:w-44 mx-auto w-full">
         <AccordionMenuList items={manageTestimonialsSidebarElements} />
       </TabsList>
-      <div className="grow rounded-lg border border-border text-start min-h-[calc(100vh-8rem)]">
+      <div className="grow rounded-lg text-start min-h-[calc(100vh-8rem)]">
         {/* <TabsContent value={`tab-1`}>Tab 1 content</TabsContent>
         <TabsContent value={`tab-2`}>Tab 2 content</TabsContent>
         <TabsContent value={`tab-3`}>Tab 3 content</TabsContent> */}

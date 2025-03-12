@@ -42,7 +42,7 @@ export interface SpaceResponse {
 
 export interface TestimonialResponse {
   id: string;
-  answer: string;
+  answer: string | null;
   name: string;
   email: string;
   rating: number;
@@ -52,4 +52,5 @@ export interface TestimonialResponse {
   updatedAt: Date;
   feedbackType: string;
   addToWallOfLove: boolean;
+  videoUrl: string | null;
 }
