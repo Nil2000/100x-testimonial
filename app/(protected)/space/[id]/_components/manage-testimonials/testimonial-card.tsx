@@ -1,11 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Loader2, Star } from "lucide-react";
+import { Heart, Loader2, Share2, Star } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { toggleWallOfLove } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
 import VideoCustomComponent from "@/components/videojs-component";
 import { div } from "motion/react-client";
 import { videoJSOptions } from "@/lib/constants";
+import ShareButton from "../share-component";
+import { Button } from "@/components/ui/button";
 
 type TestimonialCardProps = {
   testimonial: any;
@@ -45,17 +47,26 @@ export default function TestimonialCard({
         <div>
           <BadgeOfTestimonials category={testimonial.feedbackType} />
         </div>
-        <button onClick={toggleLike}>
-          {isPending ? (
-            <Loader2 size={24} className="animate-spin text-muted-foreground" />
-          ) : (
-            <Heart
-              size={24}
-              fill={isLiked ? "red" : "none"}
-              className={isLiked ? "text-red-500" : ""}
-            />
-          )}
-        </button>
+        <div className="flex space-x-2">
+          <ShareButton />
+          <button
+            onClick={toggleLike}
+            className="text-muted-foreground hover:text-primary"
+          >
+            {isPending ? (
+              <Loader2
+                size={24}
+                className="animate-spin text-muted-foreground"
+              />
+            ) : (
+              <Heart
+                size={24}
+                fill={isLiked ? "red" : "none"}
+                className={isLiked ? "text-red-500" : ""}
+              />
+            )}
+          </button>
+        </div>
       </div>
       {testimonial.feedbackType === "TEXT" ? (
         <div className="text-sm">{testimonial.answer}</div>

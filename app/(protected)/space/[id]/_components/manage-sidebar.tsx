@@ -1,15 +1,11 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import React from "react";
 import AccordionMenuList from "./accordion-menu-list";
 import { manageTestimonialsSidebarElements } from "./constants";
 
 export default function ManageSidebar() {
+  const [feedbackInfo, setFeedbackInfo] = React.useState<any>(null);
+  const [isShareDialogOpen, setIsShareDialogOpen] = React.useState(false);
   return (
     <Tabs
       defaultValue="All"
@@ -20,10 +16,6 @@ export default function ManageSidebar() {
         <AccordionMenuList items={manageTestimonialsSidebarElements} />
       </TabsList>
       <div className="grow rounded-lg text-start min-h-[calc(100vh-8rem)]">
-        {/* <TabsContent value={`tab-1`}>Tab 1 content</TabsContent>
-        <TabsContent value={`tab-2`}>Tab 2 content</TabsContent>
-        <TabsContent value={`tab-3`}>Tab 3 content</TabsContent> */}
-
         {manageTestimonialsSidebarElements.map((element, index) => (
           <div key={`tab-${element.header}`}>
             {element.contents.map((content) => {
