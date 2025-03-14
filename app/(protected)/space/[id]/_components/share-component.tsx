@@ -8,11 +8,13 @@ import {
 import { Code2, Image, Share2 } from "lucide-react";
 
 type Props = {
+  type: "TEXT" | "VIDEO";
   handleShareImage: () => void;
   handleEmbedTestimonial: () => void;
 };
 
 export default function ShareButton({
+  type,
   handleShareImage,
   handleEmbedTestimonial,
 }: Props) {
@@ -27,13 +29,15 @@ export default function ShareButton({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="font-sans ">
-        <DropdownMenuItem
-          onClick={() => {
-            handleShareImage();
-          }}
-        >
-          <Image size={16} /> Share as image
-        </DropdownMenuItem>
+        {type === "TEXT" && (
+          <DropdownMenuItem
+            onClick={() => {
+              handleShareImage();
+            }}
+          >
+            <Image size={16} /> Share as image
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onClick={() => {
             handleEmbedTestimonial();

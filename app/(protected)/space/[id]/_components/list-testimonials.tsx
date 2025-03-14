@@ -154,8 +154,8 @@ export default function ListTestimonials({
         </div>
       )}
       <ShareTestimonialDialog
-        feddabackInfo={selectedTestimonial!}
-        isOpen={isOpenShareImage && !!selectedTestimonial}
+        feedbackInfo={selectedTestimonial}
+        isOpen={isOpenShareImage}
         onClose={() => {
           setIsOpenShareImage(false);
           setSelectedTestimonial(null);

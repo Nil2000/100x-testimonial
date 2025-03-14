@@ -8,9 +8,10 @@ import { div } from "motion/react-client";
 import { videoJSOptions } from "@/lib/constants";
 import ShareButton from "../share-component";
 import { Button } from "@/components/ui/button";
+import { TestimonialResponse } from "@/lib/types";
 
 type Props = {
-  testimonial: any;
+  testimonial: TestimonialResponse;
   removeFromWallOfLove: (id: string) => void;
   shareForImage: (testimonial: any) => void;
   shareForEmbed: (testimonial: any) => void;
@@ -49,12 +50,15 @@ export default function TestimonialCard({
     <Card className="p-3 flex flex-col space-y-2">
       <div className="flex justify-between">
         <div>
-          <BadgeOfTestimonials category={testimonial.feedbackType} />
+          <BadgeOfTestimonials
+            category={testimonial.feedbackType as "TEXT" | "VIDEO"}
+          />
         </div>
         <div className="flex space-x-2">
           <ShareButton
             handleShareImage={() => shareForImage(testimonial)}
             handleEmbedTestimonial={() => shareForEmbed(testimonial)}
+            type={testimonial.feedbackType as "TEXT" | "VIDEO"}
           />
           <button
             onClick={toggleLike}
@@ -98,7 +102,7 @@ export default function TestimonialCard({
       <div className="text-xs italic text-muted-foreground">
         <h3>{testimonial.name}</h3>
         <h4>{testimonial.email}</h4>
-        <div>{renderDate(testimonial.createdAt)}</div>
+        <div>{renderDate(testimonial.createdAt.toString())}</div>
       </div>
     </Card>
   );
