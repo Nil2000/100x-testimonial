@@ -6,10 +6,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Code2, Image, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-export default function ShareButton() {
+
+type Props = {
+  handleShareImage: () => void;
+  handleEmbedTestimonial: () => void;
+};
+
+export default function ShareButton({
+  handleShareImage,
+  handleEmbedTestimonial,
+}: Props) {
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Open edit menu"
@@ -19,10 +27,18 @@ export default function ShareButton() {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="font-sans ">
-        <DropdownMenuItem>
-          <Image size={16} /> Create image
+        <DropdownMenuItem
+          onClick={() => {
+            handleShareImage();
+          }}
+        >
+          <Image size={16} /> Share as image
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            handleEmbedTestimonial();
+          }}
+        >
           <Code2 size={16} /> Embed testimonial
         </DropdownMenuItem>
       </DropdownMenuContent>

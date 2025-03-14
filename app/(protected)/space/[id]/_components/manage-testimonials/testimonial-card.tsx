@@ -9,15 +9,19 @@ import { videoJSOptions } from "@/lib/constants";
 import ShareButton from "../share-component";
 import { Button } from "@/components/ui/button";
 
-type TestimonialCardProps = {
+type Props = {
   testimonial: any;
   removeFromWallOfLove: (id: string) => void;
+  shareForImage: (testimonial: any) => void;
+  shareForEmbed: (testimonial: any) => void;
 };
 
 export default function TestimonialCard({
   testimonial,
   removeFromWallOfLove,
-}: TestimonialCardProps) {
+  shareForImage,
+  shareForEmbed,
+}: Props) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
   const [isPending, startTransition] = useTransition();
   const playerRef = React.useRef<HTMLVideoElement>(null);
@@ -48,7 +52,10 @@ export default function TestimonialCard({
           <BadgeOfTestimonials category={testimonial.feedbackType} />
         </div>
         <div className="flex space-x-2">
-          <ShareButton />
+          <ShareButton
+            handleShareImage={() => shareForImage(testimonial)}
+            handleEmbedTestimonial={() => shareForEmbed(testimonial)}
+          />
           <button
             onClick={toggleLike}
             className="text-muted-foreground hover:text-primary"

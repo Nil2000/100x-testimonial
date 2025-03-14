@@ -1,3 +1,4 @@
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -21,17 +22,13 @@ export default function ShareTestimonialDialog({
 }: ShareTestimonialDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Share Testimonial</DialogTitle>
+      <DialogContent className="font-sans">
+        <DialogHeader hidden>
+          <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div>
           <p>Share this testimonial with your friends and family</p>
-          <div>
-            <input type="text" value="https://www.example.com" />
-            <button>Copy</button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

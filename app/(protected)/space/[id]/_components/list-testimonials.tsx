@@ -10,6 +10,7 @@ import PaginationComponent from "@/components/pagination-component";
 import { TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
+import ShareTestimonialDialog from "./share-testimonial-dialog";
 
 type Props = {
   category?: string;
@@ -26,10 +27,16 @@ export default function ListTestimonials({
   const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
     []
   );
+  const [isOpenShareImage, setIsOpenShareImage] = React.useState(false);
+  const [isOpenEmbedTestimonial, setIsOpenEmbedTestimonial] =
+    React.useState(false);
+  const [selectedTestimonial, setSelectedTestimonial] =
+    React.useState<TestimonialResponse | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { spaceInfo } = useSpaceStore();
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const handleNextPage = () => {
     const isItemsLeft =
@@ -126,6 +133,14 @@ export default function ListTestimonials({
           key={testimonial.id}
           testimonial={testimonial}
           removeFromWallOfLove={removeFromWallOfLove}
+          shareForEmbed={() => {
+            setSelectedTestimonial(testimonial);
+            setIsOpenEmbedTestimonial(true);
+          }}
+          shareForImage={() => {
+            setSelectedTestimonial(testimonial);
+            setIsOpenShareImage(true);
+          }}
         />
       ))}
       {filteredTestimonials.length > 0 && (
@@ -138,6 +153,14 @@ export default function ListTestimonials({
           />
         </div>
       )}
+      <ShareTestimonialDialog
+        feddabackInfo={selectedTestimonial!}
+        isOpen={isOpenShareImage && !!selectedTestimonial}
+        onClose={() => {
+          setIsOpenShareImage(false);
+          setSelectedTestimonial(null);
+        }}
+      />
     </div>
   );
 }
