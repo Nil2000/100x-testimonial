@@ -21,6 +21,7 @@ import { TbBackground } from "react-icons/tb";
 import BorderTabContent from "./share-testimonial-subcomponents/BorderTabContent";
 import ShadowTabContent from "./share-testimonial-subcomponents/ShadowTabContent";
 import BackgroundTabContent from "./share-testimonial-subcomponents/BackgroundTabContent";
+import { Avatar } from "@/components/ui/avatar";
 
 type ShareTestimonialDialogProps = {
   isOpen: boolean;
@@ -38,7 +39,9 @@ export default function ShareTestimonialDialog({
   const [width, setWidth] = useState(1200);
   const [height, setHeight] = useState(670);
   const [borderRadius, setBorderRadius] = useState("medium");
-  const [shadow, setShadow] = useState("none");
+  const [shadowType, setShadowType] = useState("none");
+  const [shadowSize, setShadowSize] = useState("small");
+  const [shadowColor, setShadowColor] = useState("#000000");
   const [background, setBackground] = useState("#ffffff");
   const [showBorder, setShowBorder] = useState(true);
   const [borderColor, setBorderColor] = useState("#000000");
@@ -157,7 +160,14 @@ export default function ShareTestimonialDialog({
                 />
               </TabsContent>
               <TabsContent value="shadow">
-                <ShadowTabContent shadow={shadow} setShadow={setShadow} />
+                <ShadowTabContent
+                  shadowType={shadowType}
+                  setShadowType={setShadowType}
+                  shadowSize={shadowSize}
+                  setShadowSize={setShadowSize}
+                  shadowColor={shadowColor}
+                  setShadowColor={setShadowColor}
+                />
               </TabsContent>
               <TabsContent value="background">
                 <BackgroundTabContent
@@ -178,7 +188,7 @@ export default function ShareTestimonialDialog({
               >
                 <div className="w-full my-2">
                   <div
-                    className="p-3 bg-primary-foreground border-2 rounded-md h-full"
+                    className="p-6 bg-primary-foreground border-2 rounded-md h-full"
                     style={{
                       border: showBorder
                         ? `${borderThickness}px solid ${borderColor}`
@@ -190,19 +200,25 @@ export default function ShareTestimonialDialog({
                           ? "10px"
                           : "15px",
                       boxShadow:
-                        shadow === "none"
+                        shadowType === "none"
                           ? "none"
-                          : shadow === "small"
-                          ? "0 1px 3px rgba(0,0,0,0.1)"
-                          : shadow === "medium"
-                          ? "0 4px 6px rgba(0,0,0,0.1)"
-                          : "0 10px 20px rgba(0,0,0,0.1)",
+                          : shadowType === "standard"
+                          ? shadowSize === "small"
+                            ? `0 1px 3px ${shadowColor}`
+                            : shadowSize === "medium"
+                            ? `0 4px 6px ${shadowColor}`
+                            : `0 10px 20px ${shadowColor}`
+                          : shadowSize === "small"
+                          ? `3px 3px 0 0 ${shadowColor}`
+                          : shadowSize === "medium"
+                          ? `6px 6px 0 0 ${shadowColor}`
+                          : `9px 9px 0 0 ${shadowColor}`,
                     }}
                   >
                     {/* <img src={feedbackInfo.avatar} alt={`${feedbackInfo.name}'s avatar`} /> */}
-                    <h3>{feedbackInfo.name}</h3>
-                    <p>{feedbackInfo.answer}</p>
+                    <h3 className="font-bold">{feedbackInfo.name}</h3>
                     <p>{renderStars(feedbackInfo.rating)}</p>
+                    <p className="w-[80%]">{feedbackInfo.answer}</p>
                   </div>
                 </div>
               </div>

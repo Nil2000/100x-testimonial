@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import ColorPalette from "./ColorPalette";
 
 type BorderTabContentProps = {
   showBorder: boolean;
@@ -17,21 +17,6 @@ type BorderTabContentProps = {
   setBorderThickness: (value: number) => void;
 };
 
-const colorPalette = [
-  "#000000",
-  "#FFFFFF",
-  "#FF6900",
-  "#FCB900",
-  "#7BDCB5",
-  "#00D084",
-  "#8ED1FC",
-  "#0693E3",
-  "#ABB8C3",
-  "#EB144C",
-  "#F78DA7",
-  "#5D5DFF",
-];
-
 export default function BorderTabContent({
   showBorder,
   setShowBorder,
@@ -43,7 +28,7 @@ export default function BorderTabContent({
   setBorderThickness,
 }: BorderTabContentProps) {
   return (
-    <div className="space-y-3 grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3">
       <div className="flex items-center gap-x-4">
         <Label>Show Border:</Label>
         <Switch
@@ -61,7 +46,7 @@ export default function BorderTabContent({
             className="flex gap-2"
           >
             <div className="flex items-center gap-2">
-              <RadioGroupItem id="small" value="left" />
+              <RadioGroupItem id="small" value="small" />
               <Label htmlFor="small">Small</Label>
             </div>
             <div className="flex items-center gap-2">
@@ -75,27 +60,10 @@ export default function BorderTabContent({
           </RadioGroup>
         </div>
       </div>
-      <div className="space-y-3">
-        <Label>Border Color:</Label>
-        <div className="flex gap-2 flex-wrap">
-          {colorPalette.map((color) => (
-            <div
-              key={color}
-              className={`w-8 h-8 cursor-pointer rounded-sm`}
-              style={{ backgroundColor: color }}
-              onClick={() => setBorderColor(color)}
-            />
-          ))}
-          <Input
-            type="text"
-            maxLength={7}
-            value={borderColor}
-            onChange={(e) => setBorderColor(e.target.value)}
-            placeholder="#000000"
-            className="w-28"
-          />
-        </div>
-      </div>
+      <ColorPalette
+        selectedColor={borderColor}
+        setSelectedColor={setBorderColor}
+      />
       <div className="max-w-sm space-y-3">
         <Label>Border Thickness:</Label>
         <Slider
