@@ -11,9 +11,16 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { feedbackConstants } from "@/lib/constants";
 import { TestimonialResponse } from "@/lib/types";
 import React, { useState } from "react";
+import { TbBorderRadius } from "react-icons/tb";
+import { RiShadowFill } from "react-icons/ri";
+import { TbBackground } from "react-icons/tb";
+import BorderTabContent from "./share-testimonial-subcomponents/BorderTabContent";
+import ShadowTabContent from "./share-testimonial-subcomponents/ShadowTabContent";
+import BackgroundTabContent from "./share-testimonial-subcomponents/BackgroundTabContent";
 
 type ShareTestimonialDialogProps = {
   isOpen: boolean;
@@ -26,11 +33,16 @@ export default function ShareTestimonialDialog({
   onClose,
   feedbackInfo,
 }: ShareTestimonialDialogProps) {
-  const [alignment, setAlignment] = useState("center");
+  const [alignment, setAlignment] = useState("left");
   const [padding, setPadding] = useState(10);
   const [width, setWidth] = useState(1200);
   const [height, setHeight] = useState(670);
   const [borderRadius, setBorderRadius] = useState("medium");
+  const [shadow, setShadow] = useState("none");
+  const [background, setBackground] = useState("#ffffff");
+  const [showBorder, setShowBorder] = useState(true);
+  const [borderColor, setBorderColor] = useState("#000000");
+  const [borderThickness, setBorderThickness] = useState(1);
 
   const handleDownloadPNG = () => {
     // Implement download PNG functionality
@@ -50,7 +62,7 @@ export default function ShareTestimonialDialog({
         {feedbackInfo && (
           <>
             <div className="flex flex-col space-y-3">
-              <h2>Alignment:</h2>
+              <Label>Alignment:</Label>
               <RadioGroup
                 defaultValue="left"
                 className="flex"
@@ -70,7 +82,7 @@ export default function ShareTestimonialDialog({
                 </div>
               </RadioGroup>
               <div className="max-w-sm space-y-3">
-                <h2>Padding:</h2>
+                <Label>Padding:</Label>
                 <Slider
                   defaultValue={[padding]}
                   min={0}
@@ -81,7 +93,7 @@ export default function ShareTestimonialDialog({
                   className="[&>:last-child>span]:border-background [&>:last-child>span]:bg-primary **:data-[slot=slider-thumb]:shadow-none [&>:last-child>span]:h-6 [&>:last-child>span]:w-2.5 [&>:last-child>span]:border-[3px] [&>:last-child>span]:ring-offset-0"
                 />
               </div>
-              <h2>Ratio:</h2>
+              <Label>Ratio:</Label>
               <RadioGroup
                 defaultValue="auto"
                 className="flex"
@@ -114,6 +126,46 @@ export default function ShareTestimonialDialog({
                 </div>
               </RadioGroup>
             </div>
+            <Tabs defaultValue="border" className="mt-4 w-full">
+              <TabsList>
+                <TabsTrigger value="border" className="flex items-center gap-2">
+                  <TbBorderRadius size={24} />
+                  Border
+                </TabsTrigger>
+                <TabsTrigger value="shadow" className="flex items-center gap-2">
+                  <RiShadowFill size={24} />
+                  Shadow
+                </TabsTrigger>
+                <TabsTrigger
+                  value="background"
+                  className="flex items-center gap-2"
+                >
+                  <TbBackground size={24} />
+                  Background
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="border">
+                <BorderTabContent
+                  showBorder={showBorder}
+                  setShowBorder={setShowBorder}
+                  borderRadius={borderRadius}
+                  setBorderRadius={setBorderRadius}
+                  borderColor={borderColor}
+                  setBorderColor={setBorderColor}
+                  borderThickness={borderThickness}
+                  setBorderThickness={setBorderThickness}
+                />
+              </TabsContent>
+              <TabsContent value="shadow">
+                <ShadowTabContent shadow={shadow} setShadow={setShadow} />
+              </TabsContent>
+              <TabsContent value="background">
+                <BackgroundTabContent
+                  background={background}
+                  setBackground={setBackground}
+                />
+              </TabsContent>
+            </Tabs>
             <div className="flex items-start overflow-x-hidden">
               <div
                 className="flex justify-center items-center"
@@ -121,11 +173,32 @@ export default function ShareTestimonialDialog({
                   aspectRatio: `${width}/${height}`,
                   textAlign: alignment as "left" | "center" | "right",
                   padding: `${padding * 2}px ${padding}px`,
-                  border: "1px solid #fff",
+                  backgroundColor: background,
                 }}
               >
                 <div className="w-full my-2">
-                  <div className="p-3 bg-primary-foreground border-2 rounded-md h-full">
+                  <div
+                    className="p-3 bg-primary-foreground border-2 rounded-md h-full"
+                    style={{
+                      border: showBorder
+                        ? `${borderThickness}px solid ${borderColor}`
+                        : "none",
+                      borderRadius:
+                        borderRadius === "small"
+                          ? "5px"
+                          : borderRadius === "medium"
+                          ? "10px"
+                          : "15px",
+                      boxShadow:
+                        shadow === "none"
+                          ? "none"
+                          : shadow === "small"
+                          ? "0 1px 3px rgba(0,0,0,0.1)"
+                          : shadow === "medium"
+                          ? "0 4px 6px rgba(0,0,0,0.1)"
+                          : "0 10px 20px rgba(0,0,0,0.1)",
+                    }}
+                  >
                     {/* <img src={feedbackInfo.avatar} alt={`${feedbackInfo.name}'s avatar`} /> */}
                     <h3>{feedbackInfo.name}</h3>
                     <p>{feedbackInfo.answer}</p>
