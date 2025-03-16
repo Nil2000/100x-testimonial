@@ -36,8 +36,8 @@ export default function ShareTestimonialDialog({
 }: ShareTestimonialDialogProps) {
   const [alignment, setAlignment] = useState("left");
   const [padding, setPadding] = useState(10);
-  const [width, setWidth] = useState(1200);
-  const [height, setHeight] = useState(670);
+  const [width, setWidth] = useState("auto");
+  const [height, setHeight] = useState("auto");
   const [borderRadius, setBorderRadius] = useState("medium");
   const [shadowType, setShadowType] = useState("none");
   const [shadowSize, setShadowSize] = useState("small");
@@ -102,11 +102,11 @@ export default function ShareTestimonialDialog({
                 className="flex"
                 onValueChange={(value) => {
                   if (value === "auto") {
-                    setWidth(1200);
-                    setHeight(670);
+                    setWidth("auto");
+                    setHeight("auto");
                     return;
                   }
-                  const [w, h] = value.split("x").map(Number);
+                  const [w, h] = value.split("x").map(String);
                   setWidth(w);
                   setHeight(h);
                 }}
@@ -176,11 +176,16 @@ export default function ShareTestimonialDialog({
                 />
               </TabsContent>
             </Tabs>
-            <div className="flex items-start overflow-x-hidden">
+            <div className="flex justify-center items-center overflow-x-hidden">
+              <div className="my-auto w-full"></div>
               <div
-                className="flex justify-center items-center"
+                className="flex justify-center items-center w-full"
                 style={{
-                  aspectRatio: `${width}/${height}`,
+                  aspectRatio: `${
+                    width === "auto" && height === "auto"
+                      ? "1/1"
+                      : width + "/" + height
+                  }`,
                   textAlign: alignment as "left" | "center" | "right",
                   padding: `${padding * 2}px ${padding}px`,
                   backgroundColor: background,
@@ -188,7 +193,7 @@ export default function ShareTestimonialDialog({
               >
                 <div className="w-full my-2">
                   <div
-                    className="p-6 bg-primary-foreground border-2 rounded-md h-full"
+                    className="p-6 bg-primary-foreground border-2 rounded-md h-full w-full"
                     style={{
                       border: showBorder
                         ? `${borderThickness}px solid ${borderColor}`
@@ -215,10 +220,9 @@ export default function ShareTestimonialDialog({
                           : `9px 9px 0 0 ${shadowColor}`,
                     }}
                   >
-                    {/* <img src={feedbackInfo.avatar} alt={`${feedbackInfo.name}'s avatar`} /> */}
                     <h3 className="font-bold">{feedbackInfo.name}</h3>
                     <p>{renderStars(feedbackInfo.rating)}</p>
-                    <p className="w-[80%]">{feedbackInfo.answer}</p>
+                    <p>{feedbackInfo.answer}</p>
                   </div>
                 </div>
               </div>

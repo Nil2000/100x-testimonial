@@ -71,6 +71,7 @@ export default function ShadowTabContent({
         <ColorPalette
           selectedColor={shadowColor}
           setSelectedColor={setShadowColor}
+          title="Shadow Color:"
         />
       </div>
     </div>

@@ -63,6 +63,7 @@ export default function BorderTabContent({
       <ColorPalette
         selectedColor={borderColor}
         setSelectedColor={setBorderColor}
+        title="Border Color:"
       />
       <div className="max-w-sm space-y-3">
         <Label>Border Thickness:</Label>

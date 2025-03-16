@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 type ColorPaletteProps = {
   selectedColor: string;
   setSelectedColor: (value: string) => void;
+  title: string;
 };
 
 const colorPalette = [
@@ -26,10 +27,11 @@ const colorPalette = [
 export default function ColorPalette({
   selectedColor,
   setSelectedColor,
+  title,
 }: ColorPaletteProps) {
   return (
     <div className="space-y-3">
-      <Label>Color:</Label>
+      <Label>{title}</Label>
       <div className="flex gap-2 flex-wrap p-3">
         {colorPalette.map((color) => (
           <div
