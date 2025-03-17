@@ -28,7 +28,7 @@ export default function BorderTabContent({
   setBorderThickness,
 }: BorderTabContentProps) {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3 sm:max-w-3xl">
       <div className="flex items-center gap-x-4">
         <Label>Show Border:</Label>
         <Switch

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import ColorPalette from "./ColorPalette";
@@ -7,27 +7,33 @@ import ColorPalette from "./ColorPalette";
 type BackgroundTabContentProps = {
   background: string;
   setBackground: (value: string) => void;
+  gradient: string;
+  setGradient: (value: string) => void;
+  backgroundType: string;
+  setBackgroundType: (value: string) => void;
 };
 
 const gradientOptions = [
-  "linear-gradient(to right, #ff7e5f, #feb47b)",
-  "linear-gradient(to right, #6a11cb, #2575fc)",
-  "linear-gradient(to right, #ff6a00, #ee0979)",
-  "linear-gradient(to right, #00c6ff, #0072ff)",
-  "linear-gradient(to right, #f7971e, #ffd200)",
-  "linear-gradient(to right, #00b09b, #96c93d)",
-  "linear-gradient(to right, #fc5c7d, #6a82fb)",
-  "linear-gradient(to right, #ff9a9e, #fad0c4)",
-  "linear-gradient(to right, #a18cd1, #fbc2eb)",
-  "linear-gradient(to right, #ffecd2, #fcb69f)",
+  "bg-gradient-to-r from-pink-500 to-yellow-500",
+  "bg-gradient-to-r from-green-400 to-blue-500",
+  "bg-gradient-to-r from-purple-400 via-pink-500 to-red-500",
+  "bg-gradient-to-r from-yellow-200 via-green-200 to-green-500",
+  "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200",
+  "bg-gradient-to-r from-indigo-200 via-red-200 to-yellow-100",
+  "bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200",
+  "bg-gradient-to-r from-pink-200 via-purple-200 to-indigo-200",
+  "bg-gradient-to-r from-green-200 via-green-300 to-blue-200",
+  "bg-gradient-to-r from-yellow-200 via-yellow-300 to-red-200",
 ];
 
 export default function BackgroundTabContent({
   background,
   setBackground,
+  gradient,
+  setGradient,
+  backgroundType,
+  setBackgroundType,
 }: BackgroundTabContentProps) {
-  const [backgroundType, setBackgroundType] = useState("solid");
-
   return (
     <div className="flex flex-col space-y-3">
       <Label>Background Type:</Label>
@@ -63,12 +69,11 @@ export default function BackgroundTabContent({
         <div className="space-y-3">
           <Label>Gradient Options:</Label>
           <div className="flex gap-2 flex-wrap">
-            {gradientOptions.map((gradient, index) => (
+            {gradientOptions.map((gradientClass, index) => (
               <div
                 key={index}
-                className="w-20 h-20 cursor-pointer rounded-sm"
-                style={{ background: gradient }}
-                onClick={() => setBackground(gradient)}
+                className={`w-8 h-8 cursor-pointer rounded-sm ${gradientClass}`}
+                onClick={() => setGradient(gradientClass)}
               />
             ))}
           </div>

@@ -154,8 +154,8 @@ export default function ListTestimonials({
         </div>
       )}
       <ShareTestimonialDialog
-        feedbackInfo={selectedTestimonial}
-        isOpen={isOpenShareImage}
+        feedbackInfo={selectedTestimonial!}
+        isOpen={isOpenShareImage && !!selectedTestimonial}
         onClose={() => {
           setIsOpenShareImage(false);
           setSelectedTestimonial(null);
