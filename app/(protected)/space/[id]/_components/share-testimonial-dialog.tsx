@@ -45,6 +45,8 @@ export default function ShareTestimonialDialog({
   const [background, setBackground] = useState("#ffffff");
   const [gradient, setGradient] = useState("");
   const [backgroundType, setBackgroundType] = useState("solid");
+  const [cardBackground, setCardBackground] = useState("#000000");
+  const [cardBackgroundType, setCardBackgroundType] = useState("solid");
   const [showBorder, setShowBorder] = useState(true);
   const [borderColor, setBorderColor] = useState("#000000");
   const [borderThickness, setBorderThickness] = useState(1);
@@ -176,7 +178,7 @@ export default function ShareTestimonialDialog({
                 setShadowColor={setShadowColor}
               />
             </TabsContent>
-            <TabsContent value="background">
+            <TabsContent value="background" className="space-y-3">
               <BackgroundTabContent
                 background={background}
                 setBackground={setBackground}
@@ -184,6 +186,13 @@ export default function ShareTestimonialDialog({
                 setGradient={setGradient}
                 backgroundType={backgroundType}
                 setBackgroundType={setBackgroundType}
+              />
+              <BackgroundTabContent
+                background={cardBackground}
+                setBackground={setCardBackground}
+                backgroundType={cardBackgroundType}
+                setBackgroundType={setCardBackgroundType}
+                title="Card Background"
               />
             </TabsContent>
           </Tabs>
@@ -202,13 +211,23 @@ export default function ShareTestimonialDialog({
               textAlign: alignment as "left" | "center" | "right",
               padding: `${padding * 2}px ${padding}px`,
               backgroundColor:
-                backgroundType === "solid" ? background : "transparent",
+                backgroundType === "solid"
+                  ? background
+                  : backgroundType === "transparent"
+                  ? "transparent"
+                  : "transparent",
             }}
           >
             <div
-              className={`p-6 bg-primary-foreground border-2 rounded-md h-full w-full
+              className={`p-6 border-2 rounded-md h-full w-full
                 `}
               style={{
+                backgroundColor:
+                  cardBackgroundType === "solid"
+                    ? cardBackground
+                    : cardBackgroundType === "transparent"
+                    ? "transparent"
+                    : "transparent",
                 border: showBorder
                   ? `${borderThickness}px solid ${borderColor}`
                   : "none",
@@ -223,9 +242,9 @@ export default function ShareTestimonialDialog({
                     ? "none"
                     : shadowType === "standard"
                     ? shadowSize === "small"
-                      ? `0 4px 6px -1px ${shadowColor}, 0 2px 4px -2px ${shadowColor};`
+                      ? `0 4px 6px -1px ${shadowColor}, 0 2px 4px -2px ${shadowColor}`
                       : shadowSize === "medium"
-                      ? `0 10px 15px -3px ${shadowColor}, 0 4px 6px -4px ${shadowColor};`
+                      ? `0 10px 15px -3px ${shadowColor}, 0 4px 6px -4px ${shadowColor}`
                       : `0 25px 50px -12px ${shadowColor}`
                     : shadowSize === "small"
                     ? `3px 3px 0 0 ${shadowColor}`
