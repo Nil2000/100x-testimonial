@@ -23,6 +23,7 @@ import ShadowTabContent from "./share-testimonial-subcomponents/ShadowTabContent
 import BackgroundTabContent from "./share-testimonial-subcomponents/BackgroundTabContent";
 import { Text } from "lucide-react";
 import TextTabContent from "./share-testimonial-subcomponents/TextTabContent";
+import { toPng, toBlob } from "html-to-image";
 
 type ShareTestimonialDialogProps = {
   isOpen: boolean;
@@ -55,13 +56,44 @@ export default function ShareTestimonialDialog({
   const [bodyColor, setBodyColor] = useState("#000000");
   const [headerSize, setHeaderSize] = useState(20);
   const [bodySize, setBodySize] = useState(16);
+  const downloadNodeRef = React.useRef<HTMLDivElement>(null);
 
-  const handleDownloadPNG = () => {
-    // Implement download PNG functionality
-  };
+  const handleDownloadPNG = React.useCallback(() => {
+    console.log("Download PNG clicked");
+
+    if (!feedbackInfo) return;
+
+    if (!downloadNodeRef.current) return;
+
+    toPng(downloadNodeRef.current)
+      .then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.download = `testimonial-image-${feedbackInfo.id}.png`;
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch(function (error) {
+        console.error("Failed to download image", error);
+      });
+  }, [downloadNodeRef, feedbackInfo]);
 
   const handleCopyToClipboard = () => {
-    // Implement copy to clipboard functionality
+    console.log("Copy to clipboard clicked");
+
+    if (!downloadNodeRef.current) return;
+
+    toBlob(downloadNodeRef.current)
+      .then(function (blob) {
+        if (!blob) {
+          console.error("Failed to create blob");
+          throw new Error("Failed to create blob");
+        }
+
+        navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      })
+      .catch(function (error) {
+        console.error("Failed to copy image to clipboard", error);
+      });
   };
 
   if (!feedbackInfo) return null;
@@ -220,7 +252,8 @@ export default function ShareTestimonialDialog({
         </div>
         <div className="min-w-full">
           <div
-            className={`flex justify-center items-center min-w-full 
+            ref={downloadNodeRef}
+            className={`flex justify-center items-center min-w-full
                 ${backgroundType === "gradient" ? gradient : ""}
               `}
             style={{
@@ -240,7 +273,7 @@ export default function ShareTestimonialDialog({
             }}
           >
             <div
-              className={`p-6 border-2 rounded-md h-full w-full
+              className={`p-6 border-2 rounded-md h-min w-full
                 `}
               style={{
                 backgroundColor:
@@ -296,8 +329,10 @@ export default function ShareTestimonialDialog({
           </div>
         </div>
         <div className="flex justify-end max-w-[45rem] gap-2">
+          <Button onClick={handleCopyToClipboard} variant={"secondary"}>
+            Copy to clipboard
+          </Button>
           <Button onClick={handleDownloadPNG}>Download PNG</Button>
-          <Button onClick={handleCopyToClipboard}>Copy to clipboard</Button>
         </div>
       </DialogContent>
     </Dialog>
