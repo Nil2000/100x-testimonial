@@ -21,7 +21,8 @@ import { TbBackground } from "react-icons/tb";
 import BorderTabContent from "./share-testimonial-subcomponents/BorderTabContent";
 import ShadowTabContent from "./share-testimonial-subcomponents/ShadowTabContent";
 import BackgroundTabContent from "./share-testimonial-subcomponents/BackgroundTabContent";
-import { Avatar } from "@/components/ui/avatar";
+import { Text } from "lucide-react";
+import TextTabContent from "./share-testimonial-subcomponents/TextTabContent";
 
 type ShareTestimonialDialogProps = {
   isOpen: boolean;
@@ -50,6 +51,10 @@ export default function ShareTestimonialDialog({
   const [showBorder, setShowBorder] = useState(true);
   const [borderColor, setBorderColor] = useState("#000000");
   const [borderThickness, setBorderThickness] = useState(1);
+  const [headerColor, setHeaderColor] = useState("#000000");
+  const [bodyColor, setBodyColor] = useState("#000000");
+  const [headerSize, setHeaderSize] = useState(20);
+  const [bodySize, setBodySize] = useState(16);
 
   const handleDownloadPNG = () => {
     // Implement download PNG functionality
@@ -155,6 +160,10 @@ export default function ShareTestimonialDialog({
                 <TbBackground size={24} />
                 Background
               </TabsTrigger>
+              <TabsTrigger value="test" className="flex items-center gap-2">
+                <Text size={24} />
+                Text
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="border">
               <BorderTabContent
@@ -193,6 +202,18 @@ export default function ShareTestimonialDialog({
                 backgroundType={cardBackgroundType}
                 setBackgroundType={setCardBackgroundType}
                 title="Card Background"
+              />
+            </TabsContent>
+            <TabsContent value="test">
+              <TextTabContent
+                headerColor={headerColor}
+                setHeaderColor={setHeaderColor}
+                bodyColor={bodyColor}
+                setBodyColor={setBodyColor}
+                headerSize={headerSize}
+                setHeaderSize={setHeaderSize}
+                bodySize={bodySize}
+                setBodySize={setBodySize}
               />
             </TabsContent>
           </Tabs>
@@ -242,20 +263,35 @@ export default function ShareTestimonialDialog({
                     ? "none"
                     : shadowType === "standard"
                     ? shadowSize === "small"
-                      ? `0 4px 6px -1px ${shadowColor}, 0 2px 4px -2px ${shadowColor}`
+                      ? `0 4px 6px -1px ${shadowColor}40, 0 2px 4px -2px ${shadowColor}40`
                       : shadowSize === "medium"
-                      ? `0 10px 15px -3px ${shadowColor}, 0 4px 6px -4px ${shadowColor}`
-                      : `0 25px 50px -12px ${shadowColor}`
+                      ? `0 10px 15px -3px ${shadowColor}40, 0 4px 6px -4px ${shadowColor}40`
+                      : `0 25px 50px -12px ${shadowColor}40`
                     : shadowSize === "small"
-                    ? `3px 3px 0 0 ${shadowColor}`
+                    ? `3px 3px 0 0 ${shadowColor}77`
                     : shadowSize === "medium"
-                    ? `6px 6px 0 0 ${shadowColor}`
-                    : `9px 9px 0 0 ${shadowColor}`,
+                    ? `6px 6px 0 0 ${shadowColor}77`
+                    : `9px 9px 0 0 ${shadowColor}77`,
+                color: bodyColor,
               }}
             >
-              <h3 className="font-bold">{feedbackInfo.name}</h3>
+              <h3
+                className="font-bold"
+                style={{
+                  color: headerColor,
+                  fontSize: `${headerSize}px`,
+                }}
+              >
+                {feedbackInfo.name}
+              </h3>
               <p>{renderStars(feedbackInfo.rating)}</p>
-              <p>{feedbackInfo.answer}</p>
+              <p
+                style={{
+                  fontSize: `${bodySize}px`,
+                }}
+              >
+                {feedbackInfo.answer}
+              </p>
             </div>
           </div>
         </div>
