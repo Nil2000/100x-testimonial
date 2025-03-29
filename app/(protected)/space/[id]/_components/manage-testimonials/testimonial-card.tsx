@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Loader2, Share2, Star } from "lucide-react";
+import { Heart, Loader2, Share2, Star, Trash2 } from "lucide-react";
 import React, { useState, useTransition } from "react";
-import { toggleWallOfLove } from "@/actions/feedbackActions";
+import { deleteFeedback, toggleWallOfLove } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
 import VideoCustomComponent from "@/components/videojs-component";
 import { div } from "motion/react-client";
@@ -9,12 +9,14 @@ import { videoJSOptions } from "@/lib/constants";
 import ShareButton from "../share-component";
 import { Button } from "@/components/ui/button";
 import { TestimonialResponse } from "@/lib/types";
+import ButtonWrapperTestimonailCard from "@/components/button-wrapper-testimonial";
 
 type Props = {
   testimonial: TestimonialResponse;
   removeFromWallOfLove: (id: string) => void;
   shareForImage: (testimonial: any) => void;
   shareForEmbed: (testimonial: any) => void;
+  removeFromList: (id: string) => void;
 };
 
 export default function TestimonialCard({
@@ -22,6 +24,7 @@ export default function TestimonialCard({
   removeFromWallOfLove,
   shareForImage,
   shareForEmbed,
+  removeFromList,
 }: Props) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
   const [isPending, startTransition] = useTransition();
@@ -42,6 +45,16 @@ export default function TestimonialCard({
     });
   };
 
+  const deleteTestimonial = async () => {
+    deleteFeedback(testimonial.id).then((res) => {
+      if (res.error) {
+        console.error(res.error);
+        return;
+      }
+      removeFromList(testimonial.id);
+    });
+  };
+
   const handlePlayerReady = (player: any) => {
     playerRef.current = player;
   };
@@ -54,7 +67,7 @@ export default function TestimonialCard({
             category={testimonial.feedbackType as "TEXT" | "VIDEO"}
           />
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-3">
           <ShareButton
             handleShareImage={() => shareForImage(testimonial)}
             handleEmbedTestimonial={() => shareForEmbed(testimonial)}
@@ -77,6 +90,11 @@ export default function TestimonialCard({
               />
             )}
           </button>
+          <ButtonWrapperTestimonailCard
+            buttonAction={deleteTestimonial}
+            buttonIcon={Trash2}
+            className="text-muted-foreground hover:text-red-500"
+          />
         </div>
       </div>
       {testimonial.feedbackType === "TEXT" ? (

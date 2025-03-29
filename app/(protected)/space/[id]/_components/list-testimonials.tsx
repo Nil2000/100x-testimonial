@@ -86,6 +86,11 @@ export default function ListTestimonials({
     }
   };
 
+  const removeFromList = (id: string) => {
+    if (!id) return;
+    setTestimonials((prev) => prev.filter((t: any) => t.id !== id));
+  };
+
   const filteredTestimonials = testimonials.filter((testimonial) => {
     return (
       testimonial.answer
@@ -141,6 +146,7 @@ export default function ListTestimonials({
             setSelectedTestimonial(testimonial);
             setIsOpenShareImage(true);
           }}
+          removeFromList={removeFromList}
         />
       ))}
       {filteredTestimonials.length > 0 && (

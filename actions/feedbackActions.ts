@@ -3,7 +3,9 @@
 import { auth } from "@/lib/auth";
 import { db, FeedbackType } from "@/lib/db";
 import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
-import videoFeedbackSchema, { VideoFeedback } from "@/schemas/videoFeedbackSchema";
+import videoFeedbackSchema, {
+  VideoFeedback,
+} from "@/schemas/videoFeedbackSchema";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -79,7 +81,8 @@ export const toggleWallOfLove = async (
 
 export const submitVideoFeedback = async (
   spaceId: string,
-  values: VideoFeedback) => {
+  values: VideoFeedback
+) => {
   const session = await auth();
 
   if (!session || !session.user) {
@@ -117,4 +120,28 @@ export const submitVideoFeedback = async (
       error: "Failed to submit feedback",
     };
   }
-}
+};
+
+export const deleteFeedback = async (feedbackId: string) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    await db.feedback.delete({
+      where: { id: feedbackId },
+    });
+    return {
+      message: "Feedback deleted successfully",
+    };
+  } catch (error) {
+    console.error("DELETE_FEEDBACK_ERROR", error);
+    return {
+      error: "Failed to delete feedback",
+    };
+  }
+};
