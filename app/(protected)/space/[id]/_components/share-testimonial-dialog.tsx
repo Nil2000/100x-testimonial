@@ -56,6 +56,8 @@ export default function ShareTestimonialDialog({
   const [bodyColor, setBodyColor] = useState("#000000");
   const [headerSize, setHeaderSize] = useState(20);
   const [bodySize, setBodySize] = useState(16);
+  const [headerFont, setHeaderFont] = useState("");
+  const [bodyFont, setBodyFont] = useState("");
   const downloadNodeRef = React.useRef<HTMLDivElement>(null);
 
   const handleDownloadPNG = React.useCallback(() => {
@@ -246,6 +248,10 @@ export default function ShareTestimonialDialog({
                 setHeaderSize={setHeaderSize}
                 bodySize={bodySize}
                 setBodySize={setBodySize}
+                headerFont={headerFont}
+                setHeaderFont={setHeaderFont}
+                bodyFont={bodyFont}
+                setBodyFont={setBodyFont}
               />
             </TabsContent>
           </Tabs>
@@ -306,6 +312,7 @@ export default function ShareTestimonialDialog({
                     ? `6px 6px 0 0 ${shadowColor}77`
                     : `9px 9px 0 0 ${shadowColor}77`,
                 color: bodyColor,
+                fontFamily: bodyFont,
               }}
             >
               <h3
@@ -313,6 +320,7 @@ export default function ShareTestimonialDialog({
                 style={{
                   color: headerColor,
                   fontSize: `${headerSize}px`,
+                  fontFamily: headerFont,
                 }}
               >
                 {feedbackInfo.name}
@@ -321,6 +329,7 @@ export default function ShareTestimonialDialog({
               <p
                 style={{
                   fontSize: `${bodySize}px`,
+                  fontFamily: bodyFont,
                 }}
               >
                 {feedbackInfo.answer}

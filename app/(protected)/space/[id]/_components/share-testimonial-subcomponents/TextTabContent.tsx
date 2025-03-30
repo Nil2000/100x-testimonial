@@ -3,6 +3,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import ColorPalette from "./ColorPalette";
+import FontPicker from "@/components/font-picker";
 
 export default function TextTabContent({
   headerColor,
@@ -13,6 +14,10 @@ export default function TextTabContent({
   setHeaderSize,
   bodySize,
   setBodySize,
+  headerFont,
+  setHeaderFont,
+  bodyFont,
+  setBodyFont,
 }: {
   headerColor: string;
   setHeaderColor: (color: string) => void;
@@ -22,6 +27,10 @@ export default function TextTabContent({
   setHeaderSize: (size: number) => void;
   bodySize: number;
   setBodySize: (size: number) => void;
+  headerFont: string;
+  setHeaderFont: (font: string) => void;
+  bodyFont: string;
+  setBodyFont: (font: string) => void;
 }) {
   return (
     <div className="grid gird-cols-1 sm:grid-cols-2 gap-3">
@@ -39,6 +48,8 @@ export default function TextTabContent({
           step={1}
           onValueChange={(value) => setHeaderSize(value[0])}
         />
+        <Label>Header Font:</Label>
+        <FontPicker onSelect={setHeaderFont} selectedFont={headerFont} />
       </div>
       <ColorPalette
         title="Body Text Color"
@@ -54,6 +65,8 @@ export default function TextTabContent({
           step={1}
           onValueChange={(value) => setBodySize(value[0])}
         />
+        <Label>Body Font:</Label>
+        <FontPicker onSelect={setBodyFont} selectedFont={bodyFont} />
       </div>
     </div>
   );
