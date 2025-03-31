@@ -40,6 +40,8 @@ export default function TextTabContent({
         setSelectedColor={setHeaderColor}
       />
       <div className="space-y-3">
+        <Label>Header Font:</Label>
+        <FontPicker onSelect={setHeaderFont} selectedFont={headerFont} />
         <Label>Header Text Size:</Label>
         <Slider
           defaultValue={[headerSize]}
@@ -48,15 +50,16 @@ export default function TextTabContent({
           step={1}
           onValueChange={(value) => setHeaderSize(value[0])}
         />
-        <Label>Header Font:</Label>
-        <FontPicker onSelect={setHeaderFont} selectedFont={headerFont} />
       </div>
+
       <ColorPalette
         title="Body Text Color"
         selectedColor={bodyColor}
         setSelectedColor={setBodyColor}
       />
       <div className="space-y-3">
+        <Label>Body Font:</Label>
+        <FontPicker onSelect={setBodyFont} selectedFont={bodyFont} />
         <Label>Body Text Size:</Label>
         <Slider
           defaultValue={[bodySize]}
@@ -65,8 +68,6 @@ export default function TextTabContent({
           step={1}
           onValueChange={(value) => setBodySize(value[0])}
         />
-        <Label>Body Font:</Label>
-        <FontPicker onSelect={setBodyFont} selectedFont={bodyFont} />
       </div>
     </div>
   );

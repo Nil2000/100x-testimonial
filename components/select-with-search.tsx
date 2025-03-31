@@ -39,7 +39,6 @@ export default function SelectWithSearch({
 
   return (
     <div className="*:not-first:mt-2 font-sans">
-      <Label htmlFor={id}>Choose font</Label>
       <Popover open={open} onOpenChange={setOpen} modal>
         <PopoverTrigger asChild>
           <Button
