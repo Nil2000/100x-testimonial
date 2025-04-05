@@ -27,7 +27,7 @@ export interface ThankYouSpace {
 export interface SpaceResponse {
   id: string;
   name: string;
-  logoObjectKey: string | null;
+  logo: string | null;
   headerTitle: string;
   headerSubtitle: string;
   collectionType: string;

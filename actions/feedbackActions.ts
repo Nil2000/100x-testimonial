@@ -145,3 +145,35 @@ export const deleteFeedback = async (feedbackId: string) => {
     };
   }
 };
+
+export const getFeedbackByIdAndSpaceName = async (
+  spaceName: string,
+  feedbackId: string
+) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    const feedback = await db.feedback.findFirst({
+      where: {
+        id: feedbackId,
+        space: {
+          name: spaceName,
+        },
+      },
+    });
+
+    if (!feedback) {
+      return null;
+    }
+    return feedback;
+  } catch (error) {
+    console.error("GET_FEEDBACK_BY_ID_AND_SPACENAME_ERROR", error);
+    return null;
+  }
+};

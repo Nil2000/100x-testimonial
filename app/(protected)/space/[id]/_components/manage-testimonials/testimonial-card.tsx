@@ -58,6 +58,7 @@ export default function TestimonialCard({
   const handlePlayerReady = (player: any) => {
     playerRef.current = player;
   };
+  console.log(testimonial.id);
 
   return (
     <Card className="p-3 flex flex-col space-y-2">

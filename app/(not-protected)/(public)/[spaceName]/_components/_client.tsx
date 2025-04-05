@@ -40,9 +40,9 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   return (
     <div className="lg:max-w-[1000px] w-full px-4 flex flex-col justify-center mx-auto space-y-8 py-8">
       <div className="flex justify-center">
-        {space.logoObjectKey && (
+        {space.logo && (
           <Image
-            src={space.logoObjectKey}
+            src={space.logo}
             alt="Public space"
             width={100}
             height={100}

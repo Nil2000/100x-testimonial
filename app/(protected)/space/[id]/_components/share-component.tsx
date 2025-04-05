@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Code2, Image, Share2 } from "lucide-react";
+import { ArrowRightFromLine, Code2, Image, Share2 } from "lucide-react";
 
 type Props = {
   type: "TEXT" | "VIDEO";
@@ -29,6 +29,9 @@ export default function ShareButton({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="font-sans ">
+        <DropdownMenuItem>
+          <ArrowRightFromLine size={16} /> Get link
+        </DropdownMenuItem>
         {type === "TEXT" && (
           <DropdownMenuItem
             onClick={() => {
