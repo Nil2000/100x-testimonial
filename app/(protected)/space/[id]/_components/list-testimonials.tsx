@@ -11,6 +11,7 @@ import { TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
 import ShareTestimonialDialog from "./share-testimonial-dialog";
+import GetLinkDialog from "./getlink-dialog";
 
 type Props = {
   category?: string;
@@ -36,7 +37,7 @@ export default function ListTestimonials({
   const [searchTerm, setSearchTerm] = React.useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { spaceInfo } = useSpaceStore();
-  const [openDialog, setOpenDialog] = React.useState(false);
+  const [openGetlinkDialog, setOpenGetLinkDialog] = React.useState(false);
 
   const handleNextPage = () => {
     const isItemsLeft =
@@ -146,6 +147,10 @@ export default function ListTestimonials({
             setSelectedTestimonial(testimonial);
             setIsOpenShareImage(true);
           }}
+          getLink={() => {
+            setSelectedTestimonial(testimonial);
+            setOpenGetLinkDialog(true);
+          }}
           removeFromList={removeFromList}
         />
       ))}
@@ -166,6 +171,12 @@ export default function ListTestimonials({
           setIsOpenShareImage(false);
           setSelectedTestimonial(null);
         }}
+      />
+      <GetLinkDialog
+        isOpen={openGetlinkDialog}
+        onClose={() => setOpenGetLinkDialog(false)}
+        testimonialId={selectedTestimonial?.id!}
+        spaceName={spaceInfo.name}
       />
     </div>
   );

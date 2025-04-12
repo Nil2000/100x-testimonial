@@ -11,12 +11,14 @@ type Props = {
   type: "TEXT" | "VIDEO";
   handleShareImage: () => void;
   handleEmbedTestimonial: () => void;
+  handleGetLink: () => void;
 };
 
 export default function ShareButton({
   type,
   handleShareImage,
   handleEmbedTestimonial,
+  handleGetLink,
 }: Props) {
   return (
     <DropdownMenu modal={false}>
@@ -28,7 +30,12 @@ export default function ShareButton({
           <Share2 size={16} aria-hidden="true" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="font-sans ">
+      <DropdownMenuContent
+        className="font-sans "
+        onClick={() => {
+          handleGetLink();
+        }}
+      >
         <DropdownMenuItem>
           <ArrowRightFromLine size={16} /> Get link
         </DropdownMenuItem>

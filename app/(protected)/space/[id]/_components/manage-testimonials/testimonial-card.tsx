@@ -10,12 +10,15 @@ import ShareButton from "../share-component";
 import { Button } from "@/components/ui/button";
 import { TestimonialResponse } from "@/lib/types";
 import ButtonWrapperTestimonailCard from "@/components/button-wrapper-testimonial";
+import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
   testimonial: TestimonialResponse;
   removeFromWallOfLove: (id: string) => void;
   shareForImage: (testimonial: any) => void;
   shareForEmbed: (testimonial: any) => void;
+  getLink: (testimonial: any) => void;
   removeFromList: (id: string) => void;
 };
 
@@ -25,6 +28,7 @@ export default function TestimonialCard({
   shareForImage,
   shareForEmbed,
   removeFromList,
+  getLink,
 }: Props) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
   const [isPending, startTransition] = useTransition();
@@ -58,7 +62,6 @@ export default function TestimonialCard({
   const handlePlayerReady = (player: any) => {
     playerRef.current = player;
   };
-  console.log(testimonial.id);
 
   return (
     <Card className="p-3 flex flex-col space-y-2">
@@ -72,6 +75,7 @@ export default function TestimonialCard({
           <ShareButton
             handleShareImage={() => shareForImage(testimonial)}
             handleEmbedTestimonial={() => shareForEmbed(testimonial)}
+            handleGetLink={() => getLink(testimonial)}
             type={testimonial.feedbackType as "TEXT" | "VIDEO"}
           />
           <button
@@ -118,6 +122,16 @@ export default function TestimonialCard({
         </div>
       )}
       <div className="flex">{renderStars(testimonial.rating)}</div>
+      <Avatar>
+        <AvatarImage
+          src={testimonial.imageUrl || ""}
+          className="object-cover"
+          alt="User Image"
+        />
+        <AvatarFallback>
+          {testimonial.name.charAt(0).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
       <div className="text-xs italic text-muted-foreground">
         <h3>{testimonial.name}</h3>
         <h4>{testimonial.email}</h4>
