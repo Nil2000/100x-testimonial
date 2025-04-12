@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Pen } from "lucide-react";
+import { Loader2, Pen, Trash2, XCircle } from "lucide-react";
 import React, { useTransition } from "react";
 import CollectStarRatings from "./collect-start-rating";
 import { Controller, useForm } from "react-hook-form";
@@ -20,6 +20,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import feedbackSchema from "@/schemas/feedbackSchema";
 import { submitTextFeedback } from "@/actions/feedbackActions";
 import { FeedbackType } from "@/lib/db";
+import { uploadFileToBucket } from "@/actions/fileAction";
+import { createId } from "@paralleldrive/cuid2";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 type Props = {
   space: any;
@@ -29,11 +33,13 @@ type Props = {
 export default function WriteTextDialog({ space, showThankYou }: Props) {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = React.useState(false);
+  const [isFileSelected, setFileSelected] = React.useState<File | null>(null);
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
@@ -42,10 +48,36 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
       answer: "",
       name: "",
       email: "",
+      imageUrl: "",
     },
   });
 
-  const onSubmit = (data: any) => {
+  const uploadFile = async (file: File, spaceName: string) => {
+    if (!file) return;
+    console.log(file);
+    const url = await uploadFileToBucket({
+      file: file,
+      key: `space/${spaceName}/profilePicUrl/${createId() + createId()}.${
+        file.type.split("/")[1]
+      }`,
+      mimeType: file.type,
+      size: file.size,
+    });
+    return url;
+  };
+
+  const onSubmit = async (data: any) => {
+    if (!isFileSelected) {
+      data.imageUrl = "";
+    } else {
+      const fileUrl = await uploadFile(isFileSelected, space.name);
+      if (!fileUrl) {
+        console.error("File upload failed");
+        return;
+      }
+      data.imageUrl = fileUrl.url;
+    }
+
     if (Object.keys(errors).length === 0) {
       startTransition(() => {
         submitTextFeedback(space.id, data, FeedbackType.TEXT)
@@ -72,6 +104,11 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
         setOpen(isOpen);
         if (isOpen) {
           reset();
+          setFileSelected(null);
+          const node = document.getElementById("file") as HTMLInputElement;
+          if (node) {
+            node.value = "";
+          }
         }
       }}
     >
@@ -103,7 +140,7 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
           ))}
         </ul>
         <form
-          className="space-y-4"
+          className="space-y-3"
           onSubmit={(e) => {
             handleSubmit(onSubmit)();
             e.preventDefault();
@@ -129,7 +166,7 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
             control={control}
             render={({ field }) => (
               <>
-                <Input placeholder="Tommy Shelby" {...field} required />
+                <Input placeholder="Tommy Shelby" {...field} />
                 {errors.name && (
                   <p className="text-destructive text-xs">
                     {errors.name.message}
@@ -144,7 +181,7 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
             control={control}
             render={({ field }) => (
               <>
-                <Input placeholder="tommy@gmail.com" {...field} required />
+                <Input placeholder="tommy@gmail.com" {...field} />
                 {errors.email && (
                   <p className="text-destructive text-xs">
                     {errors.email.message}
@@ -153,6 +190,66 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
               </>
             )}
           />
+
+          <Label htmlFor="imageUrl">Image URL</Label>
+          <Controller
+            name="imageUrl"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input
+                  id="file"
+                  className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (e.target.files && e.target.files[0]) {
+                      setFileSelected(e.target.files[0]);
+                    }
+                  }}
+                  // {...field}
+                />
+                {isFileSelected && (
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage
+                      src={
+                        isFileSelected
+                          ? URL.createObjectURL(isFileSelected)
+                          : ""
+                      }
+                      alt="public_user_image"
+                      className="object-cover"
+                    />
+                  </Avatar>
+                )}
+                {isFileSelected && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setFileSelected(null);
+                      setValue("imageUrl", "");
+                      const node = document.getElementById(
+                        "file"
+                      ) as HTMLInputElement;
+                      if (node) node.value = "";
+                    }}
+                    className="text-muted-foreground hover:text-red-500 "
+                  >
+                    <XCircle size={16} className="-ms-1 me-2 opacity-60" />
+                    Remove
+                  </Button>
+                )}
+              </>
+            )}
+          />
+
+          {errors.imageUrl && (
+            <p className="text-destructive text-xs">
+              {errors.imageUrl.message}
+            </p>
+          )}
+
           <Controller
             name="rating"
             control={control}

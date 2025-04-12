@@ -53,4 +53,5 @@ export interface TestimonialResponse {
   feedbackType: string;
   addToWallOfLove: boolean;
   videoUrl: string | null;
+  imageUrl: string | null;
 }

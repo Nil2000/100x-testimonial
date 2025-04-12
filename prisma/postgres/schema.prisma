@@ -153,6 +153,7 @@ model Feedback {
   feedbackType    FeedbackType
   addToWallOfLove Boolean      @default(false)
   videoUrl        String?
+  imageUrl        String?
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

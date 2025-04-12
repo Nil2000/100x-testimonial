@@ -13,6 +13,7 @@ export default function CollectStarRatings({
       answer: string;
       name: string;
       email: string;
+      imageUrl: string;
     },
     "rating"
   >;

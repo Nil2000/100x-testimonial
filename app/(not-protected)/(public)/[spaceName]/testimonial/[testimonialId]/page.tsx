@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import TestimonialCard from "./_components/testimonial-card";
 import { TestimonialResponse } from "@/lib/types";
+import { spaceExists } from "@/actions/spaceActions";
 
 export default async function page({
   params,
@@ -10,6 +11,12 @@ export default async function page({
   params: Promise<{ spaceName: string; testimonialId: string }>;
 }) {
   const { spaceName, testimonialId } = await params;
+
+  const spaceResponse = await spaceExists(spaceName);
+
+  if (!spaceResponse) {
+    return notFound();
+  }
 
   const feedbackResponse = await getFeedbackByIdAndSpaceName(
     spaceName,
