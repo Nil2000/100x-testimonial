@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -8,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { videoJSOptions } from "@/lib/constants";
-import { Loader2, Video } from "lucide-react";
+import { Loader2, Video, XCircle } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import VideoCustomComponent from "@/components/videojs-component";
 import { Controller, useForm } from "react-hook-form";
@@ -23,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import CollectStarVideoRatings from "./collect-star-video";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
   open: boolean;
@@ -34,7 +36,7 @@ type Props = {
   showThankYou: () => void;
 };
 
-export default function SubmitFeedbackDialog({
+export default function SubmitVideoFeedbackDialog({
   open,
   onClose,
   videoFileBlob,
@@ -45,19 +47,22 @@ export default function SubmitFeedbackDialog({
 }: Props) {
   const playerRef = React.useRef<HTMLVideoElement>(null);
   const [isPending, startTransition] = useTransition();
+  const [profilePicFile, setProfilePicFile] = React.useState<File | null>(null);
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<VideoFeedback>({
     resolver: zodResolver(videoFeedbackSchema),
     defaultValues: {
       videoUrl: "http://localhost:3000/logo.svg",
-      name: "nil",
-      email: "abc@gmail.com",
+      name: "",
+      email: "",
       rating: 3,
       permission: false,
+      imageUrl: "",
     },
   });
 
@@ -75,12 +80,16 @@ export default function SubmitFeedbackDialog({
     playerRef.current = player;
   };
 
-  const uploadFile = async (file: File, spaceName: string) => {
+  const uploadFile = async (
+    file: File,
+    spaceName: string,
+    catgeory: string
+  ) => {
     if (!file) return;
     console.log(file);
     const url = await uploadFileToBucket({
       file: file,
-      key: `space/${spaceName}/feedback/${createId() + createId()}.${
+      key: `space/${spaceName}/${catgeory}/${createId() + createId()}.${
         file.type.split("/")[1]
       }`,
       mimeType: file.type,
@@ -90,57 +99,76 @@ export default function SubmitFeedbackDialog({
   };
 
   const onSubmit = async (data: VideoFeedback) => {
-    if (Object.keys(errors).length === 0) {
-      console.log(data);
-      startTransition(() => {
-        if (!videoFileBlob) {
-          console.error("No video file found");
-          return;
+    startTransition(async () => {
+      try {
+        if (!profilePicFile) {
+          data.imageUrl = "";
+        } else {
+          const fileUrl = await uploadFile(
+            profilePicFile,
+            spaceName,
+            "profilePicUrl"
+          );
+          if (!fileUrl) {
+            console.error("File upload failed");
+            return;
+          }
+          data.imageUrl = fileUrl.url;
         }
-        const file = new File(
-          [videoFileBlob!],
-          `${createId()}feedback-video.mp4`,
-          { type: "video/mp4" }
-        );
-        uploadFile(file, spaceName)
-          .then((res) => {
-            console.log(res);
-            if (res && res.error) {
-              console.error(res.error);
-              return;
+
+        if (Object.keys(errors).length === 0) {
+          console.log(data);
+
+          if (!videoFileBlob) {
+            console.error("No video file found");
+            return;
+          }
+
+          const file = new File(
+            [videoFileBlob!],
+            `${createId()}feedback-video.mp4`,
+            {
+              type: "video/mp4",
             }
-            data.videoUrl = res?.url!;
-            submitVideoFeedback(spaceId, data)
-              .then((res) => {
-                if (res.error) {
-                  console.error(res.error);
-                  return;
-                }
-                console.log(res.message);
-              })
-              .catch((err) => {
-                throw err;
-              });
-          })
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            onClose();
-            reset();
-            showThankYou();
-          });
-      });
-    }
+          );
+
+          const videoRes = await uploadFile(file, spaceName, "feedbackVideo");
+          if (videoRes?.error) {
+            console.error(videoRes.error);
+            return;
+          }
+
+          data.videoUrl = videoRes?.url!;
+          const feedbackRes = await submitVideoFeedback(spaceId, data);
+
+          if (feedbackRes.error) {
+            console.error(feedbackRes.error);
+            return;
+          }
+
+          console.log(feedbackRes.message);
+          onClose();
+          reset();
+          showThankYou();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
   };
 
   return (
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
+        onClose();
         if (isOpen) {
-          onClose();
           reset();
+          setProfilePicFile(null);
+          const node = document.getElementById("file") as HTMLInputElement;
+          if (node) {
+            node.value = "";
+          }
         }
       }}
     >
@@ -193,6 +221,63 @@ export default function SubmitFeedbackDialog({
                 </>
               )}
             />
+            <Label htmlFor="imageUrl">Your profile picture</Label>
+            <Controller
+              name="imageUrl"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <Input
+                    id="file"
+                    className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      if (e.target.files && e.target.files[0]) {
+                        setProfilePicFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {profilePicFile && (
+                    <Avatar className="w-16 h-16">
+                      <AvatarImage
+                        src={
+                          profilePicFile
+                            ? URL.createObjectURL(profilePicFile)
+                            : ""
+                        }
+                        alt="public_user_image"
+                        className="object-cover"
+                      />
+                    </Avatar>
+                  )}
+                  {profilePicFile && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setProfilePicFile(null);
+                        setValue("imageUrl", "");
+                        const node = document.getElementById(
+                          "file"
+                        ) as HTMLInputElement;
+                        if (node) node.value = "";
+                      }}
+                      className="text-muted-foreground hover:text-red-500 w-min"
+                    >
+                      <XCircle size={16} className="-ms-1 me-2 opacity-60" />
+                      Remove
+                    </Button>
+                  )}
+                </>
+              )}
+            />
+
+            {errors.imageUrl && (
+              <p className="text-destructive text-xs">
+                {errors.imageUrl.message}
+              </p>
+            )}
             <Controller
               name="rating"
               control={control}
@@ -245,6 +330,7 @@ export default function SubmitFeedbackDialog({
             <Button
               onClick={() => {
                 onClose();
+                reset();
                 retakeVideo();
               }}
               variant={"secondary"}

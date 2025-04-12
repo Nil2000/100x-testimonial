@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 import { CollectionType } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Pen, PenLine, Video } from "lucide-react";
-import WriteTextDialog from "./write-text-dialog";
 import ThankYouDialog from "./thanks-dialog";
 import { SpaceResponse } from "@/lib/types";
 import RecordVideoDialog from "./record-video-dialog";
 import UploadFileDialog from "./upload-file-dialog";
-import SubmitFeedbackDialog from "./submit-feedback-dialog";
+import SubmitTextFeedbackDialog from "./submit-text-feedback-dialog";
+import SubmitVideoFeedbackDialog from "./submit-video-feedback-dialog";
 
 type PublicSpaceViewProps = {
   space: SpaceResponse;
@@ -89,7 +89,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
         )}
         {(space.collectionType === CollectionType.TEXT ||
           space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
-          <WriteTextDialog space={space} showThankYou={showThanks} />
+          <SubmitTextFeedbackDialog space={space} showThankYou={showThanks} />
         )}
         <ThankYouDialog
           open={openThanks}
@@ -110,7 +110,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
             setOpenSubmitFeedback(true);
           }}
         />
-        <SubmitFeedbackDialog
+        <SubmitVideoFeedbackDialog
           open={openSubmitFeedback}
           onClose={() => {
             setOpenSubmitFeedback(false);

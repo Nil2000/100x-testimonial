@@ -30,7 +30,10 @@ type Props = {
   showThankYou: () => void;
 };
 
-export default function WriteTextDialog({ space, showThankYou }: Props) {
+export default function SubmitTextFeedbackDialog({
+  space,
+  showThankYou,
+}: Props) {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = React.useState(false);
   const [isFileSelected, setFileSelected] = React.useState<File | null>(null);
@@ -191,7 +194,7 @@ export default function WriteTextDialog({ space, showThankYou }: Props) {
             )}
           />
 
-          <Label htmlFor="imageUrl">Image URL</Label>
+          <Label htmlFor="imageUrl">Your profile picture</Label>
           <Controller
             name="imageUrl"
             control={control}

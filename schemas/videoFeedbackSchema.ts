@@ -11,6 +11,7 @@ const videoFeedbackSchema = z.object({
   permission: z
     .boolean()
     .refine((val) => val === true, "Permission is required to proceed"),
+  imageUrl: z.string().optional(),
 });
 
 export type VideoFeedback = z.infer<typeof videoFeedbackSchema>;
