@@ -55,3 +55,9 @@ export interface TestimonialResponse {
   videoUrl: string | null;
   imageUrl: string | null;
 }
+
+export type SingleTestimonialWithSpaceLogo = TestimonialResponse & {
+  space: {
+    logo: string | null;
+  };
+};

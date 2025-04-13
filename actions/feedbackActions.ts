@@ -146,7 +146,7 @@ export const deleteFeedback = async (feedbackId: string) => {
   }
 };
 
-export const getFeedbackByIdAndSpaceName = async (
+export const getFeedbackByIdAndSpaceNameWithSpaceLogo = async (
   spaceName: string,
   feedbackId: string
 ) => {
@@ -166,6 +166,13 @@ export const getFeedbackByIdAndSpaceName = async (
           name: spaceName,
         },
       },
+      include: {
+        space: {
+          select: {
+            logo: true,
+          },
+        },
+      },
     });
 
     if (!feedback) {
@@ -174,6 +181,8 @@ export const getFeedbackByIdAndSpaceName = async (
     return feedback;
   } catch (error) {
     console.error("GET_FEEDBACK_BY_ID_AND_SPACENAME_ERROR", error);
-    return null;
+    return {
+      error: "Failed to fetch feedback",
+    };
   }
 };
