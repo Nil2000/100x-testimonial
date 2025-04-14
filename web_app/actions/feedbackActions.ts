@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { db, FeedbackType } from "@/lib/db";
+import { sendToQueue } from "@/lib/queue/client";
 import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 import videoFeedbackSchema, {
   VideoFeedback,
@@ -29,7 +30,7 @@ export const submitTextFeedback = async (
   }
 
   try {
-    await db.feedback.create({
+    const feedback = await db.feedback.create({
       data: {
         ...values,
         feedbackType,
@@ -40,6 +41,9 @@ export const submitTextFeedback = async (
         },
       },
     });
+
+    await sendToQueue(JSON.stringify(feedback));
+
     return {
       message: "Feedback submitted",
     };
@@ -100,7 +104,7 @@ export const submitVideoFeedback = async (
   }
 
   try {
-    await db.feedback.create({
+    const feedback = await db.feedback.create({
       data: {
         ...values,
         feedbackType: FeedbackType.VIDEO,
@@ -111,6 +115,9 @@ export const submitVideoFeedback = async (
         },
       },
     });
+
+    await sendToQueue(JSON.stringify(feedback));
+
     return {
       message: "Feedback submitted",
     };
