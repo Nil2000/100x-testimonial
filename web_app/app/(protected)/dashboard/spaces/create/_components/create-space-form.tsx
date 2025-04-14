@@ -57,7 +57,7 @@ export default function CreateSpaceForm({
       collectionType: CollectionType.TEXT,
       collectStarRating: false,
       // chooseTheme: false,
-      spaceLogoKey: "",
+      logo: "",
     },
   });
   const [questions, setQuestions] =
@@ -105,7 +105,7 @@ export default function CreateSpaceForm({
             throw new Error(msg.error);
           }
           console.log(msg);
-          data.spaceLogoKey = msg.url;
+          data.logo = msg.url;
         })
         .catch((err) => {
           console.error(err);
@@ -159,7 +159,7 @@ export default function CreateSpaceForm({
           Space logo <span className="text-destructive">*</span>
         </Label>
         <Controller
-          name="spaceLogoKey"
+          name="logo"
           control={control}
           render={({ field }) => (
             <>
@@ -182,7 +182,7 @@ export default function CreateSpaceForm({
                   onClick={() => {
                     setFileSelected(null);
                     // field.onChange(null);
-                    setValue("spaceLogoKey", "");
+                    setValue("logo", "");
                     const node = document.getElementById(
                       "file"
                     ) as HTMLInputElement;

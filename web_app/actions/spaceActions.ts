@@ -27,7 +27,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
     questionList,
     collectionType,
     collectStarRating,
-    spaceLogoKey,
+    logo,
   } = validateFields.data;
 
   // await db.question.createMany({
@@ -57,7 +57,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
         },
         collectionType,
         collectStar: collectStarRating,
-        logo: spaceLogoKey || "",
+        logo: logo,
         createdAt: new Date(Date.now()),
         updatedAt: new Date(Date.now()),
         createdBy: {
@@ -106,7 +106,7 @@ export const updateSpace = async (
     questionList,
     collectionType,
     collectStarRating,
-    spaceLogoKey,
+    logo,
   } = validateFields.data;
   try {
     await db.space.update({
@@ -130,7 +130,7 @@ export const updateSpace = async (
         },
         collectionType,
         collectStar: collectStarRating,
-        logo: spaceLogoKey || "",
+        logo: logo,
         updatedAt: new Date(Date.now()),
       },
     });

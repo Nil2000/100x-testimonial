@@ -17,15 +17,18 @@ import { z } from "zod";
 import { spaceSchema } from "@/schemas/spaceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DragAndDropQuestions from "@/components/drag-and-drop-questions";
-import { Loader2, PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle, XCircle } from "lucide-react";
 import { dropDownOptionsTextVideo } from "@/lib/constants";
 import { Switch } from "@/components/ui/switch";
 import { updateSpace } from "@/actions/spaceActions";
+import { uploadFileToBucket } from "@/actions/fileAction";
+import { createId } from "@paralleldrive/cuid2";
 
 export default function TestimonialEditFormView() {
   const { spaceInfo, updateSpaceField } = useSpaceStore();
   const [isPending, startTransition] = useTransition();
-
+  const [fileSelected, setFileSelected] = React.useState<File | null>(null);
+  const initialLogoRef = React.useRef<string | null>(spaceInfo.logo || null);
   const {
     control,
     handleSubmit,
@@ -40,6 +43,7 @@ export default function TestimonialEditFormView() {
       questionList: spaceInfo.questions,
       collectionType: spaceInfo.collectionType,
       collectStarRating: spaceInfo.collectStar,
+      logo: spaceInfo.logo || "",
     },
   });
 
@@ -58,8 +62,32 @@ export default function TestimonialEditFormView() {
     updateSpaceField("questions", [...spaceInfo.questions, newQuestion]);
   };
 
-  const onSubmit = (data: z.infer<typeof spaceSchema>) => {
-    console.log(spaceInfo.id, data);
+  const uploadFile = async (file: File, spaceName: string) => {
+    if (!file) return;
+    console.log(file);
+    const url = await uploadFileToBucket({
+      file: file,
+      key: `space/${spaceName}/space-logo/${createId() + createId()}.${
+        file.type.split("/")[1]
+      }`,
+      mimeType: file.type,
+      size: file.size,
+    });
+    return url;
+  };
+
+  const onSubmit = async (data: z.infer<typeof spaceSchema>) => {
+    if (!fileSelected) {
+      data.logo = initialLogoRef.current || "";
+    } else {
+      const fileUrl = await uploadFile(fileSelected, spaceInfo.name);
+      if (!fileUrl) {
+        console.error("File upload failed");
+        return;
+      }
+      data.logo = fileUrl.url;
+    }
+
     startTransition(() => {
       updateSpace(spaceInfo.id, data).then((res) => {
         if (res.error) {
@@ -77,9 +105,7 @@ export default function TestimonialEditFormView() {
       className="space-y-4 mt-2 w-full sm:max-w-[400px] mx-auto"
     >
       <div className="space-y-2">
-        <Label htmlFor="spaceName">
-          Space name <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="spaceName">Space name</Label>
         <Controller
           name="spaceName"
           control={control}
@@ -87,7 +113,7 @@ export default function TestimonialEditFormView() {
             <>
               <Input placeholder="Space name" {...field} disabled />
               <h1 className="text-muted-foreground text-sm">
-                Public url will be testimonial.to/public
+                Public url will be testimonial.to/
                 {field.value || "your-space-name"}
               </h1>
               <p className="text-destructive text-xs">
@@ -98,15 +124,13 @@ export default function TestimonialEditFormView() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="spaceLogoUrl">
-          Space logo <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="spaceLogoUrl">Space logo</Label>
         <Controller
-          name="spaceLogoUrl"
+          name="logo"
           control={control}
           render={({ field }) => (
             <>
-              {/* <Input
+              <Input
                 id="file"
                 className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
                 type="file"
@@ -115,17 +139,20 @@ export default function TestimonialEditFormView() {
                   field.onChange(e);
                   if (e.target.files && e.target.files[0]) {
                     setFileSelected(e.target.files[0]);
+                    const file = e.target.files[0];
+                    updateSpaceField("logo", URL.createObjectURL(file));
                   }
                 }}
                 // {...field}
-              /> */}
-              {/* {isFileSelected && (
+              />
+              {fileSelected && (
                 <Button
                   variant="outline"
                   onClick={() => {
                     setFileSelected(null);
-                    // field.onChange(null);
-                    setValue("spaceLogoUrl", "");
+                    console.log(initialLogoRef.current);
+                    setValue("logo", initialLogoRef.current || "");
+                    updateSpaceField("logo", initialLogoRef.current || "");
                     const node = document.getElementById(
                       "file"
                     ) as HTMLInputElement;
@@ -136,15 +163,13 @@ export default function TestimonialEditFormView() {
                   <XCircle size={16} className="-ms-1 me-2 opacity-60" />
                   Remove
                 </Button>
-              )} */}
+              )}
             </>
           )}
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="headerTitle">
-          Header title <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="headerTitle">Header title</Label>
         <Controller
           name="headerTitle"
           control={control}
@@ -167,9 +192,7 @@ export default function TestimonialEditFormView() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="customMessage">
-          Your custom message <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="customMessage">Your custom message</Label>
         <Controller
           name="customMessage"
           control={control}
@@ -254,19 +277,8 @@ export default function TestimonialEditFormView() {
             )}
           />
         </div>
-        {/* <div className="flex flex-col gap-y-2">
-          <Label htmlFor="chooseTheme">Choose theme</Label>
-          <Controller
-            name="chooseTheme"
-            control={control}
-            defaultValue={false}
-            render={({ field }) => (
-              <Switch className="rounded-md [&_span]:rounded" {...field} />
-            )}
-          />
-        </div> */}
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-start">
         <Button
           type="submit"
           className="w-full sm:max-w-[300px]"
