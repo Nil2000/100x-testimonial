@@ -140,20 +140,36 @@ enum FeedbackType {
   TEXT_AND_VIDEO
 }
 
+enum SentimentType {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+enum AnalysisStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
 model Feedback {
-  id              String       @id @default(cuid())
+  id              String         @id @default(cuid())
   answer          String?
   name            String
   email           String
   rating          Int
   permission      Boolean
   spaceId         String
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   feedbackType    FeedbackType
-  addToWallOfLove Boolean      @default(false)
+  addToWallOfLove Boolean        @default(false)
   videoUrl        String?
   imageUrl        String?
+  isSpam          Boolean        @default(false)
+  sentiment       SentimentType  @default(NEUTRAL)
+  analysisStatus  AnalysisStatus @default(PENDING)
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

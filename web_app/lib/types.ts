@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { AnalysisStatus, SentimentType } from "./db";
 
 export interface CreateSpaceQuestion {
   id: string;
@@ -54,6 +55,9 @@ export interface TestimonialResponse {
   addToWallOfLove: boolean;
   videoUrl: string | null;
   imageUrl: string | null;
+  isSpam: boolean;
+  sentiment: SentimentType;
+  analysisStatus: AnalysisStatus;
 }
 
 export type SingleTestimonialWithSpaceLogo = TestimonialResponse & {
