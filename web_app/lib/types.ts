@@ -65,3 +65,9 @@ export type SingleTestimonialWithSpaceLogo = TestimonialResponse & {
     logo: string | null;
   };
 };
+
+export interface UpdateTestimonialStatus {
+  isSpam: boolean;
+  sentiment: SentimentType;
+  analysisStatus: AnalysisStatus;
+}
