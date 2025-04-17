@@ -9,7 +9,7 @@ export const sendMessageToQueue = async (message: string, key?: string) => {
       throw new Error("Producer not initialized");
     }
 
-    const topic = process.env.KAFKA_TOPIC || "testimonials";
+    const topic = "test-topic"; // Replace with your topic name
     await producer.send({
       topic,
       messages: [
