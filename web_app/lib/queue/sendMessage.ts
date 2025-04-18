@@ -1,7 +1,12 @@
 import { createId } from "@paralleldrive/cuid2";
 import { getProducer } from "./client";
+import { KAFKA_QUEUE } from "../constants";
 
-export const sendMessageToQueue = async (message: string, key?: string) => {
+export const sendMessageToQueue = async (
+  message: string,
+  feedbackType: "TEXT" | "VIDEO",
+  key?: string
+) => {
   try {
     const producer = await getProducer();
 
@@ -9,7 +14,10 @@ export const sendMessageToQueue = async (message: string, key?: string) => {
       throw new Error("Producer not initialized");
     }
 
-    const topic = "test-topic"; // Replace with your topic name
+    const topic =
+      feedbackType === "TEXT"
+        ? KAFKA_QUEUE.text_topic
+        : KAFKA_QUEUE.video_topic; // Determine the topic based on feedback type
     await producer.send({
       topic,
       messages: [

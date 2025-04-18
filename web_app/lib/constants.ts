@@ -42,3 +42,8 @@ export const videoJSOptions = {
 export const feedbackPerPage = 5;
 
 export const debounceTime = 300;
+
+export const KAFKA_QUEUE = {
+  text_topic: "text-processor",
+  video_topic: "video-processor",
+};

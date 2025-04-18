@@ -1,22 +1,33 @@
 import { Kafka } from "kafkajs";
 
-const kafka = new Kafka({
-  clientId: "my-app",
-  brokers: ["host.docker.internal:9092"],
-});
-
-const consumer = kafka.consumer({ groupId: "test-group" });
+const getKafkaConsumer = (groupId: string) => {
+  const kafka = new Kafka({
+    clientId: "my-app",
+    brokers: ["host.docker.internal:9092"],
+  });
+  const consumer = kafka.consumer({ groupId: "test-group" });
+  return consumer;
+};
 
 type Props = {
+  topic: string;
+  groupId: string;
   processMessage: (message: string) => void;
 };
 
-export const startGettingMessageFromQueue = async () => {
+export const startGettingMessageFromQueue = async ({
+  topic,
+  groupId,
+  processMessage,
+}: Props) => {
+  const consumer = getKafkaConsumer(groupId);
+
   await consumer.connect();
   await consumer.subscribe({
-    topic: "test-topic",
+    topic,
     fromBeginning: true,
   });
+
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       console.log({
