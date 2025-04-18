@@ -2,10 +2,10 @@ import { Kafka } from "kafkajs";
 
 const getKafkaConsumer = (groupId: string) => {
   const kafka = new Kafka({
-    clientId: "my-app",
-    brokers: ["host.docker.internal:9092"],
+    clientId: process.env.KAFKA_CLIENT_ID || "kafka-client",
+    brokers: [process.env.KAFKA_BROKER || "localhost:9092"],
   });
-  const consumer = kafka.consumer({ groupId: "test-group" });
+  const consumer = kafka.consumer({ groupId });
   return consumer;
 };
 

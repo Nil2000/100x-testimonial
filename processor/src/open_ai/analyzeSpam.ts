@@ -3,7 +3,8 @@ import { openAiClient } from "./client";
 export const analyzeSpam = async (message: string) => {
   const response = await openAiClient.responses.create({
     model: "gpt-3.5-turbo",
-    instructions: "Answer with yes or no. Is this message spam?",
+    instructions:
+      "Determine if the following testimonial submission is spam or not.Respond with one word only: 'yes' or 'no'",
     input: message,
   });
 
@@ -11,9 +12,9 @@ export const analyzeSpam = async (message: string) => {
     throw new Error(response.error.message);
   }
 
-  if (response.output_text === "yes") {
+  if (response.output_text.toLocaleLowerCase().includes("yes")) {
     return true;
-  } else if (response.output_text === "no") {
+  } else {
     return false;
   }
 };

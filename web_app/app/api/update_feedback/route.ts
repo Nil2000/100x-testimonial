@@ -4,11 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PUT(req: NextRequest, res: NextResponse) {
   const token = req.headers.get("Authorization")?.split(" ")[1];
 
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (token !== process.env.INTERNAL_API_KEY) {
+  if (!token || token.length === 0 || token !== process.env.INTERNAL_API_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

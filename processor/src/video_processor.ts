@@ -1,8 +1,8 @@
 import { startGettingMessageFromQueue } from "./queue/client";
 
 const videoProcessorIp = {
-  topic: "video-processor",
-  groupId: "video-processor-group",
+  topic: process.env.KAFKA_VIDEO_TOPIC || "video-processor-topic",
+  groupId: process.env.KAFKA_VIDEO_GROUP_ID || "video-processor-group",
   processMessage: async (message: string) => {
     console.log("Processing message:", message);
     // Here you can add your processing logic

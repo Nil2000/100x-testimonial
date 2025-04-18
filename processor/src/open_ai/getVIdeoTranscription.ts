@@ -1,11 +1,11 @@
 import { openAiClient } from "./client";
 import fs from "fs";
 
-export const getVideoTranscription = async (videoUrl: string) => {
+export const getVideoTranscription = async (filePathUrl: string) => {
   try {
     const transcription = await openAiClient.audio.transcriptions.create({
-      model: "gpt-4o-transcribe",
-      file: fs.createReadStream(videoUrl),
+      model: process.env.OPENAI_TRANSCRIPT_MODEL || "gpt-4o-transcribe",
+      file: fs.createReadStream(filePathUrl),
       response_format: "text",
     });
 

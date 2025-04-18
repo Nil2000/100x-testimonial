@@ -16,8 +16,8 @@ export const sendMessageToQueue = async (
 
     const topic =
       feedbackType === "TEXT"
-        ? KAFKA_QUEUE.text_topic
-        : KAFKA_QUEUE.video_topic; // Determine the topic based on feedback type
+        ? process.env.KAFKA_TEXT_TOPIC || KAFKA_QUEUE.text_topic
+        : process.env.KAFKA_VIDEO_TOPIC || KAFKA_QUEUE.video_topic;
     await producer.send({
       topic,
       messages: [

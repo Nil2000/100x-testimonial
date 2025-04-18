@@ -6,7 +6,7 @@ export const getProducer = async () => {
   if (!producer) {
     kafka_client = new Kafka({
       clientId: process.env.KAFKA_CLIENT_ID || "my-app",
-      brokers: ["host.docker.internal:9092"],
+      brokers: [process.env.KAFKA_BROKER || "localhost:9092"],
     });
     producer = kafka_client.producer();
     await producer.connect();

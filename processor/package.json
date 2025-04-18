@@ -4,17 +4,20 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/download": "^8.0.5"
   },
   "scripts": {
     "start": "bun run index.ts",
-    "text_processor": "bun run text_processor.ts",
-    "video_processor": "bun run video_processor.ts"
+    "text_processor": "bun run src/text_processor.ts",
+    "video_processor": "bun run src/video_processor.ts"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "axios": "^1.8.4",
+    "download": "^8.0.0",
     "kafkajs": "^2.2.4",
     "openai": "^4.95.0"
   }

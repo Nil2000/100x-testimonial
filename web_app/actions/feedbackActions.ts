@@ -7,6 +7,7 @@ import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 import videoFeedbackSchema, {
   VideoFeedback,
 } from "@/schemas/videoFeedbackSchema";
+import { createId } from "@paralleldrive/cuid2";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -30,26 +31,35 @@ export const submitTextFeedback = async (
   }
 
   try {
-    // const feedback = await db.feedback.create({
-    //   data: {
-    //     ...values,
-    //     feedbackType,
-    //     space: {
-    //       connect: {
-    //         id: spaceId,
-    //       },
-    //     },
-    //   },
-    // });
+    const feedback = await db.feedback.create({
+      data: {
+        ...values,
+        feedbackType,
+        space: {
+          connect: {
+            id: spaceId,
+          },
+        },
+      },
+    });
 
-    const dummyFeedback = {
-      ...values,
-      feedbackType,
-      spaceId,
-      userId: session.user.id,
-    };
+    const response = await sendMessageToQueue(
+      JSON.stringify({
+        id: feedback.id,
+        answer: feedback.answer,
+        name: feedback.name,
+        email: feedback.email,
+        spaceId: feedback.spaceId,
+      }),
+      "TEXT",
+      feedback.id
+    );
 
-    await sendMessageToQueue(JSON.stringify(dummyFeedback));
+    if (response.error) {
+      return {
+        error: response.error,
+      };
+    }
 
     return {
       message: "Feedback submitted",
