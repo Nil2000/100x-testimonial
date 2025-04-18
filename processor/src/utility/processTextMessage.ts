@@ -1,7 +1,7 @@
 import axios from "axios";
-import { analyzeSentiment } from "../src/open_ai/analyzeSentiment";
-import { analyzeSpam } from "../src/open_ai/analyzeSpam";
-import type { TextFeedback } from "../src/types";
+import { analyzeSentiment } from "../open_ai/analyzeSentiment";
+import { analyzeSpam } from "../open_ai/analyzeSpam";
+import type { TextFeedback } from "../types";
 import { updateFeedback } from "./updateFeedback";
 
 const generateForTextFeedback = (feedback: TextFeedback) => {
@@ -25,6 +25,8 @@ export const processTextMessage = async (message: string) => {
 
     const isSpam = await analyzeSpam(messageToAnalyze);
 
+    console.log("Spam analysis result:", isSpam);
+
     if (isSpam) {
       await updateFeedback({
         feedbackId: feedback.id,
@@ -36,6 +38,8 @@ export const processTextMessage = async (message: string) => {
     }
 
     const sentiment = await analyzeSentiment(messageToAnalyze);
+
+    console.log("Sentiment analysis result:", sentiment);
 
     await updateFeedback({
       feedbackId: feedback.id,

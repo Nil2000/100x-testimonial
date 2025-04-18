@@ -12,5 +12,8 @@ export const analyzeSentiment = async (message: string) => {
     throw new Error(response.error.message);
   }
 
-  return response.output_text;
+  return response.output_text.toUpperCase() as
+    | "POSITIVE"
+    | "NEGATIVE"
+    | "NEUTRAL";
 };

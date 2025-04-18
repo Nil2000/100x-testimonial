@@ -46,14 +46,22 @@ export async function PUT(req: NextRequest, res: NextResponse) {
       );
     }
 
-    if (sentiment && typeof sentiment !== typeof SentimentType) {
+    if (
+      sentiment &&
+      typeof sentiment !== "string" &&
+      !Object.values(SentimentType).includes(sentiment)
+    ) {
       return NextResponse.json(
         { error: "Invalid sentiment type" },
         { status: 400 }
       );
     }
 
-    if (analysisStatus && typeof analysisStatus !== typeof AnalysisStatus) {
+    if (
+      analysisStatus &&
+      typeof analysisStatus !== "string" &&
+      !Object.values(AnalysisStatus).includes(analysisStatus)
+    ) {
       return NextResponse.json(
         { error: "Invalid analysis status type" },
         { status: 400 }

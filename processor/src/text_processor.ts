@@ -1,4 +1,4 @@
-import { processTextMessage } from "../utility/processTextMessage";
+import { processTextMessage } from "./utility/processTextMessage";
 import { startGettingMessageFromQueue } from "./queue/client";
 
 const textProcessorIp = {

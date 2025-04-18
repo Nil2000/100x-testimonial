@@ -12,7 +12,7 @@ const getKafkaConsumer = (groupId: string) => {
 type Props = {
   topic: string;
   groupId: string;
-  processMessage: (message: string) => void;
+  processMessage: (message: string) => Promise<void>;
 };
 
 export const startGettingMessageFromQueue = async ({
@@ -25,7 +25,7 @@ export const startGettingMessageFromQueue = async ({
   await consumer.connect();
   await consumer.subscribe({
     topic,
-    fromBeginning: true,
+    fromBeginning: false,
   });
 
   await consumer.run({
@@ -36,6 +36,13 @@ export const startGettingMessageFromQueue = async ({
         topic,
         partition,
       });
+
+      if (message.value) {
+        processMessage(message.value.toString()).catch((error) => {
+          console.error("Error processing message:", error.message);
+          console.log(error.stack);
+        });
+      }
     },
   });
 };
