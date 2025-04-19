@@ -10,6 +10,7 @@ import React from "react";
 import SelectWrapper from "./select-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
+import { UPLOAD_VIDEO_MAX_DURATION } from "@/lib/constants";
 
 export default function REcordVideoDialogComponent({
   open,
@@ -31,6 +32,8 @@ export default function REcordVideoDialogComponent({
   const [recording, setRecording] = React.useState(false);
   const [recordedChunks, setRecordedChunks] = React.useState<Blob[]>([]);
   const [deviceChanging, setDeviceChanging] = React.useState(false);
+  const [leftTime, setLeftTime] = React.useState(UPLOAD_VIDEO_MAX_DURATION);
+  const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const handleStartRecording = () => {
     if (
@@ -47,6 +50,10 @@ export default function REcordVideoDialogComponent({
       };
       setRecordedChunks(tempChunks);
       setRecording(true);
+      setLeftTime(UPLOAD_VIDEO_MAX_DURATION);
+      intervalRef.current = setInterval(() => {
+        setLeftTime((prev) => prev - 1);
+      }, 1000);
     }
   };
 
@@ -62,11 +69,13 @@ export default function REcordVideoDialogComponent({
           type: "video/x-matroska;codecs=avc1,opus",
         });
         // const url = URL.createObjectURL(blob);
+        console.log(blob);
         onSubmitFeedback(blob);
         setRecordedChunks([]);
       };
       setRecording(false);
     }
+    intervalRef.current = null;
   };
 
   const handleDeviceChange = (
@@ -163,6 +172,39 @@ export default function REcordVideoDialogComponent({
     };
   }, [open]);
 
+  React.useEffect(() => {
+    if (leftTime <= 0) {
+      clearInterval(intervalRef.current!);
+      handleStopRecording();
+    }
+  }, [leftTime]);
+
+  React.useEffect(() => {
+    if (recording) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(() => {
+        setLeftTime((prev) => prev - 1);
+      }, 1000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [recording]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+
   return (
     <Dialog
       open={open}
@@ -207,12 +249,12 @@ export default function REcordVideoDialogComponent({
             } ${recording ? "ring-1 ring-red-500" : ""}`}
           />
           {recording && (
-            <Badge className="absolute top-2 right-2 gap-1.5 animate-pulse text-red-500 bg-transparent border-red-500 font-bold border-2">
+            <Badge className="absolute top-2 right-2 gap-1.5 text-red-500 bg-transparent border-red-500 font-bold border-2">
               <span
                 className="size-1.5 rounded-full bg-red-500"
                 aria-hidden="true"
               ></span>
-              Recording
+              {formatTime(leftTime)}
             </Badge>
           )}
         </div>

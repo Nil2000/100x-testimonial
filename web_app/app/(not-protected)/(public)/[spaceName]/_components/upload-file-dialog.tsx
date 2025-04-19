@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { UPLOAD_VIDEO_MAX_SIZE } from "@/lib/constants";
 import React, { useState } from "react";
 
 export default function UploadFileDialog({
@@ -43,6 +44,18 @@ export default function UploadFileDialog({
   const handleSubmitFile = (file: Blob) => {
     if (file) {
       // const url = URL.createObjectURL(file);
+
+      if (file.size > UPLOAD_VIDEO_MAX_SIZE) {
+        // TODO: Show toast notification instead of alert
+        alert(
+          `File size exceeds the limit of ${
+            UPLOAD_VIDEO_MAX_SIZE / (1024 * 1024)
+          } MB`
+        );
+        fileInputRef.current!.value = ""; // Clear the file input
+        return;
+      }
+      console.log("File size:", file.size);
       onSubmitFeedback(file);
       onClose();
     }
