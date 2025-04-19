@@ -3,12 +3,14 @@ import download from "download";
 
 export const downloadToTemp = async (url: string) => {
   const fileType = url.split(".").pop() || "mp4";
-  const fileName = __dirname + `/temp/tempfile.${fileType}`;
-  const file = fs.createWriteStream(fileName);
+  const fileName = `tempFile_${Date.now()}.${fileType}`;
+  const filePath = `./temp/`;
 
-  fs.writeFileSync(fileName, await download(url));
+  await download(url, "./temp", {
+    filename: fileName,
+  });
 
-  return fileName;
+  return filePath + fileName;
 };
 
 export const deleteTempFile = (fileName: string) => {

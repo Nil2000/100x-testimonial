@@ -10,53 +10,69 @@ const generateForTextFeedback = (feedback: TextFeedback) => {
 };
 
 export const processVideoMessage = async (message: string) => {
-  const videoMessage = JSON.parse(message) as VideoFeedback;
+  try {
+    const videoMessage = JSON.parse(message) as VideoFeedback;
 
-  const { videoUrl, name, email, spaceId } = videoMessage;
+    console.log("Processing video message:", videoMessage);
 
-  const filePath = await downloadToTemp(videoUrl);
+    if (!videoMessage.videoUrl) {
+      await updateFeedback({
+        feedbackId: videoMessage.id,
+        spaceId: videoMessage.spaceId,
+        isSpam: true,
+        analysisStatus: "COMPLETED",
+      });
+      return;
+    }
 
-  console.log(`File downloaded to: ${filePath}`);
+    const { videoUrl, name, email, spaceId } = videoMessage;
 
-  const transcription = await getVideoTranscription(filePath);
+    const filePath = await downloadToTemp(videoUrl);
 
-  console.log(`Transcription: ${transcription}`);
+    console.log(`File downloaded to: ${filePath}`);
 
-  const messageToAnalyze = generateForTextFeedback({
-    id: videoMessage.id,
-    answer: transcription,
-    name,
-    email,
-    spaceId,
-  });
+    const transcription = await getVideoTranscription(filePath);
 
-  const isSpam = await analyzeSpam(messageToAnalyze);
+    console.log(`Transcription: ${transcription}`);
 
-  console.log(`Spam Analysis: ${isSpam}`);
+    const messageToAnalyze = generateForTextFeedback({
+      id: videoMessage.id,
+      answer: transcription,
+      name,
+      email,
+      spaceId,
+    });
 
-  if (isSpam) {
+    const isSpam = await analyzeSpam(messageToAnalyze);
+
+    console.log(`Spam Analysis: ${isSpam}`);
+
+    if (isSpam) {
+      await updateFeedback({
+        feedbackId: videoMessage.id,
+        spaceId,
+        isSpam,
+        analysisStatus: "COMPLETED",
+      });
+
+      deleteTempFile(filePath);
+      return;
+    }
+
+    const sentiment = await analyzeSentiment(transcription);
+
+    console.log(`Sentiment Analysis: ${sentiment}`);
+
     await updateFeedback({
       feedbackId: videoMessage.id,
       spaceId,
       isSpam,
+      sentiment,
       analysisStatus: "COMPLETED",
     });
 
     deleteTempFile(filePath);
-    return;
+  } catch (error) {
+    console.log("Error processing video message:", error);
   }
-
-  const sentiment = await analyzeSentiment(transcription);
-
-  console.log(`Sentiment Analysis: ${sentiment}`);
-
-  await updateFeedback({
-    feedbackId: videoMessage.id,
-    spaceId,
-    isSpam,
-    sentiment,
-    analysisStatus: "COMPLETED",
-  });
-
-  deleteTempFile(filePath);
 };

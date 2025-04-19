@@ -55,7 +55,6 @@ export default function UploadFileDialog({
         fileInputRef.current!.value = ""; // Clear the file input
         return;
       }
-      console.log("File size:", file.size);
       onSubmitFeedback(file);
       onClose();
     }

@@ -104,14 +104,6 @@ export const submitVideoFeedback = async (
   spaceId: string,
   values: VideoFeedback
 ) => {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
-  }
-
   const validateFields = videoFeedbackSchema.safeParse(values);
 
   if (validateFields.error) {
@@ -133,7 +125,23 @@ export const submitVideoFeedback = async (
       },
     });
 
-    // await sendToQueue(JSON.stringify(feedback));
+    const response = await sendMessageToQueue(
+      JSON.stringify({
+        id: feedback.id,
+        videoUrl: feedback.videoUrl,
+        name: feedback.name,
+        email: feedback.email,
+        spaceId: feedback.spaceId,
+      }),
+      "VIDEO",
+      feedback.id
+    );
+
+    if (response.error) {
+      return {
+        error: response.error,
+      };
+    }
 
     return {
       message: "Feedback submitted",

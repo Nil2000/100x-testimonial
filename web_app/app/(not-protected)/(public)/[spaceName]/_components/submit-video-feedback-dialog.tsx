@@ -86,7 +86,6 @@ export default function SubmitVideoFeedbackDialog({
     catgeory: string
   ) => {
     if (!file) return;
-    console.log(file);
     const url = await uploadFileToBucket({
       file: file,
       key: `space/${spaceName}/${catgeory}/${createId() + createId()}.${
@@ -117,8 +116,6 @@ export default function SubmitVideoFeedbackDialog({
         }
 
         if (Object.keys(errors).length === 0) {
-          console.log(data);
-
           if (!videoFileBlob) {
             console.error("No video file found");
             return;
