@@ -10,3 +10,13 @@ export const downloadToTemp = async (url: string) => {
 
   return fileName;
 };
+
+export const deleteTempFile = (fileName: string) => {
+  fs.unlink(fileName, (err) => {
+    if (err) {
+      console.error("Error deleting temp file:", err);
+    } else {
+      console.log("Temp file deleted successfully:", fileName);
+    }
+  });
+};
