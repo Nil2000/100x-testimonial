@@ -3,7 +3,7 @@ import React from "react";
 import VerticalTabsWrapper from "./vertical-tabs-wrapper";
 import TestimonialView from "./testimonial-view";
 import ThankYouView from "./thankyou-view";
-import PublishView from "./publish-view";
+import SpaceControlView from "./space-control-view";
 
 const EditSpaceVerticalTabs = [
   {
@@ -15,8 +15,8 @@ const EditSpaceVerticalTabs = [
     tabContent: <ThankYouView />,
   },
   {
-    tabTitle: "Publish view",
-    tabContent: <PublishView />,
+    tabTitle: "Space control",
+    tabContent: <SpaceControlView />,
   },
 ];
 

@@ -1,15 +1,14 @@
-"use client";
 import { changeSpaceStatus } from "@/actions/spaceActions";
 import { Switch } from "@/components/ui/switch";
 import { useSpaceStore } from "@/store/spaceStore";
 import React from "react";
 
-export default function PublishView() {
+export default function PublishSpaceSwitch() {
   const { spaceInfo, updateSpaceField } = useSpaceStore();
   const [loading, setLoading] = React.useState(false);
 
   return (
-    <div className="grid grid-cols-2 p-4">
+    <>
       <h1 className="flex items-center">Testimonial public view status</h1>
       <div>
         <div className="relative inline-grid h-9 grid-cols-[1fr_1fr] items-center text-sm font-medium">
@@ -41,6 +40,6 @@ export default function PublishView() {
           </span>
         </div>
       </div>
-    </div>
+    </>
   );
 }

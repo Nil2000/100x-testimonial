@@ -4,8 +4,6 @@ import AccordionMenuList from "./accordion-menu-list";
 import { manageTestimonialsSidebarElements } from "./constants";
 
 export default function ManageSidebar() {
-  const [feedbackInfo, setFeedbackInfo] = React.useState<any>(null);
-  const [isShareDialogOpen, setIsShareDialogOpen] = React.useState(false);
   return (
     <Tabs
       defaultValue="All"

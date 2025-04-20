@@ -7,26 +7,27 @@ import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 import videoFeedbackSchema, {
   VideoFeedback,
 } from "@/schemas/videoFeedbackSchema";
-import { createId } from "@paralleldrive/cuid2";
 
 export const submitTextFeedback = async (
   spaceId: string,
   values: Feedback,
   feedbackType: FeedbackType
 ) => {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
-  }
-
   const validateFields = feedbackSchema.safeParse(values);
 
   if (validateFields.error) {
     return {
       error: "Invalid fields",
+    };
+  }
+
+  const space = await db.space.findUnique({
+    where: { id: spaceId },
+  });
+
+  if (!space) {
+    return {
+      error: "Space not found",
     };
   }
 
@@ -43,22 +44,31 @@ export const submitTextFeedback = async (
       },
     });
 
-    const response = await sendMessageToQueue(
-      JSON.stringify({
-        id: feedback.id,
-        answer: feedback.answer,
-        name: feedback.name,
-        email: feedback.email,
-        spaceId: feedback.spaceId,
-      }),
-      "TEXT",
-      feedback.id
-    );
+    if (space.isAnalysisEnabled) {
+      const response = await sendMessageToQueue(
+        JSON.stringify({
+          id: feedback.id,
+          answer: feedback.answer,
+          name: feedback.name,
+          email: feedback.email,
+          spaceId: feedback.spaceId,
+        }),
+        "TEXT",
+        feedback.id
+      );
 
-    if (response.error) {
-      return {
-        error: response.error,
-      };
+      if (response.error) {
+        return {
+          error: response.error,
+        };
+      }
+    } else {
+      await db.feedback.update({
+        where: { id: feedback.id },
+        data: {
+          analysisStatus: "FAILED",
+        },
+      });
     }
 
     return {
@@ -112,6 +122,16 @@ export const submitVideoFeedback = async (
     };
   }
 
+  const space = await db.space.findUnique({
+    where: { id: spaceId },
+  });
+
+  if (!space) {
+    return {
+      error: "Space not found",
+    };
+  }
+
   try {
     const feedback = await db.feedback.create({
       data: {
@@ -125,22 +145,24 @@ export const submitVideoFeedback = async (
       },
     });
 
-    const response = await sendMessageToQueue(
-      JSON.stringify({
-        id: feedback.id,
-        videoUrl: feedback.videoUrl,
-        name: feedback.name,
-        email: feedback.email,
-        spaceId: feedback.spaceId,
-      }),
-      "VIDEO",
-      feedback.id
-    );
+    if (space.isAnalysisEnabled) {
+      const response = await sendMessageToQueue(
+        JSON.stringify({
+          id: feedback.id,
+          videoUrl: feedback.videoUrl,
+          name: feedback.name,
+          email: feedback.email,
+          spaceId: feedback.spaceId,
+        }),
+        "VIDEO",
+        feedback.id
+      );
 
-    if (response.error) {
-      return {
-        error: response.error,
-      };
+      if (response.error) {
+        return {
+          error: response.error,
+        };
+      }
     }
 
     return {

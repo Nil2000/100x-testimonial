@@ -77,22 +77,23 @@ enum CollectionType {
 }
 
 model Space {
-  id             String         @id @default(cuid())
-  name           String
-  logo           String?
-  headerTitle    String
-  headerSubtitle String
-  questions      Question[]
-  collectionType CollectionType
-  collectStar    Boolean
+  id                String         @id @default(cuid())
+  name              String
+  logo              String?
+  headerTitle       String
+  headerSubtitle    String
+  questions         Question[]
+  collectionType    CollectionType
+  collectStar       Boolean
+  isAnalysisEnabled Boolean        @default(false)
   // themeId        String         @unique
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  createdById    String
-  createdBy      User           @relation(fields: [createdById], references: [id])
-  thankyouSpace  ThankYouSpace?
-  isPublished    Boolean        @default(false)
-  feedbacks      Feedback[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  createdById       String
+  createdBy         User           @relation(fields: [createdById], references: [id])
+  thankyouSpace     ThankYouSpace?
+  isPublished       Boolean        @default(false)
+  feedbacks         Feedback[]
   // theme          Theme          @relation(fields: [themeId], references: [id])
 }
 
@@ -129,7 +130,7 @@ model ThankYouSpace {
   title     String
   message   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

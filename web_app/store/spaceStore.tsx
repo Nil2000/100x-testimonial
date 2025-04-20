@@ -22,6 +22,7 @@ type SpaceInfo = {
     title: string;
     message: string;
   };
+  isAnalysisEnabled?: boolean;
 };
 
 interface SpaceStore {
@@ -42,6 +43,7 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
     name: "",
     questions: [],
     isPublished: false,
+    isAnalysisEnabled: false,
     thanksSpace: {
       id: "",
       title: "",

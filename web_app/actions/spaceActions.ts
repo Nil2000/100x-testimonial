@@ -268,3 +268,29 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
     data: feedbacks,
   };
 };
+
+export const toggleAnalysis = async (id: string, status: boolean) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  try {
+    await db.space.update({
+      where: {
+        id,
+      },
+      data: {
+        isAnalysisEnabled: status,
+      },
+    });
+    return {
+      message: "Space analysis status updated successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};
