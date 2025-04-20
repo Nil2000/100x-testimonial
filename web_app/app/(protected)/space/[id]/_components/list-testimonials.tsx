@@ -12,6 +12,32 @@ import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
 import ShareTestimonialDialog from "./share-testimonial-dialog";
 import GetLinkDialog from "./getlink-dialog";
+import SortByDropDown from "./sortby-dropdown";
+
+// Sorting function
+const sortTestimonials = (
+  testimonials: TestimonialResponse[],
+  sortBy: string
+) => {
+  switch (sortBy) {
+    case "name-asc":
+      return [...testimonials].sort((a, b) => a.name.localeCompare(b.name));
+    case "name-desc":
+      return [...testimonials].sort((a, b) => b.name.localeCompare(a.name));
+    case "newest-first":
+      return [...testimonials].sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+    case "oldest-first":
+      return [...testimonials].sort(
+        (a, b) =>
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+      );
+    default:
+      return testimonials;
+  }
+};
 
 type Props = {
   category?: string;
@@ -35,6 +61,7 @@ export default function ListTestimonials({
     React.useState<TestimonialResponse | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [sortBy, setSortBy] = React.useState("name-asc"); // Added state for sorting
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { spaceInfo } = useSpaceStore();
   const [openGetlinkDialog, setOpenGetLinkDialog] = React.useState(false);
@@ -106,10 +133,12 @@ export default function ListTestimonials({
     );
   });
 
+  const sortedTestimonials = sortTestimonials(filteredTestimonials, sortBy); // Apply sorting
+
   const getTestimonialsByPage = () => {
     const start = (currentPage - 1) * feedbackPerPage;
     const end = start + feedbackPerPage;
-    return filteredTestimonials.slice(start, end);
+    return sortedTestimonials.slice(start, end);
   };
 
   const totalPages = Math.ceil(filteredTestimonials.length / feedbackPerPage);
@@ -128,6 +157,7 @@ export default function ListTestimonials({
             <SearchIcon size={16} />
           </div>
         </div>
+        <SortByDropDown onChange={setSortBy} defaultValue={"name-asc"} />
       </div>
       {!filteredTestimonials.length && (
         <div className="w-full text-center text-muted-foreground text-sm italic">

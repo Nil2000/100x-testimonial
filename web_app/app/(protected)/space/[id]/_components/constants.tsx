@@ -38,7 +38,7 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "Spam",
           icon: MessageSquareWarningIcon,
-          tabContent: <ListTestimonials archived={true} />,
+          tabContent: <ListTestimonials category="SPAM" />,
         },
       ],
     },
