@@ -21,7 +21,7 @@ type Props = {
 export default function SortByDropDown({ onChange, defaultValue }: Props) {
   return (
     <Select onValueChange={onChange} defaultValue={defaultValue}>
-      <SelectTrigger className="[&>span_svg]:text-muted-foreground/80 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0 w-[200px]">
+      <SelectTrigger className="[&>span_svg]:text-muted-foreground/80 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0 w-[220px] bg-background">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent className="[&_*[role=option]>span>svg]:text-muted-foreground/80 [&_*[role=option]>span]:flex [&_*[role=option]>span]:gap-2 [&_*[role=option]>span>svg]:shrink-0 font-sans">

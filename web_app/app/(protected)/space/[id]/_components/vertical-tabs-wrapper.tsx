@@ -18,9 +18,13 @@ export default function VerticalTabsWrapper({
       orientation="vertical"
       className="flex w-full gap-2"
     >
-      <TabsList className="flex-col justify-start">
+      <TabsList className="flex-col justify-start sm:w-44 mx-auto w-full">
         {tabs.map((tab, index) => (
-          <TabsTrigger value={`tab-${index + 1}`} key={`tab-${index + 1}`}>
+          <TabsTrigger
+            value={`tab-${index + 1}`}
+            key={`tab-${index + 1}`}
+            className="w-full"
+          >
             {tab.tabTitle}
           </TabsTrigger>
         ))}

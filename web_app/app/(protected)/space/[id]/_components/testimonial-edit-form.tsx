@@ -244,7 +244,10 @@ export default function TestimonialEditFormView() {
               }}
               value={field.value}
             >
-              <SelectTrigger name="options" className="w-full md:w-56">
+              <SelectTrigger
+                name="options"
+                className="w-full md:w-56 bg-background"
+              >
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="font-sans">
