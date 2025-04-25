@@ -52,3 +52,14 @@ export const UPLOAD_VIDEO_MAX_SIZE =
   Number(process.env.NEXT_PUBLIC_UPLOAD_VIDEO_MAX_SIZE || "5") * 1024 * 1024; // 10 MB
 export const UPLOAD_VIDEO_MAX_DURATION =
   Number(process.env.NEXT_PUBLIC_UPLOAD_VIDEO_MAX_DURATION || "5") * 60; // 300 seconds
+
+export const DROPDOWN_ANALYTICS_PAGE_OPTIONS = [
+  {
+    value: "req-test-page",
+    name: "Request Testimonial Page",
+  },
+  {
+    value: "wall-of-love-page",
+    name: "Wall of Love Page",
+  },
+];

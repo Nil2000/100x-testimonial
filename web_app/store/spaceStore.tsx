@@ -49,6 +49,8 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
       title: "",
       message: "",
     },
+    createdAt: new Date(Date.now()),
+    updatedAt: new Date(Date.now()),
   },
   setSpaceInfo: (info: any) =>
     set({

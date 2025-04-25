@@ -4,6 +4,7 @@ import VerticalTabsWrapper from "./vertical-tabs-wrapper";
 import TestimonialView from "./testimonial-view";
 import ThankYouView from "./thankyou-view";
 import SpaceControlView from "./space-control-view";
+import AnalyticsTabView from "./analytics-tab-view";
 
 const EditSpaceVerticalTabs = [
   {
@@ -17,6 +18,10 @@ const EditSpaceVerticalTabs = [
   {
     tabTitle: "Space control",
     tabContent: <SpaceControlView />,
+  },
+  {
+    tabTitle: "Analytics",
+    tabContent: <AnalyticsTabView />,
   },
 ];
 

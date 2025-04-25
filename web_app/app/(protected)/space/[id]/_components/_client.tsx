@@ -11,7 +11,7 @@ export default function SpacePage({ id }: { id: string }) {
 
   const fetchSpaceInfo = async () => {
     try {
-      const res = await axios.get(`/api/spaces/${id}`);
+      const res = await axios.get(`/api/space/${id}`);
       console.log("Space info", res.data);
       setSpaceInfo(res.data.space);
     } catch (error) {
