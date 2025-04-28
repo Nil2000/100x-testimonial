@@ -16,7 +16,7 @@ export default function VerticalTabsWrapper({
     <Tabs
       defaultValue="tab-1"
       orientation="vertical"
-      className="flex w-full gap-2"
+      className="flex w-full gap-2 flex-col sm:flex-row"
     >
       <TabsList className="flex-col justify-start sm:w-44 mx-auto w-full">
         {tabs.map((tab, index) => (
