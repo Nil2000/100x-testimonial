@@ -94,6 +94,7 @@ model Space {
   thankyouSpace     ThankYouSpace?
   isPublished       Boolean        @default(false)
   feedbacks         Feedback[]
+  DailyMetrics      DailyMetrics[]
   // theme          Theme          @relation(fields: [themeId], references: [id])
 }
 
@@ -173,4 +174,23 @@ model Feedback {
   analysisStatus  AnalysisStatus @default(PENDING)
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
+
+model DailyMetrics {
+  id                    String   @id @default(cuid())
+  spaceId               String
+  date                  DateTime @db.Date
+  pageViews             Int      @default(0)
+  visitors              Int      @default(0)
+  completedActions      Int      @default(0)
+  timeSpentOnWallOfLove Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@unique([spaceId, date])
+  @@index([date])
+  @@index([spaceId, date])
 }

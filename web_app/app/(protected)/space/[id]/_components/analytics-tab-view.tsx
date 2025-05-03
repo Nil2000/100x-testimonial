@@ -2,7 +2,7 @@ import SelectWrapper from "@/components/dropdown-wrapper";
 import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
 import React from "react";
 import MetricsCard from "./analytics-subcomponent/metrics-card";
-import { BookOpenCheck, Eye, Users2 } from "lucide-react";
+import { BookOpenCheck, Clock, Eye, Users2 } from "lucide-react";
 import {
   ChartConfig,
   ChartContainer,
@@ -136,11 +136,19 @@ export default function AnalyticsTabView() {
           title="Total Visitors"
           value={totalVisitors.toLocaleString()}
         />
-        <MetricsCard
-          icon={BookOpenCheck}
-          title="Completed Action"
-          value={totalCompletedActions.toLocaleString()}
-        />
+        {selectedPage === DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value ? (
+          <MetricsCard
+            icon={BookOpenCheck}
+            title="Completed Action"
+            value={totalCompletedActions.toLocaleString()}
+          />
+        ) : (
+          <MetricsCard
+            icon={Clock}
+            title="Total Time Spent"
+            value={totalCompletedActions.toLocaleString()}
+          />
+        )}
       </div>
       <div>
         <ChartContainer config={chartConfig}>
