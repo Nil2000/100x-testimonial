@@ -1,5 +1,8 @@
 import SelectWrapper from "@/components/dropdown-wrapper";
-import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
+import {
+  DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS,
+  DROPDOWN_ANALYTICS_PAGE_OPTIONS,
+} from "@/lib/constants";
 import React from "react";
 import MetricsCard from "./analytics-subcomponent/metrics-card";
 import { BookOpenCheck, Clock, Eye, Users2 } from "lucide-react";
@@ -10,108 +13,54 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { useSpaceStore } from "@/store/spaceStore";
+import axios from "axios";
+import { MetricsResponse } from "@/lib/types";
+import MetricsChart from "./analytics-subcomponent/metrics-chart";
+import Loading from "@/components/loader";
 
 export default function AnalyticsTabView() {
   const [selectedPage, setSelectedPage] = React.useState(
     DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value
   );
-  const chartData = [
-    {
-      date: "2025-04-26",
-      total_pageviews: 1000,
-      total_visitors: 200,
-      completed_actions: 50,
-    },
+  const [selectedDate, setSelectedDate] = React.useState(
+    DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS[0].value
+  );
+  const { spaceInfo } = useSpaceStore();
+  const [metricsData, setMetricsData] = React.useState<MetricsResponse[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
-    {
-      date: "2025-04-28",
-      total_pageviews: 967,
-      total_visitors: 192,
-      completed_actions: 46,
-    },
-    {
-      date: "2025-04-29",
-      total_pageviews: 1054,
-      total_visitors: 213,
-      completed_actions: 51,
-    },
-    {
-      date: "2025-04-30",
-      total_pageviews: 1132,
-      total_visitors: 225,
-      completed_actions: 58,
-    },
-    {
-      date: "2025-05-01",
-      total_pageviews: 873,
-      total_visitors: 176,
-      completed_actions: 42,
-    },
-    {
-      date: "2025-05-02",
-      total_pageviews: 912,
-      total_visitors: 185,
-      completed_actions: 44,
-    },
-    {
-      date: "2025-05-03",
-      total_pageviews: 798,
-      total_visitors: 165,
-      completed_actions: 39,
-    },
-    {
-      date: "2025-05-04",
-      total_pageviews: 845,
-      total_visitors: 172,
-      completed_actions: 41,
-    },
-    {
-      date: "2025-05-05",
-      total_pageviews: 1089,
-      total_visitors: 219,
-      completed_actions: 55,
-    },
-    {
-      date: "2025-05-06",
-      total_pageviews: 1156,
-      total_visitors: 231,
-      completed_actions: 60,
-    },
-    {
-      date: "2025-05-07",
-      total_pageviews: 1032,
-      total_visitors: 207,
-      completed_actions: 49,
-    },
-  ];
-  const chartConfig: ChartConfig = {
-    total_pageviews: {
-      label: "Total Page Views",
-      color: "hsl(var(--chart-1))",
-    },
-    total_visitors: {
-      label: "Total Visitors",
-      color: "hsl(var(--chart-2))",
-    },
-    completed_actions: {
-      label: "Completed Actions",
-      color: "hsl(var(--chart-3))",
-    },
-  };
-
+  if (loading) {
+    return <Loading />;
+  }
   // Calculate totals for metric cards
-  const totalPageViews = chartData.reduce(
-    (acc, item) => acc + item.total_pageviews,
+  const totalPageViews = metricsData.reduce(
+    (acc, item) => acc + item.pageViews,
     0
   );
-  const totalVisitors = chartData.reduce(
-    (acc, item) => acc + item.total_visitors,
+  const totalVisitors = metricsData.reduce(
+    (acc, item) => acc + item.visitors,
     0
   );
-  const totalCompletedActions = chartData.reduce(
-    (acc, item) => acc + item.completed_actions,
+  const totalCompletedActions = metricsData.reduce(
+    (acc, item) => acc + item.completedActions,
     0
   );
+
+  React.useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await axios.get(
+          `/api/metrics?limit_days=30&space_id=${spaceInfo.id}`
+        );
+        setMetricsData(response.data.metrics);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching metrics:", error);
+      }
+    };
+    fetchMetrics();
+  }, []);
 
   return (
     <div className="w-full">
@@ -150,90 +99,7 @@ export default function AnalyticsTabView() {
           />
         )}
       </div>
-      <div>
-        <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return `${date.getMonth() + 1}/${date.getDate()}`;
-              }}
-            />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <defs>
-              <linearGradient id="fillPageViews" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor={chartConfig.total_pageviews.color}
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={chartConfig.total_pageviews.color}
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-              <linearGradient id="fillVisitors" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor={chartConfig.total_visitors.color}
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={chartConfig.total_visitors.color}
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-              <linearGradient id="fillActions" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor={chartConfig.completed_actions.color}
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={chartConfig.completed_actions.color}
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <Area
-              dataKey="total_pageviews"
-              type="natural"
-              fill="url(#fillPageViews)"
-              fillOpacity={0.4}
-              stroke={chartConfig.total_pageviews.color}
-            />
-            <Area
-              dataKey="total_visitors"
-              type="natural"
-              fill="url(#fillVisitors)"
-              fillOpacity={0.4}
-              stroke={chartConfig.total_visitors.color}
-            />
-            <Area
-              dataKey="completed_actions"
-              type="natural"
-              fill="url(#fillActions)"
-              fillOpacity={0.4}
-              stroke={chartConfig.completed_actions.color}
-            />
-          </AreaChart>
-        </ChartContainer>
-      </div>
+      <MetricsChart chartData={metricsData} />
     </div>
   );
 }

@@ -63,3 +63,18 @@ export const DROPDOWN_ANALYTICS_PAGE_OPTIONS = [
     name: "Wall of Love Page",
   },
 ];
+
+export const DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS = [
+  {
+    value: "7",
+    name: "Last 7 Days",
+  },
+  {
+    value: "30",
+    name: "Last 30 Days",
+  },
+  {
+    value: "90",
+    name: "Last 90 Days",
+  },
+];

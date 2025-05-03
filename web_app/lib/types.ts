@@ -71,3 +71,15 @@ export interface UpdateTestimonialStatus {
   sentiment: SentimentType;
   analysisStatus: AnalysisStatus;
 }
+
+export interface MetricsResponse {
+  id: string;
+  spaceId: string;
+  date: Date;
+  pageViews: number;
+  visitors: number;
+  completedActions: number;
+  timeSpentOnWallOfLove: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
