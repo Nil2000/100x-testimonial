@@ -4,7 +4,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { MetricsResponse } from "@/lib/types";
 import React from "react";
 
@@ -29,85 +29,106 @@ const chartConfig: ChartConfig = {
 
 export default function MetricsChart({ chartData }: Props) {
   return (
-    <ChartContainer config={chartConfig}>
+    <ChartContainer
+      config={chartConfig}
+      className="aspect-auto h-[250px] w-full pt-2 pr-4"
+    >
       <AreaChart
         accessibilityLayer
         data={chartData}
         margin={{
-          left: 12,
-          right: 12,
+          left: 0,
+          right: 0,
         }}
       >
-        <CartesianGrid vertical={false} />
+        <CartesianGrid vertical={true} />
         <XAxis
           dataKey="date"
           tickLine={false}
           axisLine={false}
-          tickMargin={8}
+          tickMargin={6}
           tickFormatter={(value) => {
             const date = new Date(value);
-            return `${date.getMonth() + 1}/${date.getDate()}`;
+            return date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+          }}
+          interval={"equidistantPreserveStart"}
+        />
+        <YAxis
+          tickLine={true}
+          axisLine={true}
+          tickMargin={8}
+          tickFormatter={(value) => {
+            if (value >= 1000) {
+              return `${(value / 1000).toFixed(1)}k`;
+            }
+            return value;
           }}
         />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent indicator="line" />}
+        />
         <defs>
           <linearGradient id="fillPageViews" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="5%"
-              stopColor={chartConfig.total_pageviews.color}
+              stopColor={chartConfig.pageViews.color}
               stopOpacity={0.8}
             />
             <stop
               offset="95%"
-              stopColor={chartConfig.total_pageviews.color}
+              stopColor={chartConfig.pageViews.color}
               stopOpacity={0.1}
             />
           </linearGradient>
           <linearGradient id="fillVisitors" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="5%"
-              stopColor={chartConfig.total_visitors.color}
+              stopColor={chartConfig.visitors.color}
               stopOpacity={0.8}
             />
             <stop
               offset="95%"
-              stopColor={chartConfig.total_visitors.color}
+              stopColor={chartConfig.visitors.color}
               stopOpacity={0.1}
             />
           </linearGradient>
           <linearGradient id="fillActions" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="5%"
-              stopColor={chartConfig.completed_actions.color}
+              stopColor={chartConfig.completedActions.color}
               stopOpacity={0.8}
             />
             <stop
               offset="95%"
-              stopColor={chartConfig.completed_actions.color}
+              stopColor={chartConfig.completedActions.color}
               stopOpacity={0.1}
             />
           </linearGradient>
         </defs>
         <Area
-          dataKey="total_pageviews"
+          dataKey="pageViews"
           type="natural"
           fill="url(#fillPageViews)"
           fillOpacity={0.4}
-          stroke={chartConfig.total_pageviews.color}
+          stroke={chartConfig.pageViews.color}
         />
         <Area
-          dataKey="total_visitors"
+          dataKey="visitors"
           type="natural"
           fill="url(#fillVisitors)"
           fillOpacity={0.4}
-          stroke={chartConfig.total_visitors.color}
+          stroke={chartConfig.visitors.color}
         />
         <Area
-          dataKey="completed_actions"
+          dataKey="completedActions"
           type="natural"
           fill="url(#fillActions)"
           fillOpacity={0.4}
-          stroke={chartConfig.completed_actions.color}
+          stroke={chartConfig.completedActions.color}
         />
       </AreaChart>
     </ChartContainer>
