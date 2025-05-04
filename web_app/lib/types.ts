@@ -72,14 +72,13 @@ export interface UpdateTestimonialStatus {
   analysisStatus: AnalysisStatus;
 }
 
-export interface MetricsResponse {
+export type MetricsResponse = {
   id: string;
-  spaceId: string;
-  date: Date;
+  date: string;
   pageViews: number;
   visitors: number;
-  completedActions: number;
-  timeSpentOnWallOfLove: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+  completedActions?: number; // Only for request testimonial page
+  timeSpentOnWallOfLove?: number; // Only for wall of love page
+};
+
+export type PAGE_TYPE = "req-test-page" | "wall-of-love-page";

@@ -12,9 +12,14 @@ import { MetricsResponse } from "@/lib/types";
 type Props = {
   pageTitle: string;
   dateRange: string;
+  changePending: (pending: boolean) => void;
 };
 
-export default function MetricsContainer({ pageTitle, dateRange }: Props) {
+export default function MetricsContainer({
+  pageTitle,
+  dateRange,
+  changePending,
+}: Props) {
   const { spaceInfo } = useSpaceStore();
   const [metricsData, setMetricsData] = React.useState<MetricsResponse[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -29,15 +34,20 @@ export default function MetricsContainer({ pageTitle, dateRange }: Props) {
     0
   );
   const totalCompletedActions = metricsData.reduce(
-    (acc, item) => acc + item.completedActions,
+    (acc, item) => acc + item.completedActions! || 0,
+    0
+  );
+  const totalTimeSpent = metricsData.reduce(
+    (acc, item) => acc + item.timeSpentOnWallOfLove! || 0,
     0
   );
 
   const fetchMetrics = async () => {
-    setLoading(true);
+    changePending(true); // Set pending to true before loading
+    setLoading(true); // Set loading to true before fetching data
     try {
       const response = await axios.get(
-        `/api/metrics?limit_days=${dateRange}&space_id=${spaceInfo.id}`
+        `/api/metrics?limit_days=${dateRange}&space_id=${spaceInfo.id}&page=${pageTitle}`
       );
       console.log("Metrics response:", response.data.metrics);
       setMetricsData(response.data.metrics);
@@ -45,12 +55,13 @@ export default function MetricsContainer({ pageTitle, dateRange }: Props) {
       console.error("Error fetching metrics:", error);
     } finally {
       setLoading(false);
+      changePending(false); // Set pending to false after loading
     }
   };
 
   React.useEffect(() => {
     fetchMetrics();
-  }, [dateRange]);
+  }, [dateRange, pageTitle]);
 
   if (loading) {
     return <Loading />;
@@ -79,13 +90,20 @@ export default function MetricsContainer({ pageTitle, dateRange }: Props) {
           <MetricsCard
             icon={Clock}
             title="Total Time Spent"
-            value={totalCompletedActions.toLocaleString()}
+            value={totalTimeSpent.toLocaleString()}
           />
         )}
       </div>
-      <Card className="w-full p-2">
-        <MetricsChart chartData={metricsData} />
-      </Card>
+      <div className="w-full p-2">
+        <MetricsChart
+          chartData={metricsData}
+          pageType={
+            pageTitle === DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value
+              ? "request"
+              : "wall"
+          }
+        />
+      </div>
     </>
   );
 }

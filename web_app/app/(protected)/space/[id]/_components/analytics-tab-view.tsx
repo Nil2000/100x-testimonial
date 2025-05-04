@@ -4,14 +4,6 @@ import {
   DROPDOWN_ANALYTICS_PAGE_OPTIONS,
 } from "@/lib/constants";
 import React from "react";
-import MetricsCard from "./analytics-subcomponent/metrics-card";
-import { BookOpenCheck, Clock, Eye, Users2 } from "lucide-react";
-import { useSpaceStore } from "@/store/spaceStore";
-import axios from "axios";
-import { MetricsResponse } from "@/lib/types";
-import MetricsChart from "./analytics-subcomponent/metrics-chart";
-import Loading from "@/components/loader";
-import { Card } from "@/components/ui/card";
 import MetricsContainer from "./analytics-subcomponent/metrics-container";
 
 export default function AnalyticsTabView() {
@@ -21,6 +13,7 @@ export default function AnalyticsTabView() {
   const [selectedDate, setSelectedDate] = React.useState(
     DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS[1].value
   );
+  const [isLoading, setIsLoading] = React.useState(true);
 
   return (
     <div className="w-full space-y-4">
@@ -32,6 +25,7 @@ export default function AnalyticsTabView() {
           onChange={(value) => {
             setSelectedPage(value);
           }}
+          disabled={isLoading}
         />
         <SelectWrapper
           defaultValue={DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS[1].value}
@@ -40,9 +34,16 @@ export default function AnalyticsTabView() {
           onChange={(value) => {
             setSelectedDate(value);
           }}
+          disabled={isLoading}
         />
       </div>
-      <MetricsContainer pageTitle={selectedPage} dateRange={selectedDate} />
+      <MetricsContainer
+        pageTitle={selectedPage}
+        dateRange={selectedDate}
+        changePending={(status) => {
+          setIsLoading(status);
+        }}
+      />
     </div>
   );
 }
