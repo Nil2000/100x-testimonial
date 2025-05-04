@@ -84,6 +84,7 @@ export default function MetricsChart({ chartData, pageType }: Props) {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+                interval={"equidistantPreserveStart"}
                 tickFormatter={(value) => {
                   const date = new Date(value);
                   return `${date.getMonth() + 1}/${date.getDate()}`;
@@ -165,6 +166,7 @@ export default function MetricsChart({ chartData, pageType }: Props) {
                   const date = new Date(value);
                   return `${date.getMonth() + 1}/${date.getDate()}`;
                 }}
+                interval={"equidistantPreserveStart"}
               />
               <YAxis tickLine={false} axisLine={false} tickMargin={8} />
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />

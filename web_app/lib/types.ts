@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { AnalysisStatus, SentimentType } from "./db";
+import { API_METRIC } from "./constants";
 
 export interface CreateSpaceQuestion {
   id: string;
@@ -82,3 +83,11 @@ export type MetricsResponse = {
 };
 
 export type PAGE_TYPE = "req-test-page" | "wall-of-love-page";
+
+// export type API_METRIC_TYPE =
+//   | "page-views"
+//   | "visitors"
+//   | "completed-actions"
+//   | "time-spent-on-wall-of-love";
+
+export type API_METRIC_TYPE = (typeof API_METRIC)[number];

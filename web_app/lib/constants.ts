@@ -78,3 +78,17 @@ export const DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS = [
     name: "Last 90 Days",
   },
 ];
+
+export const API_METRIC = [
+  "track-page-visit",
+  "track-unique-visit",
+  "completed-actions",
+  "time-spent-on-wall-of-love",
+];
+
+// export const API_METRIC = {
+//   PAGE_VIEWS: "page-views",
+//   VISITORS: "visitors",
+//   COMPLETED_ACTIONS: "completed-actions",
+//   TIME_SPENT_ON_WALL_OF_LOVE: "time-spent-on-wall-of-love",
+// };

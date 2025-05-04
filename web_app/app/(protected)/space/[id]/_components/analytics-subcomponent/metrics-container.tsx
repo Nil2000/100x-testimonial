@@ -8,6 +8,7 @@ import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
 import MetricsChart from "./metrics-chart";
 import { MetricsResponse } from "@/lib/types";
+import { useMetrics } from "@/hooks/use-metrics";
 
 type Props = {
   pageTitle: string;
@@ -21,46 +22,30 @@ export default function MetricsContainer({
   changePending,
 }: Props) {
   const { spaceInfo } = useSpaceStore();
-  const [metricsData, setMetricsData] = React.useState<MetricsResponse[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const {
+    fetchMetrics,
+    loading,
+    totalCompletedActions,
+    totalPageViews,
+    totalTimeSpent,
+    totalVisitors,
+    metrics,
+  } = useMetrics();
 
-  // Calculate totals for metric cards
-  const totalPageViews = metricsData.reduce(
-    (acc, item) => acc + item.pageViews,
-    0
-  );
-  const totalVisitors = metricsData.reduce(
-    (acc, item) => acc + item.visitors,
-    0
-  );
-  const totalCompletedActions = metricsData.reduce(
-    (acc, item) => acc + item.completedActions! || 0,
-    0
-  );
-  const totalTimeSpent = metricsData.reduce(
-    (acc, item) => acc + item.timeSpentOnWallOfLove! || 0,
-    0
-  );
-
-  const fetchMetrics = async () => {
-    changePending(true); // Set pending to true before loading
-    setLoading(true); // Set loading to true before fetching data
-    try {
-      const response = await axios.get(
-        `/api/metrics?limit_days=${dateRange}&space_id=${spaceInfo.id}&page=${pageTitle}`
-      );
-      console.log("Metrics response:", response.data.metrics);
-      setMetricsData(response.data.metrics);
-    } catch (error) {
-      console.error("Error fetching metrics:", error);
-    } finally {
-      setLoading(false);
-      changePending(false); // Set pending to false after loading
-    }
+  const fetchMetricsData = async () => {
+    changePending(true);
+    fetchMetrics(pageTitle, dateRange, spaceInfo?.id || "")
+      .catch((error) => {
+        console.error("Error fetching metrics:", error);
+        changePending(false);
+      })
+      .finally(() => {
+        changePending(false);
+      });
   };
 
   React.useEffect(() => {
-    fetchMetrics();
+    fetchMetricsData();
   }, [dateRange, pageTitle]);
 
   if (loading) {
@@ -96,7 +81,7 @@ export default function MetricsContainer({
       </div>
       <div className="w-full p-2">
         <MetricsChart
-          chartData={metricsData}
+          chartData={metrics}
           pageType={
             pageTitle === DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value
               ? "request"
