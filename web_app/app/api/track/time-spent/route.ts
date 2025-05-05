@@ -1,3 +1,4 @@
+import { METRIC_PAGE } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
     return new NextResponse("Page is required", { status: 400 });
   }
 
-  if (page !== "wall-of-love") {
+  if (page !== METRIC_PAGE.WALL_PAGE) {
     return new NextResponse("Invalid page", { status: 400 });
   }
 
@@ -36,8 +37,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Normalize date to the start of the day
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(Date.now());
+    today.setUTCHours(0, 0, 0, 0);
 
     let dateData = await db.metricsDate.findUnique({
       where: {

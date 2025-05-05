@@ -1,3 +1,4 @@
+import { METRIC_PAGE } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
     return new NextResponse("Page is required", { status: 400 });
   }
 
-  if (page !== "req-test-page") {
+  if (page !== METRIC_PAGE.REQ_PAGE) {
     return new NextResponse("Invalid page", { status: 400 });
   }
 
@@ -28,8 +29,8 @@ export async function POST(request: NextRequest, response: NextResponse) {
     }
 
     // Normalize date to the start of the day
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(Date.now());
+    today.setUTCHours(0, 0, 0, 0);
 
     let dateData = await db.metricsDate.findUnique({
       where: {

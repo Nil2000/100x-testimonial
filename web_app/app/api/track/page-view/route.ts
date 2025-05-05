@@ -1,4 +1,4 @@
-import { API_METRIC } from "@/lib/constants";
+import { METRIC_PAGE } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,14 +25,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Normalize date to the start of the day
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(Date.now());
+    today.setUTCHours(0, 0, 0, 0);
 
     let dateData = await db.metricsDate.findUnique({
       where: {
         date: today,
       },
     });
+
+    console.log("dateData from page-view", dateData);
 
     if (!dateData) {
       dateData = await db.metricsDate.create({
@@ -42,7 +44,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (page === "req-test-page") {
+    if (page === METRIC_PAGE.REQ_PAGE) {
       await db.requestTestimonialMetrics.upsert({
         where: {
           spaceId_dateId: {
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
           pageViews: { increment: 1 },
         },
       });
-    } else if (page === "wall-of-love") {
+    } else if (page === METRIC_PAGE.WALL_PAGE) {
       await db.wallOfLoveMetrics.upsert({
         where: {
           spaceId_dateId: {

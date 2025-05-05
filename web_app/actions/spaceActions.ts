@@ -266,6 +266,7 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
   return {
     error: null,
     data: feedbacks,
+    spaceId: space.id,
   };
 };
 

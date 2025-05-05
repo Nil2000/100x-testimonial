@@ -79,12 +79,10 @@ export const DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS = [
   },
 ];
 
-export const API_METRIC = [
-  "track-page-visit",
-  "track-unique-visit",
-  "completed-actions",
-  "time-spent-on-wall-of-love",
-];
+export const METRIC_PAGE = {
+  REQ_PAGE: "req-test-page",
+  WALL_PAGE: "wall-of-love-page",
+};
 
 // export const API_METRIC = {
 //   PAGE_VIEWS: "page-views",

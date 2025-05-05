@@ -14,6 +14,9 @@ import RecordVideoDialog from "./record-video-dialog";
 import UploadFileDialog from "./upload-file-dialog";
 import SubmitTextFeedbackDialog from "./submit-text-feedback-dialog";
 import SubmitVideoFeedbackDialog from "./submit-video-feedback-dialog";
+import { useMetrics } from "@/hooks/use-metrics";
+import { createId } from "@paralleldrive/cuid2";
+import { METRIC_PAGE } from "@/lib/constants";
 
 type PublicSpaceViewProps = {
   space: SpaceResponse;
@@ -25,11 +28,36 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openUpload, setOpenUpload] = React.useState(false);
   const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
   const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
-  const [openCheckPermission, setOpenCheckPermission] = React.useState(false);
-  const router = useRouter();
+  const { trackPageView, trackUniqueVisitor, trackAction } = useMetrics();
 
-  const showThanks = () => {
+  React.useEffect(() => {
+    async function init() {
+      const visitorData = JSON.parse(
+        localStorage.getItem("visitorData") || "{}"
+      );
+      const pageKey = METRIC_PAGE.REQ_PAGE;
+
+      if (!visitorData[space.id]) {
+        visitorData[space.id] = {};
+      }
+
+      const visitorId = visitorData[space.id][pageKey];
+
+      if (!visitorId) {
+        const newVisitorId = createId();
+        visitorData[space.id][pageKey] = newVisitorId;
+        localStorage.setItem("visitorData", JSON.stringify(visitorData));
+        await trackUniqueVisitor(space.id, pageKey);
+      }
+      await trackPageView(space.id, pageKey);
+    }
+
+    init();
+  }, [space.id]);
+
+  const showThanks = async () => {
     setOpenThanks(true);
+    await trackAction(space.id, "req-test-page");
   };
 
   const handleUplaodFile = () => {
