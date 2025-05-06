@@ -46,12 +46,11 @@ export default function WallOfLovePage({
 
     init();
 
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = async () => {
       const endTime = Date.now();
-      const timeSpent = Math.floor((endTime - startTime) / 1000); // Calculate time spent in seconds
+      const timeSpent = Math.floor((endTime - startTime) / 1000);
       if (timeSpent > 0) {
-        const payload = JSON.stringify({ space_id: spaceId, page: "wall-of-love-page", timeSpent });
-        navigator.sendBeacon("/api/track/time-spent", payload); // Use sendBeacon to ensure the call is made
+        await trackTimeSpent(spaceId, METRIC_PAGE.WALL_PAGE, timeSpent);
       }
     };
 
@@ -59,6 +58,7 @@ export default function WallOfLovePage({
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      handleBeforeUnload();
     };
   }, [spaceId, trackPageView, trackUniqueVisitor, trackTimeSpent]);
 
