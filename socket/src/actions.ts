@@ -1,7 +1,7 @@
 import { METRIC_PAGE } from "./constants";
 import { db } from "./db";
 
-const incrementVisitorCount = async (
+export const incrementVisitorCount = async (
   pageType: "request" | "wall",
   spaceId: string
 ) => {
@@ -75,7 +75,7 @@ const incrementVisitorCount = async (
   }
 };
 
-const incrementPageViewCount = async (
+export const incrementPageViewCount = async (
   pageType: "request" | "wall",
   spaceId: string
 ) => {
@@ -149,7 +149,7 @@ const incrementPageViewCount = async (
   }
 };
 
-const incrementTimeSpentOnWallOfLove = async (
+export const incrementTimeSpentOnWallOfLove = async (
   spaceId: string,
   timeSpent: number
 ) => {
@@ -202,7 +202,7 @@ const incrementTimeSpentOnWallOfLove = async (
   }
 };
 
-const incrementCompletedActions = async (spaceId: string) => {
+export const incrementCompletedActions = async (spaceId: string) => {
   try {
     const spaceExists = await db.space.findUnique({
       where: {
