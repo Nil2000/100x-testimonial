@@ -6,6 +6,8 @@ import WallOfLoveFooter from "./wall-of-love-footer";
 import { useMetrics } from "@/hooks/use-metrics";
 import { createId } from "@paralleldrive/cuid2";
 import { METRIC_PAGE } from "@/lib/constants";
+import { usePostHog } from "posthog-js/react";
+import { usePathname } from "next/navigation";
 
 type Props = {
   spaceName: string;
@@ -19,48 +21,17 @@ export default function WallOfLovePage({
   spaceId,
 }: Props) {
   const { trackPageView, trackUniqueVisitor, trackTimeSpent } = useMetrics();
+  const posthog = usePostHog();
+  const pathName = usePathname();
 
   React.useEffect(() => {
-    const startTime = Date.now();
-
-    async function init() {
-      const visitorData = JSON.parse(
-        localStorage.getItem("visitorData") || "{}"
-      );
-      const pageKey = METRIC_PAGE.WALL_PAGE;
-
-      if (!visitorData[spaceId]) {
-        visitorData[spaceId] = {};
-      }
-
-      const visitorId = visitorData[spaceId][pageKey];
-
-      if (!visitorId) {
-        const newVisitorId = createId();
-        visitorData[spaceId][pageKey] = newVisitorId;
-        localStorage.setItem("visitorData", JSON.stringify(visitorData));
-        await trackUniqueVisitor(spaceId, pageKey);
-      }
-      await trackPageView(spaceId, pageKey);
+    if (pathName && posthog) {
+      posthog.capture("$pageview", {
+        $current_url: window.origin + pathName,
+        spaceId,
+      });
     }
-
-    init();
-
-    const handleBeforeUnload = async () => {
-      const endTime = Date.now();
-      const timeSpent = Math.floor((endTime - startTime) / 1000);
-      if (timeSpent > 0) {
-        await trackTimeSpent(spaceId, METRIC_PAGE.WALL_PAGE, timeSpent);
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      handleBeforeUnload();
-    };
-  }, [spaceId, trackPageView, trackUniqueVisitor, trackTimeSpent]);
+  }, [spaceId]);
 
   return (
     <div className="lg:max-w-[1000px] mx-auto pt-8 w-full overflow-x-hidden">

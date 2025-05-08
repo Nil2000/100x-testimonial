@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import LoadingPublicView from "./loading-public-view";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { CollectionType } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Pen, PenLine, Video } from "lucide-react";
@@ -17,6 +17,7 @@ import SubmitVideoFeedbackDialog from "./submit-video-feedback-dialog";
 import { useMetrics } from "@/hooks/use-metrics";
 import { createId } from "@paralleldrive/cuid2";
 import { METRIC_PAGE } from "@/lib/constants";
+import { usePostHog } from "posthog-js/react";
 
 type PublicSpaceViewProps = {
   space: SpaceResponse;
@@ -29,35 +30,47 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
   const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
   const { trackPageView, trackUniqueVisitor, trackAction } = useMetrics();
+  const posthog = usePostHog();
+  const pathname = usePathname();
 
   React.useEffect(() => {
-    async function init() {
-      const visitorData = JSON.parse(
-        localStorage.getItem("visitorData") || "{}"
-      );
-      const pageKey = METRIC_PAGE.REQ_PAGE;
+    // async function init() {
+    //   const visitorData = JSON.parse(
+    //     localStorage.getItem("visitorData") || "{}"
+    //   );
+    //   const pageKey = METRIC_PAGE.REQ_PAGE;
 
-      if (!visitorData[space.id]) {
-        visitorData[space.id] = {};
-      }
+    //   if (!visitorData[space.id]) {
+    //     visitorData[space.id] = {};
+    //   }
 
-      const visitorId = visitorData[space.id][pageKey];
+    //   const visitorId = visitorData[space.id][pageKey];
 
-      if (!visitorId) {
-        const newVisitorId = createId();
-        visitorData[space.id][pageKey] = newVisitorId;
-        localStorage.setItem("visitorData", JSON.stringify(visitorData));
-        await trackUniqueVisitor(space.id, pageKey);
-      }
-      await trackPageView(space.id, pageKey);
+    //   if (!visitorId) {
+    //     const newVisitorId = createId();
+    //     visitorData[space.id][pageKey] = newVisitorId;
+    //     localStorage.setItem("visitorData", JSON.stringify(visitorData));
+    //     await trackUniqueVisitor(space.id, pageKey);
+    //   }
+    //   await trackPageView(space.id, pageKey);
+    // }
+
+    // init();
+
+    if (pathname && posthog) {
+      posthog.capture("$pageview", {
+        $current_url: window.origin + pathname,
+        spaceId: space.id,
+      });
     }
-
-    init();
   }, [space.id]);
 
   const showThanks = async () => {
     setOpenThanks(true);
-    await trackAction(space.id, "req-test-page");
+    // await trackAction(space.id, "req-test-page");
+    posthog.capture("completed-testimonial", {
+      spaceId: space.id,
+    });
   };
 
   const handleUplaodFile = () => {
