@@ -33,44 +33,16 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const posthog = usePostHog();
   const pathname = usePathname();
 
-  React.useEffect(() => {
-    // async function init() {
-    //   const visitorData = JSON.parse(
-    //     localStorage.getItem("visitorData") || "{}"
-    //   );
-    //   const pageKey = METRIC_PAGE.REQ_PAGE;
-
-    //   if (!visitorData[space.id]) {
-    //     visitorData[space.id] = {};
-    //   }
-
-    //   const visitorId = visitorData[space.id][pageKey];
-
-    //   if (!visitorId) {
-    //     const newVisitorId = createId();
-    //     visitorData[space.id][pageKey] = newVisitorId;
-    //     localStorage.setItem("visitorData", JSON.stringify(visitorData));
-    //     await trackUniqueVisitor(space.id, pageKey);
-    //   }
-    //   await trackPageView(space.id, pageKey);
-    // }
-
-    // init();
-
-    if (pathname && posthog) {
-      posthog.capture("$pageview", {
-        $current_url: window.origin + pathname,
-        spaceId: space.id,
-      });
-    }
-  }, [space.id]);
-
   const showThanks = async () => {
     setOpenThanks(true);
     // await trackAction(space.id, "req-test-page");
-    posthog.capture("completed-testimonial", {
-      spaceId: space.id,
-    });
+    if (posthog) {
+      posthog.capture("completed-testimonial", {
+        spaceId: space.id,
+      });
+    } else {
+      console.warn("PostHog not initialized");
+    }
   };
 
   const handleUplaodFile = () => {

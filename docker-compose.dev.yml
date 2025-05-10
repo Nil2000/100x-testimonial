@@ -45,5 +45,16 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 3
 
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: testimonials
+      POSTGRES_DB: testimonials
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
 volumes:
   s3_data:
+  db_data:

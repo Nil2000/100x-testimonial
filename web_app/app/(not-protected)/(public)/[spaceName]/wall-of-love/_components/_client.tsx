@@ -20,19 +20,6 @@ export default function WallOfLovePage({
   testimonialList,
   spaceId,
 }: Props) {
-  const { trackPageView, trackUniqueVisitor, trackTimeSpent } = useMetrics();
-  const posthog = usePostHog();
-  const pathName = usePathname();
-
-  React.useEffect(() => {
-    if (pathName && posthog) {
-      posthog.capture("$pageview", {
-        $current_url: window.origin + pathName,
-        spaceId,
-      });
-    }
-  }, [spaceId]);
-
   return (
     <div className="lg:max-w-[1000px] mx-auto pt-8 w-full overflow-x-hidden">
       <BackgroundImage />

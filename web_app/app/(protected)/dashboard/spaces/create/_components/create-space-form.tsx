@@ -16,7 +16,6 @@ import { Loader2, PlusCircle, XCircle } from "lucide-react";
 import React, { startTransition, useActionState, useTransition } from "react";
 import DragAndDropQuestions from "../../../../../../components/drag-and-drop-questions";
 import { useForm, Controller } from "react-hook-form";
-import { Form } from "@/components/ui/form";
 import { dropDownOptionsTextVideo, sampleQuestions } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { spaceSchema } from "@/schemas/spaceSchema";
@@ -26,6 +25,7 @@ import { createSpace } from "@/actions/spaceActions";
 import { CreateSpaceQuestion } from "@/lib/types";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
+import { redirect, useRouter } from "next/navigation";
 
 export default function CreateSpaceForm({
   setFileSelected,
@@ -62,8 +62,8 @@ export default function CreateSpaceForm({
   });
   const [questions, setQuestions] =
     React.useState<CreateSpaceQuestion[]>(sampleQuestions);
-  const [checked, setChecked] = React.useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleNewQuestion = () => {
     const question = {
@@ -119,6 +119,7 @@ export default function CreateSpaceForm({
           }
           console.log(res.message);
           //redirect to the newly created space
+          router.push("/dashboard");
         })
         .catch((err) => {
           console.error(err);
