@@ -15,9 +15,8 @@ import UploadFileDialog from "./upload-file-dialog";
 import SubmitTextFeedbackDialog from "./submit-text-feedback-dialog";
 import SubmitVideoFeedbackDialog from "./submit-video-feedback-dialog";
 import { useMetrics } from "@/hooks/use-metrics";
-import { createId } from "@paralleldrive/cuid2";
-import { METRIC_PAGE } from "@/lib/constants";
 import { usePostHog } from "posthog-js/react";
+import { POSTHOG_METRIC_CLIENT_EVENTS } from "@/lib/constants";
 
 type PublicSpaceViewProps = {
   space: SpaceResponse;
@@ -31,15 +30,19 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
   const { trackPageView, trackUniqueVisitor, trackAction } = useMetrics();
   const posthog = usePostHog();
-  const pathname = usePathname();
+  const startTime = React.useRef(Date.now());
 
   const showThanks = async () => {
     setOpenThanks(true);
     // await trackAction(space.id, "req-test-page");
     if (posthog) {
-      posthog.capture("completed-testimonial", {
-        spaceId: space.id,
-      });
+      const captureResponse = posthog.capture(
+        POSTHOG_METRIC_CLIENT_EVENTS.TESTIMONIAL_SUBMITTED,
+        {
+          spaceId: space.id,
+        }
+      );
+      console.log("PostHog captureResponse", captureResponse);
     } else {
       console.warn("PostHog not initialized");
     }
@@ -49,6 +52,32 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
     setOpenRecord(false);
     setOpenUpload(true);
   };
+
+  React.useEffect(() => {
+    if (posthog) {
+      const postHogresp = posthog.capture(
+        POSTHOG_METRIC_CLIENT_EVENTS.PAGE_OPENED,
+        {
+          spaceId: space.id,
+        }
+      );
+      console.log("PostHog captureResponse", postHogresp);
+    }
+
+    const handleExit = () => {
+      if (document.visibilityState === "hidden") {
+        posthog?.capture(POSTHOG_METRIC_CLIENT_EVENTS.PAGE_EXITED, {
+          spaceId: space.id,
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleExit);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleExit);
+    };
+  }, [space.id, posthog]);
 
   return (
     <div className="lg:max-w-[1000px] w-full px-4 flex flex-col justify-center mx-auto space-y-8 py-8">

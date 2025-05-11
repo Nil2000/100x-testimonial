@@ -74,6 +74,10 @@ export const DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS = [
     name: "Last 30 Days",
   },
   {
+    value: "60",
+    name: "Last 60 Days",
+  },
+  {
     value: "90",
     name: "Last 90 Days",
   },
@@ -90,3 +94,15 @@ export const METRIC_PAGE = {
 //   COMPLETED_ACTIONS: "completed-actions",
 //   TIME_SPENT_ON_WALL_OF_LOVE: "time-spent-on-wall-of-love",
 // };
+
+export const POSTHOG_METRIC_EVENTS = {
+  PAGE_VIEW: "page-view",
+  UNIQUE_VISITORS: "unique-visitors",
+  COMPLETED_TESTIMONIAL: "completed-testimonial",
+};
+
+export const POSTHOG_METRIC_CLIENT_EVENTS = {
+  PAGE_OPENED: "page-opened",
+  PAGE_EXITED: "page-exited",
+  TESTIMONIAL_SUBMITTED: "completed-testimonial",
+};

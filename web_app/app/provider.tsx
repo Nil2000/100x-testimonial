@@ -5,17 +5,18 @@ import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
 import posthog from "posthog-js";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
-      api_host:
-        process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-      person_profiles: "always", // or 'always' to create profiles for anonymous users as well
-      capture_pageview: false, // Disable automatic pageview capture, as we capture manually
-      capture_pageleave: true,
-    });
-  }, []);
+if (typeof window !== "undefined") {
+  const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY as string;
+  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST as string;
+  posthog.init(posthogKey, {
+    api_host: posthogHost,
+    person_profiles: "always",
+    capture_pageview: false,
+    capture_pageleave: true,
+  });
+}
 
+export function PostHogProvider({ children }: { children: React.ReactNode }) {
   return (
     <PHProvider client={posthog}>
       <SuspendedPostHogPageView />

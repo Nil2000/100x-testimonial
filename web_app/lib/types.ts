@@ -88,3 +88,5 @@ export type PAGE_TYPE = "req-test-page" | "wall-of-love-page";
 //   | "visitors"
 //   | "completed-actions"
 //   | "time-spent-on-wall-of-love";
+
+export type POSTHOG_METRIC_TYPE = "page-view" | "completed-testimonial";
