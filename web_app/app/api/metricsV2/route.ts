@@ -69,34 +69,11 @@ export async function GET(req: NextRequest, res: NextResponse) {
       );
     }
 
-    let postHogOptions;
-
-    switch (event) {
-      case POSTHOG_METRIC_EVENTS.COMPLETED_TESTIMONIAL:
-        postHogOptions = {
-          event: "completed-testimonial",
-          name: "completed-testimonial",
-          math: "total",
-        };
-        break;
-      case POSTHOG_METRIC_EVENTS.PAGE_VIEW:
-        postHogOptions = {
-          event: "$pageview",
-          name: "$pageview",
-          math: "total",
-        };
-        break;
-      case POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS:
-        postHogOptions = {
-          event: "$pageview",
-          name: "$pageview",
-          math: "dau",
-        };
-      default:
-        break;
-    }
-
-    const postHogResponse = await postHogExecQuery(days, postHogOptions!);
+    const postHogResponse = await postHogExecQuery(
+      days,
+      event,
+      spaceExists.name
+    );
 
     if (!postHogResponse) {
       return NextResponse.json(

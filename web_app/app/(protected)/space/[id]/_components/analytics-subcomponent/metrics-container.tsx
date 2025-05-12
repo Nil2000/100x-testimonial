@@ -22,26 +22,18 @@ export default function MetricsContainer({
   changePending,
 }: Props) {
   const { spaceInfo } = useSpaceStore();
-  const {
-    fetchMetrics,
-    loading,
-    totalCompletedActions,
-    totalPageViews,
-    totalTimeSpent,
-    totalVisitors,
-    metrics,
-  } = useMetrics();
+  // const {
+  //   fetchMetrics,
+  //   loading,
+  //   totalCompletedActions,
+  //   totalPageViews,
+  //   totalTimeSpent,
+  //   totalVisitors,
+  //   metrics,
+  // } = useMetrics();
 
   const fetchMetricsData = async () => {
     changePending(true);
-    fetchMetrics(pageTitle, dateRange, spaceInfo?.id || "")
-      .catch((error) => {
-        console.error("Error fetching metrics:", error);
-        changePending(false);
-      })
-      .finally(() => {
-        changePending(false);
-      });
   };
 
   React.useEffect(() => {

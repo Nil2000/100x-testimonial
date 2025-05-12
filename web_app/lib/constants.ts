@@ -99,10 +99,12 @@ export const POSTHOG_METRIC_EVENTS = {
   PAGE_VIEW: "page-view",
   UNIQUE_VISITORS: "unique-visitors",
   COMPLETED_TESTIMONIAL: "completed-testimonial",
+  TIME_SPENT_ON_WALL_OF_LOVE: "time-spent-on-wall-of-love",
 };
 
 export const POSTHOG_METRIC_CLIENT_EVENTS = {
   PAGE_OPENED: "page-opened",
   PAGE_EXITED: "page-exited",
   TESTIMONIAL_SUBMITTED: "completed-testimonial",
+  TIME_SPENT_ON_WALL_OF_LOVE: "time-spent-on-wall-of-love",
 };

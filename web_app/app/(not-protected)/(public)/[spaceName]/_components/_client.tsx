@@ -28,9 +28,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openUpload, setOpenUpload] = React.useState(false);
   const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
   const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
-  const { trackPageView, trackUniqueVisitor, trackAction } = useMetrics();
   const posthog = usePostHog();
-  const startTime = React.useRef(Date.now());
 
   const showThanks = async () => {
     setOpenThanks(true);
@@ -52,32 +50,6 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
     setOpenRecord(false);
     setOpenUpload(true);
   };
-
-  React.useEffect(() => {
-    if (posthog) {
-      const postHogresp = posthog.capture(
-        POSTHOG_METRIC_CLIENT_EVENTS.PAGE_OPENED,
-        {
-          spaceId: space.id,
-        }
-      );
-      console.log("PostHog captureResponse", postHogresp);
-    }
-
-    const handleExit = () => {
-      if (document.visibilityState === "hidden") {
-        posthog?.capture(POSTHOG_METRIC_CLIENT_EVENTS.PAGE_EXITED, {
-          spaceId: space.id,
-        });
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleExit);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleExit);
-    };
-  }, [space.id, posthog]);
 
   return (
     <div className="lg:max-w-[1000px] w-full px-4 flex flex-col justify-center mx-auto space-y-8 py-8">

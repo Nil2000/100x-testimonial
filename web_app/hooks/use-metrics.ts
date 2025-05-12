@@ -1,22 +1,29 @@
+import { POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { MetricsResponse } from "@/lib/types";
 import axios from "axios";
 import React from "react";
 
 export function useMetrics() {
-  const [metrics, setMetrics] = React.useState<MetricsResponse[]>([]);
+  // const [metrics, setMetrics] = React.useState<MetricsResponse[]>([]);
+  const [pageViewMetrics, setPageViewMetrics] = React.useState<any>([]);
+  const [uniqueVisitorMetrics, setUniqueVisitorMetrics] = React.useState<any>(
+    []
+  );
   const [loading, setLoading] = React.useState(true);
 
   const fetchMetrics = async (
-    pageTitle: string,
+    event: string,
     dayUpperLimit: string,
     spaceId: string
   ) => {
     setLoading(true); // Set loading to true before fetching data
     try {
-      const response = await axios.get(
-        `/api/metrics?limit_days=${dayUpperLimit}&space_id=${spaceId}&page=${pageTitle}`
+      const responsePageView = await axios.get(
+        `/api/metricsV2?days=${dayUpperLimit}&spaceId=${spaceId}&event=${POSTHOG_METRIC_EVENTS.PAGE_VIEW}`
       );
-      setMetrics(response.data.metrics);
+      const responseUniqueVisitor = await axios.get(
+        `/api/metricsV2?days=${dayUpperLimit}&spaceId=${spaceId}&event=${POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS}`
+      );
     } catch (error) {
       console.error("Error fetching metrics:", error);
     } finally {
