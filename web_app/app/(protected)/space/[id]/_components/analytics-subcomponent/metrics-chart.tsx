@@ -4,26 +4,17 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { MetricsResponse } from "@/lib/types";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Metric } from "@/lib/types";
 import React from "react";
 import { Card } from "@/components/ui/card";
 
 type Props = {
-  chartData: MetricsResponse[];
-  pageType: "request" | "wall";
+  chartData: Metric[];
 };
 
-const getAreaChartConfig = (): ChartConfig => {
-  return {
+export default function MetricsChart({ chartData }: Props) {
+  const areaChartConfig: ChartConfig = {
     pageViews: {
       label: "Total Page Views",
       color: "hsl(var(--chart-1))",
@@ -33,37 +24,8 @@ const getAreaChartConfig = (): ChartConfig => {
       color: "hsl(var(--chart-2))",
     },
   };
-};
-
-const getBarChartConfig = (pageType: "request" | "wall"): ChartConfig => {
-  if (pageType === "request") {
-    return {
-      completedActions: {
-        label: "Completed Testimonials",
-        color: "hsl(var(--chart-5))",
-      },
-    };
-  } else {
-    return {
-      timeSpentOnWallOfLove: {
-        label: "Time Spent (seconds)",
-        color: "hsl(var(--chart-5))",
-      },
-    };
-  }
-};
-
-export default function MetricsChart({ chartData, pageType }: Props) {
-  const areaChartConfig = getAreaChartConfig();
-  const barChartConfig = getBarChartConfig(pageType);
-
-  // Get the key for the specific metric based on page type
-  const specificMetricKey =
-    pageType === "request" ? "completedActions" : "timeSpentOnWallOfLove";
-
   return (
     <div className="space-y-8">
-      {/* First Chart: Area Chart for Page Views and Visitors */}
       <div>
         <h3 className="text-md font-medium mb-4">Page Views & Visitors</h3>
         <Card className="pr-4 pt-4">
@@ -133,49 +95,6 @@ export default function MetricsChart({ chartData, pageType }: Props) {
                 stroke={areaChartConfig.visitors.color}
               />
             </AreaChart>
-          </ChartContainer>
-        </Card>
-      </div>
-
-      {/* Second Chart: Bar Chart for Page-Specific Metric */}
-      <div>
-        <h3 className="text-md font-medium mb-4">
-          {pageType === "request"
-            ? "Completed Testimonials"
-            : "Time Spent on Wall (seconds)"}
-        </h3>
-        <Card className="pr-4 pt-4">
-          <ChartContainer config={barChartConfig} className="h-[250px] w-full">
-            <BarChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                left: 12,
-                right: 12,
-                bottom: 12,
-              }}
-              height={100}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return `${date.getMonth() + 1}/${date.getDate()}`;
-                }}
-                interval={"equidistantPreserveStart"}
-              />
-              <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <Bar
-                dataKey={specificMetricKey}
-                fill={Object.values(barChartConfig)[0].color}
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
           </ChartContainer>
         </Card>
       </div>

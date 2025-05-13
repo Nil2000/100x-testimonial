@@ -72,14 +72,14 @@ export interface UpdateTestimonialStatus {
   analysisStatus: AnalysisStatus;
 }
 
-export type MetricsResponse = {
-  id: string;
-  date: string;
-  pageViews: number;
-  visitors: number;
-  completedActions?: number; // Only for request testimonial page
-  timeSpentOnWallOfLove?: number; // Only for wall of love page
-};
+// export type MetricsResponse = {
+//   id: string;
+//   date: string;
+//   pageViews: number;
+//   visitors: number;
+//   completedActions?: number; // Only for request testimonial page
+//   timeSpentOnWallOfLove?: number; // Only for wall of love page
+// };
 
 export type PAGE_TYPE = "req-test-page" | "wall-of-love-page";
 
@@ -90,3 +90,16 @@ export type PAGE_TYPE = "req-test-page" | "wall-of-love-page";
 //   | "time-spent-on-wall-of-love";
 
 export type POSTHOG_METRIC_TYPE = "page-view" | "completed-testimonial";
+
+export interface MetricResponse {
+  metric: Metric[];
+  totalPageViews: number;
+  totalVisitors: number;
+  countMetric: number;
+}
+
+export interface Metric {
+  date: string;
+  pageViews: number;
+  visitors: number;
+}

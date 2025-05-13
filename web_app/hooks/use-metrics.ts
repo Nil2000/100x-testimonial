@@ -1,29 +1,31 @@
 import { POSTHOG_METRIC_EVENTS } from "@/lib/constants";
-import { MetricsResponse } from "@/lib/types";
+import { Metric, MetricResponse } from "@/lib/types";
 import axios from "axios";
 import React from "react";
 
 export function useMetrics() {
-  // const [metrics, setMetrics] = React.useState<MetricsResponse[]>([]);
-  const [pageViewMetrics, setPageViewMetrics] = React.useState<any>([]);
-  const [uniqueVisitorMetrics, setUniqueVisitorMetrics] = React.useState<any>(
-    []
-  );
+  const [metrics, setMetrics] = React.useState<Metric[]>([]);
+  const [totalPageViewMetrics, setTotalPageViewMetrics] =
+    React.useState<number>(0);
+  const [totalUniqueVisitorMetrics, setTotalUniqueVisitorMetrics] =
+    React.useState<number>(0);
+  const [totalSpecialCount, setTotalSpecialCount] = React.useState<number>(0);
   const [loading, setLoading] = React.useState(true);
 
   const fetchMetrics = async (
-    event: string,
+    pageType: string,
     dayUpperLimit: string,
     spaceId: string
   ) => {
-    setLoading(true); // Set loading to true before fetching data
+    setLoading(true);
     try {
-      const responsePageView = await axios.get(
-        `/api/metricsV2?days=${dayUpperLimit}&spaceId=${spaceId}&event=${POSTHOG_METRIC_EVENTS.PAGE_VIEW}`
+      const response = await axios.get(
+        `/api/metrics?spaceId=${spaceId}&days=${dayUpperLimit}&page=${pageType}`
       );
-      const responseUniqueVisitor = await axios.get(
-        `/api/metricsV2?days=${dayUpperLimit}&spaceId=${spaceId}&event=${POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS}`
-      );
+      setMetrics(response.data.metrics);
+      setTotalPageViewMetrics(response.data.totalPageViews);
+      setTotalUniqueVisitorMetrics(response.data.totalVisitors);
+      setTotalSpecialCount(response.data.countMetric);
     } catch (error) {
       console.error("Error fetching metrics:", error);
     } finally {
@@ -31,71 +33,12 @@ export function useMetrics() {
     }
   };
 
-  const trackPageView = async (spaceId: string, page: string) => {
-    try {
-      await axios.post(`/api/track/page-view`, { space_id: spaceId, page });
-    } catch (error) {
-      console.error("Error tracking page view:", error);
-    }
-  };
-
-  const trackUniqueVisitor = async (spaceId: string, page: string) => {
-    try {
-      await axios.post(`/api/track/unique-visitor`, {
-        space_id: spaceId,
-        page,
-      });
-    } catch (error) {
-      console.error("Error tracking unique visitor:", error);
-    }
-  };
-
-  const trackAction = async (spaceId: string, page: string) => {
-    try {
-      await axios.post(`/api/track/action`, { space_id: spaceId, page });
-    } catch (error) {
-      console.error("Error tracking action:", error);
-    }
-  };
-
-  const trackTimeSpent = async (
-    spaceId: string,
-    page: string,
-    timeSpent: number
-  ) => {
-    try {
-      await axios.post(`/api/track/time-spent`, {
-        space_id: spaceId,
-        page,
-        timeSpent,
-      });
-    } catch (error) {
-      console.error("Error tracking time spent:", error);
-    }
-  };
-
-  const totalPageViews = metrics.reduce((acc, item) => acc + item.pageViews, 0);
-  const totalVisitors = metrics.reduce((acc, item) => acc + item.visitors, 0);
-  const totalCompletedActions = metrics.reduce(
-    (acc, item) => acc + item.completedActions! || 0,
-    0
-  );
-  const totalTimeSpent = metrics.reduce(
-    (acc, item) => acc + item.timeSpentOnWallOfLove! || 0,
-    0
-  );
-
   return {
     metrics,
     loading,
     fetchMetrics,
-    trackPageView,
-    trackUniqueVisitor,
-    trackAction,
-    trackTimeSpent,
-    totalPageViews,
-    totalVisitors,
-    totalCompletedActions,
-    totalTimeSpent,
+    totalPageViewMetrics,
+    totalUniqueVisitorMetrics,
+    totalSpecialCount,
   };
 }

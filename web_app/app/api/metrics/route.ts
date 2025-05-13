@@ -1,204 +1,179 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { createId } from "@paralleldrive/cuid2";
-import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
-import { PAGE_TYPE } from "@/lib/types";
+import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
+import { db } from "@/lib/db";
+import { postHogExecQuery } from "@/lib/posthog-utils";
+import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const session = await auth();
+
   if (!session || !session.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      {
+        status: 401,
+      }
+    );
   }
 
   const params = req.nextUrl.searchParams;
-  const limit_days = params.get("limit_days");
-  const space_id = params.get("space_id");
+  const spaceId = params.get("spaceId");
+  const days = params.get("days");
   const page = params.get("page");
 
-  if (!limit_days) {
+  if (!spaceId) {
     return NextResponse.json(
-      { error: "limit_days is required" },
-      { status: 400 }
+      { error: "spaceId is required" },
+      {
+        status: 400,
+      }
     );
   }
 
-  if (!space_id) {
+  if (!days) {
     return NextResponse.json(
-      { error: "space_id is required" },
-      { status: 400 }
+      { error: "days is required" },
+      {
+        status: 400,
+      }
     );
   }
 
-  if (!page) {
-    return NextResponse.json({ error: "page is required" }, { status: 400 });
+  if (
+    !page ||
+    (page !== METRIC_PAGE.REQ_PAGE && page !== METRIC_PAGE.WALL_PAGE)
+  ) {
+    return NextResponse.json(
+      { error: "event is required" },
+      {
+        status: 400,
+      }
+    );
   }
 
   try {
-    const space = await db.space.findUnique({
+    const spaceExists = await db.space.findUnique({
       where: {
-        id: space_id,
-        createdById: session.user.id,
+        id: spaceId,
       },
     });
 
-    if (!space) {
-      return NextResponse.json({ error: "Space not found" }, { status: 404 });
+    if (!spaceExists) {
+      return NextResponse.json(
+        { error: "Space not found" },
+        {
+          status: 404,
+        }
+      );
+    }
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceExists.name}/${
+      page === METRIC_PAGE.WALL_PAGE ? "wall-of-love" : ""
+    }`;
+    const pageViewMetricResponse = await postHogExecQuery(
+      days,
+      POSTHOG_METRIC_EVENTS.PAGE_VIEW,
+      url
+    );
+
+    if (!pageViewMetricResponse) {
+      return NextResponse.json(
+        { error: "Unable to fetch page view metrics." },
+        {
+          status: 500,
+        }
+      );
     }
 
-    // const metrics = await db.dailyMetrics.findMany({
-    //   where: {
-    //     spaceId: space_id,
-    //     date: {
-    //       gte: new Date(
-    //         new Date().setDate(new Date().getDate() - parseInt(limit_days))
-    //       ),
-    //     },
-    //     space: {
-    //       createdById: session.user.id,
-    //     },
-    //   },
-    //   orderBy: {
-    //     date: "asc",
-    //   },
-    // });
-    let metrics: any[] = [];
-    if (page === DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value) {
-      metrics = await db.requestTestimonialMetrics.findMany({
-        where: {
-          spaceId: space_id,
-          date: {
-            date: {
-              gte: new Date(
-                new Date().setDate(new Date().getDate() - parseInt(limit_days))
-              ),
-            },
-          },
-          space: {
-            createdById: session.user.id,
-          },
-        },
-        orderBy: {
-          date: {
-            date: "asc",
-          },
-        },
-        include: {
-          date: {
-            select: {
-              date: true,
-            },
-          },
-        },
-      });
-    } else if (page === DROPDOWN_ANALYTICS_PAGE_OPTIONS[1].value) {
-      metrics = await db.wallOfLoveMetrics.findMany({
-        where: {
-          spaceId: space_id,
-          date: {
-            date: {
-              gte: new Date(
-                new Date().setDate(new Date().getDate() - parseInt(limit_days))
-              ),
-            },
-          },
-          space: {
-            createdById: session.user.id,
-          },
-        },
-        orderBy: {
-          date: {
-            date: "asc",
-          },
-        },
-        include: {
-          date: {
-            select: {
-              date: true,
-            },
-          },
-        },
+    const uniqueVisitorMetricResponse = await postHogExecQuery(
+      days,
+      POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS,
+      url
+    );
+
+    if (!uniqueVisitorMetricResponse) {
+      return NextResponse.json(
+        { error: "Unable to fetch unique visitor metrics." },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    let countMetric;
+    if (page === METRIC_PAGE.WALL_PAGE) {
+      const completedTestimonialResponse = await postHogExecQuery(
+        days,
+        POSTHOG_METRIC_EVENTS.COMPLETED_TESTIMONIAL,
+        url
+      );
+
+      if (!completedTestimonialResponse) {
+        return NextResponse.json(
+          { error: "Unable to fetch completed testimonial metrics." },
+          {
+            status: 500,
+          }
+        );
+      }
+
+      countMetric = completedTestimonialResponse[0].data.reduce(
+        (acc: number, item: number) => acc + item,
+        0
+      );
+    } else {
+      const timeSpentResponse = await postHogExecQuery(
+        days,
+        POSTHOG_METRIC_EVENTS.TIME_SPENT_ON_WALL_OF_LOVE,
+        url
+      );
+
+      if (!timeSpentResponse) {
+        return NextResponse.json(
+          { error: "Unable to fetch time spent metrics." },
+          {
+            status: 500,
+          }
+        );
+      }
+
+      countMetric = timeSpentResponse.reduce(
+        (acc: number, item: any[]) => acc + (item[1] ?? 0),
+        0
+      );
+    }
+
+    let combinedMetrics = [],
+      totalPageViews = 0,
+      totalVisitors = 0;
+    for (let i = 0; i < pageViewMetricResponse[0].data.length; i++) {
+      totalPageViews += pageViewMetricResponse[0].data[i];
+      totalVisitors += uniqueVisitorMetricResponse[0].data[i];
+      combinedMetrics.push({
+        date: pageViewMetricResponse[0].labels[i],
+        pageViews: pageViewMetricResponse[0].data[i],
+        visitors: uniqueVisitorMetricResponse[0].data[i],
       });
     }
 
-    // Fill in missing days with zero values
-    const filledMetrics =
-      metrics.length > 0
-        ? fillMissingDays(metrics, parseInt(limit_days), page as PAGE_TYPE)
-        : [];
-
-    return NextResponse.json({ metrics: filledMetrics }, { status: 200 });
+    return NextResponse.json(
+      {
+        metrics: combinedMetrics,
+        totalPageViews,
+        totalVisitors,
+        countMetric,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
-    console.error("Error fetching metrics:", error);
+    console.error("Error fetching PostHog data:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
-}
-
-/**
- * Fill in missing days in metrics data with zero values
- * @param metrics The metrics data from the database
- * @param limitDays Number of days to look back
- * @returns An array of metrics with all days filled in
- */
-function fillMissingDays(
-  metrics: any[],
-  limitDays: number,
-  pageTitle: PAGE_TYPE
-) {
-  // Create a map of existing metrics by date string
-  const metricsByDate = new Map();
-  metrics.forEach((metric) => {
-    const dateStr = new Date(metric.date.date).toISOString().split("T")[0];
-    metricsByDate.set(dateStr, metric);
-  });
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const startDate = new Date(today);
-  startDate.setDate(today.getDate() - limitDays);
-
-  const filledMetrics = [];
-  const currentDate = new Date(startDate);
-
-  while (currentDate <= today) {
-    const dateStr = currentDate.toISOString().split("T")[0];
-
-    if (metricsByDate.has(dateStr)) {
-      const metric = metricsByDate.get(dateStr);
-      filledMetrics.push({
-        ...metric,
-        date: dateStr,
-      });
-    } else {
-      if (pageTitle === DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value) {
-        filledMetrics.push({
-          id: createId(),
-          spaceId: metrics.length > 0 ? metrics[0].spaceId : "",
-          date: dateStr,
-          pageViews: 0,
-          visitors: 0,
-          completedActions: 0,
-        });
-      } else if (pageTitle === DROPDOWN_ANALYTICS_PAGE_OPTIONS[1].value) {
-        filledMetrics.push({
-          id: createId(),
-          spaceId: metrics.length > 0 ? metrics[0].spaceId : "",
-          date: dateStr,
-          pageViews: 0,
-          visitors: 0,
-          timeSpentOnWallOfLove: 0,
-        });
-      }
-    }
-
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  metricsByDate.clear(); // Clear the map to free up memory
-
-  return filledMetrics;
 }
