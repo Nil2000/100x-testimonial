@@ -28,7 +28,6 @@ export const generateOptions = (event: string) => {
     default:
       break;
   }
-
   return postHogOptions;
 };
 
@@ -68,7 +67,9 @@ const generateQuery = (days: string, event: string, url: string) => {
         date_to: null,
         explicitDate: false,
       },
-      trendsFilter: {},
+      trendsFilter: {
+        formulaNodes: [],
+      },
     },
     refresh: "blocking",
     filters_override: null,
@@ -81,9 +82,11 @@ export const postHogExecQuery = async (
   event: string,
   url: string
 ) => {
+  const query = generateQuery(days, event, url);
+  console.log("PostHog query", JSON.stringify(query));
   const posthogResponse = await axios.post(
     process.env.POSTHOG_METRICS_QUERY_URL || "",
-    generateQuery(days, event, url),
+    query,
     {
       headers: {
         Authorization: `Bearer ${process.env.POSTHOG_QUERY_TOKEN}`,
