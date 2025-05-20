@@ -74,7 +74,7 @@ export default function MetricsContainer({
           />
         )}
       </div>
-      <div className="w-full p-2">
+      <div className="w-full">
         <MetricsChart chartData={metrics} />
       </div>
     </>

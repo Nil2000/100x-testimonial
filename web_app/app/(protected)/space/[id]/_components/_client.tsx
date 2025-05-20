@@ -29,7 +29,7 @@ export default function SpacePage({ id }: { id: string }) {
   }
 
   return (
-    <div className="px-2 h-full">
+    <div className="p-2 h-full">
       <HorizontalTabs />
     </div>
   );
