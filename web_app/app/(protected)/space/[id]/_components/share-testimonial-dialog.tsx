@@ -21,9 +21,11 @@ import { TbBackground } from "react-icons/tb";
 import BorderTabContent from "./share-testimonial-subcomponents/BorderTabContent";
 import ShadowTabContent from "./share-testimonial-subcomponents/ShadowTabContent";
 import BackgroundTabContent from "./share-testimonial-subcomponents/BackgroundTabContent";
-import { Text } from "lucide-react";
+import { Text, UserRound } from "lucide-react";
 import TextTabContent from "./share-testimonial-subcomponents/TextTabContent";
 import { toPng, toBlob } from "html-to-image";
+import { useTheme } from "next-themes";
+import { div } from "motion/react-client";
 
 type ShareTestimonialDialogProps = {
   isOpen: boolean;
@@ -36,6 +38,7 @@ export default function ShareTestimonialDialog({
   onClose,
   feedbackInfo,
 }: ShareTestimonialDialogProps) {
+  const { theme } = useTheme();
   const [alignment, setAlignment] = useState("left");
   const [padding, setPadding] = useState(10);
   const [width, setWidth] = useState("auto");
@@ -52,8 +55,12 @@ export default function ShareTestimonialDialog({
   const [showBorder, setShowBorder] = useState(true);
   const [borderColor, setBorderColor] = useState("#000000");
   const [borderThickness, setBorderThickness] = useState(1);
-  const [headerColor, setHeaderColor] = useState("#000000");
-  const [bodyColor, setBodyColor] = useState("#000000");
+  const [headerColor, setHeaderColor] = useState(
+    theme === "dark" ? "#000000" : "#ffffff"
+  );
+  const [bodyColor, setBodyColor] = useState(
+    theme === "dark" ? "#000000" : "#ffffff"
+  );
   const [headerSize, setHeaderSize] = useState(20);
   const [bodySize, setBodySize] = useState(16);
   const [headerFont, setHeaderFont] = useState("");
@@ -279,7 +286,7 @@ export default function ShareTestimonialDialog({
             }}
           >
             <div
-              className={`p-6 border-2 rounded-md h-min w-full
+              className={`p-6 border-2 rounded-md h-min w-full space-y-2
                 `}
               style={{
                 backgroundColor:
@@ -315,16 +322,29 @@ export default function ShareTestimonialDialog({
                 fontFamily: bodyFont,
               }}
             >
-              <h3
-                className="font-bold"
-                style={{
-                  color: headerColor,
-                  fontSize: `${headerSize}px`,
-                  fontFamily: headerFont,
-                }}
-              >
-                {feedbackInfo.name}
-              </h3>
+              <div className="flex items-center gap-4">
+                {feedbackInfo.imageUrl ? (
+                  <img
+                    src={feedbackInfo.imageUrl}
+                    alt="User Image"
+                    className="rounded-full w-12 h-12 object-cover"
+                  />
+                ) : (
+                  <div className="rounded-full w-12 h-12 bg-secondary flex items-center justify-center text-foreground">
+                    <UserRound />
+                  </div>
+                )}
+                <h3
+                  className="font-bold"
+                  style={{
+                    color: headerColor,
+                    fontSize: `${headerSize}px`,
+                    fontFamily: headerFont,
+                  }}
+                >
+                  {feedbackInfo.name}
+                </h3>
+              </div>
               <p>{renderStars(feedbackInfo.rating)}</p>
               <p
                 style={{

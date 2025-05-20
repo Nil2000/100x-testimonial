@@ -203,8 +203,11 @@ export default function ListTestimonials({
         }}
       />
       <GetLinkDialog
-        isOpen={openGetlinkDialog}
-        onClose={() => setOpenGetLinkDialog(false)}
+        isOpen={openGetlinkDialog && !!selectedTestimonial}
+        onClose={() => {
+          setOpenGetLinkDialog(false);
+          setSelectedTestimonial(null);
+        }}
         testimonialId={selectedTestimonial?.id!}
         spaceName={spaceInfo.name}
       />

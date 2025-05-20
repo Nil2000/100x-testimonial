@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { postHogExecQuery } from "@/lib/posthog-utils";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
@@ -67,14 +66,16 @@ export async function GET(req: NextRequest, res: NextResponse) {
         }
       );
     }
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceExists.name}/${
-      page === METRIC_PAGE.WALL_PAGE ? "wall-of-love" : ""
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceExists.name}${
+      page === METRIC_PAGE.WALL_PAGE ? "/wall-of-love" : ""
     }`;
+    console.log("url", url);
     const pageViewMetricResponse = await postHogExecQuery(
       days,
       POSTHOG_METRIC_EVENTS.PAGE_VIEW,
       url
     );
+    console.log("pageViewMetricResponse", pageViewMetricResponse);
 
     if (!pageViewMetricResponse) {
       return NextResponse.json(
@@ -90,6 +91,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS,
       url
     );
+    console.log("uniqueVisitorMetricResponse", uniqueVisitorMetricResponse);
 
     if (!uniqueVisitorMetricResponse) {
       return NextResponse.json(
@@ -101,12 +103,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
     }
 
     let countMetric;
-    if (page === METRIC_PAGE.WALL_PAGE) {
+    if (page === METRIC_PAGE.REQ_PAGE) {
       const completedTestimonialResponse = await postHogExecQuery(
         days,
         POSTHOG_METRIC_EVENTS.COMPLETED_TESTIMONIAL,
         url
       );
+
+      console.log("completedTestimonialResponse", completedTestimonialResponse);
 
       if (!completedTestimonialResponse) {
         return NextResponse.json(
@@ -127,7 +131,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
         POSTHOG_METRIC_EVENTS.TIME_SPENT_ON_WALL_OF_LOVE,
         url
       );
-
+      console.log("timeSpentResponse", timeSpentResponse);
       if (!timeSpentResponse) {
         return NextResponse.json(
           { error: "Unable to fetch time spent metrics." },
@@ -147,8 +151,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
       totalPageViews = 0,
       totalVisitors = 0;
     for (let i = 0; i < pageViewMetricResponse[0].data.length; i++) {
-      totalPageViews += pageViewMetricResponse[0].data[i];
-      totalVisitors += uniqueVisitorMetricResponse[0].data[i];
+      // totalPageViews += pageViewMetricResponse[0].data[i];
+      // totalVisitors += uniqueVisitorMetricResponse[0].data[i];
       combinedMetrics.push({
         date: pageViewMetricResponse[0].labels[i],
         pageViews: pageViewMetricResponse[0].data[i],
@@ -159,8 +163,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
     return NextResponse.json(
       {
         metrics: combinedMetrics,
-        totalPageViews,
-        totalVisitors,
+        totalPageViews: pageViewMetricResponse[0].count,
+        totalVisitors: uniqueVisitorMetricResponse[0].count,
         countMetric,
       },
       {

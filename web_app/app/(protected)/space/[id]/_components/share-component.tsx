@@ -30,13 +30,12 @@ export default function ShareButton({
           <Share2 size={16} aria-hidden="true" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="font-sans "
-        onClick={() => {
-          handleGetLink();
-        }}
-      >
-        <DropdownMenuItem>
+      <DropdownMenuContent className="font-sans ">
+        <DropdownMenuItem
+          onClick={() => {
+            handleGetLink();
+          }}
+        >
           <ArrowRightFromLine size={16} /> Get link
         </DropdownMenuItem>
         {type === "TEXT" && (

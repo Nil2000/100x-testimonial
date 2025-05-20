@@ -8,11 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ChevronDown, LogOut, UserPen } from "lucide-react";
+import { ChevronDown, LogOut, Paintbrush, UserPen } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 export default function AvatarDropDownMenu({
   name,
@@ -23,6 +27,7 @@ export default function AvatarDropDownMenu({
   email: string;
   imageUrl: string;
 }) {
+  const { setTheme } = useTheme();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -49,6 +54,40 @@ export default function AvatarDropDownMenu({
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Paintbrush
+              size={16}
+              strokeWidth={2}
+              className="opacity-60"
+              aria-hidden="true"
+            />
+            Theme
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem
+              onClick={() => {
+                setTheme("system");
+              }}
+            >
+              System
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setTheme("light");
+              }}
+            >
+              Light
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setTheme("dark");
+              }}
+            >
+              Dark
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <UserPen

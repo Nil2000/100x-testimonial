@@ -10,7 +10,7 @@ export default async function Navbar() {
   const session = await auth();
   return (
     <div className="w-full h-max absolute top-0">
-      <nav className="w-full bg-transparent text-foreground  lg:w-[1000px] h-max flex justify-center px-2 shadow mx-auto font-sans ">
+      <nav className="w-full bg-zinc-100 dark:bg-zinc-900 text-foreground  lg:w-[1000px] h-max flex justify-center px-2 shadow mx-auto font-sans ">
         <div className="flex items-center justify-between h-min w-full py-5">
           <div className="flex space-x-2 font-bold gap-2">
             <Image src={"/logo.svg"} alt="Logo" width={30} height={30} />

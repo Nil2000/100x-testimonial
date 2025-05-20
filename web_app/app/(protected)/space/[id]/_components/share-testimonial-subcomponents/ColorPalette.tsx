@@ -36,7 +36,7 @@ export default function ColorPalette({
         {colorPalette.map((color) => (
           <div
             key={color}
-            className={`w-8 h-8 cursor-pointer rounded-sm`}
+            className={`w-8 h-8 cursor-pointer rounded-sm ring-1 ring-zinc-200 dark:ring-zinc-600 shadow-sm`}
             style={{ backgroundColor: color }}
             onClick={() => setSelectedColor(color)}
           />
