@@ -77,27 +77,23 @@ enum CollectionType {
 }
 
 model Space {
-  id                        String                      @id @default(cuid())
-  name                      String
-  logo                      String?
-  headerTitle               String
-  headerSubtitle            String
-  questions                 Question[]
-  collectionType            CollectionType
-  collectStar               Boolean
-  isAnalysisEnabled         Boolean                     @default(false)
-  // themeId        String         @unique
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  createdById               String
-  createdBy                 User                        @relation(fields: [createdById], references: [id])
-  thankyouSpace             ThankYouSpace?
-  isPublished               Boolean                     @default(false)
-  feedbacks                 Feedback[]
-  DailyMetrics              DailyMetrics[]
-  // theme          Theme          @relation(fields: [themeId], references: [id])
-  RequestTestimonialMetrics RequestTestimonialMetrics[]
-  WallOfLoveMetrics         WallOfLoveMetrics[]
+  id                          String         @id @default(cuid())
+  name                        String
+  logo                        String?
+  headerTitle                 String
+  headerSubtitle              String
+  questions                   Question[]
+  collectionType              CollectionType
+  collectStar                 Boolean
+  isAnalysisEnabled           Boolean        @default(false)
+  themeForRequestTestimonials String         @default("sunrise")
+  createdAt                   DateTime       @default(now())
+  updatedAt                   DateTime       @updatedAt
+  createdById                 String
+  createdBy                   User           @relation(fields: [createdById], references: [id])
+  thankyouSpace               ThankYouSpace?
+  isPublished                 Boolean        @default(false)
+  feedbacks                   Feedback[]
 }
 
 model Question {
@@ -107,24 +103,6 @@ model Question {
   order   Int
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-}
-
-model Theme {
-  id              String   @id @default(cuid())
-  name            String
-  primaryColor    String
-  secondaryColor  String
-  tertiaryColor   String
-  quaternaryColor String
-  quinaryColor    String
-  senaryColor     String
-  septenaryColor  String
-  octonaryColor   String
-  nonaryColor     String
-  denaryColor     String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  // space           Space?
 }
 
 model ThankYouSpace {
@@ -176,75 +154,4 @@ model Feedback {
   analysisStatus  AnalysisStatus @default(PENDING)
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-}
-
-// Date registry for metrics tracking
-model MetricsDate {
-  id                        String                      @id @default(cuid())
-  date                      DateTime                    @unique @db.Date
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  requestTestimonialMetrics RequestTestimonialMetrics[]
-  wallOfLoveMetrics         WallOfLoveMetrics[]
-
-  @@index([date])
-}
-
-// Metrics for Request Testimonial page
-model RequestTestimonialMetrics {
-  id               String   @id @default(cuid())
-  spaceId          String
-  dateId           String
-  pageViews        Int      @default(0)
-  visitors         Int      @default(0)
-  completedActions Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @default(now())
-
-  space Space       @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  date  MetricsDate @relation(fields: [dateId], references: [id], onDelete: Cascade)
-
-  @@unique([spaceId, dateId])
-  @@index([spaceId])
-  @@index([dateId])
-}
-
-// Metrics for Wall of Love page
-model WallOfLoveMetrics {
-  id                    String   @id @default(cuid())
-  spaceId               String
-  dateId                String
-  pageViews             Int      @default(0)
-  visitors              Int      @default(0)
-  timeSpentOnWallOfLove Int      @default(0)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @default(now())
-
-  space Space       @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  date  MetricsDate @relation(fields: [dateId], references: [id], onDelete: Cascade)
-
-  @@unique([spaceId, dateId])
-  @@index([spaceId])
-  @@index([dateId])
-}
-
-// Deprecating old DailyMetrics model - will need migration 
-// to move data from here to the new models
-model DailyMetrics {
-  id                    String   @id @default(cuid())
-  spaceId               String
-  date                  DateTime @db.Date
-  pageViews             Int      @default(0)
-  visitors              Int      @default(0)
-  completedActions      Int      @default(0)
-  timeSpentOnWallOfLove Int      @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-
-  @@unique([spaceId, date])
-  @@index([date])
-  @@index([spaceId, date])
 }

@@ -11,110 +11,16 @@ import { Switch } from "@/components/ui/switch";
 import { useFont } from "@/hooks/use-font";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
+import { THEME_CHOICES } from "@/lib/constants";
 
 // Add a defaultFont property to each theme
-const themes = [
-  {
-    label: "Sunrise Bliss",
-    value: "sunrise",
-    bg: "bg-gradient-to-r from-orange-200 via-pink-300 to-yellow-200",
-    border: "border-2 border-pink-300",
-    shadow: "shadow-xl",
-    text: "text-gray-900 font-serif",
-    alignment: "text-left",
-    listStyle: "list-disc text-pink-700",
-    buttonColor: "bg-pink-500 hover:bg-pink-600 text-white",
-    defaultFont: "Montserrat",
-  },
-  {
-    label: "Oceanic Calm",
-    value: "oceanic",
-    bg: "bg-gradient-to-r from-blue-200 via-cyan-200 to-teal-100",
-    border: "border-2 border-blue-300",
-    shadow: "shadow-lg",
-    text: "text-blue-900 font-sans",
-    alignment: "text-center",
-    listStyle: "list-circle text-cyan-800",
-    buttonColor: "bg-cyan-600 hover:bg-cyan-700 text-white",
-    defaultFont: "Roboto",
-  },
-  {
-    label: "Lavender Dream",
-    value: "lavender",
-    bg: "bg-gradient-to-br from-purple-200 via-indigo-100 to-pink-100",
-    border: "border-4 border-purple-200",
-    shadow: "shadow-2xl",
-    text: "text-purple-900 font-mono",
-    alignment: "text-right",
-    listStyle: "list-none text-purple-700",
-    buttonColor: "bg-purple-500 hover:bg-purple-600 text-white",
-    defaultFont: "Lato",
-  },
-  {
-    label: "Minty Fresh",
-    value: "minty",
-    bg: "bg-gradient-to-r from-green-100 via-teal-100 to-lime-100",
-    border: "border border-green-300",
-    shadow: "shadow-md",
-    text: "text-green-900 font-sans",
-    alignment: "text-left",
-    listStyle: "list-decimal text-emerald-700",
-    buttonColor: "bg-emerald-500 hover:bg-emerald-600 text-white",
-    defaultFont: "Nunito",
-  },
-  {
-    label: "Rose Quartz",
-    value: "rose",
-    bg: "bg-gradient-to-r from-rose-100 via-pink-200 to-rose-200",
-    border: "border-2 border-rose-300",
-    shadow: "shadow-lg",
-    text: "text-rose-900 font-serif",
-    alignment: "text-center",
-    listStyle: "list-square text-rose-700",
-    buttonColor: "bg-rose-500 hover:bg-rose-600 text-white",
-    defaultFont: "Poppins",
-  },
-  {
-    label: "Slate Modern",
-    value: "slate",
-    bg: "bg-slate-100",
-    border: "border-2 border-slate-300",
-    shadow: "shadow-xl",
-    text: "text-slate-800 font-mono",
-    alignment: "text-left",
-    listStyle: "list-disc text-slate-700",
-    buttonColor: "bg-slate-700 hover:bg-slate-800 text-white",
-    defaultFont: "Roboto Mono",
-  },
-  {
-    label: "Golden Hour",
-    value: "golden",
-    bg: "bg-gradient-to-r from-yellow-100 via-orange-100 to-yellow-200",
-    border: "border-4 border-yellow-300",
-    shadow: "shadow-2xl",
-    text: "text-yellow-900 font-serif",
-    alignment: "text-right",
-    listStyle: "list-decimal text-yellow-700",
-    buttonColor: "bg-yellow-500 hover:bg-yellow-600 text-white",
-    defaultFont: "Playfair Display",
-  },
-  {
-    label: "Forest Whisper",
-    value: "forest",
-    bg: "bg-gradient-to-br from-green-200 via-emerald-100 to-lime-200",
-    border: "border border-emerald-300",
-    shadow: "shadow-lg",
-    text: "text-emerald-900 font-sans",
-    alignment: "text-center",
-    listStyle: "list-dot text-emerald-800",
-    buttonColor: "bg-emerald-700 hover:bg-emerald-800 text-white",
-    defaultFont: "Inter",
-  },
-];
 
 export default function TestimonialPage() {
-  const [selectedTheme, setSelectedTheme] = React.useState(themes[0].value);
-  const theme = themes.find((t) => t.value === selectedTheme) ?? themes[0];
+  const [selectedTheme, setSelectedTheme] = React.useState(
+    THEME_CHOICES[0].value
+  );
+  const theme =
+    THEME_CHOICES.find((t) => t.value === selectedTheme) ?? THEME_CHOICES[0];
   const { fontSelected, handleFontSelect, fontList } = useFont();
   const effectiveFont = fontSelected;
   const [showBrandLogo, setShowBrandLogo] = React.useState(true);
@@ -138,7 +44,7 @@ export default function TestimonialPage() {
               <SelectValue placeholder="Select theme" />
             </SelectTrigger>
             <SelectContent className="font-sans">
-              {themes.map((theme) => (
+              {THEME_CHOICES.map((theme) => (
                 <SelectItem key={theme.value} value={theme.value}>
                   {theme.label}
                 </SelectItem>
@@ -195,12 +101,13 @@ export default function TestimonialPage() {
         {/* Main Container */}
         <div className="flex justify-center items-center min-h-[250px] py-12">
           <div
-            className={`bg-white/80 rounded-lg p-8 w-full max-w-md flex flex-col gap-4 ${theme.text} ${theme.border} ${theme.shadow} ${theme.alignment}`}
+            className={`rounded-lg p-8 w-full max-w-md flex flex-col gap-4 ${theme.text} ${theme.border} ${theme.shadow} ${theme.alignment}`}
             style={{
               fontFamily: `'${effectiveFont}', ${
                 fontList.find((f) => f.family === effectiveFont)?.category ||
                 "sans-serif"
               }`,
+              background: theme.mainContainerBg,
             }}
           >
             {showBrandLogo && (
