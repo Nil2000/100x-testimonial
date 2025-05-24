@@ -15,5 +15,6 @@ export default async function page({
   if (!foundSpace) {
     notFound();
   }
+
   return <PublicSpaceView space={foundSpace} />;
 }
