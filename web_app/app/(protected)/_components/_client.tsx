@@ -23,7 +23,7 @@ export default function DashboardPage() {
       .get("/api/spaces")
       .then((res) => {
         setSpaces(res.data.data);
-        console.log("Fetched spaces:", res.data.data);
+
         setLoading(false);
       })
       .catch((err) => {

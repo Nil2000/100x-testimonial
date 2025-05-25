@@ -11,8 +11,12 @@ export default function SpaceControlView() {
   const { spaceInfo } = useSpaceStore();
   const router = useRouter();
   const handleDelete = async () => {
-    await deleteSpace(spaceInfo.id);
-    router.push("/dashboard");
+    try {
+      await deleteSpace(spaceInfo.id);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Failed to delete space:", error);
+    }
   };
   return (
     <div className="grid grid-cols-2 gap-y-3">
