@@ -16,15 +16,15 @@ export default function SpaceCard({
   const router = useRouter();
   return (
     <Card
-      className="h-[150px] md:w-[300px] w-full flex rounded-lg hover:bg-foreground/5 cursor-pointer"
+      className="h-[150px] md:w-[300px] w-full flex rounded-lg hover:bg-foreground/5 cursor-pointer items-center p-2"
       onClick={() => router.push(`/space/${id}`)}
     >
       <Image
         src={imgUrl}
         alt={name}
-        width={150}
-        height={150}
-        className="object-cover rounded-lg rounded-r-3xl"
+        width={100}
+        height={100}
+        className="object-contain rounded-lg h-30 w-30 shadow-lg border"
       />
       <div className="h-full w-full flex items-center justify-center">
         <h2>{name}</h2>

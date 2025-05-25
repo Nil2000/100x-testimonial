@@ -295,3 +295,41 @@ export const toggleAnalysis = async (id: string, status: boolean) => {
     };
   }
 };
+
+export const deleteSpace = async (id: string) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  try {
+    const isSpaceOwner = await db.space.findFirst({
+      where: {
+        id,
+        createdById: session.user.id,
+      },
+    });
+
+    if (!isSpaceOwner) {
+      return {
+        error: "You are not the owner of this space",
+      };
+    }
+
+    await db.space.delete({
+      where: {
+        id,
+        createdById: session.user.id,
+      },
+    });
+
+    return {
+      message: "Space deleted successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};

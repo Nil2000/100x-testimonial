@@ -28,14 +28,17 @@ import Image from "next/image";
 type Props = {
   space: any;
   showThankYou: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
 export default function SubmitTextFeedbackDialog({
   space,
   showThankYou,
+  open,
+  onOpenChange,
 }: Props) {
   const [isPending, startTransition] = useTransition();
-  const [open, setOpen] = React.useState(false);
   const [isFileSelected, setFileSelected] = React.useState<File | null>(null);
   const {
     control,
@@ -92,7 +95,7 @@ export default function SubmitTextFeedbackDialog({
             console.log(res.message);
           })
           .finally(() => {
-            setOpen(false);
+            onOpenChange(false);
             reset();
             showThankYou();
           });
@@ -104,7 +107,7 @@ export default function SubmitTextFeedbackDialog({
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
-        setOpen(isOpen);
+        onOpenChange(isOpen);
         if (isOpen) {
           reset();
           setFileSelected(null);
@@ -115,7 +118,7 @@ export default function SubmitTextFeedbackDialog({
         }
       }}
     >
-      <DialogTrigger asChild>
+      {/* <DialogTrigger asChild>
         <Button
           className="w-full sm:max-w-40 group flex gap-1"
           variant={"secondary"}
@@ -128,7 +131,7 @@ export default function SubmitTextFeedbackDialog({
           />
           <h2>Write as text</h2>
         </Button>
-      </DialogTrigger>
+      </DialogTrigger> */}
       <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Write text testimonial to</DialogTitle>

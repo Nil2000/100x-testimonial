@@ -9,7 +9,7 @@ export default function AnalysisSwitch() {
 
   return (
     <>
-      <h1 className="flex items-center">Testimonial Analysis mode</h1>
+      <h1 className="flex items-center">Analysis mode</h1>
       <div>
         <div className="relative inline-grid h-9 grid-cols-[1fr_1fr] items-center text-sm font-medium">
           <Switch
