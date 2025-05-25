@@ -9,7 +9,7 @@ export default function PublishSpaceSwitch() {
 
   return (
     <>
-      <h1 className="flex items-center">Testimonial public view status</h1>
+      <h1 className="flex items-center">Publish space</h1>
       <div>
         <div className="relative inline-grid h-9 grid-cols-[1fr_1fr] items-center text-sm font-medium">
           <Switch

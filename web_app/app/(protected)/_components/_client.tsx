@@ -11,6 +11,7 @@ import axios from "axios";
 interface Space {
   id: string;
   name: string;
+  logo: string | null;
 }
 
 export default function DashboardPage() {
@@ -22,6 +23,7 @@ export default function DashboardPage() {
       .get("/api/spaces")
       .then((res) => {
         setSpaces(res.data.data);
+
         setLoading(false);
       })
       .catch((err) => {
@@ -63,21 +65,6 @@ export default function DashboardPage() {
             </Button>
           </Link>
         </div>
-        {/* {!loading && spaces.length == 0 && (
-          <div className="h-[300px] bg-transparent border w-full rounded-lg flex flex-col justify-center items-center gap-5">
-            <h2 className="italic text-foreground/30">No spaces created</h2>
-            <Link href={"/dashboard/spaces/create"}>
-              <Button>
-                <PlusIcon
-                  className="-ms-1 me-2 opacity-60"
-                  size={16}
-                  strokeWidth={2}
-                />
-                <h2>Create your First Space</h2>
-              </Button>
-            </Link>
-          </div>
-        )} */}
         {loading ? (
           <div className="w-full flex gap-4 flex-col md:flex-row md:flex-wrap">
             <LoadingSpaceCard />
@@ -86,17 +73,16 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="w-full flex gap-4 flex-col md:flex-row md:flex-wrap">
-            {/* {<SpaceCard
-              name="Space 1"
-              imgUrl="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-              />} */}
             {spaces.map((space, index) => {
               return (
                 <SpaceCard
                   key={index}
                   id={space.id}
                   name={space.name}
-                  imgUrl="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                  imgUrl={
+                    space.logo ||
+                    "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                  }
                 />
               );
             })}

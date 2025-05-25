@@ -1,4 +1,5 @@
 "use client";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
 import React from "react";
 type Props = {

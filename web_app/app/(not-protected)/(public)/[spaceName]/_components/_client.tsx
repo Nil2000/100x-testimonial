@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import { CollectionType } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Video } from "lucide-react";
+import { Pen, Video } from "lucide-react";
 import ThankYouDialog from "./thanks-dialog";
 import { SpaceResponse } from "@/lib/types";
 import RecordVideoDialog from "./record-video-dialog";
@@ -25,6 +25,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openThanks, setOpenThanks] = React.useState(false);
   const [openRecord, setOpenRecord] = React.useState(false);
   const [openUpload, setOpenUpload] = React.useState(false);
+  const [openTextFeedback, setOpenTextFeedback] = React.useState(false);
   const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
   const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
   const posthog = usePostHog();
@@ -67,123 +68,154 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   return (
     <div className={`min-h-screen ${theme?.bg}`}>
       <RequestTestimonialPageNavbar themeType={theme?.type || "default"} />
-      <div className="lg:max-w-[1000px] w-full px-4 flex flex-col justify-center mx-auto space-y-8 py-8 ">
-        <div className="flex justify-center">
+      <div className="lg:max-w-[1000px] w-full flex flex-col justify-center items-center mx-auto space-y-8 h-[calc(100vh-4.5rem)]">
+        <div
+          className={cx(
+            "rounded-lg p-8 w-full max-w-md flex flex-col gap-4 overflow-y-auto",
+            theme
+              ? theme.textClass +
+                  " " +
+                  theme.border +
+                  " " +
+                  theme.shadow +
+                  " " +
+                  theme.alignment
+              : "text-center"
+          )}
+          style={{
+            fontFamily: `'${effectiveFont}', ${
+              fontList.find((f) => f.family === effectiveFont)?.category ||
+              "sans-serif"
+            }`,
+            background: theme ? theme.mainContainerBg : undefined,
+          }}
+        >
           {space.logo &&
-            !space.themeForRequestTestimonials.themeOptions.showBrandLogo && (
-              <Image
-                src={space.logo}
-                alt="Public space"
-                width={100}
-                height={100}
-                className="object-cover"
-              />
+            space.themeForRequestTestimonials.themeOptions.showBrandLogo && (
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={space.logo}
+                  alt="Public space"
+                  width={80}
+                  height={80}
+                  className="object-cover"
+                />
+              </div>
             )}
-        </div>
-        <div className="flex justify-center items-center min-h-[250px] py-12">
-          <div
-            className={cx(
-              "rounded-lg p-8 w-full max-w-md flex flex-col gap-4",
-              theme
-                ? theme.textClass +
-                    " " +
-                    theme.border +
-                    " " +
-                    theme.shadow +
-                    " " +
-                    theme.alignment
-                : "text-center"
-            )}
+          <h1 className="text-4xl font-bold text-center">
+            {space.headerTitle}
+          </h1>
+          <p className="text-center text-xl text-muted-foreground">
+            {space.headerSubtitle}
+          </p>
+          <h2 className="uppercase font-semibold leading-6 mb-4">Questions</h2>
+          <ul
+            className={`mb-4 text-sm pl-3 ${
+              theme ? theme.listStyle : "list-square"
+            } ${theme ? theme.alignment : "text-left"}`}
             style={{
-              fontFamily: `'${effectiveFont}', ${
-                fontList.find((f) => f.family === effectiveFont)?.category ||
-                "sans-serif"
-              }`,
-              background: theme ? theme.mainContainerBg : undefined,
+              listStyleType:
+                theme && theme.listStyle.includes("none") ? "none" : undefined,
             }}
           >
-            <h1 className="text-4xl font-bold text-center">
-              {space.headerTitle}
-            </h1>
-            <p className="text-center text-xl text-muted-foreground">
-              {space.headerSubtitle}
-            </p>
-            <h2 className="uppercase font-semibold leading-6 mb-4">
-              Questions
-            </h2>
-            <ul className="sm:w-2/4 w-full mx-auto list-square list-inside">
-              {space.questions.map((question: any) => (
-                <li key={question.id} className="text-muted-foreground">
-                  {question.title}
-                </li>
-              ))}
-            </ul>
-            <div className="flex justify-center space-x-2">
-              {(space.collectionType === CollectionType.VIDEO ||
-                space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
-                <>
-                  <Button onClick={() => setOpenRecord(true)} className="group">
-                    <Video
-                      className="me-1 transition-transform group-hover:-translate-x-0.5"
-                      size={16}
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
-                    <h2>Record a video</h2>
-                  </Button>
-                  <RecordVideoDialog
-                    open={openRecord}
-                    onClose={() => setOpenRecord(false)}
-                    handleFileUpload={handleUplaodFile}
-                    onSubmitFeedback={(uploadFile: Blob) => {
-                      setVideoFileBlob(uploadFile);
-                      setOpenRecord(false);
-                      setOpenSubmitFeedback(true);
-                    }}
+            {space.questions.map((question: any) => (
+              <li key={question.id} className="text-muted-foreground">
+                {question.title}
+              </li>
+            ))}
+          </ul>
+          <div className="flex justify-center space-x-2">
+            {(space.collectionType === CollectionType.VIDEO ||
+              space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
+              <>
+                <Button
+                  onClick={() => setOpenRecord(true)}
+                  className={cx(
+                    theme ? `${theme.primaryButtonColor} text-white` : "",
+                    "group"
+                  )}
+                >
+                  <Video
+                    className="me-1 transition-transform group-hover:-translate-x-0.5"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
                   />
-                </>
-              )}
-              {(space.collectionType === CollectionType.TEXT ||
-                space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
+                  <h2>Record a video</h2>
+                </Button>
+                <RecordVideoDialog
+                  open={openRecord}
+                  onClose={() => setOpenRecord(false)}
+                  handleFileUpload={handleUplaodFile}
+                  onSubmitFeedback={(uploadFile: Blob) => {
+                    setVideoFileBlob(uploadFile);
+                    setOpenRecord(false);
+                    setOpenSubmitFeedback(true);
+                  }}
+                />
+              </>
+            )}
+            {(space.collectionType === CollectionType.TEXT ||
+              space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
+              <>
+                <Button
+                  className={cx(
+                    theme ? `${theme.secondaryButtonColor} text-white` : ""
+                  )}
+                  variant={!theme ? "secondary" : "default"}
+                  onClick={() => setOpenTextFeedback(true)}
+                >
+                  <Pen
+                    className="me-1 transition-transform group-hover:-translate-x-0.5"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                  <h2>Write as text</h2>
+                </Button>
                 <SubmitTextFeedbackDialog
                   space={space}
                   showThankYou={showThanks}
+                  open={openTextFeedback}
+                  onOpenChange={() => {
+                    setOpenTextFeedback(false);
+                  }}
                 />
-              )}
-            </div>
-            <ThankYouDialog
-              open={openThanks}
-              onOpenChange={() => {
-                setOpenThanks(false);
-              }}
-              title={space.thankyouSpace!.title}
-              message={space.thankyouSpace!.message}
-            />
-            <UploadFileDialog
-              open={openUpload}
-              onClose={() => {
-                setOpenUpload(false);
-              }}
-              onSubmitFeedback={(uploadFile: Blob) => {
-                setVideoFileBlob(uploadFile);
-                setOpenUpload(false);
-                setOpenSubmitFeedback(true);
-              }}
-            />
-            <SubmitVideoFeedbackDialog
-              open={openSubmitFeedback}
-              onClose={() => {
-                setOpenSubmitFeedback(false);
-              }}
-              videoFileBlob={videoFileBlob}
-              retakeVideo={() => {
-                setOpenRecord(true);
-              }}
-              spaceName={space.name}
-              spaceId={space.id}
-              showThankYou={showThanks}
-            />
+              </>
+            )}
           </div>
+          <ThankYouDialog
+            open={openThanks}
+            onOpenChange={() => {
+              setOpenThanks(false);
+            }}
+            title={space.thankyouSpace!.title}
+            message={space.thankyouSpace!.message}
+          />
+          <UploadFileDialog
+            open={openUpload}
+            onClose={() => {
+              setOpenUpload(false);
+            }}
+            onSubmitFeedback={(uploadFile: Blob) => {
+              setVideoFileBlob(uploadFile);
+              setOpenUpload(false);
+              setOpenSubmitFeedback(true);
+            }}
+          />
+          <SubmitVideoFeedbackDialog
+            open={openSubmitFeedback}
+            onClose={() => {
+              setOpenSubmitFeedback(false);
+            }}
+            videoFileBlob={videoFileBlob}
+            retakeVideo={() => {
+              setOpenRecord(true);
+            }}
+            spaceName={space.name}
+            spaceId={space.id}
+            showThankYou={showThanks}
+          />
         </div>
       </div>
     </div>

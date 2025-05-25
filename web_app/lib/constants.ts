@@ -191,7 +191,7 @@ export const THEME_CHOICES = [
     label: "Midnight Indigo",
     value: "midnight",
     primaryButtonColor: "bg-indigo-700 hover:bg-indigo-800",
-    secondaryButtonColor: "bg-blue-900 hover:bg-indigo-900 text-indigo-300",
+    secondaryButtonColor: "bg-blue-800 hover:bg-blue-900 text-white",
     bg: "bg-gradient-to-br from-indigo-900 via-gray-900 to-blue-900",
     border: "border-2 border-indigo-700",
     shadow: "shadow-2xl",
