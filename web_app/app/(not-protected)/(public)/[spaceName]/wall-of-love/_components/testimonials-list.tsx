@@ -12,36 +12,36 @@ export default function TestimonialsList({ testimonials }: Props) {
   const dividedTestimonials = dividTestimonialsListCol3(testimonials);
 
   return (
-    <div className="flex items-center gap-4 mt-8 px-4 overflow-x-hidden w-[130%]">
+    <div className="flex items-center gap-4 px-4 w-full z-20">
       {/* {testimonials.map((testimonial) => (
         <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
       ))} */}
-      <div className="flex flex-row gap-4">
-        <div className="flex flex-col gap-4 w-1/3">
+      <div className="flex sm:flex-row flex-col gap-4">
+        {/* <div className="flex flex-col gap-4 w-1/3">
           {dividedTestimonials!.col3.map((testimonial) => (
             <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
           ))}
-        </div>
-        <div className="flex flex-col gap-4 w-1/3">
+        </div> */}
+        <div className="flex flex-col gap-4 sm:w-1/3 w-full">
           {dividedTestimonials!.col1.map((testimonial) => (
             <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
           ))}
         </div>
-        <div className="flex flex-col gap-4 w-1/3">
+        <div className="flex flex-col gap-4 sm:w-1/3 w-full">
           {dividedTestimonials!.col2.map((testimonial) => (
             <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
           ))}
         </div>
-        <div className="flex flex-col gap-4 w-1/3">
+        <div className="flex flex-col gap-4 sm:w-1/3 w-full">
           {dividedTestimonials!.col3.map((testimonial) => (
             <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
           ))}
         </div>
-        <div className="flex flex-col gap-4 w-1/3">
+        {/* <div className="flex flex-col gap-4 w-1/3">
           {dividedTestimonials!.col1.map((testimonial) => (
             <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
