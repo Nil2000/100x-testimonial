@@ -12,7 +12,7 @@ export default function TestimonialsList({ testimonials }: Props) {
   const dividedTestimonials = dividTestimonialsListCol3(testimonials);
 
   return (
-    <div className="flex items-center gap-4 px-4 w-full z-20">
+    <div className="flex items-center gap-2 w-full z-20">
       {/* {testimonials.map((testimonial) => (
         <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
       ))} */}

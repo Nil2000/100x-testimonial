@@ -263,3 +263,52 @@ export const THEME_CHOICES = [
     type: "dark",
   },
 ];
+
+export const WALL_OF_LOVE_STYLE_CHOICES = [
+  {
+    label: "List",
+    value: "list",
+  },
+  {
+    label: "Carousel",
+    value: "carousel",
+    extraOptions: [
+      {
+        key: "columns",
+        options: [
+          { label: "1 Column", value: "1" },
+          { label: "2 Columns", value: "2" },
+          { label: "3 Columns", value: "3" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Infinite Scroll Horizontal",
+    value: "infiniteScrollHorizontal",
+    extraOptions: [
+      {
+        key: "rows",
+        options: [
+          { label: "1 Row", value: "1" },
+          { label: "2 Rows", value: "2" },
+          { label: "3 Rows", value: "3" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Infinite Scroll Vertical",
+    value: "infiniteScrollVertical",
+    extraOptions: [
+      {
+        key: "columns",
+        options: [
+          { label: "1 Column", value: "1" },
+          { label: "2 Columns", value: "2" },
+          { label: "3 Columns", value: "3" },
+        ],
+      },
+    ],
+  },
+];

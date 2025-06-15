@@ -104,6 +104,7 @@ export default function AvatarDropDownMenu({
           onClick={() => {
             signOut();
           }}
+          className="text-destructive dark:focus:bg-destructive/40 focus:bg-destructive/10 focus:text-destructive"
         >
           <LogOut
             size={16}
@@ -111,7 +112,7 @@ export default function AvatarDropDownMenu({
             className="opacity-60"
             aria-hidden="true"
           />
-          <span>Logout</span>
+          Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
