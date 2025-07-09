@@ -1,4 +1,4 @@
-version: "1.1"
+version: "3.8"
 services:
   minio:
     image: quay.io/minio/minio
@@ -19,7 +19,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 10;
-      /usr/bin/mc config host add minio http://minio:9000 minio minio123;
+      /usr/bin/mc alias set minio http://minio:9000 minio minio123;
       /usr/bin/mc mb minio/100xtestimonials;
       /usr/bin/mc anonymous set public minio/100xtestimonials/public;
       exit 0;
