@@ -1,8 +1,7 @@
-import Image from "next/image";
-import Navbar from "../components/Navbar";
-import WordRotate from "@/components/ui/word-rotate";
 import LandingPage from "@/components/LandingPage";
+import { auth } from "@/lib/auth";
 
-export default function Home() {
-  return <LandingPage />;
+export default async function Home() {
+  const session = await auth();
+  return <LandingPage session={session} />;
 }
