@@ -1,4 +1,3 @@
-import { Marquee } from "@/components/magicui/marquee";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -7,9 +6,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Marquee } from "@/components/ui/marquee";
 import { ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { MarqueeDemo } from "./demo-marquee";
 type Props = {
   selectedStyle: string;
   selectedStyleOption?: any;
@@ -22,7 +23,7 @@ export default function WallOfLovePreviewContainer({
   console.log(selectedStyleOption);
   return (
     <div
-      className="w-full h-[50vh] border rounded-md space-y-2"
+      className="relative w-full sm:w-[70vw] lg:w-[800px] h-[50vh] border rounded-md space-y-2"
       key="preview-container-wall-of-love"
     >
       <div className="h-1/3 w-2/3 mx-auto pt-2 flex flex-col items-center justify-center">
@@ -43,7 +44,7 @@ export default function WallOfLovePreviewContainer({
         </div>
       )}
       {selectedStyle == "infiniteScrollHorizontal" && (
-        <div className="w-2/3 mx-auto h-2/3 p-2 overflow-hidden">
+        <div className="relative w-2/3 mx-auto h-2/3 p-2 overflow-hidden">
           {generateInfiniteScroll({
             direction: "horizontal",
             rows: Number(selectedStyleOption.rows),
@@ -58,6 +59,15 @@ export default function WallOfLovePreviewContainer({
           })}
         </div>
       )}
+      {/* <div className="w-2/3 mx-auto h-2/3 p-2 overflow-hidden">
+        {generateInfiniteScroll({
+          direction: "horizontal",
+          rows: Number(selectedStyleOption.rows),
+        })}
+      </div> */}
+      {/* <div className="w-[50vw] mx-auto h-2/3 p-2 overflow-hidden">
+        <MarqueeDemo />
+      </div> */}
     </div>
   );
 }
@@ -145,22 +155,24 @@ const generateInfiniteScroll = (selectedStyleOption: {
       : selectedStyleOption.columns;
   return (
     <div
-      className={`relative flex w-[50vw] h-[30vh] ${
+      className={`relative flex w-full h-[30vh] ${
         direction == "vertical" ? "flex-row" : "flex-col"
       } items-center justify-center overflow-hidden gap-2`}
     >
       {Array.from({ length: noOfRowsOrColumns! }, (_, index) => (
         <Marquee
-          pauseOnHover
-          className={`[--duration:${index + 1}0s]`}
           key={index}
           vertical={direction == "vertical"}
+          pauseOnHover
+          className={`[--duration:${index + 1}0s]`}
+          reverse={index % 2 == 0 ? true : false}
         >
           {Array.from({ length: 5 }, (_, index) => (
-            <Card className="bg-secondary" key={index}>
-              <CardContent className="flex items-center justify-center p-6 h-[2rem]">
-                <span className="text-3xl font-semibold">{index + 1}</span>
-              </CardContent>
+            <Card
+              className="bg-secondary flex items-center justify-center h-9 w-9 rounded-md"
+              key={index}
+            >
+              <span className="md:text-2xl font-semibold">{index + 1}</span>
             </Card>
           ))}
         </Marquee>

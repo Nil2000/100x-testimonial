@@ -27,7 +27,7 @@ export default function WallOfLovePage() {
   return (
     <div>
       <div
-        className="grid grid-cols-2 gap-y-2 text-sm p-2"
+        className="grid sm:grid-cols-2 grid-cols-1 gap-y-2 text-sm p-2"
         key="wall-of-love-page-ui"
       >
         <div key="page-style">Page Style</div>
@@ -45,12 +45,9 @@ export default function WallOfLovePage() {
         {selectedStyle &&
           selectedStyle.extraOptions &&
           selectedStyle.extraOptions.map((optionObj) => (
-            <>
-              <div key={optionObj.key + "-label"} className="capitalize">
-                {optionObj.key}
-              </div>
+            <React.Fragment key={optionObj.key}>
+              <div className="capitalize">{optionObj.key}</div>
               <SelectWrapper
-                key={optionObj.key + "-select"}
                 defaultValue={optionObj.options[0].value}
                 listOfItems={optionObj.options.map((opt: any) => ({
                   name: opt.label,
@@ -63,7 +60,7 @@ export default function WallOfLovePage() {
                   }));
                 }}
               />
-            </>
+            </React.Fragment>
           ))}
       </div>
       {/* Prview changes */}

@@ -22,6 +22,7 @@ export default function DashboardPage() {
     axios
       .get("/api/spaces")
       .then((res) => {
+        console.log(res.data);
         setSpaces(res.data.data);
         setLoading(false);
       })
