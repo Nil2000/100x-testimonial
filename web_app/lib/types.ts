@@ -39,7 +39,7 @@ export interface SpaceResponse {
   isPublished: boolean;
   questions: Question[];
   thankyouSpace: ThankYouSpace | null;
-  themeForRequestTestimonials: any;
+  theme: any;
 }
 
 export interface TestimonialResponse {

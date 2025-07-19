@@ -8,7 +8,7 @@ type ThemeProps = {
   spaceId: string;
 };
 
-export const setThemeForSpace = async ({
+export const updateThemeForSpace = async ({
   theme,
   themeOptions,
   spaceId,
@@ -23,8 +23,8 @@ export const setThemeForSpace = async ({
         id: spaceId,
       },
       data: {
-        themeForRequestTestimonials: {
-          theme: theme,
+        theme: {
+          theme: theme ?? null,
           themeOptions: themeOptions,
         },
       },

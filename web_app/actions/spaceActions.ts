@@ -71,6 +71,12 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
             message: "Thank you for your feedback",
           },
         },
+        theme: {
+          theme: null,
+          themeOptions: {
+            showBrandLogo: true,
+          },
+        },
       },
     });
     return {

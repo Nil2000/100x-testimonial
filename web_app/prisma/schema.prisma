@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/@prisma-db-postgres/client"
 }
 
 datasource db {
@@ -77,23 +76,23 @@ enum CollectionType {
 }
 
 model Space {
-  id                          String         @id @default(cuid())
-  name                        String
-  logo                        String?
-  headerTitle                 String
-  headerSubtitle              String
-  questions                   Question[]
-  collectionType              CollectionType
-  collectStar                 Boolean
-  isAnalysisEnabled           Boolean        @default(false)
-  themeForRequestTestimonials Json?          @db.Json
-  createdAt                   DateTime       @default(now())
-  updatedAt                   DateTime       @updatedAt
-  createdById                 String
-  createdBy                   User           @relation(fields: [createdById], references: [id])
-  thankyouSpace               ThankYouSpace?
-  isPublished                 Boolean        @default(false)
-  feedbacks                   Feedback[]
+  id                String         @id @default(cuid())
+  name              String
+  logo              String?
+  headerTitle       String
+  headerSubtitle    String
+  questions         Question[]
+  collectionType    CollectionType
+  collectStar       Boolean
+  isAnalysisEnabled Boolean        @default(false)
+  theme             Json?          @db.Json
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  createdById       String
+  createdBy         User           @relation(fields: [createdById], references: [id])
+  thankyouSpace     ThankYouSpace?
+  isPublished       Boolean        @default(false)
+  feedbacks         Feedback[]
 }
 
 model Question {

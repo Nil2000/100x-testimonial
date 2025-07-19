@@ -13,183 +13,29 @@ import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
 import clsx from "clsx";
 import { cx } from "class-variance-authority";
-import { setThemeForSpace } from "@/actions/themeActions";
-import { THEME_CHOICES } from "@/lib/constants";
-
-// const THEME_CHOICES = [
-//   // Light Themes
-//   {
-//     label: "Sunrise Bliss",
-//     value: "sunrise",
-//     primaryButtonColor: "bg-pink-500 hover:bg-pink-600",
-//     secondaryButtonColor: "bg-orange-200 hover:bg-orange-300 text-pink-700",
-//     bg: "bg-gradient-to-r from-orange-200 via-pink-300 to-yellow-200",
-//     border: "border-2 border-pink-300",
-//     shadow: "shadow-xl",
-//     textClass: "text-pink-900 font-serif",
-//     alignment: "text-left",
-//     listStyle: "list-disc text-pink-700",
-//     defaultFont: "Montserrat",
-//     mainContainerBg: "rgba(255,255,255,0.8)",
-//     type: "light",
-//   },
-//   {
-//     label: "Minty Fresh",
-//     value: "minty",
-//     primaryButtonColor: "bg-emerald-500 hover:bg-emerald-600",
-//     secondaryButtonColor: "bg-green-100 hover:bg-teal-200 text-emerald-700",
-//     bg: "bg-gradient-to-r from-green-100 via-teal-100 to-lime-100",
-//     border: "border border-green-300",
-//     shadow: "shadow-md",
-//     textClass: "text-emerald-900 font-sans",
-//     alignment: "text-left",
-//     listStyle: "list-decimal text-emerald-700",
-//     defaultFont: "Nunito",
-//     mainContainerBg: "rgba(255,255,255,0.8)",
-//     type: "light",
-//   },
-//   {
-//     label: "Golden Hour",
-//     value: "golden",
-//     primaryButtonColor: "bg-yellow-500 hover:bg-yellow-600",
-//     secondaryButtonColor: "bg-orange-200 hover:bg-yellow-200 text-yellow-700",
-//     bg: "bg-gradient-to-r from-yellow-100 via-orange-100 to-yellow-200",
-//     border: "border-4 border-yellow-300",
-//     shadow: "shadow-2xl",
-//     textClass: "text-yellow-900 font-serif",
-//     alignment: "text-right",
-//     listStyle: "list-decimal text-yellow-700",
-//     defaultFont: "Playfair Display",
-//     mainContainerBg: "rgba(255,255,255,0.8)",
-//     type: "light",
-//   },
-//   {
-//     label: "Lavender Dream",
-//     value: "lavender",
-//     primaryButtonColor: "bg-purple-500 hover:bg-purple-600",
-//     secondaryButtonColor: "bg-pink-100 hover:bg-indigo-200 text-purple-700",
-//     bg: "bg-gradient-to-br from-purple-200 via-indigo-100 to-pink-100",
-//     border: "border-4 border-purple-200",
-//     shadow: "shadow-2xl",
-//     textClass: "text-purple-900 font-mono",
-//     alignment: "text-right",
-//     listStyle: "list-none text-purple-700",
-//     defaultFont: "Lato",
-//     mainContainerBg: "rgba(255,255,255,0.8)",
-//     type: "light",
-//   },
-//   {
-//     label: "Oceanic Calm",
-//     value: "oceanic",
-//     primaryButtonColor: "bg-cyan-600 hover:bg-cyan-700",
-//     secondaryButtonColor: "bg-blue-200 hover:bg-cyan-200 text-cyan-800",
-//     bg: "bg-gradient-to-r from-blue-200 via-cyan-200 to-teal-100",
-//     border: "border-2 border-blue-300",
-//     shadow: "shadow-lg",
-//     textClass: "text-blue-900 font-sans",
-//     alignment: "text-center",
-//     listStyle: "list-circle text-cyan-800",
-//     defaultFont: "Roboto",
-//     mainContainerBg: "rgba(255,255,255,0.8)",
-//     type: "light",
-//   },
-//   // Dark Themes
-//   {
-//     label: "Midnight Indigo",
-//     value: "midnight",
-//     primaryButtonColor: "bg-indigo-700 hover:bg-indigo-800",
-//     secondaryButtonColor: "bg-blue-900 hover:bg-indigo-900 text-indigo-300",
-//     bg: "bg-gradient-to-br from-indigo-900 via-gray-900 to-blue-900",
-//     border: "border-2 border-indigo-700",
-//     shadow: "shadow-2xl",
-//     textClass: "text-indigo-100 font-mono",
-//     alignment: "text-left",
-//     listStyle: "list-disc text-indigo-300",
-//     defaultFont: "Roboto Mono",
-//     mainContainerBg: "rgba(30, 41, 59, 0.95)",
-//     type: "dark",
-//   },
-//   {
-//     label: "Slate Modern",
-//     value: "slate",
-//     primaryButtonColor: "bg-violet-700 hover:bg-violet-800",
-//     secondaryButtonColor: "bg-purple-900 hover:bg-violet-900 text-violet-300",
-//     bg: "bg-gradient-to-br from-violet-900 via-violet-800 to-purple-900",
-//     border: "border-2 border-violet-700",
-//     shadow: "shadow-xl",
-//     textClass: "text-violet-100 font-mono",
-//     alignment: "text-left",
-//     listStyle: "list-disc text-violet-300",
-//     defaultFont: "Roboto Mono",
-//     mainContainerBg: "rgba(49, 24, 77, 0.95)",
-//     type: "dark",
-//   },
-//   {
-//     label: "Forest Night",
-//     value: "forest-night",
-//     primaryButtonColor: "bg-emerald-800 hover:bg-emerald-900",
-//     secondaryButtonColor: "bg-green-900 hover:bg-emerald-900 text-emerald-300",
-//     bg: "bg-gradient-to-br from-green-900 via-emerald-800 to-lime-900",
-//     border: "border border-emerald-700",
-//     shadow: "shadow-lg",
-//     textClass: "text-emerald-100 font-sans",
-//     alignment: "text-center",
-//     listStyle: "list-dot text-emerald-300",
-//     defaultFont: "Inter",
-//     mainContainerBg: "rgba(30, 41, 59, 0.95)",
-//     type: "dark",
-//   },
-//   {
-//     label: "Rose Quartz Dark",
-//     value: "rose-dark",
-//     primaryButtonColor: "bg-fuchsia-700 hover:bg-fuchsia-800",
-//     secondaryButtonColor: "bg-rose-800 hover:bg-fuchsia-900 text-pink-200",
-//     bg: "bg-gradient-to-br from-fuchsia-900 via-rose-800 to-pink-700",
-//     border: "border-2 border-fuchsia-700",
-//     shadow: "shadow-2xl",
-//     textClass: "text-fuchsia-100 font-sans",
-//     alignment: "text-center",
-//     listStyle: "list-disc text-pink-200",
-//     defaultFont: "Rubik",
-//     mainContainerBg: "rgba(55, 7, 55, 0.92)",
-//     type: "dark",
-//   },
-//   {
-//     label: "Charcoal Classic",
-//     value: "charcoal",
-//     primaryButtonColor: "bg-rose-700 hover:bg-amber-900",
-//     secondaryButtonColor: "bg-amber-900 hover:bg-rose-900 text-amber-300",
-//     bg: "bg-gradient-to-r from-rose-900 via-amber-900 to-rose-700",
-//     border: "border-2 border-rose-700",
-//     shadow: "shadow-2xl",
-//     textClass: "text-rose-100 font-sans",
-//     alignment: "text-right",
-//     listStyle: "list-decimal text-amber-300",
-//     defaultFont: "Open Sans",
-//     mainContainerBg: "rgba(67, 20, 36, 0.95)",
-//     type: "dark",
-//   },
-// ];
+import { updateThemeForSpace } from "@/actions/themeActions";
+import { Theme, THEME_CHOICES } from "@/components/theme-constant";
 
 export default function TestimonialPage() {
-  const [noTheme, setNoTheme] = React.useState(true);
-  const [selectedTheme, setSelectedTheme] = React.useState(
-    THEME_CHOICES[0].value
-  );
-  const theme =
-    THEME_CHOICES.find((t) => t.value === selectedTheme) ?? THEME_CHOICES[0];
+  const { spaceInfo, updateThemeField } = useSpaceStore();
   const { fontSelected, handleFontSelect, fontList } = useFont();
   const effectiveFont = fontSelected;
-  const [showBrandLogo, setShowBrandLogo] = React.useState(true);
-  const { spaceInfo } = useSpaceStore();
+  const [theme, setTheme] = React.useState<Theme | null>(
+    THEME_CHOICES.find((t) => t.value === spaceInfo.theme.theme) || null
+  );
+  const [showBrandLogo, setShowBrandLogo] = React.useState(
+    spaceInfo.theme.themeOptions.showBrandLogo
+  );
   const [isPending, startTransition] = React.useTransition();
-
+  const noTheme = !theme;
   const submitTheme = async () => {
     if (noTheme) {
       startTransition(async () => {
-        await setThemeForSpace({
+        await updateThemeForSpace({
           theme: null,
-          themeOptions: {},
+          themeOptions: {
+            showBrandLogo,
+          },
           spaceId: spaceInfo?.id,
         });
       });
@@ -198,45 +44,88 @@ export default function TestimonialPage() {
 
     const themeOptions = {
       showBrandLogo,
-      customFont: effectiveFont,
+      font: effectiveFont,
     };
 
     startTransition(async () => {
-      await setThemeForSpace({
-        theme: selectedTheme,
+      await updateThemeForSpace({
+        theme: theme?.value,
         themeOptions,
         spaceId: spaceInfo?.id,
       });
+
+      updateThemeField("theme", theme?.value);
+      updateThemeField("themeOptions", themeOptions);
     });
   };
 
   React.useEffect(() => {
     if (!noTheme) {
-      handleFontSelect(theme.defaultFont);
+      const selectedTheme = THEME_CHOICES.find((t) => t.value === theme?.value);
+      if (selectedTheme) {
+        setTheme(selectedTheme);
+      }
     }
-  }, [selectedTheme, noTheme]);
+  }, [theme]);
+
+  const checkDiff = () => {
+    return (
+      theme?.value === spaceInfo.theme.theme &&
+      showBrandLogo === spaceInfo.theme.themeOptions.showBrandLogo &&
+      effectiveFont === spaceInfo.theme.themeOptions.font
+    );
+  };
 
   return (
     <div className="flex flex-col gap-8 p-6 w-full">
-      <div className="flex items-center gap-2">
-        <Switch
-          id="theme-switch"
-          checked={noTheme}
-          onCheckedChange={setNoTheme}
-        />
-        <label htmlFor="theme-switch" className="font-medium select-none">
-          No Theme
-        </label>
-      </div>
       {/* Top: Settings */}
       <div className="grid items-center gap-4 flex-col sm:grid-cols-1 sm:gap-6 md:grid-cols-2">
+        <div className="flex items-center gap-2">
+          <Switch
+            id="theme-switch"
+            checked={noTheme}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                setTheme(null);
+              } else {
+                setTheme(THEME_CHOICES[0]);
+              }
+            }}
+          />
+          <label
+            htmlFor="theme-switch"
+            className="font-medium select-none text-sm"
+          >
+            No Theme
+          </label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            id="brand-logo-switch"
+            checked={showBrandLogo}
+            onCheckedChange={setShowBrandLogo}
+          />
+          <label
+            htmlFor="brand-logo-switch"
+            className="font-medium select-none text-sm"
+          >
+            Show Brand Logo
+          </label>
+        </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="theme-select" className="font-medium">
+          <label htmlFor="theme-select" className="font-medium text-sm">
             Theme:
           </label>
           <Select
-            value={selectedTheme}
-            onValueChange={setSelectedTheme}
+            value={theme?.value}
+            onValueChange={(value) => {
+              const selectedTheme = THEME_CHOICES.find(
+                (t) => t.value === value
+              );
+              if (selectedTheme) {
+                setTheme(selectedTheme);
+              }
+            }}
             disabled={noTheme}
           >
             <SelectTrigger className="w-56">
@@ -252,12 +141,14 @@ export default function TestimonialPage() {
           </Select>
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="font-select" className="font-medium">
+          <label htmlFor="font-select" className="font-medium text-sm">
             Font:
           </label>
           <Select
             value={effectiveFont}
-            onValueChange={handleFontSelect}
+            onValueChange={(font) => {
+              handleFontSelect(font);
+            }}
             disabled={noTheme}
           >
             <SelectTrigger className="w-56">
@@ -272,29 +163,19 @@ export default function TestimonialPage() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-2">
-          <Switch
-            id="brand-logo-switch"
-            checked={showBrandLogo}
-            onCheckedChange={setShowBrandLogo}
-            disabled={noTheme}
-          />
-          <label
-            htmlFor="brand-logo-switch"
-            className="font-medium select-none"
-          >
-            Show Brand Logo
-          </label>
-        </div>
       </div>
-      <Button className="w-max" disabled={isPending} onClick={submitTheme}>
+      <Button
+        className="w-max"
+        disabled={isPending || checkDiff()}
+        onClick={submitTheme}
+      >
         {isPending ? "Saving..." : "Save Changes"}
       </Button>
 
       {/* Bottom: Preview */}
       <div
         className={`rounded-lg p-0 min-h-[300px] transition-colors duration-300 border-2 ${
-          !noTheme && theme.bg
+          !noTheme && theme?.bg
         }`}
       >
         {/* Navbar */}
@@ -304,9 +185,9 @@ export default function TestimonialPage() {
           <div className="flex items-center gap-2">
             <Image src={"/logo.svg"} alt="Logo" width={30} height={30} />
             <h2
-              className={`text-center font-poppins flex items-center text-xl font-semibold ${
+              className={`text-center font-poppins flex items-center font-semibold text-xl ${
                 !noTheme
-                  ? theme.type === "dark"
+                  ? theme?.type === "dark"
                     ? "text-white"
                     : "text-black"
                   : "text-foreground"
@@ -322,13 +203,13 @@ export default function TestimonialPage() {
             className={cx(
               "rounded-lg p-8 w-full max-w-md flex flex-col gap-4",
               !noTheme
-                ? theme.textClass +
+                ? theme?.textClass +
                     " " +
-                    theme.border +
+                    theme?.border +
                     " " +
-                    theme.shadow +
+                    theme?.shadow +
                     " " +
-                    theme.alignment
+                    theme?.alignment
                 : "text-center"
             )}
             style={{
@@ -336,7 +217,7 @@ export default function TestimonialPage() {
                 fontList.find((f) => f.family === effectiveFont)?.category ||
                 "sans-serif"
               }`,
-              background: !noTheme ? theme.mainContainerBg : undefined,
+              background: !noTheme ? theme?.mainContainerBg : undefined,
             }}
           >
             {showBrandLogo && (
@@ -367,10 +248,10 @@ export default function TestimonialPage() {
             </p>
             <ul
               className={`mb-4 text-sm pl-3 ${
-                !noTheme ? theme.listStyle : "list-square"
-              } ${!noTheme ? theme.alignment : "text-left"}`}
+                !noTheme ? theme?.listStyle : "list-square"
+              } ${!noTheme ? theme?.alignment : "text-left"}`}
               style={{
-                listStyleType: theme.listStyle.includes("none")
+                listStyleType: theme?.listStyle.includes("none")
                   ? "none"
                   : undefined,
               }}
@@ -383,14 +264,14 @@ export default function TestimonialPage() {
               <Button
                 type="button"
                 className={cx(
-                  !noTheme ? `${theme.primaryButtonColor} text-white` : ""
+                  !noTheme ? `${theme?.primaryButtonColor} text-white` : ""
                 )}
               >
                 Record video
               </Button>
               <Button
                 type="button"
-                className={cx(!noTheme ? `${theme.secondaryButtonColor}` : "")}
+                className={cx(!noTheme ? `${theme?.secondaryButtonColor}` : "")}
                 variant={noTheme ? "secondary" : "default"}
               >
                 Write as text
