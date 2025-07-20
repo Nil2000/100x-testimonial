@@ -59,8 +59,12 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   };
 
   React.useEffect(() => {
-    if (space.theme?.themeOptions?.customFont) {
-      handleFontSelect(space.theme.themeOptions.customFont);
+    // Always load the font from theme options if available, regardless of theme selection
+    if (space.theme?.themeOptions?.font) {
+      handleFontSelect(space.theme.themeOptions.font);
+    } else {
+      // If no font is specified in theme options, use a default accessible font
+      handleFontSelect("Roboto");
     }
   }, [space]);
 
@@ -100,13 +104,13 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               />
             </div>
           )}
-          <h1 className="text-4xl font-bold text-center">
+          <h1 className={`text-4xl font-bold text-center ${theme?.textClass}`}>
             {space.headerTitle}
           </h1>
-          <p className="text-center text-xl text-muted-foreground">
+          <p className={`text-center text-xl text-muted-foreground ${theme?.textClass}`}>
             {space.headerSubtitle}
           </p>
-          <h2 className="uppercase font-semibold leading-6 mb-4">Questions</h2>
+          <h2 className={`uppercase font-semibold leading-6 mb-4 ${theme?.textClass}`}>Questions</h2>
           <ul
             className={`mb-4 text-sm pl-3 ${
               theme ? theme.listStyle : "list-square"
@@ -158,7 +162,8 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               <>
                 <Button
                   className={cx(
-                    theme ? `${theme.secondaryButtonColor} text-white` : ""
+                    theme ? `${theme.secondaryButtonColor} text-white` : "",
+                    "group"
                   )}
                   variant={!theme ? "secondary" : "default"}
                   onClick={() => setOpenTextFeedback(true)}

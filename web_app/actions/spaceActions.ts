@@ -75,6 +75,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
           theme: null,
           themeOptions: {
             showBrandLogo: true,
+            font: "Roboto",
           },
         },
       },

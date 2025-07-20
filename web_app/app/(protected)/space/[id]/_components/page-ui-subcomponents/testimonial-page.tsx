@@ -29,23 +29,25 @@ export default function TestimonialPage() {
   const [isPending, startTransition] = React.useTransition();
   const noTheme = !theme;
   const submitTheme = async () => {
-    if (noTheme) {
-      startTransition(async () => {
-        await updateThemeForSpace({
-          theme: null,
-          themeOptions: {
-            showBrandLogo,
-          },
-          spaceId: spaceInfo?.id,
-        });
-      });
-      return;
-    }
-
+    // Always include font in theme options regardless of theme selection
     const themeOptions = {
       showBrandLogo,
       font: effectiveFont,
     };
+
+    if (noTheme) {
+      startTransition(async () => {
+        await updateThemeForSpace({
+          theme: null,
+          themeOptions,
+          spaceId: spaceInfo?.id,
+        });
+
+        updateThemeField("theme", null);
+        updateThemeField("themeOptions", themeOptions);
+      });
+      return;
+    }
 
     startTransition(async () => {
       await updateThemeForSpace({
@@ -60,13 +62,11 @@ export default function TestimonialPage() {
   };
 
   React.useEffect(() => {
-    if (!noTheme) {
-      const selectedTheme = THEME_CHOICES.find((t) => t.value === theme?.value);
-      if (selectedTheme) {
-        setTheme(selectedTheme);
-      }
+    // Always load the font from theme options if available, regardless of theme selection
+    if (spaceInfo.theme.themeOptions.font) {
+      handleFontSelect(spaceInfo.theme.themeOptions.font);
     }
-  }, [theme]);
+  }, []);
 
   const checkDiff = () => {
     return (
@@ -87,8 +87,10 @@ export default function TestimonialPage() {
             onCheckedChange={(checked) => {
               if (checked) {
                 setTheme(null);
+                // Keep the current font when switching to no theme
               } else {
                 setTheme(THEME_CHOICES[0]);
+                // Don't automatically change font when enabling theme
               }
             }}
           />
@@ -117,13 +119,15 @@ export default function TestimonialPage() {
             Theme:
           </label>
           <Select
-            value={theme?.value}
+            value={theme?.value || THEME_CHOICES[0].value}
             onValueChange={(value) => {
               const selectedTheme = THEME_CHOICES.find(
                 (t) => t.value === value
               );
               if (selectedTheme) {
                 setTheme(selectedTheme);
+                // Don't automatically change font when theme changes
+                // handleFontSelect(selectedTheme.defaultFont);
               }
             }}
             disabled={noTheme}
@@ -149,7 +153,6 @@ export default function TestimonialPage() {
             onValueChange={(font) => {
               handleFontSelect(font);
             }}
-            disabled={noTheme}
           >
             <SelectTrigger className="w-56">
               <SelectValue placeholder="Select font" />

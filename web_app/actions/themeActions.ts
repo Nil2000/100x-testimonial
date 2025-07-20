@@ -13,7 +13,7 @@ export const updateThemeForSpace = async ({
   themeOptions,
   spaceId,
 }: ThemeProps) => {
-  if (!theme || !spaceId) {
+  if (!spaceId) {
     throw new Error("Theme and spaceId are required");
   }
 
