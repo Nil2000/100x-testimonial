@@ -19,6 +19,7 @@ export default async function page({
       spaceName={spaceName}
       testimonialList={response.data}
       spaceId={response.spaceId!}
+      wallOfLoveSettings={response.wallOfLoveSettings}
     />
   );
 }

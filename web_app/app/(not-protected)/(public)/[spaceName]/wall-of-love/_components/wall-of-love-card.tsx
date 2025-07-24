@@ -10,7 +10,7 @@ export default function WallOfLoveCard({
   testimonial: TestimonialResponse;
 }) {
   return (
-    <Card className="flex flex-col items-center gap-2 p-4 bg-zinc-500/20 border border-zinc-700 rounded-lg w-full">
+    <Card className="flex flex-col items-center gap-2 p-4 bg-zinc-500/20 border border-zinc-700 rounded-lg w-[15rem] h-max max-h-[30rem]">
       <Avatar className="w-12 h-12">
         <AvatarFallback className="p-2">
           <UserRoundIcon size={30} className="opacity-60" aria-hidden="true" />

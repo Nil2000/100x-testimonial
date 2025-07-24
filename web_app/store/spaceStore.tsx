@@ -26,6 +26,13 @@ type SpaceInfo = {
   theme: {
     theme: string | null;
     themeOptions: any;
+    wallOfLove?: {
+      style: string;
+      styleOptions: {
+        columns?: string;
+        rows?: string;
+      };
+    };
   };
 };
 
@@ -35,6 +42,13 @@ interface SpaceStore {
   updateSpaceField: (field: any, value: any) => void;
   updateThanksField: (field: any, value: any) => void;
   updateThemeField: (field: any, value: any) => void;
+  updateWallOfLoveSettings: (settings: {
+    style: string;
+    styleOptions: {
+      columns?: string;
+      rows?: string;
+    };
+  }) => void;
 }
 
 export const useSpaceStore = create<SpaceStore>((set) => ({
@@ -103,6 +117,16 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
         theme: {
           ...state.spaceInfo.theme,
           [field]: value,
+        },
+      },
+    })),
+  updateWallOfLoveSettings: (settings) =>
+    set((state) => ({
+      spaceInfo: {
+        ...state.spaceInfo,
+        theme: {
+          ...state.spaceInfo.theme,
+          wallOfLove: settings,
         },
       },
     })),

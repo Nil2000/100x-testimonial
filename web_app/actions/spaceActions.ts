@@ -270,11 +270,73 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
       addToWallOfLove: true,
     },
   });
+  
+  // Extract wall of love settings from theme
+  const theme = space.theme as any;
+  const wallOfLoveSettings = theme?.wallOfLove || {
+    style: "list",
+    styleOptions: { columns: "3" }
+  };
+  
   return {
     error: null,
     data: feedbacks,
     spaceId: space.id,
+    wallOfLoveSettings,
   };
+};
+
+export const saveWallOfLoveSettings = async (
+  spaceId: string,
+  wallOfLoveSettings: {
+    style: string;
+    styleOptions: {
+      columns?: string;
+      rows?: string;
+    };
+  }
+) => {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    const space = await db.space.findFirst({
+      where: {
+        id: spaceId,
+        createdById: session.user.id,
+      },
+    });
+
+    if (!space) {
+      return {
+        error: "Space not found or unauthorized",
+      };
+    }
+
+    const currentTheme = (space.theme as any) || {};
+    const updatedTheme = {
+      ...currentTheme,
+      wallOfLove: wallOfLoveSettings,
+    };
+
+    await db.space.update({
+      where: { id: spaceId },
+      data: { theme: updatedTheme },
+    });
+
+    return {
+      error: null,
+      success: true,
+    };
+  } catch (error) {
+    return {
+      error: "Failed to save wall of love settings",
+    };
+  }
 };
 
 export const toggleAnalysis = async (id: string, status: boolean) => {

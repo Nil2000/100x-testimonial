@@ -97,6 +97,11 @@ export default function SubmitTextFeedbackDialog({
           .finally(() => {
             onOpenChange(false);
             reset();
+            setFileSelected(null);
+            const node = document.getElementById("file") as HTMLInputElement;
+            if (node) {
+              node.value = "";
+            }
             showThankYou();
           });
       });
@@ -108,13 +113,11 @@ export default function SubmitTextFeedbackDialog({
       open={open}
       onOpenChange={(isOpen) => {
         onOpenChange(isOpen);
-        if (isOpen) {
-          reset();
-          setFileSelected(null);
-          const node = document.getElementById("file") as HTMLInputElement;
-          if (node) {
-            node.value = "";
-          }
+        reset();
+        setFileSelected(null);
+        const node = document.getElementById("file") as HTMLInputElement;
+        if (node) {
+          node.value = "";
         }
       }}
     >

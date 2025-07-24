@@ -11,6 +11,7 @@ import { ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { MarqueeDemo } from "./demo-marquee";
+import { cn } from "@/lib/utils";
 type Props = {
   selectedStyle: string;
   selectedStyleOption?: any;
@@ -164,7 +165,9 @@ const generateInfiniteScroll = (selectedStyleOption: {
           key={index}
           vertical={direction == "vertical"}
           pauseOnHover
-          className={`[--duration:${index + 1}0s]`}
+          className={cn(
+            index % 2 == 0 ? "[--duration:10s]" : "[--duration:20s]"
+          )}
           reverse={index % 2 == 0 ? true : false}
         >
           {Array.from({ length: 5 }, (_, index) => (

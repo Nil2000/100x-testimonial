@@ -17,7 +17,7 @@ export default function BackgroundImageContainer({
         alt="Wall of love"
         width={1974}
         height={400}
-        className="-z-20 object-cover w-full lg:w-[1000px] sm:h-[60vh] h-[30vh] rounded-md"
+        className="-z-20 object-cover w-full lg:w-[1000px] sm:h-[30vh] h-[20vh] rounded-md"
       />
       <div className="absolute top-0 left-0 w-full h-full rounded-md z-10 p-2">
         {children}
