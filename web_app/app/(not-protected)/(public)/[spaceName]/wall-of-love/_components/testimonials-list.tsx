@@ -121,7 +121,7 @@ export default function TestimonialsList({
               {row.map((testimonial, index) => (
                 <div
                   key={`${testimonial.id}-${index}`}
-                  className="flex-shrink-0 w-max h-min"
+                  className="flex-shrink-0 w-[200px] h-min"
                 >
                   <WallOfLoveCard testimonial={testimonial} />
                 </div>
@@ -144,40 +144,32 @@ export default function TestimonialsList({
     ]);
 
     return (
-      <div className="w-full overflow-hidden" style={{ height: "600px" }}>
+      <div className="w-full overflow-hidden relative h-[600px]">
         <div
           ref={scrollContainerRef}
-          className={`flex gap-4 overflow-hidden h-full ${
-            columns === 1
-              ? ""
-              : columns === 2
-              ? "justify-center"
-              : "justify-center"
-          }`}
+          className="flex gap-4 overflow-hidden h-full justify-center w-full"
         >
           {duplicatedColumns.map((column, colIndex) => (
-            <div
+            <Marquee
               key={colIndex}
-              className={`flex flex-col gap-4 animate-scroll-vertical ${
-                columns === 1 ? "w-full" : columns === 2 ? "w-80" : "w-72"
-              }`}
-              style={{
-                animation: `scrollVertical ${
-                  column.length * 2
-                }s linear infinite`,
-              }}
+              vertical={true}
+              pauseOnHover
+              reverse={colIndex % 2 === 0}
+              className={`w-1/3`}
             >
               {column.map((testimonial, index) => (
                 <div
                   key={`${testimonial.id}-${index}`}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 w-full h-min"
                 >
                   <WallOfLoveCard testimonial={testimonial} />
                 </div>
               ))}
-            </div>
+            </Marquee>
           ))}
         </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-background"></div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-background"></div>
       </div>
     );
   };
