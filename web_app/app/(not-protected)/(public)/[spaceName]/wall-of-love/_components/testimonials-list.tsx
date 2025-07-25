@@ -30,20 +30,16 @@ export default function TestimonialsList({
     const dividedTestimonials = divideTestimonials(testimonials, columns);
 
     return (
-      <div className="flex items-start gap-4 w-full">
+      <div className="flex gap-4 flex-col sm:flex-row">
         {dividedTestimonials.map((column, colIndex) => (
-          <div
-            key={colIndex}
-            className={`flex flex-col gap-4 ${
-              columns === 1
-                ? "w-full"
-                : columns === 2
-                ? "w-1/2"
-                : "sm:w-1/3 w-full"
-            }`}
-          >
+          <div key={colIndex} className={`flex flex-col gap-4 w-full sm:w-1/2`}>
             {column.map((testimonial) => (
-              <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
+              <div className="gap-4">
+                <WallOfLoveCard
+                  testimonial={testimonial}
+                  key={testimonial.id}
+                />
+              </div>
             ))}
           </div>
         ))}
@@ -200,7 +196,7 @@ export default function TestimonialsList({
     }
   };
 
-  return <div className="w-full z-20">{renderContent()}</div>;
+  return <div className="w-full z-20 sm:px-5 px-2">{renderContent()}</div>;
 }
 
 // Helper function to divide testimonials into columns
