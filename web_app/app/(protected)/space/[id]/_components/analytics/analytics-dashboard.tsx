@@ -4,7 +4,7 @@ import {
   DROPDOWN_ANALYTICS_PAGE_OPTIONS,
 } from "@/lib/constants";
 import React from "react";
-import MetricsContainer from "./analytics-subcomponent/metrics-container";
+import MetricsContainer from "./metrics/metrics-container";
 
 export default function AnalyticsTabView() {
   const [selectedPage, setSelectedPage] = React.useState(

@@ -4,14 +4,11 @@ import React, { useState, useTransition } from "react";
 import { deleteFeedback, toggleWallOfLove } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
 import VideoCustomComponent from "@/components/videojs-component";
-import { div } from "motion/react-client";
 import { videoJSOptions } from "@/lib/constants";
-import ShareButton from "../share-component";
-import { Button } from "@/components/ui/button";
 import { TestimonialResponse } from "@/lib/types";
 import ButtonWrapperTestimonailCard from "@/components/button-wrapper-testimonial";
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ShareButton from "../../sharing/share-controls";
 
 type Props = {
   testimonial: TestimonialResponse;

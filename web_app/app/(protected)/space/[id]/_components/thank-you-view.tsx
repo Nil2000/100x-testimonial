@@ -1,6 +1,6 @@
 import React from "react";
-import ThankYouForm from "./thankyou-form";
-import ThankYouViewPreview from "./thankyou-live-preview";
+import ThankYouForm from "./thank-you-form";
+import ThankYouViewPreview from "./thank-you-live-preview";
 
 export default function ThankYouView() {
   return (

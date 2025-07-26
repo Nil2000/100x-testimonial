@@ -1,7 +1,7 @@
 import React from "react";
-import TestimonialPage from "./testimonial-page";
-import WallOfLovePage from "./wall-of-love-page";
-import VerticalTabsWrapper from "../vertical-tabs-wrapper";
+import TestimonialPage from "./testimonial-settings";
+import WallOfLovePage from "./wall-of-love-settings";
+import TabbedInterfaceWrapper from "../../tabbed-interface-wrapper";
 
 const PageUIDesignVerticalTabs = [
   {
@@ -15,5 +15,5 @@ const PageUIDesignVerticalTabs = [
 ];
 
 export default function PageUIDesignViewContent() {
-  return <VerticalTabsWrapper tabs={PageUIDesignVerticalTabs} />;
+  return <TabbedInterfaceWrapper tabs={PageUIDesignVerticalTabs} />;
 }

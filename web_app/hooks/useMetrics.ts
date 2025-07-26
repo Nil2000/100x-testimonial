@@ -1,5 +1,4 @@
-import { POSTHOG_METRIC_EVENTS } from "@/lib/constants";
-import { Metric, MetricResponse } from "@/lib/types";
+import { Metric } from "@/lib/types";
 import axios from "axios";
 import React from "react";
 

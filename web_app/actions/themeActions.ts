@@ -8,12 +8,12 @@ type ThemeProps = {
   spaceId: string;
 };
 
-export const setThemeForSpace = async ({
+export const updateThemeForSpace = async ({
   theme,
   themeOptions,
   spaceId,
 }: ThemeProps) => {
-  if (!theme || !spaceId) {
+  if (!spaceId) {
     throw new Error("Theme and spaceId are required");
   }
 
@@ -23,8 +23,8 @@ export const setThemeForSpace = async ({
         id: spaceId,
       },
       data: {
-        themeForRequestTestimonials: {
-          theme: theme,
+        theme: {
+          theme: theme ?? null,
           themeOptions: themeOptions,
         },
       },

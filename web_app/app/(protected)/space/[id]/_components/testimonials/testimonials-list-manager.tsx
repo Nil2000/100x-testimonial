@@ -3,16 +3,16 @@ import React from "react";
 import axios from "axios";
 import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
-import TestimonialCard from "./manage-testimonials/testimonial-card";
 import { useDebounce } from "@uidotdev/usehooks";
 import { feedbackPerPage } from "@/lib/constants";
 import PaginationComponent from "@/components/pagination-component";
 import { TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
-import ShareTestimonialDialog from "./share-testimonial-dialog";
-import GetLinkDialog from "./getlink-dialog";
-import SortByDropDown from "./sortby-dropdown";
+import TestimonialSortDropdown from "./testimonial-sort-dropdown";
+import TestimonialItemCard from "./cards/testimonial-item-card";
+import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
+import ShareableLinkDialog from "../sharing/shareable-link-dialog";
 
 // Sorting function
 const sortTestimonials = (
@@ -157,7 +157,10 @@ export default function ListTestimonials({
             <SearchIcon size={16} />
           </div>
         </div>
-        <SortByDropDown onChange={setSortBy} defaultValue={"name-asc"} />
+        <TestimonialSortDropdown
+          onChange={setSortBy}
+          defaultValue={"name-asc"}
+        />
       </div>
       {!filteredTestimonials.length && (
         <div className="w-full text-center text-muted-foreground text-sm italic">
@@ -165,7 +168,7 @@ export default function ListTestimonials({
         </div>
       )}
       {getTestimonialsByPage().map((testimonial: any) => (
-        <TestimonialCard
+        <TestimonialItemCard
           key={testimonial.id}
           testimonial={testimonial}
           removeFromWallOfLove={removeFromWallOfLove}
@@ -194,7 +197,7 @@ export default function ListTestimonials({
           />
         </div>
       )}
-      <ShareTestimonialDialog
+      <TestimonialShareDialog
         feedbackInfo={selectedTestimonial!}
         isOpen={isOpenShareImage && !!selectedTestimonial}
         onClose={() => {
@@ -202,7 +205,7 @@ export default function ListTestimonials({
           setSelectedTestimonial(null);
         }}
       />
-      <GetLinkDialog
+      <ShareableLinkDialog
         isOpen={openGetlinkDialog && !!selectedTestimonial}
         onClose={() => {
           setOpenGetLinkDialog(false);

@@ -23,6 +23,17 @@ type SpaceInfo = {
     message: string;
   };
   isAnalysisEnabled?: boolean;
+  theme: {
+    theme: string | null;
+    themeOptions: any;
+    wallOfLove?: {
+      style: string;
+      styleOptions: {
+        columns?: string;
+        rows?: string;
+      };
+    };
+  };
 };
 
 interface SpaceStore {
@@ -30,6 +41,14 @@ interface SpaceStore {
   setSpaceInfo: (info: SpaceInfo) => void;
   updateSpaceField: (field: any, value: any) => void;
   updateThanksField: (field: any, value: any) => void;
+  updateThemeField: (field: any, value: any) => void;
+  updateWallOfLoveSettings: (settings: {
+    style: string;
+    styleOptions: {
+      columns?: string;
+      rows?: string;
+    };
+  }) => void;
 }
 
 export const useSpaceStore = create<SpaceStore>((set) => ({
@@ -51,6 +70,12 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
     },
     createdAt: new Date(Date.now()),
     updatedAt: new Date(Date.now()),
+    theme: {
+      theme: null,
+      themeOptions: {
+        showBrandLogo: true,
+      },
+    },
   },
   setSpaceInfo: (info: any) =>
     set({
@@ -82,6 +107,26 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
         thanksSpace: {
           ...state.spaceInfo.thanksSpace,
           [field]: value,
+        },
+      },
+    })),
+  updateThemeField: (field: any, value: any) =>
+    set((state) => ({
+      spaceInfo: {
+        ...state.spaceInfo,
+        theme: {
+          ...state.spaceInfo.theme,
+          [field]: value,
+        },
+      },
+    })),
+  updateWallOfLoveSettings: (settings) =>
+    set((state) => ({
+      spaceInfo: {
+        ...state.spaceInfo,
+        theme: {
+          ...state.spaceInfo.theme,
+          wallOfLove: settings,
         },
       },
     })),

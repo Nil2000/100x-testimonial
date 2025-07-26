@@ -1,4 +1,5 @@
 "use client";
+import { div } from "motion/react-client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import React from "react";

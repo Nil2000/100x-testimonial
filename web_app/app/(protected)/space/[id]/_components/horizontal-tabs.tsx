@@ -1,9 +1,9 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Brush, Edit, FileStack } from "lucide-react";
-import EditSpaceContent from "./edit-space-content";
-import MangeTestimonailsTabContent from "./manage-testimonials";
-import PageUIDesignViewContent from "./page-ui-subcomponents/page-ui-view-content";
+import SpaceEditorTabs from "./settings/space-editor-tabs";
+import TestimonialsManagementView from "./testimonials/testimonials-management-view";
+import PageSettingsTabs from "./settings/page-settings/page-settings-tabs";
 
 export default function HorizontalTabs() {
   return (
@@ -32,13 +32,13 @@ export default function HorizontalTabs() {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="tab-1" className="min-h-[calc(100vh-8rem)]">
-        <EditSpaceContent />
+        <SpaceEditorTabs />
       </TabsContent>
       <TabsContent value="tab-2">
-        <MangeTestimonailsTabContent />
+        <TestimonialsManagementView />
       </TabsContent>
-      <TabsContent value="tab-3">
-        <PageUIDesignViewContent />
+      <TabsContent value="tab-3" className="space-y-4">
+        <PageSettingsTabs />
       </TabsContent>
     </Tabs>
   );

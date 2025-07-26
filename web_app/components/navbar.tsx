@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import AvatarDropDownMenu from "./AvatarDropdownMenu";
+import AvatarDropdownMenu from "./avatar-dropdown-menu";
 
 export default async function Navbar() {
   const session = await auth();
@@ -34,7 +34,7 @@ export default async function Navbar() {
               </Link>
             </Button>
           ) : (
-            <AvatarDropDownMenu
+            <AvatarDropdownMenu
               name={session.user.name || "User"}
               email={session.user.email || "example@gmail.com"}
               imageUrl={session.user.image || "/avatar.svg"}

@@ -5,7 +5,7 @@ import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
 import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
 import MetricsChart from "./metrics-chart";
-import { useMetrics } from "@/hooks/use-metrics";
+import { useMetrics } from "@/hooks/useMetrics";
 
 type Props = {
   pageTitle: string;
