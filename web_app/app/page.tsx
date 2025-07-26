@@ -1,4 +1,4 @@
-import LandingPage from "@/components/LandingPage";
+import LandingPage from "@/components/landing-page";
 import { auth } from "@/lib/auth";
 
 export default async function Home() {
