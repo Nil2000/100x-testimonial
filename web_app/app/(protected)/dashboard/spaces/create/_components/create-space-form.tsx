@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,7 +12,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, PlusCircle, XCircle } from "lucide-react";
-import React, { startTransition, useActionState, useTransition } from "react";
+import React, { useTransition } from "react";
 import DragAndDropQuestions from "../../../../../../components/drag-and-drop-questions";
 import { useForm, Controller } from "react-hook-form";
 import { dropDownOptionsTextVideo, sampleQuestions } from "@/lib/constants";
@@ -25,7 +24,7 @@ import { createSpace } from "@/actions/spaceActions";
 import { CreateSpaceQuestion } from "@/lib/types";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function CreateSpaceForm({
   setFileSelected,

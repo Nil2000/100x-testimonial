@@ -12,7 +12,8 @@ import UploadFileDialog from "./upload-file-dialog";
 import SubmitTextFeedbackDialog from "./submit-text-feedback-dialog";
 import SubmitVideoFeedbackDialog from "./submit-video-feedback-dialog";
 import { usePostHog } from "posthog-js/react";
-import { POSTHOG_METRIC_CLIENT_EVENTS, THEME_CHOICES } from "@/lib/constants";
+import { POSTHOG_METRIC_CLIENT_EVENTS } from "@/lib/constants";
+import { THEME_CHOICES } from "@/components/theme-constant";
 import RequestTestimonialPageNavbar from "./navbar";
 import { useFont } from "@/hooks/use-font";
 import { cx } from "class-variance-authority";
@@ -22,6 +23,7 @@ type PublicSpaceViewProps = {
 };
 
 export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
+  console.log(space);
   const [openThanks, setOpenThanks] = React.useState(false);
   const [openRecord, setOpenRecord] = React.useState(false);
   const [openUpload, setOpenUpload] = React.useState(false);
@@ -29,11 +31,10 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   const [openSubmitFeedback, setOpenSubmitFeedback] = React.useState(false);
   const [videoFileBlob, setVideoFileBlob] = React.useState<Blob | null>(null);
   const posthog = usePostHog();
-  const theme = space.themeForRequestTestimonials.theme
-    ? THEME_CHOICES.find(
-        (t) => t.value === space.themeForRequestTestimonials.theme
-      )
-    : undefined;
+  const theme =
+    space.theme && space.theme.theme
+      ? THEME_CHOICES.find((t) => t.value === space.theme.theme)
+      : undefined;
   const { fontSelected, handleFontSelect, fontList } = useFont();
   const effectiveFont = fontSelected;
   const showThanks = async () => {
@@ -58,10 +59,12 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   };
 
   React.useEffect(() => {
-    if (space.themeForRequestTestimonials.themeOptions?.customFont) {
-      handleFontSelect(
-        space.themeForRequestTestimonials.themeOptions.customFont
-      );
+    // Always load the font from theme options if available, regardless of theme selection
+    if (space.theme?.themeOptions?.font) {
+      handleFontSelect(space.theme.themeOptions.font);
+    } else {
+      // If no font is specified in theme options, use a default accessible font
+      handleFontSelect("Roboto");
     }
   }, [space]);
 
@@ -90,25 +93,24 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
             background: theme ? theme.mainContainerBg : undefined,
           }}
         >
-          {space.logo &&
-            space.themeForRequestTestimonials.themeOptions.showBrandLogo && (
-              <div className="flex justify-center mb-4">
-                <Image
-                  src={space.logo}
-                  alt="Public space"
-                  width={80}
-                  height={80}
-                  className="object-cover"
-                />
-              </div>
-            )}
-          <h1 className="text-4xl font-bold text-center">
+          {space.logo && space.theme?.themeOptions?.showBrandLogo && (
+            <div className="flex justify-center mb-4">
+              <Image
+                src={space.logo}
+                alt="Public space"
+                width={80}
+                height={80}
+                className="object-cover"
+              />
+            </div>
+          )}
+          <h1 className={`text-4xl font-bold text-center ${theme?.textClass}`}>
             {space.headerTitle}
           </h1>
-          <p className="text-center text-xl text-muted-foreground">
+          <p className={`text-center text-xl text-muted-foreground ${theme?.textClass}`}>
             {space.headerSubtitle}
           </p>
-          <h2 className="uppercase font-semibold leading-6 mb-4">Questions</h2>
+          <h2 className={`uppercase font-semibold leading-6 mb-4 ${theme?.textClass}`}>Questions</h2>
           <ul
             className={`mb-4 text-sm pl-3 ${
               theme ? theme.listStyle : "list-square"
@@ -160,7 +162,8 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               <>
                 <Button
                   className={cx(
-                    theme ? `${theme.secondaryButtonColor} text-white` : ""
+                    theme ? `${theme.secondaryButtonColor} text-white` : "",
+                    "group"
                   )}
                   variant={!theme ? "secondary" : "default"}
                   onClick={() => setOpenTextFeedback(true)}

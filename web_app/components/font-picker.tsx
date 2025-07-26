@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
+import React from "react";
 import SelectWithSearch from "./select-with-search";
-import { useFont } from "@/hooks/use-font";
+import { useFont } from "@/hooks/useFont";
 
 type FontPickerProps = {
   selectedFont?: string;

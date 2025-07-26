@@ -1,6 +1,6 @@
 "use client";
 
-import { useCharacterLimit } from "@/hooks/use-character-limit";
+import { useCharacterLimit } from "@/hooks/useCharacterLimit";
 import { Input } from "@/components/ui/input";
 import { useId } from "react";
 import { GripVerticalIcon, Trash2 } from "lucide-react";

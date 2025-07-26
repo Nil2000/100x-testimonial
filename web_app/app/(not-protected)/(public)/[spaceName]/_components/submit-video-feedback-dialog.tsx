@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { videoJSOptions } from "@/lib/constants";
 import { Loader2, Video, XCircle } from "lucide-react";
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
 import VideoCustomComponent from "@/components/videojs-component";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +17,7 @@ import videoFeedbackSchema, {
   VideoFeedback,
 } from "@/schemas/videoFeedbackSchema";
 import { uploadFileToBucket } from "@/actions/fileAction";
-import cuid2, { createId } from "@paralleldrive/cuid2";
+import { createId } from "@paralleldrive/cuid2";
 import { submitVideoFeedback } from "@/actions/feedbackActions";
 import { Input } from "@/components/ui/input";
 import CollectStarVideoRatings from "./collect-star-video";
