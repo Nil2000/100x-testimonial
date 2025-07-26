@@ -1,9 +1,9 @@
 "use client";
 import { useSpaceStore } from "@/store/spaceStore";
 import React from "react";
-import PublishSpaceSwitch from "./space-controls/publish-space-switch";
-import AnalysisSwitch from "./space-controls/analysis-switch";
-import DeleteSpaceDialog from "./space-controls/delete-space-dialog";
+import PublishSpaceSwitch from "../space-settings-controls/publish-space-switch";
+import AnalysisSwitch from "../space-settings-controls/analysis-switch";
+import DeleteSpaceDialog from "../space-settings-controls/delete-space-dialog";
 import { deleteSpace } from "@/actions/spaceActions";
 import { useRouter } from "next/navigation";
 

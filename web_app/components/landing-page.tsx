@@ -1,6 +1,6 @@
 import React from "react";
 import WordRotate from "./ui/word-rotate";
-import Navbar from "./Navbar";
+import Navbar from "./navbar";
 
 export default function LandingPage() {
   return (

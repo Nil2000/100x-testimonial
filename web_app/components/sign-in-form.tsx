@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 
-export default function SingInForm() {
+export default function SignInForm() {
   return (
     <Card className="font-sans text-center">
       <CardHeader>

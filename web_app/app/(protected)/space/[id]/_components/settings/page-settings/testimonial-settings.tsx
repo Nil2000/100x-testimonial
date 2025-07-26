@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { useFont } from "@/hooks/use-font";
+import { useFont } from "@/hooks/useFont";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
 import clsx from "clsx";

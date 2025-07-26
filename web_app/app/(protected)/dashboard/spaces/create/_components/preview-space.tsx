@@ -1,8 +1,6 @@
 "use client";
 import { Card } from "@/components/ui/card";
 import React from "react";
-
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
 import ImagePrview from "./image-preview";

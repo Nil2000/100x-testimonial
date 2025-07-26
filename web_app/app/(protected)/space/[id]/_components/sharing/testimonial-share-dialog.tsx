@@ -6,26 +6,23 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { feedbackConstants } from "@/lib/constants";
 import { TestimonialResponse } from "@/lib/types";
 import React, { useState } from "react";
 import { TbBorderRadius } from "react-icons/tb";
 import { RiShadowFill } from "react-icons/ri";
 import { TbBackground } from "react-icons/tb";
-import BorderTabContent from "./share-testimonial-subcomponents/BorderTabContent";
-import ShadowTabContent from "./share-testimonial-subcomponents/ShadowTabContent";
-import BackgroundTabContent from "./share-testimonial-subcomponents/BackgroundTabContent";
+import BorderTabContent from "./customization/BorderTabContent";
+import ShadowTabContent from "./customization/ShadowTabContent";
+import BackgroundTabContent from "./customization/BackgroundTabContent";
 import { Text, UserRound } from "lucide-react";
-import TextTabContent from "./share-testimonial-subcomponents/TextTabContent";
+import TextTabContent from "./customization/TextTabContent";
 import { toPng, toBlob } from "html-to-image";
 import { useTheme } from "next-themes";
-import { div } from "motion/react-client";
 
 type ShareTestimonialDialogProps = {
   isOpen: boolean;

@@ -10,7 +10,6 @@ import { Marquee } from "@/components/ui/marquee";
 import { ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { MarqueeDemo } from "./demo-marquee";
 import { cn } from "@/lib/utils";
 type Props = {
   selectedStyle: string;

@@ -2,7 +2,7 @@
 import React from "react";
 import { WALL_OF_LOVE_STYLE_CHOICES } from "@/lib/constants";
 import SelectWrapper from "@/components/dropdown-wrapper";
-import WallOfLovePreviewContainer from "./wall-of-love-preview-container";
+import WallOfLovePreview from "./wall-of-love-preview";
 import { useSpaceStore } from "@/store/spaceStore";
 import { saveWallOfLoveSettings } from "@/actions/spaceActions";
 import { Button } from "@/components/ui/button";
@@ -147,7 +147,7 @@ export default function WallOfLovePage() {
       </Button>
       {/* Preview changes */}
       <div className="relative">
-        <WallOfLovePreviewContainer
+        <WallOfLovePreview
           selectedStyle={selectedStyleOption}
           selectedStyleOption={selectedExtraOptions}
         />

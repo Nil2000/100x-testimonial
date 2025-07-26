@@ -18,7 +18,7 @@ import { ChevronDown, LogOut, Paintbrush, UserPen } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 
-export default function AvatarDropDownMenu({
+export default function AvatarDropdownMenu({
   name,
   email,
   imageUrl,
