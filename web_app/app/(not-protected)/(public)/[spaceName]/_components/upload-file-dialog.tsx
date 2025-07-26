@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UPLOAD_VIDEO_MAX_SIZE } from "@/lib/constants";
-import React, { useState } from "react";
+import React from "react";
 
 export default function UploadFileDialog({
   open,

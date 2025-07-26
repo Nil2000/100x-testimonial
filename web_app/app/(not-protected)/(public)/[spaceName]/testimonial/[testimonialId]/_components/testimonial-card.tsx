@@ -1,9 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import {
-  SingleTestimonialWithSpaceLogo,
-  TestimonialResponse,
-} from "@/lib/types";
+import { SingleTestimonialWithSpaceLogo } from "@/lib/types";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";

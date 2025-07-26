@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma-db-postgres/client";
+import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
@@ -14,4 +14,4 @@ export {
   FeedbackType,
   SentimentType,
   AnalysisStatus,
-} from "@prisma-db-postgres/client";
+} from "@prisma/client";

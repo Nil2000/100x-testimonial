@@ -5,14 +5,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Pen, Trash2, XCircle } from "lucide-react";
+import { Loader2, XCircle } from "lucide-react";
 import React, { useTransition } from "react";
 import CollectStarRatings from "./collect-start-rating";
 import { Controller, useForm } from "react-hook-form";
@@ -23,7 +22,6 @@ import { FeedbackType } from "@/lib/db";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
 
 type Props = {
   space: any;
@@ -97,6 +95,11 @@ export default function SubmitTextFeedbackDialog({
           .finally(() => {
             onOpenChange(false);
             reset();
+            setFileSelected(null);
+            const node = document.getElementById("file") as HTMLInputElement;
+            if (node) {
+              node.value = "";
+            }
             showThankYou();
           });
       });
@@ -108,13 +111,11 @@ export default function SubmitTextFeedbackDialog({
       open={open}
       onOpenChange={(isOpen) => {
         onOpenChange(isOpen);
-        if (isOpen) {
-          reset();
-          setFileSelected(null);
-          const node = document.getElementById("file") as HTMLInputElement;
-          if (node) {
-            node.value = "";
-          }
+        reset();
+        setFileSelected(null);
+        const node = document.getElementById("file") as HTMLInputElement;
+        if (node) {
+          node.value = "";
         }
       }}
     >

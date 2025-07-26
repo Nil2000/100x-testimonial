@@ -8,7 +8,7 @@ import {
   Video,
   WalletCards,
 } from "lucide-react";
-import ListTestimonials from "./list-testimonials";
+import TestimonialsListManager from "./testimonials/testimonials-list-manager";
 import { manageTestimonialSidebarElementType } from "@/lib/types";
 export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementType[] =
   [
@@ -18,27 +18,27 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "All",
           icon: WalletCards,
-          tabContent: <ListTestimonials />,
+          tabContent: <TestimonialsListManager key="all-testimonials" />,
         },
         {
           title: "Video",
           icon: Video,
-          tabContent: <ListTestimonials category="VIDEO" />,
+          tabContent: <TestimonialsListManager key="video-testimonials" category="VIDEO" />,
         },
         {
           title: "Text",
           icon: LetterText,
-          tabContent: <ListTestimonials category="TEXT" />,
+          tabContent: <TestimonialsListManager key="text-testimonials" category="TEXT" />,
         },
         {
           title: "Liked",
           icon: HandHeart,
-          tabContent: <ListTestimonials wallOfLove={true} />,
+          tabContent: <TestimonialsListManager key="liked-testimonials" wallOfLove={true} />,
         },
         {
           title: "Spam",
           icon: MessageSquareWarningIcon,
-          tabContent: <ListTestimonials category="SPAM" />,
+          tabContent: <TestimonialsListManager key="spam-testimonials" category="SPAM" />,
         },
       ],
     },
@@ -48,12 +48,12 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
     //     {
     //       title: "Wall of love",
     //       icon: Heart,
-    //       tabContent: <ListTestimonials category="embed-love" />,
+    //       tabContent: <TestimonialsListManager filter="embed-love" key="embed-love-testimonials" />,
     //     },
     //     {
     //       title: "Single testimonials",
     //       icon: Heart,
-    //       tabContent: <ListTestimonials category="embed-single" />,
+    //       tabContent: <TestimonialsListManager filter="all" key="all-testimonials" />,
     //     },
     //   ],
     // },
@@ -63,12 +63,12 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
     //     {
     //       title: "Request testimonails",
     //       icon: Send,
-    //       tabContent: <ListTestimonials category="request" />,
+    //       tabContent: <TestimonialsListManager key="request-testimonials" category="request" />,
     //     },
     //     {
     //       title: "Wall of love",
     //       icon: Heart,
-    //       tabContent: <ListTestimonials category="wall-of-love" />,
+    //       tabContent: <TestimonialsListManager key="wall-of-love-testimonials" wallOfLove={true} />,
     //     },
     //   ],
     // },
