@@ -2,9 +2,15 @@
 import { TestimonialResponse } from "@/lib/types";
 import React from "react";
 import WallOfLoveCard from "./wall-of-love-card";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
 
 type Props = {
   testimonials: TestimonialResponse[] | undefined;
@@ -21,9 +27,6 @@ export default function TestimonialsList({
   styleOptions = {},
 }: Props) {
   if (!testimonials || testimonials.length === 0) return null;
-
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   const renderListStyle = () => {
     const columns = parseInt(styleOptions.columns || "3");
@@ -49,58 +52,46 @@ export default function TestimonialsList({
 
   const renderCarouselStyle = () => {
     const columns = parseInt(styleOptions.columns || "2");
-    const itemsPerSlide = columns;
-    const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
-
-    const nextSlide = () => {
-      setCurrentIndex((prev) => (prev + 1) % totalSlides);
-    };
-
-    const prevSlide = () => {
-      setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
-    };
-
-    const currentTestimonials = testimonials.slice(
-      currentIndex * itemsPerSlide,
-      (currentIndex + 1) * itemsPerSlide
-    );
 
     return (
-      <div className="relative w-full">
-        <div className="flex justify-between items-center mb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={prevSlide}
-            className="p-2"
-          >
-            <ChevronLeft size={16} />
-          </Button>
-          <span className="text-sm text-gray-500">
-            {currentIndex + 1} / {totalSlides}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={nextSlide}
-            className="p-2"
-          >
-            <ChevronRight size={16} />
-          </Button>
-        </div>
-        <div
-          className={`grid gap-4 ${
-            columns === 1
-              ? "grid-cols-1"
-              : columns === 2
-              ? "grid-cols-1 sm:grid-cols-2"
-              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-          }`}
+      <div className="w-full flex items-center justify-center p-10 h-max">
+        <Carousel
+          opts={{
+            align: "start",
+          }}
+          className={cn(
+            columns == 3
+              ? "w-full"
+              : columns == 2
+              ? "max-w-[40rem]"
+              : "max-w-sm",
+            "w-full"
+          )}
         >
-          {currentTestimonials.map((testimonial) => (
-            <WallOfLoveCard testimonial={testimonial} key={testimonial.id} />
-          ))}
-        </div>
+          <CarouselContent className="-ml-1">
+            {testimonials.map((testimonial, index) => (
+              <CarouselItem
+                key={index}
+                className={`pl-1 flex items-center justify-center ${
+                  columns == 3
+                    ? "sm:basis-1/3 basis-full"
+                    : columns == 2
+                    ? "sm:basis-1/2 basis-full"
+                    : ""
+                }`}
+              >
+                <div className="w-full p-1">
+                  <WallOfLoveCard
+                    testimonial={testimonial}
+                    key={testimonial.id}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     );
   };
@@ -112,10 +103,7 @@ export default function TestimonialsList({
 
     return (
       <div className="w-full overflow-hidden relative">
-        <div
-          ref={scrollContainerRef}
-          className="flex flex-col gap-4 overflow-hidden"
-        >
+        <div className="flex flex-col gap-4 overflow-hidden">
           {duplicatedTestimonials.map((row, rowIndex) => (
             <Marquee key={rowIndex} pauseOnHover reverse={rowIndex % 2 === 0}>
               {row.map((testimonial, index) => (
@@ -145,10 +133,7 @@ export default function TestimonialsList({
 
     return (
       <div className="w-full overflow-hidden relative h-[600px]">
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-4 overflow-hidden h-full justify-center w-full"
-        >
+        <div className="flex gap-4 overflow-hidden h-full justify-center w-full">
           {duplicatedColumns.map((column, colIndex) => (
             <Marquee
               key={colIndex}
