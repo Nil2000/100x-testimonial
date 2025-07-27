@@ -15,7 +15,7 @@ import { usePostHog } from "posthog-js/react";
 import { POSTHOG_METRIC_CLIENT_EVENTS } from "@/lib/constants";
 import { THEME_CHOICES } from "@/components/theme-constant";
 import RequestTestimonialPageNavbar from "./navbar";
-import { useFont } from "@/hooks/use-font";
+import { useFont } from "@/hooks/useFont";
 import { cx } from "class-variance-authority";
 
 type PublicSpaceViewProps = {
@@ -107,10 +107,16 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           <h1 className={`text-4xl font-bold text-center ${theme?.textClass}`}>
             {space.headerTitle}
           </h1>
-          <p className={`text-center text-xl text-muted-foreground ${theme?.textClass}`}>
+          <p
+            className={`text-center text-xl text-muted-foreground ${theme?.textClass}`}
+          >
             {space.headerSubtitle}
           </p>
-          <h2 className={`uppercase font-semibold leading-6 mb-4 ${theme?.textClass}`}>Questions</h2>
+          <h2
+            className={`uppercase font-semibold leading-6 mb-4 ${theme?.textClass}`}
+          >
+            Questions
+          </h2>
           <ul
             className={`mb-4 text-sm pl-3 ${
               theme ? theme.listStyle : "list-square"
