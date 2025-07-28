@@ -115,6 +115,13 @@ model ThankYouSpace {
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }
 
+enum SourceType {
+  WEBSITE
+  X
+  LINKEDIN
+  OTHER
+}
+
 enum FeedbackType {
   TEXT
   VIDEO
@@ -151,6 +158,9 @@ model Feedback {
   isSpam          Boolean        @default(false)
   sentiment       SentimentType  @default(NEUTRAL)
   analysisStatus  AnalysisStatus @default(PENDING)
+  source          SourceType     @default(WEBSITE)
+  sourceUrl       String?
+  metadata        Json?
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

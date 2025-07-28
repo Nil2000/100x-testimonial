@@ -1,5 +1,5 @@
-import { LucideIcon } from "lucide-react";
 import { AnalysisStatus, SentimentType } from "./db";
+import { IconType } from "react-icons/lib";
 
 export interface CreateSpaceQuestion {
   id: string;
@@ -10,7 +10,7 @@ export interface manageTestimonialSidebarElementType {
   header: string;
   contents: {
     title: string;
-    icon: LucideIcon;
+    icon: IconType;
     tabContent: any;
   }[];
 }

@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { db } from "@/lib/db";
-import { postHogExecQuery } from "@/lib/posthog-utils";
+import { postHogExecQuery } from "@/lib/posthogUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {

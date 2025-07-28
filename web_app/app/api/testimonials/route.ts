@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
-  const category = params.get("category") as "TEXT" | "VIDEO" | "SPAM";
+  const category = params.get("category") as "TEXT" | "VIDEO" | "SPAM" | "X";
   const spaceId = params.get("spaceId");
   const addToWallOfLove = params.get("addToWallOfLove");
 
@@ -13,6 +13,17 @@ export async function GET(req: NextRequest) {
 
   try {
     let feedbacks;
+
+    if (category && category === "X") {
+      feedbacks = await db.feedback.findMany({
+        where: {
+          spaceId: spaceId,
+          source: "X",
+        },
+      });
+      return NextResponse.json(feedbacks);
+    }
+
     if (category && category !== "SPAM") {
       feedbacks = await db.feedback.findMany({
         where: {

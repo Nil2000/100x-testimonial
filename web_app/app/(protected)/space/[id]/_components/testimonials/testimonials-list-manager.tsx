@@ -8,11 +8,13 @@ import { feedbackPerPage } from "@/lib/constants";
 import PaginationComponent from "@/components/pagination-component";
 import { TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
-import { SearchIcon } from "lucide-react";
+import { Import, PlusIcon, SearchIcon } from "lucide-react";
 import TestimonialSortDropdown from "./testimonial-sort-dropdown";
 import TestimonialItemCard from "./cards/testimonial-item-card";
 import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
 import ShareableLinkDialog from "../sharing/shareable-link-dialog";
+import ImportSocialDialog from "./import-social-dialog";
+import { Button } from "@/components/ui/button";
 
 // Sorting function
 const sortTestimonials = (
@@ -43,12 +45,14 @@ type Props = {
   category?: string;
   wallOfLove?: boolean;
   archived?: boolean;
+  isSocial?: boolean;
 };
 
 export default function ListTestimonials({
   category,
   wallOfLove,
   archived,
+  isSocial,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
@@ -65,6 +69,7 @@ export default function ListTestimonials({
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { spaceInfo } = useSpaceStore();
   const [openGetlinkDialog, setOpenGetLinkDialog] = React.useState(false);
+  const [openImportDialog, setOpenImportDialog] = React.useState(false);
 
   const handleNextPage = () => {
     const isItemsLeft =
@@ -157,6 +162,12 @@ export default function ListTestimonials({
             <SearchIcon size={16} />
           </div>
         </div>
+        {isSocial && (
+          <Button variant="outline" onClick={() => setOpenImportDialog(true)}>
+            <Import size={16} className="text-muted-foreground/80 mr-2" />{" "}
+            Import
+          </Button>
+        )}
         <TestimonialSortDropdown
           onChange={setSortBy}
           defaultValue={"name-asc"}
@@ -214,6 +225,19 @@ export default function ListTestimonials({
         testimonialId={selectedTestimonial?.id!}
         spaceName={spaceInfo.name}
       />
+      {isSocial && (
+        <ImportSocialDialog
+          isOpen={openImportDialog}
+          onClose={(data: any) => {
+            setOpenImportDialog(false);
+            if (data) {
+              setTestimonials((prev) => [...prev, data]);
+            }
+          }}
+          platform={"X"}
+          spaceId={spaceInfo.id}
+        />
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import TestimonialsListManager from "./testimonials/testimonials-list-manager";
 import { manageTestimonialSidebarElementType } from "@/lib/types";
+import { RiTwitterXFill } from "react-icons/ri";
 export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementType[] =
   [
     {
@@ -23,22 +24,52 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "Video",
           icon: Video,
-          tabContent: <TestimonialsListManager key="video-testimonials" category="VIDEO" />,
+          tabContent: (
+            <TestimonialsListManager
+              key="video-testimonials"
+              category="VIDEO"
+            />
+          ),
         },
         {
           title: "Text",
           icon: LetterText,
-          tabContent: <TestimonialsListManager key="text-testimonials" category="TEXT" />,
+          tabContent: (
+            <TestimonialsListManager key="text-testimonials" category="TEXT" />
+          ),
         },
         {
           title: "Liked",
           icon: HandHeart,
-          tabContent: <TestimonialsListManager key="liked-testimonials" wallOfLove={true} />,
+          tabContent: (
+            <TestimonialsListManager
+              key="liked-testimonials"
+              wallOfLove={true}
+            />
+          ),
         },
         {
           title: "Spam",
           icon: MessageSquareWarningIcon,
-          tabContent: <TestimonialsListManager key="spam-testimonials" category="SPAM" />,
+          tabContent: (
+            <TestimonialsListManager key="spam-testimonials" category="SPAM" />
+          ),
+        },
+      ],
+    },
+    {
+      header: "Integrations",
+      contents: [
+        {
+          title: "X",
+          icon: RiTwitterXFill,
+          tabContent: (
+            <TestimonialsListManager
+              key="x-testimonials"
+              category="X"
+              isSocial={true}
+            />
+          ),
         },
       ],
     },
