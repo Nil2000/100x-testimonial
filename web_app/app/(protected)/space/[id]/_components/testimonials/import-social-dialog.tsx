@@ -10,11 +10,17 @@ import {
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { Import, Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+interface ImportSocialDialogResult {
+  type: "success" | "error" | "cancel";
+  data?: any;
+  error?: string;
+}
 
 interface ImportSocialDialogProps {
   isOpen: boolean;
-  onClose: (data: any) => void;
+  onClose: (result: ImportSocialDialogResult) => void;
   platform: "X"; // e.g., "X", "LinkedIn"
   spaceId: string;
 }
@@ -34,10 +40,23 @@ export default function ImportSocialDialog({
     return tweetIdMatch ? tweetIdMatch[1] : null;
   };
 
+  const resetForm = () => {
+    setPostUrl("");
+    setStatus(null);
+    setImporting(false);
+  };
+
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      resetForm();
+    }
+  }, [isOpen]);
+
   const handleImport = async () => {
     setImporting(true);
     setStatus(null);
-    
+
     try {
       const tweetId = extractTweetId(postUrl);
       if (!tweetId) {
@@ -46,9 +65,12 @@ export default function ImportSocialDialog({
         return;
       }
 
-      const response = await axios.get(`/api/lookuptweetById?tweetId=${tweetId}&spaceId=${spaceId}`);
+      const response = await axios.post(`/api/lookuptweetById`, {
+        tweetId,
+        spaceId,
+      });
       const apiResponse = response.data;
-      
+
       if (!apiResponse.success) {
         setStatus(apiResponse.error || "Failed to import tweet.");
         setImporting(false);
@@ -57,14 +79,19 @@ export default function ImportSocialDialog({
 
       // The API now returns the saved feedback data
       const savedFeedback = apiResponse.data;
-      
+
       setImporting(false);
       setStatus(apiResponse.message || "Imported successfully!");
-      onClose(savedFeedback);
+      onClose({ type: "success", data: savedFeedback });
+
+      console.log(savedFeedback.metadata);
     } catch (error) {
       console.error("Error importing tweet:", error);
-      setStatus("Failed to import tweet. Please try again.");
+      const errorMessage = "Failed to import tweet. Please try again.";
+      setStatus(errorMessage);
       setImporting(false);
+      // Optionally close dialog on error - uncomment if desired:
+      // onClose({ type: 'error', error: errorMessage });
     }
   };
 
@@ -73,7 +100,7 @@ export default function ImportSocialDialog({
       open={isOpen}
       onOpenChange={(open) => {
         if (!open) {
-          onClose(null);
+          onClose({ type: "cancel" });
         }
       }}
     >
@@ -90,18 +117,27 @@ export default function ImportSocialDialog({
           onChange={(e) => setPostUrl(e.target.value)}
         />
         {status && (
-          <div className={`text-sm font-medium ${
-            status.includes("successfully") ? "text-green-600" : "text-red-600"
-          }`}>
+          <div
+            className={`text-sm font-medium ${
+              status.includes("successfully")
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
             {status}
           </div>
         )}
         <p className="text-sm text-muted-foreground">
-          The tweet link should follow this format:<br />
+          The tweet link should follow this format:
+          <br />
           https://twitter.com/username/status/tweet-id
         </p>
         <DialogFooter>
-          <Button variant="default" onClick={handleImport} disabled={importing || !postUrl.trim()}>
+          <Button
+            variant="default"
+            onClick={handleImport}
+            disabled={importing || !postUrl.trim()}
+          >
             {importing ? (
               <Loader2 className="mr-2 opacity-60 animate-spin" size={16} />
             ) : (

@@ -228,10 +228,15 @@ export default function ListTestimonials({
       {isSocial && (
         <ImportSocialDialog
           isOpen={openImportDialog}
-          onClose={(data: any) => {
+          onClose={(result) => {
             setOpenImportDialog(false);
-            if (data) {
-              setTestimonials((prev) => [...prev, data]);
+            if (result.type === 'success' && result.data) {
+              setTestimonials((prev) => [...prev, result.data]);
+            }
+            // Handle error case if needed
+            if (result.type === 'error') {
+              console.error('Import error:', result.error);
+              // Could show a toast notification here
             }
           }}
           platform={"X"}

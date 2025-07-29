@@ -36,6 +36,8 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    console.log(tweet);
+
     // Save tweet as feedback in database
     const savedFeedback = await db.feedback.create({
       data: {
@@ -62,6 +64,7 @@ export async function POST(req: NextRequest) {
       success: true,
       data: savedFeedback,
       message: "Tweet imported successfully",
+      metadata: tweet,
     });
   } catch (error) {
     console.error("Error importing tweet:", error);
