@@ -21,6 +21,9 @@ export async function GET(req: NextRequest) {
           source: "X",
         },
       });
+      feedbacks.map((feedback) => {
+        console.log(feedback.metadata);
+      });
       return NextResponse.json(feedbacks);
     }
 

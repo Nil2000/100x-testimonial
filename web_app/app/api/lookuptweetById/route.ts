@@ -47,10 +47,16 @@ export async function POST(req: NextRequest) {
         rating: 5, // Default rating for imported tweets
         permission: true,
         spaceId: spaceId,
-        feedbackType: "TEXT",
+        feedbackType: "TEXT_AND_VIDEO",
         addToWallOfLove: false,
-        videoUrl: null,
-        imageUrl: null,
+        videoUrl:
+          tweet.includes?.media?.[0]?.type === "video"
+            ? tweet.includes.media[0].url
+            : null,
+        imageUrl:
+          tweet.includes?.media?.[0]?.type === "photo"
+            ? tweet.includes.media[0].url
+            : null,
         isSpam: false,
         sentiment: "POSITIVE",
         analysisStatus: "PENDING",
