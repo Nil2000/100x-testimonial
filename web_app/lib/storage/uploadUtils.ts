@@ -4,7 +4,8 @@ import { parseS3PublicBaseUrl } from "./parseS3publicBaseUrl";
 // Upload image to S3 storage
 export const uploadImageToS3 = async (
   imageUrl: string,
-  mediaKey: string
+  mediaKey: string,
+  spaceId: string
 ): Promise<string> => {
   const s3Client = initClient();
   const bucketName = process.env.S3_BUCKET!;
@@ -20,7 +21,7 @@ export const uploadImageToS3 = async (
     const buffer = Buffer.from(imageBuffer);
 
     // Generate a unique filename
-    const fileName = `twitter-media/${mediaKey}.jpg`;
+    const fileName = `/public/space/${spaceId}/twitter-media/${mediaKey}.jpg`;
 
     // Upload to S3
     await s3Client.putObject(bucketName, fileName, buffer, buffer.length, {
@@ -39,7 +40,8 @@ export const uploadImageToS3 = async (
 // Upload video to S3 storage
 export const uploadVideoToS3 = async (
   videoUrl: string,
-  mediaKey: string
+  mediaKey: string,
+  spaceId: string
 ): Promise<string> => {
   const s3Client = initClient();
   const bucketName = process.env.S3_BUCKET!;
@@ -55,7 +57,7 @@ export const uploadVideoToS3 = async (
     const buffer = Buffer.from(videoBuffer);
 
     // Generate a unique filename - use .mp4 for videos
-    const fileName = `twitter-media/${mediaKey}.mp4`;
+    const fileName = `/public/space/${spaceId}/twitter-media/${mediaKey}.mp4`;
 
     // Upload to S3
     await s3Client.putObject(bucketName, fileName, buffer, buffer.length, {

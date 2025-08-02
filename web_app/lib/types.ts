@@ -1,4 +1,4 @@
-import { AnalysisStatus, SentimentType } from "./db";
+import { AnalysisStatus, SentimentType, SourceType } from "./db";
 import { IconType } from "react-icons/lib";
 
 export interface CreateSpaceQuestion {
@@ -59,6 +59,9 @@ export interface TestimonialResponse {
   isSpam: boolean;
   sentiment: SentimentType;
   analysisStatus: AnalysisStatus;
+  source: SourceType;
+  sourceUrl: string | null;
+  metadata: any;
 }
 
 export type SingleTestimonialWithSpaceLogo = TestimonialResponse & {

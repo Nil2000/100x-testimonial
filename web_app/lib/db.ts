@@ -14,4 +14,5 @@ export {
   FeedbackType,
   SentimentType,
   AnalysisStatus,
+  SourceType,
 } from "@prisma/client";

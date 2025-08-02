@@ -15,6 +15,8 @@ import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
 import ShareableLinkDialog from "../sharing/shareable-link-dialog";
 import ImportSocialDialog from "./import-social-dialog";
 import { Button } from "@/components/ui/button";
+import SocialMedialTestimonialCard from "./cards/social-medial-testimonial-card";
+import cuid2, { createId } from "@paralleldrive/cuid2";
 
 // Sorting function
 const sortTestimonials = (
@@ -178,26 +180,47 @@ export default function ListTestimonials({
           No testimonials found
         </div>
       )}
-      {getTestimonialsByPage().map((testimonial: any) => (
-        <TestimonialItemCard
-          key={testimonial.id}
-          testimonial={testimonial}
-          removeFromWallOfLove={removeFromWallOfLove}
-          shareForEmbed={() => {
-            setSelectedTestimonial(testimonial);
-            setIsOpenEmbedTestimonial(true);
-          }}
-          shareForImage={() => {
-            setSelectedTestimonial(testimonial);
-            setIsOpenShareImage(true);
-          }}
-          getLink={() => {
-            setSelectedTestimonial(testimonial);
-            setOpenGetLinkDialog(true);
-          }}
-          removeFromList={removeFromList}
-        />
-      ))}
+      {!isSocial
+        ? getTestimonialsByPage().map((testimonial: any) => (
+            <TestimonialItemCard
+              key={testimonial.id}
+              testimonial={testimonial}
+              removeFromWallOfLove={removeFromWallOfLove}
+              shareForEmbed={() => {
+                setSelectedTestimonial(testimonial);
+                setIsOpenEmbedTestimonial(true);
+              }}
+              shareForImage={() => {
+                setSelectedTestimonial(testimonial);
+                setIsOpenShareImage(true);
+              }}
+              getLink={() => {
+                setSelectedTestimonial(testimonial);
+                setOpenGetLinkDialog(true);
+              }}
+              removeFromList={removeFromList}
+            />
+          ))
+        : getTestimonialsByPage().map((testimonial: any) => (
+            <SocialMedialTestimonialCard
+              key={createId()}
+              testimonial={testimonial}
+              removeFromWallOfLove={removeFromWallOfLove}
+              shareForEmbed={() => {
+                setSelectedTestimonial(testimonial);
+                setIsOpenEmbedTestimonial(true);
+              }}
+              shareForImage={() => {
+                setSelectedTestimonial(testimonial);
+                setIsOpenShareImage(true);
+              }}
+              getLink={() => {
+                setSelectedTestimonial(testimonial);
+                setOpenGetLinkDialog(true);
+              }}
+              removeFromList={removeFromList}
+            />
+          ))}
       {filteredTestimonials.length > 0 && (
         <div className="w-full flex justify-center">
           <PaginationComponent
@@ -230,12 +253,12 @@ export default function ListTestimonials({
           isOpen={openImportDialog}
           onClose={(result) => {
             setOpenImportDialog(false);
-            if (result.type === 'success' && result.data) {
+            if (result.type === "success" && result.data) {
               setTestimonials((prev) => [...prev, result.data]);
             }
             // Handle error case if needed
-            if (result.type === 'error') {
-              console.error('Import error:', result.error);
+            if (result.type === "error") {
+              console.error("Import error:", result.error);
               // Could show a toast notification here
             }
           }}

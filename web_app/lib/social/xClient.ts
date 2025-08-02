@@ -12,54 +12,20 @@ export const getXClient = () => {
   return xClient;
 };
 
-export const getTweetById = async (tweetId: string) => {
+export const getTweetById = async (tweetId: string, spaceId: string) => {
   const client = getXClient();
   const tweet = await client.tweets.findTweetById(tweetId, {
     "tweet.fields": [
       "attachments",
       "author_id",
-      "context_annotations",
-      "conversation_id",
       "created_at",
-      "edit_controls",
-      "edit_history_tweet_ids",
       "entities",
-      "geo",
       "id",
-      "in_reply_to_user_id",
       "lang",
-      "non_public_metrics",
-      "organic_metrics",
-      "possibly_sensitive",
-      "promoted_metrics",
       "public_metrics",
-      "referenced_tweets",
-      "reply_settings",
-      "source",
       "text",
-      "withheld",
     ],
-    "user.fields": [
-      "created_at",
-      "description",
-      "entities",
-      "location",
-      "name",
-      "protected",
-      "url",
-      "username",
-      "verified",
-      "withheld",
-    ],
-    expansions: [
-      "attachments.media_keys",
-      "author_id",
-      "entities.mentions.username",
-      "geo.place_id",
-      "in_reply_to_user_id",
-      "referenced_tweets.id",
-      "referenced_tweets.id.author_id",
-    ],
+    "user.fields": ["id", "name", "username", "profile_image_url"],
     "media.fields": [
       "duration_ms",
       "height",
@@ -68,31 +34,21 @@ export const getTweetById = async (tweetId: string) => {
       "type",
       "url",
       "width",
-      "public_metrics",
       "alt_text",
+      "variants",
     ],
-
-    "place.fields": [
-      "contained_within",
-      "country",
-      "country_code",
-      "full_name",
-      "geo",
-      "id",
-      "name",
-      "place_type",
-    ],
+    expansions: ["attachments.media_keys", "author_id"],
   });
   console.log(tweet);
 
   // Process and upload single image if available
-  const processedTweet = await processTweetMedia(tweet);
+  const processedTweet = await processTweetMedia(tweet, spaceId);
 
   return processedTweet;
 };
 
 // Process tweet media to upload only the first image to S3
-const processTweetMedia = async (tweet: any) => {
+const processTweetMedia = async (tweet: any, spaceId: string) => {
   // Check if tweet has media attachments
   if (!tweet.includes?.media || tweet.includes.media.length === 0) {
     return tweet;
@@ -117,13 +73,18 @@ const processTweetMedia = async (tweet: any) => {
       // Download and upload the image to S3
       uploadedMediaUrl = await uploadImageToS3(
         firstMedia.url,
-        firstMedia.media_key
+        firstMedia.media_key,
+        spaceId
       );
     } else if (firstMedia.type === "video") {
+      let videoVariants = firstMedia.variants
+        ?.filter((variant: any) => variant.content_type === "video/mp4")
+        .sort((a: any, b: any) => b.bitrate - a.bitrate)[1];
       // Download and upload the video to S3
       uploadedMediaUrl = await uploadVideoToS3(
-        firstMedia.url,
-        firstMedia.media_key
+        videoVariants.url,
+        firstMedia.media_key,
+        spaceId
       );
     } else {
       // Fallback - shouldn't reach here due to filtering above

@@ -160,7 +160,7 @@ model Feedback {
   analysisStatus  AnalysisStatus @default(PENDING)
   source          SourceType     @default(WEBSITE)
   sourceUrl       String?
-  metadata        Json?
+  metadata        String?
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }
