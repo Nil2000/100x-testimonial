@@ -121,7 +121,7 @@ export default function TestimonialCard({
       <div className="flex">{renderStars(testimonial.rating)}</div>
       <Avatar>
         <AvatarImage
-          src={testimonial.imageUrl || ""}
+          src={testimonial.profileImageUrl || ""}
           className="object-cover"
           alt="User Image"
         />

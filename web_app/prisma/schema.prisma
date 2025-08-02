@@ -155,6 +155,7 @@ model Feedback {
   addToWallOfLove Boolean        @default(false)
   videoUrl        String?
   imageUrl        String?
+  profileImageUrl String?
   isSpam          Boolean        @default(false)
   sentiment       SentimentType  @default(NEUTRAL)
   analysisStatus  AnalysisStatus @default(PENDING)

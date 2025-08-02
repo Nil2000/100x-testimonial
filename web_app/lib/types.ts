@@ -56,6 +56,7 @@ export interface TestimonialResponse {
   addToWallOfLove: boolean;
   videoUrl: string | null;
   imageUrl: string | null;
+  profileImageUrl: string | null;
   isSpam: boolean;
   sentiment: SentimentType;
   analysisStatus: AnalysisStatus;

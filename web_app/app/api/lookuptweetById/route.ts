@@ -1,4 +1,5 @@
 import { getTweetById } from "@/lib/social/xClient";
+import { uploadImageToS3 } from "@/lib/storage/uploadUtils";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,6 +37,22 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Upload Twitter user's profile image to S3
+    let profileImageUrl = "";
+    if (tweet.includes?.users?.[0]?.profile_image_url) {
+      try {
+        const uploadedProfileImageUrl = await uploadImageToS3(
+          tweet.includes.users[0].profile_image_url,
+          `profile_${tweet.data.author_id}`,
+          spaceId
+        );
+        profileImageUrl = uploadedProfileImageUrl;
+      } catch (error) {
+        console.error("Failed to upload profile image:", error);
+        // Continue without profile image if upload fails
+      }
+    }
+
     // Save tweet as feedback in database
     const savedFeedback = await db.feedback.create({
       data: {
@@ -55,6 +72,7 @@ export async function POST(req: NextRequest) {
           tweet.includes?.media?.[0]?.type === "photo"
             ? tweet.includes.media[0].url
             : null,
+        profileImageUrl: profileImageUrl || null,
         isSpam: false,
         sentiment: "POSITIVE",
         analysisStatus: "PENDING",

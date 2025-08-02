@@ -62,6 +62,7 @@ export default function SubmitVideoFeedbackDialog({
       rating: 3,
       permission: false,
       imageUrl: "",
+      profileImageUrl: "",
     },
   });
 
@@ -100,7 +101,7 @@ export default function SubmitVideoFeedbackDialog({
     startTransition(async () => {
       try {
         if (!profilePicFile) {
-          data.imageUrl = "";
+          data.profileImageUrl = "";
         } else {
           const fileUrl = await uploadFile(
             profilePicFile,
@@ -111,7 +112,7 @@ export default function SubmitVideoFeedbackDialog({
             console.error("File upload failed");
             return;
           }
-          data.imageUrl = fileUrl.url;
+          data.profileImageUrl = fileUrl.url;
         }
 
         if (Object.keys(errors).length === 0) {
@@ -217,9 +218,9 @@ export default function SubmitVideoFeedbackDialog({
                 </>
               )}
             />
-            <Label htmlFor="imageUrl">Your profile picture</Label>
+            <Label htmlFor="profileImageUrl">Your profile picture</Label>
             <Controller
-              name="imageUrl"
+              name="profileImageUrl"
               control={control}
               render={({ field }) => (
                 <>
@@ -253,7 +254,7 @@ export default function SubmitVideoFeedbackDialog({
                       variant="outline"
                       onClick={() => {
                         setProfilePicFile(null);
-                        setValue("imageUrl", "");
+                        setValue("profileImageUrl", "");
                         const node = document.getElementById(
                           "file"
                         ) as HTMLInputElement;
@@ -269,9 +270,9 @@ export default function SubmitVideoFeedbackDialog({
               )}
             />
 
-            {errors.imageUrl && (
+            {errors.profileImageUrl && (
               <p className="text-destructive text-xs">
-                {errors.imageUrl.message}
+                {errors.profileImageUrl.message}
               </p>
             )}
             <Controller

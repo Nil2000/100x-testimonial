@@ -76,7 +76,7 @@ export default function SocialMedialTestimonialCard({
             handleShareImage={() => shareForImage(testimonial)}
             handleEmbedTestimonial={() => shareForEmbed(testimonial)}
             handleGetLink={() => getLink(testimonial)}
-            type={testimonial.imageUrl ? "TEXT" : "VIDEO"}
+            type={testimonial.feedbackType as "TEXT" | "VIDEO"}
           />
           <button
             onClick={toggleLike}
@@ -133,7 +133,7 @@ export default function SocialMedialTestimonialCard({
       )}
       <Avatar>
         <AvatarImage
-          src={testimonial.imageUrl || ""}
+          src={testimonial.profileImageUrl || ""}
           className="object-cover"
           alt="User Image"
         />
