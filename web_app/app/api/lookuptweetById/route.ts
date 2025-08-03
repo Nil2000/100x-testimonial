@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
             : null,
         profileImageUrl: profileImageUrl || null,
         isSpam: false,
+        isSocial: true, // Mark as social testimonial
         sentiment: "POSITIVE",
         analysisStatus: "PENDING",
         source: "X",

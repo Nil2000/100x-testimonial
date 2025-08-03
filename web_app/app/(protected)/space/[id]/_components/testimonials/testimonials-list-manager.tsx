@@ -96,6 +96,7 @@ export default function ListTestimonials({
             spaceId: spaceInfo.id,
             addToWallOfLove: wallOfLove,
             archived,
+            isSocial: isSocial ? "true" : "false",
           },
         });
         setTestimonials(response.data);
@@ -107,7 +108,7 @@ export default function ListTestimonials({
     };
 
     fetchTestimonials();
-  }, [category]);
+  }, [category, isSocial]);
 
   if (isLoading) {
     return <Loading />;

@@ -119,6 +119,7 @@ enum SourceType {
   WEBSITE
   X
   LINKEDIN
+  INSTAGRAM
   OTHER
 }
 
@@ -157,6 +158,7 @@ model Feedback {
   imageUrl        String?
   profileImageUrl String?
   isSpam          Boolean        @default(false)
+  isSocial        Boolean        @default(false)
   sentiment       SentimentType  @default(NEUTRAL)
   analysisStatus  AnalysisStatus @default(PENDING)
   source          SourceType     @default(WEBSITE)

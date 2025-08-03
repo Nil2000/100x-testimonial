@@ -19,7 +19,9 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "All",
           icon: WalletCards,
-          tabContent: <TestimonialsListManager key="all-testimonials" />,
+          tabContent: (
+            <TestimonialsListManager key="all-testimonials" isSocial={false} />
+          ),
         },
         {
           title: "Video",
@@ -28,6 +30,7 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
             <TestimonialsListManager
               key="video-testimonials"
               category="VIDEO"
+              isSocial={false}
             />
           ),
         },
@@ -35,7 +38,11 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
           title: "Text",
           icon: LetterText,
           tabContent: (
-            <TestimonialsListManager key="text-testimonials" category="TEXT" />
+            <TestimonialsListManager
+              key="text-testimonials"
+              category="TEXT"
+              isSocial={false}
+            />
           ),
         },
         {
@@ -45,6 +52,7 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
             <TestimonialsListManager
               key="liked-testimonials"
               wallOfLove={true}
+              isSocial={false}
             />
           ),
         },
@@ -52,7 +60,11 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
           title: "Spam",
           icon: MessageSquareWarningIcon,
           tabContent: (
-            <TestimonialsListManager key="spam-testimonials" category="SPAM" />
+            <TestimonialsListManager
+              key="spam-testimonials"
+              category="SPAM"
+              isSocial={false}
+            />
           ),
         },
       ],
