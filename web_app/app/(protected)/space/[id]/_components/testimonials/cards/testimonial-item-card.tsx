@@ -9,6 +9,7 @@ import { TestimonialResponse } from "@/lib/types";
 import ButtonWrapperTestimonailCard from "@/components/button-wrapper-testimonial";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ShareButton from "../../sharing/share-controls";
+import { toast } from "sonner";
 
 type Props = {
   testimonial: TestimonialResponse;
@@ -36,11 +37,14 @@ export default function TestimonialCard({
       toggleWallOfLove(testimonial.id, !isLiked).then((res) => {
         if (res.error) {
           console.error(res.error);
+          toast.error("Failed to update testimonial. Please try again.");
           return;
         }
         setIsLiked(!isLiked);
         if (testimonial.addToWallOfLove) {
           removeFromWallOfLove(testimonial.id);
+        } else {
+          toast.success("Added to wall of love!");
         }
       });
     });
@@ -50,9 +54,11 @@ export default function TestimonialCard({
     deleteFeedback(testimonial.id).then((res) => {
       if (res.error) {
         console.error(res.error);
+        toast.error("Failed to delete testimonial. Please try again.");
         return;
       }
       removeFromList(testimonial.id);
+      toast.success("Testimonial deleted successfully!");
     });
   };
 

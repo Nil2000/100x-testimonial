@@ -55,6 +55,7 @@
     "react-icons": "^5.5.0",
     "react-virtuoso": "^4.12.5",
     "recharts": "^2.15.3",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "twitter-api-sdk": "^1.2.1",

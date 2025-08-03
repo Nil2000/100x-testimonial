@@ -11,6 +11,7 @@ import ShareButton from "../../sharing/share-controls";
 import BadgeOfTestimonials from "./badge-testimonial-type";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "sonner";
 
 type Props = {
   testimonial: TestimonialResponse;
@@ -38,11 +39,14 @@ export default function SocialMedialTestimonialCard({
       toggleWallOfLove(testimonial.id, !isLiked).then((res) => {
         if (res.error) {
           console.error(res.error);
+          toast.error("Failed to update testimonial. Please try again.");
           return;
         }
         setIsLiked(!isLiked);
         if (testimonial.addToWallOfLove) {
           removeFromWallOfLove(testimonial.id);
+        } else {
+          toast.success("Added to wall of love!");
         }
       });
     });
@@ -52,9 +56,11 @@ export default function SocialMedialTestimonialCard({
     deleteFeedback(testimonial.id).then((res) => {
       if (res.error) {
         console.error(res.error);
+        toast.error("Failed to delete testimonial. Please try again.");
         return;
       }
       removeFromList(testimonial.id);
+      toast.success("Social testimonial deleted successfully!");
     });
   };
 
@@ -65,12 +71,7 @@ export default function SocialMedialTestimonialCard({
   console.log(testimonial);
   return (
     <Card className="p-3 flex flex-col space-y-2">
-      <div className="flex justify-between">
-        <div>
-          <BadgeOfTestimonials
-            category={testimonial.feedbackType as "TEXT" | "VIDEO"}
-          />
-        </div>
+      <div className="flex justify-end">
         <div className="flex space-x-3">
           <ShareButton
             handleShareImage={() => shareForImage(testimonial)}

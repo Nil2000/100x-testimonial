@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import React, { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
 
 export default function ThankYouForm() {
   const { spaceInfo, updateThanksField } = useSpaceStore();
@@ -36,9 +37,11 @@ export default function ThankYouForm() {
       updateThanksSpace(data).then((res) => {
         if (res.error) {
           console.error("Failed to update thanks space", res.error);
+          toast.error("Failed to update thank you page. Please try again.");
           return;
         }
         console.log("Thanks space updated successfully");
+        toast.success("Thank you page updated successfully!");
       });
     });
   };

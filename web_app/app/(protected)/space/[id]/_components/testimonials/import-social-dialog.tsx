@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { Import, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
 
 interface ImportSocialDialogResult {
@@ -60,7 +61,7 @@ export default function ImportSocialDialog({
     try {
       const tweetId = extractTweetId(postUrl);
       if (!tweetId) {
-        setStatus("Invalid post URL. Please use a valid Twitter/X post URL.");
+        toast.error("Invalid post URL. Please use a valid Twitter/X post URL.");
         setImporting(false);
         return;
       }
@@ -72,7 +73,7 @@ export default function ImportSocialDialog({
       const apiResponse = response.data;
 
       if (!apiResponse.success) {
-        setStatus(apiResponse.error || "Failed to import tweet.");
+        toast.error(apiResponse.error || "Failed to import tweet.");
         setImporting(false);
         return;
       }
@@ -81,17 +82,16 @@ export default function ImportSocialDialog({
       const savedFeedback = apiResponse.data;
 
       setImporting(false);
-      setStatus(apiResponse.message || "Imported successfully!");
+      toast.success(apiResponse.message || "Tweet imported successfully!");
       onClose({ type: "success", data: savedFeedback });
 
       console.log(savedFeedback.metadata);
     } catch (error) {
       console.error("Error importing tweet:", error);
       const errorMessage = "Failed to import tweet. Please try again.";
-      setStatus(errorMessage);
+      toast.error(errorMessage);
       setImporting(false);
-      // Optionally close dialog on error - uncomment if desired:
-      // onClose({ type: 'error', error: errorMessage });
+      onClose({ type: 'error', error: errorMessage });
     }
   };
 

@@ -17,6 +17,7 @@ import ImportSocialDialog from "./import-social-dialog";
 import { Button } from "@/components/ui/button";
 import SocialMedialTestimonialCard from "./cards/social-medial-testimonial-card";
 import cuid2, { createId } from "@paralleldrive/cuid2";
+import { toast } from "sonner";
 
 // Sorting function
 const sortTestimonials = (
@@ -102,6 +103,7 @@ export default function ListTestimonials({
         setTestimonials(response.data);
       } catch (error) {
         console.error("Failed to fetch testimonials", error);
+        toast.error("Failed to load testimonials. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -119,12 +121,14 @@ export default function ListTestimonials({
 
     if (wallOfLove) {
       setTestimonials((prev) => prev.filter((t: any) => t.id !== id));
+      toast.success("Testimonial removed from wall of love");
     }
   };
 
   const removeFromList = (id: string) => {
     if (!id) return;
     setTestimonials((prev) => prev.filter((t: any) => t.id !== id));
+    toast.success("Testimonial deleted successfully");
   };
 
   const filteredTestimonials = testimonials.filter((testimonial) => {
@@ -256,11 +260,11 @@ export default function ListTestimonials({
             setOpenImportDialog(false);
             if (result.type === "success" && result.data) {
               setTestimonials((prev) => [...prev, result.data]);
+              toast.success("Social media testimonial imported successfully!");
             }
-            // Handle error case if needed
             if (result.type === "error") {
               console.error("Import error:", result.error);
-              // Could show a toast notification here
+              toast.error(result.error || "Failed to import testimonial. Please try again.");
             }
           }}
           platform={"X"}
