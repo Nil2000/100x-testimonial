@@ -57,12 +57,13 @@ export async function POST(req: NextRequest) {
     const savedFeedback = await db.feedback.create({
       data: {
         answer: tweet.data.text,
-        name: tweet.data.author_id || "Twitter User",
+        name: tweet.includes.users[0].username || "Twitter User",
         email: "", // Twitter doesn't provide email
         rating: 3, // Default rating for imported tweets
         permission: true,
         spaceId: spaceId,
-        feedbackType: "TEXT_AND_VIDEO",
+        feedbackType:
+          tweet.includes?.media?.[0]?.type === "video" ? "VIDEO" : "TEXT",
         addToWallOfLove: false,
         videoUrl:
           tweet.includes?.media?.[0]?.type === "video"

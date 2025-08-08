@@ -68,7 +68,6 @@ export default function SocialMedialTestimonialCard({
     playerRef.current = player;
   };
 
-  console.log(testimonial);
   return (
     <Card className="p-3 flex flex-col space-y-2">
       <div className="flex justify-end">
@@ -77,7 +76,7 @@ export default function SocialMedialTestimonialCard({
             handleShareImage={() => shareForImage(testimonial)}
             handleEmbedTestimonial={() => shareForEmbed(testimonial)}
             handleGetLink={() => getLink(testimonial)}
-            type={testimonial.feedbackType as "TEXT" | "VIDEO"}
+            type={testimonial.videoUrl ? "VIDEO" : "TEXT"}
           />
           <button
             onClick={toggleLike}
@@ -123,19 +122,21 @@ export default function SocialMedialTestimonialCard({
           />
         </div>
       ) : (
-        <div className="flex flex-col items-center relative w-1/2">
-          <Image
-            src={testimonial.imageUrl!}
-            alt="Image"
-            width={500}
-            height={500}
-          />
-        </div>
+        testimonial.imageUrl && (
+          <div className="flex flex-col items-center relative w-1/2">
+            <Image
+              src={testimonial.imageUrl!}
+              alt="Image"
+              width={500}
+              height={500}
+            />
+          </div>
+        )
       )}
       <Avatar>
         <AvatarImage
           src={testimonial.profileImageUrl || ""}
-          className="object-cover"
+          className="object-cover rounded-full"
           alt="User Image"
         />
         <AvatarFallback>
@@ -629,7 +630,7 @@ const processTwitterBodyUsingMetadata = (metadata: any) => {
   if (lastIndex < text.length) {
     elements.push(text.slice(lastIndex));
   }
-  console.log(elements);
+
   return <span>{elements}</span>;
 };
 

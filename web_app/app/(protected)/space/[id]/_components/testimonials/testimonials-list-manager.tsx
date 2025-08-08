@@ -264,7 +264,10 @@ export default function ListTestimonials({
             }
             if (result.type === "error") {
               console.error("Import error:", result.error);
-              toast.error(result.error || "Failed to import testimonial. Please try again.");
+              toast.error(
+                result.error ||
+                  "Failed to import testimonial. Please try again."
+              );
             }
           }}
           platform={"X"}

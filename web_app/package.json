@@ -39,7 +39,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
     "embla-carousel-react": "^8.6.0",
-    "html-to-image": "^1.11.13",
+    "html-to-image": "1.11.11",
     "kafkajs": "^2.2.4",
     "lucide-react": "^0.469.0",
     "minio": "^8.0.4",

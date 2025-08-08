@@ -58,6 +58,7 @@ export interface TestimonialResponse {
   imageUrl: string | null;
   profileImageUrl: string | null;
   isSpam: boolean;
+  isSocial: boolean;
   sentiment: SentimentType;
   analysisStatus: AnalysisStatus;
   source: SourceType;
