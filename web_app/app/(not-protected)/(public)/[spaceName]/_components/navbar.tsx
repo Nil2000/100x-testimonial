@@ -9,7 +9,7 @@ export default function RequestTestimonialPageNavbar({ themeType }: Props) {
   console.log(themeType);
   return (
     <div
-      className={`flex space-x-2 font-bold gap-2 lg:max-w-[1000px] mx-auto w-full p-4 bg-transparent border-b ${
+      className={`flex space-x-2 font-bold gap-2 container mx-auto w-full p-4 bg-transparent border-b ${
         themeType === "default"
           ? "text-foreground border-b-muted-foreground"
           : themeType === "dark"
