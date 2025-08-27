@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import SocialMedialTestimonialCard from "./cards/social-medial-testimonial-card";
 import cuid2, { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
+import EmbedSettingsDialog from "../sharing/embed-settings-dialog";
+import EmbedShareDialog from "../sharing/embed-share-dialog";
 
 // Sorting function
 const sortTestimonials = (
@@ -51,7 +53,7 @@ type Props = {
   isSocial?: boolean;
 };
 
-export default function ListTestimonials({
+export default function TestimonialsListManager({
   category,
   wallOfLove,
   archived,
@@ -62,6 +64,7 @@ export default function ListTestimonials({
     []
   );
   const [isOpenShareImage, setIsOpenShareImage] = React.useState(false);
+  const [isOpenEmbedShare, setIsOpenEmbedShare] = React.useState(false);
   const [isOpenEmbedTestimonial, setIsOpenEmbedTestimonial] =
     React.useState(false);
   const [selectedTestimonial, setSelectedTestimonial] =
@@ -274,6 +277,22 @@ export default function ListTestimonials({
           spaceId={spaceInfo.id}
         />
       )}
+      <EmbedSettingsDialog
+        isOpen={isOpenEmbedTestimonial && !!selectedTestimonial}
+        onClose={() => {
+          setIsOpenEmbedTestimonial(false);
+          setSelectedTestimonial(null);
+        }}
+        testimonial={selectedTestimonial!}
+      />
+      <EmbedShareDialog
+        isOpen={isOpenEmbedShare && !!selectedTestimonial}
+        onClose={() => {
+          setIsOpenEmbedShare(false);
+          setSelectedTestimonial(null);
+        }}
+        testimonial={selectedTestimonial!}
+      />
     </div>
   );
 }

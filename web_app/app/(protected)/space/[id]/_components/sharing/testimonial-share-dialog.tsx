@@ -27,17 +27,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
 
-type ShareTestimonialDialogProps = {
+type TestimonialShareDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   feedbackInfo: TestimonialResponse | null;
 };
 
-export default function ShareTestimonialDialog({
+export default function TestimonialShareDialog({
   isOpen,
   onClose,
   feedbackInfo,
-}: ShareTestimonialDialogProps) {
+}: TestimonialShareDialogProps) {
   const { theme } = useTheme();
   const [alignment, setAlignment] = useState("left");
   const [padding, setPadding] = useState(10);
