@@ -32,7 +32,7 @@ export default function ColorPalette({
   return (
     <div className="space-y-3">
       <Label>{title}</Label>
-      <div className="flex gap-2 flex-wrap p-3">
+      <div className="flex gap-2 flex-wrap">
         {colorPalette.map((color) => (
           <div
             key={color}
