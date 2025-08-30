@@ -240,3 +240,17 @@ export const getFeedbackByIdAndSpaceNameWithSpaceLogo = async (
     };
   }
 };
+
+export const getFeedbackById = async (feedbackId: string) => {
+  try {
+    const feedback = await db.feedback.findUnique({
+      where: {
+        id: feedbackId,
+      },
+    });
+    return feedback;
+  } catch (error) {
+    console.error("GET_FEEDBACK_BY_ID_ERROR", error);
+    return null;
+  }
+};

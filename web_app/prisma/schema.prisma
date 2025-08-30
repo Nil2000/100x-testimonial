@@ -164,6 +164,7 @@ model Feedback {
   source          SourceType     @default(WEBSITE)
   sourceUrl       String?
   metadata        String?
+  styleSettings   Json?          @db.Json
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

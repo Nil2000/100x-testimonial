@@ -74,7 +74,7 @@ export default function EmbedSettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto max-w-4xl overflow-x-hidden p-6">
+      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto max-w-3xl overflow-x-hidden p-6">
         <DialogHeader className="max-w-[48rem]">
           <DialogTitle>Embed Settings</DialogTitle>
           <DialogDescription>
@@ -82,7 +82,7 @@ export default function EmbedSettingsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="max-w-[48rem] space-y-3">
           {/* Settings Panel */}
           <div className="space-y-4">
             <Tabs defaultValue="layout" className="w-full">
