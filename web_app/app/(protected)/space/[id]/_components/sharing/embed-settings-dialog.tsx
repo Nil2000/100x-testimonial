@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,11 +22,14 @@ import BackgroundTabContent from "./customization/BackgroundTabContent";
 import TextTabContent from "./customization/TextTabContent";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import CodeBlock from "./code-block";
+import { updateFeedbackStyleSettings } from "@/actions/feedbackActions";
+import { toast } from "sonner";
 
 type EmbedSettingsDialogProps = {
   isOpen: boolean;
   onClose: () => void;
-  testimonial: TestimonialResponse | null;
+  testimonial: (TestimonialResponse & { styleSettings?: any }) | null;
 };
 
 export default function EmbedSettingsDialog({
@@ -36,41 +39,89 @@ export default function EmbedSettingsDialog({
 }: EmbedSettingsDialogProps) {
   const { theme } = useTheme();
 
-  // Layout states
-  const [alignment, setAlignment] = useState("left");
-  const [padding, setPadding] = useState(10);
+  const [isPending, startTransition] = useTransition();
 
-  // Border states
-  const [borderRadius, setBorderRadius] = useState("medium");
-  const [showBorder, setShowBorder] = useState(true);
-  const [borderColor, setBorderColor] = useState("#000000");
-  const [borderThickness, setBorderThickness] = useState(1);
+  // Default settings object
+  const getDefaultSettings = () => ({
+    alignment: "left",
+    padding: 10,
+    borderRadius: "medium",
+    showBorder: true,
+    borderColor: "#000000",
+    borderThickness: 1,
+    shadowType: "none",
+    shadowSize: "small",
+    shadowColor: "#000000",
+    background: "#ffffff",
+    gradient: "",
+    backgroundType: "solid",
+    cardBackground: "#ffffff",
+    cardBackgroundType: "solid",
+    headerColor: theme === "dark" ? "#ffffff" : "#000000",
+    bodyColor: theme === "dark" ? "#ffffff" : "#000000",
+    headerSize: 20,
+    bodySize: 16,
+    headerFont: "",
+    bodyFont: "",
+  });
 
-  // Shadow states
-  const [shadowType, setShadowType] = useState("none");
-  const [shadowSize, setShadowSize] = useState("small");
-  const [shadowColor, setShadowColor] = useState("#000000");
+  // Single settings object
+  const [settings, setSettings] = useState(getDefaultSettings());
+  const [initialSettings, setInitialSettings] = useState<any>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  // Background states
-  const [background, setBackground] = useState("#ffffff");
-  const [gradient, setGradient] = useState("");
-  const [backgroundType, setBackgroundType] = useState("solid");
-  const [cardBackground, setCardBackground] = useState("#000000");
-  const [cardBackgroundType, setCardBackgroundType] = useState("solid");
+  // Helper function to update settings
+  const updateSetting = (key: string, value: any) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  };
 
-  // Text states
-  const [headerColor, setHeaderColor] = useState(
-    theme === "dark" ? "#ffffff" : "#000000"
-  );
-  const [bodyColor, setBodyColor] = useState(
-    theme === "dark" ? "#ffffff" : "#000000"
-  );
-  const [headerSize, setHeaderSize] = useState(20);
-  const [bodySize, setBodySize] = useState(16);
-  const [headerFont, setHeaderFont] = useState("");
-  const [bodyFont, setBodyFont] = useState("");
+  // Initialize settings from testimonial
+  useEffect(() => {
+    if (testimonial && !initialSettings) {
+      const savedSettings = testimonial.styleSettings || {};
+      const mergedSettings = { ...getDefaultSettings(), ...savedSettings };
+      setInitialSettings(mergedSettings);
+      setSettings(mergedSettings);
+    }
+  }, [testimonial, theme, initialSettings]);
+
+  // Check for changes
+  useEffect(() => {
+    if (initialSettings) {
+      const changed =
+        JSON.stringify(settings) !== JSON.stringify(initialSettings);
+      setHasChanges(changed);
+    }
+  }, [settings, initialSettings]);
 
   if (!testimonial) return null;
+
+  const handleGenerateEmbedCode = () => {
+    startTransition(() => {
+      updateFeedbackStyleSettings(testimonial.id, settings).then((res) => {
+        if (res.error) {
+          console.error(res.error);
+          toast.error("Failed to update testimonial. Please try again.");
+          return;
+        }
+        toast.success("Feedback style settings applied successfully!");
+        setInitialSettings(settings);
+      });
+    });
+  };
+
+  // Generate iframe embed code
+  const generateEmbedCode = () => {
+    const embedUrl = `${window.location.origin}/embed/${testimonial.id}`;
+    return `<iframe 
+  src="${embedUrl}" 
+  width="100%" 
+  height="300" 
+  frameborder="0" 
+  style="border: none; border-radius: 8px;"
+  title="Testimonial from ${testimonial.name}">
+</iframe>`;
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
@@ -81,7 +132,6 @@ export default function EmbedSettingsDialog({
             Customize the appearance of your embedded testimonial
           </DialogDescription>
         </DialogHeader>
-
         <div className="max-w-[48rem] space-y-3">
           {/* Settings Panel */}
           <div className="space-y-4">
@@ -116,9 +166,9 @@ export default function EmbedSettingsDialog({
                 <div className="space-y-3">
                   <Label>Alignment:</Label>
                   <RadioGroup
-                    defaultValue="left"
+                    value={settings.alignment}
                     className="flex"
-                    onValueChange={setAlignment}
+                    onValueChange={(value) => updateSetting("alignment", value)}
                   >
                     <div className="flex items-center gap-2">
                       <RadioGroupItem id="left" value="left" />
@@ -136,13 +186,15 @@ export default function EmbedSettingsDialog({
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Padding: {padding}px</Label>
+                  <Label>Padding: {settings.padding}px</Label>
                   <Slider
-                    defaultValue={[padding]}
+                    value={[settings.padding]}
                     min={0}
                     max={50}
                     step={2}
-                    onValueChange={(value) => setPadding(value[0])}
+                    onValueChange={(value) =>
+                      updateSetting("padding", value[0])
+                    }
                     className="[&>:last-child>span]:border-background [&>:last-child>span]:bg-primary **:data-[slot=slider-thumb]:shadow-none [&>:last-child>span]:h-6 [&>:last-child>span]:w-2.5 [&>:last-child>span]:border-[3px] [&>:last-child>span]:ring-offset-0"
                   />
                 </div>
@@ -150,25 +202,33 @@ export default function EmbedSettingsDialog({
 
               <TabsContent value="border" className="mt-3">
                 <BorderTabContent
-                  showBorder={showBorder}
-                  setShowBorder={setShowBorder}
-                  borderRadius={borderRadius}
-                  setBorderRadius={setBorderRadius}
-                  borderColor={borderColor}
-                  setBorderColor={setBorderColor}
-                  borderThickness={borderThickness}
-                  setBorderThickness={setBorderThickness}
+                  showBorder={settings.showBorder}
+                  setShowBorder={(value) => updateSetting("showBorder", value)}
+                  borderRadius={settings.borderRadius}
+                  setBorderRadius={(value) =>
+                    updateSetting("borderRadius", value)
+                  }
+                  borderColor={settings.borderColor}
+                  setBorderColor={(value) =>
+                    updateSetting("borderColor", value)
+                  }
+                  borderThickness={settings.borderThickness}
+                  setBorderThickness={(value) =>
+                    updateSetting("borderThickness", value)
+                  }
                 />
               </TabsContent>
 
               <TabsContent value="shadow" className="mt-3">
                 <ShadowTabContent
-                  shadowType={shadowType}
-                  setShadowType={setShadowType}
-                  shadowSize={shadowSize}
-                  setShadowSize={setShadowSize}
-                  shadowColor={shadowColor}
-                  setShadowColor={setShadowColor}
+                  shadowType={settings.shadowType}
+                  setShadowType={(value) => updateSetting("shadowType", value)}
+                  shadowSize={settings.shadowSize}
+                  setShadowSize={(value) => updateSetting("shadowSize", value)}
+                  shadowColor={settings.shadowColor}
+                  setShadowColor={(value) =>
+                    updateSetting("shadowColor", value)
+                  }
                 />
               </TabsContent>
 
@@ -177,36 +237,44 @@ export default function EmbedSettingsDialog({
                 className="grid grid-cols-2 gap-x-3 mt-3"
               >
                 <BackgroundTabContent
-                  background={background}
-                  setBackground={setBackground}
-                  gradient={gradient}
-                  setGradient={setGradient}
-                  backgroundType={backgroundType}
-                  setBackgroundType={setBackgroundType}
+                  background={settings.background}
+                  setBackground={(value) => updateSetting("background", value)}
+                  gradient={settings.gradient}
+                  setGradient={(value) => updateSetting("gradient", value)}
+                  backgroundType={settings.backgroundType}
+                  setBackgroundType={(value) =>
+                    updateSetting("backgroundType", value)
+                  }
                 />
                 <BackgroundTabContent
-                  background={cardBackground}
-                  setBackground={setCardBackground}
-                  backgroundType={cardBackgroundType}
-                  setBackgroundType={setCardBackgroundType}
+                  background={settings.cardBackground}
+                  setBackground={(value) =>
+                    updateSetting("cardBackground", value)
+                  }
+                  backgroundType={settings.cardBackgroundType}
+                  setBackgroundType={(value) =>
+                    updateSetting("cardBackgroundType", value)
+                  }
                   title="Card Background"
                 />
               </TabsContent>
 
               <TabsContent value="text" className="mt-3">
                 <TextTabContent
-                  headerColor={headerColor}
-                  setHeaderColor={setHeaderColor}
-                  bodyColor={bodyColor}
-                  setBodyColor={setBodyColor}
-                  headerSize={headerSize}
-                  setHeaderSize={setHeaderSize}
-                  bodySize={bodySize}
-                  setBodySize={setBodySize}
-                  headerFont={headerFont}
-                  setHeaderFont={setHeaderFont}
-                  bodyFont={bodyFont}
-                  setBodyFont={setBodyFont}
+                  headerColor={settings.headerColor}
+                  setHeaderColor={(value) =>
+                    updateSetting("headerColor", value)
+                  }
+                  bodyColor={settings.bodyColor}
+                  setBodyColor={(value) => updateSetting("bodyColor", value)}
+                  headerSize={settings.headerSize}
+                  setHeaderSize={(value) => updateSetting("headerSize", value)}
+                  bodySize={settings.bodySize}
+                  setBodySize={(value) => updateSetting("bodySize", value)}
+                  headerFont={settings.headerFont}
+                  setHeaderFont={(value) => updateSetting("headerFont", value)}
+                  bodyFont={settings.bodyFont}
+                  setBodyFont={(value) => updateSetting("bodyFont", value)}
                 />
               </TabsContent>
             </Tabs>
@@ -217,16 +285,20 @@ export default function EmbedSettingsDialog({
             <Label className="text-sm font-medium">Preview:</Label>
             <div
               className={`flex justify-center items-center w-full border rounded-lg
-                ${backgroundType === "gradient" ? gradient : ""}
+                ${
+                  settings.backgroundType === "gradient"
+                    ? settings.gradient
+                    : ""
+                }
               `}
               style={{
                 aspectRatio: "auto",
-                textAlign: alignment as "left" | "center" | "right",
-                padding: `${padding}px`,
+                textAlign: settings.alignment as "left" | "center" | "right",
+                padding: `${settings.padding}px`,
                 backgroundColor:
-                  backgroundType === "solid"
-                    ? background
-                    : backgroundType === "transparent"
+                  settings.backgroundType === "solid"
+                    ? settings.background
+                    : settings.backgroundType === "transparent"
                     ? "transparent"
                     : "transparent",
               }}
@@ -235,49 +307,47 @@ export default function EmbedSettingsDialog({
                 className={`p-4 border-2 rounded-md h-min w-full space-y-2`}
                 style={{
                   backgroundColor:
-                    cardBackgroundType === "solid"
-                      ? cardBackground
-                      : cardBackgroundType === "transparent"
+                    settings.cardBackgroundType === "solid"
+                      ? settings.cardBackground
+                      : settings.cardBackgroundType === "transparent"
                       ? "transparent"
                       : "transparent",
-                  border: showBorder
-                    ? `${borderThickness}px solid ${borderColor}`
+                  border: settings.showBorder
+                    ? `${settings.borderThickness}px solid ${settings.borderColor}`
                     : "none",
                   borderRadius:
-                    borderRadius === "small"
+                    settings.borderRadius === "small"
                       ? "5px"
-                      : borderRadius === "medium"
+                      : settings.borderRadius === "medium"
                       ? "10px"
                       : "15px",
                   boxShadow:
-                    shadowType === "none"
+                    settings.shadowType === "none"
                       ? "none"
-                      : shadowType === "standard"
-                      ? shadowSize === "small"
-                        ? `0 4px 6px -1px ${shadowColor}40, 0 2px 4px -2px ${shadowColor}40`
-                        : shadowSize === "medium"
-                        ? `0 10px 15px -3px ${shadowColor}40, 0 4px 6px -4px ${shadowColor}40`
-                        : `0 25px 50px -12px ${shadowColor}40`
-                      : shadowSize === "small"
-                      ? `3px 3px 0 0 ${shadowColor}`
-                      : shadowSize === "medium"
-                      ? `6px 6px 0 0 ${shadowColor}`
-                      : `9px 9px 0 0 ${shadowColor}`,
-                  color: bodyColor,
-                  fontFamily: bodyFont,
+                      : settings.shadowType === "standard"
+                      ? settings.shadowSize === "small"
+                        ? `0 4px 6px -1px ${settings.shadowColor}40, 0 2px 4px -2px ${settings.shadowColor}40`
+                        : settings.shadowSize === "medium"
+                        ? `0 10px 15px -3px ${settings.shadowColor}40, 0 4px 6px -4px ${settings.shadowColor}40`
+                        : `0 25px 50px -12px ${settings.shadowColor}40`
+                      : settings.shadowSize === "small"
+                      ? `3px 3px 0 0 ${settings.shadowColor}`
+                      : settings.shadowSize === "medium"
+                      ? `6px 6px 0 0 ${settings.shadowColor}`
+                      : `9px 9px 0 0 ${settings.shadowColor}`,
+                  color: settings.bodyColor,
+                  fontFamily: settings.bodyFont,
                 }}
               >
                 <div
                   className="flex items-center gap-3"
                   style={{
                     justifyContent:
-                      alignment === "left"
+                      settings.alignment === "left"
                         ? "flex-start"
-                        : alignment === "center"
+                        : settings.alignment === "center"
                         ? "center"
-                        : alignment === "right"
-                        ? "flex-end"
-                        : "center",
+                        : "flex-end",
                   }}
                 >
                   {testimonial.profileImageUrl ? (
@@ -296,9 +366,9 @@ export default function EmbedSettingsDialog({
                   <h3
                     className="font-bold"
                     style={{
-                      color: headerColor,
-                      fontSize: `${headerSize}px`,
-                      fontFamily: headerFont,
+                      color: settings.headerColor,
+                      fontSize: `${settings.headerSize}px`,
+                      fontFamily: settings.headerFont,
                     }}
                   >
                     {testimonial.name}
@@ -309,8 +379,8 @@ export default function EmbedSettingsDialog({
                 )}
                 <div
                   style={{
-                    fontSize: `${bodySize}px`,
-                    fontFamily: bodyFont,
+                    fontSize: `${settings.bodySize}px`,
+                    fontFamily: settings.bodyFont,
                   }}
                 >
                   {testimonial.answer}
@@ -319,8 +389,27 @@ export default function EmbedSettingsDialog({
             </div>
           </div>
         </div>
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">Embed Code:</Label>
+          <CodeBlock codeString={generateEmbedCode()} language="html" />
+        </div>
+        {/* Footer */}
         <div className="flex justify-end gap-2">
-          <Button>Generate Code</Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              navigator.clipboard.writeText(generateEmbedCode());
+              toast.success("Embed code copied to clipboard!");
+            }}
+          >
+            Copy Code
+          </Button>
+          <Button
+            onClick={handleGenerateEmbedCode}
+            disabled={isPending || !hasChanges}
+          >
+            {isPending ? "Saving..." : "Save Settings"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
