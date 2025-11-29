@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 export default function SignInForm() {
   return (
@@ -12,8 +13,16 @@ export default function SignInForm() {
       </CardHeader>
       <CardContent>
         <Button
-          onClick={() => {
-            signIn("google");
+          onClick={async () => {
+            try {
+              toast.loading("Signing in...");
+              const result = await signIn("google");
+              if (result?.error) {
+                toast.error("Failed to sign in. Please try again.");
+              }
+            } catch (error) {
+              toast.error("Failed to sign in. Please try again.");
+            }
           }}
         >
           Sign In with Google

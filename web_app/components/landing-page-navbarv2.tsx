@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Session } from "next-auth";
-import AvatarDropDownMenu from "./AvatarDropdownMenu";
+import AvatarDropDownMenu from "./avatar-dropdown-menu";
 type Props = {
   session: Session | null;
 };

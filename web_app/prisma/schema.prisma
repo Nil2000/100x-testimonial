@@ -115,6 +115,14 @@ model ThankYouSpace {
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }
 
+enum SourceType {
+  WEBSITE
+  X
+  LINKEDIN
+  INSTAGRAM
+  OTHER
+}
+
 enum FeedbackType {
   TEXT
   VIDEO
@@ -148,9 +156,15 @@ model Feedback {
   addToWallOfLove Boolean        @default(false)
   videoUrl        String?
   imageUrl        String?
+  profileImageUrl String?
   isSpam          Boolean        @default(false)
+  isSocial        Boolean        @default(false)
   sentiment       SentimentType  @default(NEUTRAL)
   analysisStatus  AnalysisStatus @default(PENDING)
+  source          SourceType     @default(WEBSITE)
+  sourceUrl       String?
+  metadata        String?
+  styleSettings   Json?          @db.Json
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

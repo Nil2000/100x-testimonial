@@ -25,6 +25,7 @@ import { CreateSpaceQuestion } from "@/lib/types";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function CreateSpaceForm({
   setFileSelected,
@@ -83,15 +84,19 @@ export default function CreateSpaceForm({
   const uploadFile = async (file: File, spaceName: string) => {
     if (!file) return;
     console.log(file);
-    const url = await uploadFileToBucket({
-      file: file,
-      key: `space/${spaceName}/space-logo/${createId() + createId()}.${
-        file.type.split("/")[1]
-      }`,
-      mimeType: file.type,
-      size: file.size,
-    });
-    return url;
+    try {
+      const url = await uploadFileToBucket({
+        file: file,
+        key: `space/${spaceName}/space-logo/${createId() + createId()}.${file.type.split("/")[1]}`,
+        mimeType: file.type,
+        size: file.size,
+      });
+      toast.success("Logo uploaded successfully!");
+      return url;
+    } catch (error) {
+      toast.error("Failed to upload logo. Please try again.");
+      throw error;
+    }
   };
 
   const onSubmit = (data: z.infer<typeof spaceSchema>) => {
@@ -105,9 +110,11 @@ export default function CreateSpaceForm({
           }
           console.log(msg);
           data.logo = msg.url;
+          toast.success("Logo uploaded successfully!");
         })
         .catch((err) => {
           console.error(err);
+          toast.error("Failed to upload logo. Please try again.");
         });
     }
     startTransition(() => {
@@ -117,11 +124,13 @@ export default function CreateSpaceForm({
             throw new Error(res.error);
           }
           console.log(res.message);
+          toast.success("Space created successfully!");
           //redirect to the newly created space
           router.push("/dashboard");
         })
         .catch((err) => {
           console.error(err);
+          toast.error("Failed to create space. Please try again.");
         });
     });
   };

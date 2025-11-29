@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, DM_Serif_Text, Poppins } from "next/font/google";
 import "./globals.css";
 import { PostHogProvider } from "./provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,6 +49,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
         </PostHogProvider>
       </body>

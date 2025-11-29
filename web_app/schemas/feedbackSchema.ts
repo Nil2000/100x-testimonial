@@ -12,6 +12,7 @@ const feedbackSchema = z.object({
     .boolean()
     .refine((val) => val === true, "Permission is required to proceed"),
   imageUrl: z.string().optional(),
+  profileImageUrl: z.string().optional(),
 });
 
 export type Feedback = z.infer<typeof feedbackSchema>;

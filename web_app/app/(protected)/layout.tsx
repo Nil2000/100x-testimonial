@@ -8,7 +8,7 @@ export default function layout({
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-sans pt-20 lg:w-[1000px] mx-auto w-full">
+      <div className="min-h-screen font-sans pt-20 container mx-auto w-full">
         {children}
       </div>
     </>

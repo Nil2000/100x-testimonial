@@ -15,6 +15,7 @@ import { Loader2, XCircle } from "lucide-react";
 import React, { useTransition } from "react";
 import CollectStarRatings from "./collect-start-rating";
 import { Controller, useForm } from "react-hook-form";
+import { Feedback } from "@/schemas/feedbackSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import feedbackSchema from "@/schemas/feedbackSchema";
 import { submitTextFeedback } from "@/actions/feedbackActions";
@@ -44,7 +45,7 @@ export default function SubmitTextFeedbackDialog({
     formState: { errors },
     reset,
     setValue,
-  } = useForm({
+  } = useForm<Feedback>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
       rating: 3,
@@ -53,6 +54,7 @@ export default function SubmitTextFeedbackDialog({
       name: "",
       email: "",
       imageUrl: "",
+      profileImageUrl: "",
     },
   });
 
@@ -72,15 +74,17 @@ export default function SubmitTextFeedbackDialog({
 
   const onSubmit = async (data: any) => {
     if (!isFileSelected) {
-      data.imageUrl = "";
+      data.profileImageUrl = "";
     } else {
       const fileUrl = await uploadFile(isFileSelected, space.name);
       if (!fileUrl) {
         console.error("File upload failed");
         return;
       }
-      data.imageUrl = fileUrl.url;
+      data.profileImageUrl = fileUrl.url;
     }
+    // Clear imageUrl as it's not used for profile images
+    data.imageUrl = "";
 
     if (Object.keys(errors).length === 0) {
       startTransition(() => {
@@ -198,9 +202,9 @@ export default function SubmitTextFeedbackDialog({
             )}
           />
 
-          <Label htmlFor="imageUrl">Your profile picture</Label>
+          <Label htmlFor="profileImageUrl">Your profile picture</Label>
           <Controller
-            name="imageUrl"
+            name="profileImageUrl"
             control={control}
             render={({ field }) => (
               <>
@@ -251,9 +255,9 @@ export default function SubmitTextFeedbackDialog({
             )}
           />
 
-          {errors.imageUrl && (
+          {errors.profileImageUrl && (
             <p className="text-destructive text-xs">
-              {errors.imageUrl.message}
+              {errors.profileImageUrl.message}
             </p>
           )}
 

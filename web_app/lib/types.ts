@@ -1,5 +1,5 @@
-import { LucideIcon } from "lucide-react";
-import { AnalysisStatus, SentimentType } from "./db";
+import { AnalysisStatus, SentimentType, SourceType } from "./db";
+import { IconType } from "react-icons/lib";
 
 export interface CreateSpaceQuestion {
   id: string;
@@ -10,7 +10,7 @@ export interface manageTestimonialSidebarElementType {
   header: string;
   contents: {
     title: string;
-    icon: LucideIcon;
+    icon: IconType;
     tabContent: any;
   }[];
 }
@@ -56,9 +56,14 @@ export interface TestimonialResponse {
   addToWallOfLove: boolean;
   videoUrl: string | null;
   imageUrl: string | null;
+  profileImageUrl: string | null;
   isSpam: boolean;
+  isSocial: boolean;
   sentiment: SentimentType;
   analysisStatus: AnalysisStatus;
+  source: SourceType;
+  sourceUrl: string | null;
+  metadata: any;
 }
 
 export type SingleTestimonialWithSpaceLogo = TestimonialResponse & {

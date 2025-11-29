@@ -23,18 +23,21 @@ import { Text, UserRound } from "lucide-react";
 import TextTabContent from "./customization/TextTabContent";
 import { toPng, toBlob } from "html-to-image";
 import { useTheme } from "next-themes";
+import Link from "next/link";
+import Image from "next/image";
+import { toast } from "sonner";
 
-type ShareTestimonialDialogProps = {
+type TestimonialShareDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   feedbackInfo: TestimonialResponse | null;
 };
 
-export default function ShareTestimonialDialog({
+export default function TestimonialShareDialog({
   isOpen,
   onClose,
   feedbackInfo,
-}: ShareTestimonialDialogProps) {
+}: TestimonialShareDialogProps) {
   const { theme } = useTheme();
   const [alignment, setAlignment] = useState("left");
   const [padding, setPadding] = useState(10);
@@ -66,7 +69,7 @@ export default function ShareTestimonialDialog({
 
   const handleDownloadPNG = React.useCallback(() => {
     console.log("Download PNG clicked");
-
+    console.log(downloadNodeRef.current);
     if (!feedbackInfo) return;
 
     if (!downloadNodeRef.current) return;
@@ -80,11 +83,15 @@ export default function ShareTestimonialDialog({
       })
       .catch(function (error) {
         console.error("Failed to download image", error);
+        toast.error("Failed to download image");
       });
   }, [downloadNodeRef, feedbackInfo]);
 
   const handleCopyToClipboard = () => {
+    console.log(headerFont, bodyFont);
     console.log("Copy to clipboard clicked");
+
+    console.log(downloadNodeRef.current);
 
     if (!downloadNodeRef.current) return;
 
@@ -92,13 +99,16 @@ export default function ShareTestimonialDialog({
       .then(function (blob) {
         if (!blob) {
           console.error("Failed to create blob");
-          throw new Error("Failed to create blob");
+          toast.error("Failed to create blob");
+          return;
         }
 
         navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        toast.success("Image copied to clipboard");
       })
       .catch(function (error) {
         console.error("Failed to copy image to clipboard", error);
+        toast.error("Failed to copy image to clipboard");
       });
   };
 
@@ -320,11 +330,13 @@ export default function ShareTestimonialDialog({
               }}
             >
               <div className="flex items-center gap-4">
-                {feedbackInfo.imageUrl ? (
+                {feedbackInfo.profileImageUrl ? (
                   <img
-                    src={feedbackInfo.imageUrl}
+                    src={feedbackInfo.profileImageUrl}
                     alt="User Image"
                     className="rounded-full w-12 h-12 object-cover"
+                    width={48}
+                    height={48}
                   />
                 ) : (
                   <div className="rounded-full w-12 h-12 bg-secondary flex items-center justify-center text-foreground">
@@ -342,15 +354,21 @@ export default function ShareTestimonialDialog({
                   {feedbackInfo.name}
                 </h3>
               </div>
-              <p>{renderStars(feedbackInfo.rating)}</p>
-              <p
+              {!feedbackInfo.isSocial && (
+                <p>{renderStars(feedbackInfo.rating)}</p>
+              )}
+              <div
                 style={{
                   fontSize: `${bodySize}px`,
                   fontFamily: bodyFont,
                 }}
               >
-                {feedbackInfo.answer}
-              </p>
+                {feedbackInfo.source === "X" && feedbackInfo.metadata
+                  ? processTwitterBodyUsingMetadata(
+                      JSON.parse(feedbackInfo.metadata)
+                    )
+                  : feedbackInfo.answer}
+              </div>
             </div>
           </div>
         </div>
@@ -364,6 +382,107 @@ export default function ShareTestimonialDialog({
     </Dialog>
   );
 }
+
+const processTwitterBodyUsingMetadata = (metadata: any) => {
+  let text = metadata.data.text;
+
+  let allEntities: Array<{
+    start: number;
+    end: number;
+    type: string;
+    data: any;
+  }> = [];
+
+  // Add all mentions
+  metadata.data.entities.mentions?.forEach((mention: any) => {
+    allEntities.push({
+      start: mention.start,
+      end: mention.end,
+      type: "mention",
+      data: mention,
+    });
+  });
+
+  // Add all hashtags
+  metadata.data.entities.hashtags?.forEach((hashtag: any) => {
+    allEntities.push({
+      start: hashtag.start,
+      end: hashtag.end,
+      type: "hashtag",
+      data: hashtag,
+    });
+  });
+  // Add all urls
+  metadata.data.entities.urls?.forEach((url: any) => {
+    allEntities.push({
+      start: url.start,
+      end: url.end,
+      type: "url",
+      data: url,
+    });
+  });
+
+  //Sorting allentities
+  allEntities.sort((a, b) => a.start - b.start);
+
+  // Build JSX elements
+  const elements: React.ReactNode[] = [];
+  let lastIndex = 0;
+
+  allEntities.forEach((entity, index) => {
+    // Add text before this entity
+    if (entity.start > lastIndex) {
+      elements.push(text.slice(lastIndex, entity.start));
+    }
+
+    // Add the entity as a link
+    const entityText = text.slice(entity.start, entity.end);
+
+    if (entity.type === "mention") {
+      elements.push(
+        <a
+          key={`mention-${index}`}
+          href={`https://x.com/${entity.data.username}`}
+          target="_blank"
+          className="text-blue-500 hover:underline"
+        >
+          {entityText}
+        </a>
+      );
+    } else if (entity.type === "hashtag") {
+      elements.push(
+        <a
+          key={`hashtag-${index}`}
+          href={`https://x.com/hashtag/${entity.data.tag}`}
+          target="_blank"
+          className="text-blue-500 hover:underline"
+        >
+          {entityText}
+        </a>
+      );
+    } else if (entity.type === "url") {
+      elements.push(
+        <a
+          key={`url-${index}`}
+          href={entity.data.expanded_url}
+          target="_blank"
+          className="text-blue-500 hover:underline"
+        >
+          {entity.data.expanded_url}
+        </a>
+      );
+    }
+
+    lastIndex = entity.end;
+  });
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    elements.push(text.slice(lastIndex));
+  }
+
+  return <span>{elements}</span>;
+};
 
 const renderStars = (rating: number) => {
   return Array.from({ length: rating }, (_, index) => (

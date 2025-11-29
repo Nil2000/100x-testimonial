@@ -2,21 +2,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { feedbackConstants } from "@/lib/constants";
 import React from "react";
 import { ControllerRenderProps } from "react-hook-form";
+import { Feedback } from "@/schemas/feedbackSchema";
 
 export default function CollectStarRatings({
   field,
 }: {
-  field: ControllerRenderProps<
-    {
-      rating: number;
-      permission: boolean;
-      answer: string;
-      name: string;
-      email: string;
-      imageUrl: string;
-    },
-    "rating"
-  >;
+  field: ControllerRenderProps<Feedback, "rating">;
 }) {
   return (
     <>

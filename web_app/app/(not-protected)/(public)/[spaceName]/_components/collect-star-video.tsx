@@ -2,20 +2,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { feedbackConstants } from "@/lib/constants";
 import React from "react";
 import { ControllerRenderProps } from "react-hook-form";
+import { VideoFeedback } from "@/schemas/videoFeedbackSchema";
 
 export default function CollectStarVideoRatings({
   field,
 }: {
-  field: ControllerRenderProps<
-    {
-      rating: number;
-      permission: boolean;
-      name: string;
-      email: string;
-      videoUrl: string;
-    },
-    "rating"
-  >;
+  field: ControllerRenderProps<VideoFeedback, "rating">;
 }) {
   return (
     <>
