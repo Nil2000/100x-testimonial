@@ -7,12 +7,13 @@ import {
 } from "@/components/ui/accordion";
 import { TabsTrigger } from "@/components/ui/tabs";
 import { LucideIcon } from "lucide-react";
+import { IconType } from "react-icons/lib";
 
 type AccordionMenuListProps = {
   header: string;
   contents: {
     title: string;
-    icon: LucideIcon;
+    icon: IconType;
     tabContent: React.ReactNode;
   }[];
 }[];

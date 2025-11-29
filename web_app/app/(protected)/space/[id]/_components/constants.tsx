@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import TestimonialsListManager from "./testimonials/testimonials-list-manager";
 import { manageTestimonialSidebarElementType } from "@/lib/types";
+import { RiTwitterXFill } from "react-icons/ri";
 export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementType[] =
   [
     {
@@ -18,27 +19,69 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
         {
           title: "All",
           icon: WalletCards,
-          tabContent: <TestimonialsListManager key="all-testimonials" />,
+          tabContent: (
+            <TestimonialsListManager key="all-testimonials" isSocial={false} />
+          ),
         },
         {
           title: "Video",
           icon: Video,
-          tabContent: <TestimonialsListManager key="video-testimonials" category="VIDEO" />,
+          tabContent: (
+            <TestimonialsListManager
+              key="video-testimonials"
+              category="VIDEO"
+              isSocial={false}
+            />
+          ),
         },
         {
           title: "Text",
           icon: LetterText,
-          tabContent: <TestimonialsListManager key="text-testimonials" category="TEXT" />,
+          tabContent: (
+            <TestimonialsListManager
+              key="text-testimonials"
+              category="TEXT"
+              isSocial={false}
+            />
+          ),
         },
         {
           title: "Liked",
           icon: HandHeart,
-          tabContent: <TestimonialsListManager key="liked-testimonials" wallOfLove={true} />,
+          tabContent: (
+            <TestimonialsListManager
+              key="liked-testimonials"
+              wallOfLove={true}
+              isSocial={false}
+            />
+          ),
         },
         {
           title: "Spam",
           icon: MessageSquareWarningIcon,
-          tabContent: <TestimonialsListManager key="spam-testimonials" category="SPAM" />,
+          tabContent: (
+            <TestimonialsListManager
+              key="spam-testimonials"
+              category="SPAM"
+              isSocial={false}
+            />
+          ),
+        },
+      ],
+    },
+    {
+      header: "Integrations",
+      contents: [
+        {
+          title: "X",
+          icon: RiTwitterXFill,
+          tabContent: (
+            <TestimonialsListManager
+              key="x-testimonials"
+              category="X"
+              isSocial={true}
+            />
+          ),
         },
       ],
     },

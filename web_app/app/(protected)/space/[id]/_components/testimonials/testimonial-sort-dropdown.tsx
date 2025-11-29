@@ -26,19 +26,19 @@ export default function SortByDropDown({ onChange, defaultValue }: Props) {
       </SelectTrigger>
       <SelectContent className="[&_*[role=option]>span>svg]:text-muted-foreground/80 [&_*[role=option]>span]:flex [&_*[role=option]>span]:gap-2 [&_*[role=option]>span>svg]:shrink-0 font-sans">
         <SelectItem value="name-asc">
-          <ArrowDownAZ className="mr-2" size={16} />
+          <ArrowDownAZ size={16} />
           <span className="truncate">Name (Ascending)</span>
         </SelectItem>
         <SelectItem value="name-desc">
-          <ArrowUpAZ className="mr-2" size={16} />
+          <ArrowUpAZ size={16} />
           <span className="truncate">Name (Descending)</span>
         </SelectItem>
         <SelectItem value="newest-first">
-          <CalendarArrowUp className="mr-2" size={16} />
+          <CalendarArrowUp size={16} />
           <span className="truncate">Newest First</span>
         </SelectItem>
         <SelectItem value="oldest-first">
-          <CalendarArrowDown className="mr-2" size={16} />
+          <CalendarArrowDown size={16} />
           <span className="truncate">Oldest First</span>
         </SelectItem>
       </SelectContent>

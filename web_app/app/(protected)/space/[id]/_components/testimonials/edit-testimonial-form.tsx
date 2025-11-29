@@ -23,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { updateSpace } from "@/actions/spaceActions";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
+import { toast } from "sonner";
 
 export default function TestimonialEditFormView() {
   const { spaceInfo, updateSpaceField } = useSpaceStore();
@@ -65,35 +66,47 @@ export default function TestimonialEditFormView() {
   const uploadFile = async (file: File, spaceName: string) => {
     if (!file) return;
     console.log(file);
-    const url = await uploadFileToBucket({
-      file: file,
-      key: `space/${spaceName}/space-logo/${createId() + createId()}.${
-        file.type.split("/")[1]
-      }`,
-      mimeType: file.type,
-      size: file.size,
-    });
-    return url;
+    try {
+      const url = await uploadFileToBucket({
+        file: file,
+        key: `space/${spaceName}/space-logo/${createId() + createId()}.${file.type.split("/")[1]}`,
+        mimeType: file.type,
+        size: file.size,
+      });
+      toast.success("Logo uploaded successfully!");
+      return url;
+    } catch (error) {
+      toast.error("Failed to upload logo. Please try again.");
+      throw error;
+    }
   };
 
   const onSubmit = async (data: z.infer<typeof spaceSchema>) => {
     if (!fileSelected) {
       data.logo = initialLogoRef.current || "";
     } else {
-      const fileUrl = await uploadFile(fileSelected, spaceInfo.name);
-      if (!fileUrl) {
-        console.error("File upload failed");
+      try {
+        const fileUrl = await uploadFile(fileSelected, spaceInfo.name);
+        if (!fileUrl) {
+          console.error("File upload failed");
+          toast.error("Failed to upload logo. Please try again.");
+          return;
+        }
+        data.logo = fileUrl.url;
+        toast.success("Logo uploaded successfully!");
+      } catch (error) {
         return;
       }
-      data.logo = fileUrl.url;
     }
 
     startTransition(() => {
       updateSpace(spaceInfo.id, data).then((res) => {
         if (res.error) {
           console.error(res.error);
+          toast.error("Failed to update space. Please try again.");
         } else {
           console.log(res.message);
+          toast.success("Space updated successfully!");
         }
       });
     });

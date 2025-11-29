@@ -17,7 +17,7 @@ type Props = {
   spaceName: string;
 };
 
-export default function GetLinkDialog({
+export default function ShareableLinkDialog({
   isOpen,
   onClose,
   testimonialId,
