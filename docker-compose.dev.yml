@@ -46,7 +46,7 @@ services:
       KAFKA_NUM_PARTITIONS: 3
 
   db:
-    image: postgres:latest
+    image: postgres:17
     ports:
       - "5432:5432"
     environment:
