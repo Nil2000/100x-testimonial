@@ -2,8 +2,12 @@ import React from "react";
 
 export default function LivePreviewbadge({ location }: { location: string }) {
   return (
-    <div className="absoulute top-0 mt-[-1rem] w-max text-center font-semibold rounded-full bg-green-500/10 py-1 px-2 text-green-600 text-xs">
-      Live preview - {location} page
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+      </span>
+      {location} page
     </div>
   );
 }
