@@ -1,4 +1,4 @@
-import { CollectionType, FeedbackType } from "./db";
+import { CollectionType } from "@/generated/prisma/enums";
 
 export const sampleQuestions = [
   {

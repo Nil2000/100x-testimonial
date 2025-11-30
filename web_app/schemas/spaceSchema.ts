@@ -1,4 +1,4 @@
-import { CollectionType } from "@/lib/db";
+import { CollectionType } from "@/generated/prisma/enums";
 import * as z from "zod";
 export const spaceSchema = z.object({
   spaceName: z.string().nonempty("Space name is required"),
