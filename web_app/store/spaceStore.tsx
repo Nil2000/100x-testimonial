@@ -1,4 +1,4 @@
-import { CollectionType } from "@/lib/db";
+import { CollectionType } from "@/generated/prisma/enums";
 import { create } from "zustand";
 
 interface Question {
