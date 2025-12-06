@@ -1,7 +1,8 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { db, FeedbackType } from "@/lib/db";
+import { db } from "@/lib/db";
+import { FeedbackType } from "@/generated/prisma/enums";
 import { sendMessageToQueue } from "@/lib/queue/sendMessage";
 import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 import videoFeedbackSchema, {
