@@ -48,8 +48,9 @@ export default function MetricsContainer({
   }
 
   return (
-    <>
-      <div className="grid sm:grid-rows-1 sm:grid-cols-3 grid-cols-1 gap-4">
+    <div className="space-y-6">
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <MetricsCard
           icon={Eye}
           title="Total Page Views"
@@ -74,9 +75,9 @@ export default function MetricsContainer({
           />
         )}
       </div>
-      <div className="w-full">
-        <MetricsChart chartData={metrics} />
-      </div>
-    </>
+
+      {/* Chart */}
+      <MetricsChart chartData={metrics} />
+    </div>
   );
 }
