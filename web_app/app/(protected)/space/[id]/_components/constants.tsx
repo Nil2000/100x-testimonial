@@ -9,8 +9,8 @@ import {
   WalletCards,
 } from "lucide-react";
 import TestimonialsListManager from "./testimonials/testimonials-list-manager";
+import SocialTestimonialsTab from "./testimonials/social-testimonials-tab";
 import { manageTestimonialSidebarElementType } from "@/lib/types";
-import { RiTwitterXFill } from "react-icons/ri";
 export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementType[] =
   [
     {
@@ -70,18 +70,12 @@ export const manageTestimonialsSidebarElements: manageTestimonialSidebarElementT
       ],
     },
     {
-      header: "Integrations",
+      header: "Social",
       contents: [
         {
-          title: "X",
-          icon: RiTwitterXFill,
-          tabContent: (
-            <TestimonialsListManager
-              key="x-testimonials"
-              category="X"
-              isSocial={true}
-            />
-          ),
+          title: "Social",
+          icon: Send,
+          tabContent: <SocialTestimonialsTab key="social-testimonials" />,
         },
       ],
     },
