@@ -1,6 +1,7 @@
 export interface Theme {
   label: string;
   value: string;
+  description: string;
   primaryButtonColor: string;
   secondaryButtonColor: string;
   bg: string;
@@ -12,6 +13,9 @@ export interface Theme {
   defaultFont: string;
   mainContainerBg: string;
   type: "light" | "dark";
+  colorPalette: string[]; // Array of hex colors for preview
+  icon: string; // Emoji or icon identifier
+  category: string; // e.g., "Warm", "Cool", "Vibrant"
 }
 
 export const THEME_CHOICES: Theme[] = [
@@ -19,6 +23,7 @@ export const THEME_CHOICES: Theme[] = [
   {
     label: "Sunrise Bliss",
     value: "sunrise",
+    description: "Warm and energetic with pink and orange tones",
     primaryButtonColor: "bg-pink-500 hover:bg-pink-600",
     secondaryButtonColor: "bg-orange-200 hover:bg-orange-300 text-pink-700",
     bg: "bg-gradient-to-r from-orange-200 via-pink-300 to-yellow-200",
@@ -30,10 +35,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Montserrat",
     mainContainerBg: "rgba(255,255,255,0.8)",
     type: "light",
+    colorPalette: ["#fed7aa", "#f9a8d4", "#fef08a"],
+    icon: "🌅",
+    category: "Warm",
   },
   {
     label: "Minty Fresh",
     value: "minty",
+    description: "Clean and refreshing green palette",
     primaryButtonColor: "bg-emerald-500 hover:bg-emerald-600",
     secondaryButtonColor: "bg-green-100 hover:bg-teal-200 text-emerald-700",
     bg: "bg-gradient-to-r from-green-100 via-teal-100 to-lime-100",
@@ -45,10 +54,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Nunito",
     mainContainerBg: "rgba(255,255,255,0.8)",
     type: "light",
+    colorPalette: ["#d1fae5", "#99f6e4", "#d9f99d"],
+    icon: "🌿",
+    category: "Cool",
   },
   {
     label: "Golden Hour",
     value: "golden",
+    description: "Luxurious golden and amber hues",
     primaryButtonColor: "bg-yellow-500 hover:bg-yellow-600",
     secondaryButtonColor: "bg-orange-200 hover:bg-yellow-200 text-yellow-700",
     bg: "bg-gradient-to-r from-yellow-100 via-orange-100 to-yellow-200",
@@ -60,10 +73,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Playfair Display",
     mainContainerBg: "rgba(255,255,255,0.8)",
     type: "light",
+    colorPalette: ["#fef3c7", "#fed7aa", "#fef08a"],
+    icon: "✨",
+    category: "Warm",
   },
   {
     label: "Lavender Dream",
     value: "lavender",
+    description: "Soft and dreamy purple tones",
     primaryButtonColor: "bg-purple-500 hover:bg-purple-600",
     secondaryButtonColor: "bg-pink-100 hover:bg-indigo-200 text-purple-700",
     bg: "bg-gradient-to-br from-purple-200 via-indigo-100 to-pink-100",
@@ -75,10 +92,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Lato",
     mainContainerBg: "rgba(255,255,255,0.8)",
     type: "light",
+    colorPalette: ["#e9d5ff", "#c7d2fe", "#fbcfe8"],
+    icon: "💜",
+    category: "Vibrant",
   },
   {
     label: "Oceanic Calm",
     value: "oceanic",
+    description: "Serene blue and cyan shades",
     primaryButtonColor: "bg-cyan-600 hover:bg-cyan-700",
     secondaryButtonColor: "bg-blue-200 hover:bg-cyan-200 text-cyan-800",
     bg: "bg-gradient-to-r from-blue-200 via-cyan-200 to-teal-100",
@@ -90,11 +111,15 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Roboto",
     mainContainerBg: "rgba(255,255,255,0.8)",
     type: "light",
+    colorPalette: ["#bfdbfe", "#a5f3fc", "#99f6e4"],
+    icon: "🌊",
+    category: "Cool",
   },
   // Dark Themes
   {
     label: "Midnight Indigo",
     value: "midnight",
+    description: "Deep indigo with mysterious elegance",
     primaryButtonColor: "bg-indigo-700 hover:bg-indigo-800",
     secondaryButtonColor: "bg-blue-900 hover:bg-blue-900 text-white",
     bg: "bg-gradient-to-br from-indigo-900 via-gray-900 to-blue-900",
@@ -106,10 +131,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Roboto Mono",
     mainContainerBg: "rgba(30, 41, 59, 0.95)",
     type: "dark",
+    colorPalette: ["#312e81", "#111827", "#1e3a8a"],
+    icon: "🌙",
+    category: "Dark",
   },
   {
     label: "Slate Modern",
     value: "slate",
+    description: "Modern violet with sleek aesthetics",
     primaryButtonColor: "bg-violet-700 hover:bg-violet-800",
     secondaryButtonColor: "bg-purple-900 hover:bg-violet-900 text-violet-300",
     bg: "bg-gradient-to-br from-violet-900 via-violet-800 to-purple-900",
@@ -121,10 +150,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Roboto Mono",
     mainContainerBg: "rgba(49, 24, 77, 0.95)",
     type: "dark",
+    colorPalette: ["#4c1d95", "#5b21b6", "#6b21a8"],
+    icon: "🎨",
+    category: "Dark",
   },
   {
     label: "Forest Night",
     value: "forest-night",
+    description: "Rich emerald tones with natural depth",
     primaryButtonColor: "bg-emerald-800 hover:bg-emerald-900",
     secondaryButtonColor: "bg-green-900 hover:bg-emerald-900 text-emerald-300",
     bg: "bg-gradient-to-br from-green-900 via-emerald-800 to-lime-900",
@@ -136,10 +169,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Inter",
     mainContainerBg: "rgba(30, 41, 59, 0.95)",
     type: "dark",
+    colorPalette: ["#14532d", "#065f46", "#365314"],
+    icon: "🌲",
+    category: "Dark",
   },
   {
     label: "Rose Quartz Dark",
     value: "rose-dark",
+    description: "Bold fuchsia with romantic vibes",
     primaryButtonColor: "bg-fuchsia-700 hover:bg-fuchsia-800",
     secondaryButtonColor: "bg-rose-800 hover:bg-fuchsia-900 text-pink-200",
     bg: "bg-gradient-to-br from-fuchsia-900 via-rose-800 to-pink-700",
@@ -151,10 +188,14 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Rubik",
     mainContainerBg: "rgba(55, 7, 55, 0.92)",
     type: "dark",
+    colorPalette: ["#701a75", "#881337", "#be185d"],
+    icon: "🌹",
+    category: "Dark",
   },
   {
     label: "Charcoal Classic",
     value: "charcoal",
+    description: "Sophisticated rose and amber blend",
     primaryButtonColor: "bg-rose-700 hover:bg-amber-900",
     secondaryButtonColor: "bg-amber-900 hover:bg-rose-900 text-amber-300",
     bg: "bg-gradient-to-r from-rose-900 via-amber-900 to-rose-700",
@@ -166,5 +207,8 @@ export const THEME_CHOICES: Theme[] = [
     defaultFont: "Open Sans",
     mainContainerBg: "rgba(67, 20, 36, 0.95)",
     type: "dark",
+    colorPalette: ["#881337", "#78350f", "#9f1239"],
+    icon: "🔥",
+    category: "Dark",
   },
 ];
