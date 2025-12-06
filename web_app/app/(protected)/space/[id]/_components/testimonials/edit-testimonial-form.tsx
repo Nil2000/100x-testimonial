@@ -253,14 +253,6 @@ export default function TestimonialEditFormView() {
               onValueChange={(e) => {
                 field.onChange(e);
                 updateSpaceField("collectionType", e);
-                console.log(
-                  "Collection type changed:",
-                  e,
-                  "value:",
-                  field.value,
-                  "current spaceInfo.collectionType:",
-                  spaceInfo.collectionType
-                );
               }}
               value={field.value}
             >

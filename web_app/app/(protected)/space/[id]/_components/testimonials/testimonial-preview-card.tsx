@@ -11,8 +11,6 @@ export default function TestimonialPreview() {
   const { spaceInfo } = useSpaceStore();
   const { headerTitle, headerSubtitle, questions, collectionType } = spaceInfo;
 
-  console.log("Preview card - collectionType:", collectionType);
-
   const showText =
     collectionType === CollectionType.TEXT ||
     collectionType === CollectionType.TEXT_AND_VIDEO;
