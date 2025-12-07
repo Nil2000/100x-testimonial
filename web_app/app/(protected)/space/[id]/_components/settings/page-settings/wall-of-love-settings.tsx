@@ -7,6 +7,16 @@ import { useSpaceStore } from "@/store/spaceStore";
 import { saveWallOfLoveSettings } from "@/actions/spaceActions";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export default function WallOfLovePage() {
   const { spaceInfo, updateWallOfLoveSettings } = useSpaceStore();
@@ -36,19 +46,16 @@ export default function WallOfLovePage() {
   React.useEffect(() => {
     const initialOptions: any = {
       ...SWITCH_DEFAULTS,
-      ...(currentWallOfLoveSettings?.styleOptions as any),
     };
 
     if (selectedStyle?.extraOptions) {
       selectedStyle.extraOptions.forEach((optionObj) => {
-        initialOptions[optionObj.key] =
-          (currentWallOfLoveSettings?.styleOptions as any)?.[optionObj.key] ||
-          optionObj.options[0].value;
+        initialOptions[optionObj.key] = optionObj.options[0].value;
       });
     }
 
     setSelectedExtraOptions(initialOptions);
-  }, [selectedStyle, currentWallOfLoveSettings, SWITCH_DEFAULTS]);
+  }, [selectedStyleOption, SWITCH_DEFAULTS]);
 
   // Function to check if current settings are different from saved settings
   const hasChanges = () => {
@@ -95,9 +102,10 @@ export default function WallOfLovePage() {
 
       if (result.error) {
         console.error("Failed to save settings:", result.error);
+        toast.error("Failed to save settings");
       } else {
         updateWallOfLoveSettings(settings);
-        console.log("Wall of love settings saved!");
+        toast.success("Wall of love settings saved!");
       }
     } catch (error) {
       console.error("Failed to save settings:", error);
@@ -107,103 +115,154 @@ export default function WallOfLovePage() {
   };
 
   return (
-    <div className="space-y-2">
-      <div
-        className="grid sm:grid-cols-2 grid-cols-1 gap-y-2 text-sm p-2"
-        key="wall-of-love-page-ui"
-      >
-        <div key="page-style">Page Style</div>
-        <SelectWrapper
-          key="page-style-select"
-          defaultValue={selectedStyleOption}
-          listOfItems={WALL_OF_LOVE_STYLE_CHOICES.map((choice) => ({
-            name: choice.label,
-            value: choice.value,
-          }))}
-          onChange={(value) => {
-            setSelectedStyleOption(value);
-          }}
-          disabled={isSaving}
-        />
-        <div className="capitalize">showRating</div>
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={selectedExtraOptions.showRating !== "false"}
-            onCheckedChange={(checked) => {
-              setSelectedExtraOptions((prev: any) => ({
-                ...prev,
-                showRating: checked ? "true" : "false",
-              }));
-            }}
-            disabled={isSaving}
-            id="wol-showRating"
-          />
-          <label
-            htmlFor="wol-showRating"
-            className="text-sm text-muted-foreground"
-          >
-            Show rating
-          </label>
-        </div>
-        <div className="capitalize">showDate</div>
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={selectedExtraOptions.showDate !== "false"}
-            onCheckedChange={(checked) => {
-              setSelectedExtraOptions((prev: any) => ({
-                ...prev,
-                showDate: checked ? "true" : "false",
-              }));
-            }}
-            disabled={isSaving}
-            id="wol-showDate"
-          />
-          <label
-            htmlFor="wol-showDate"
-            className="text-sm text-muted-foreground"
-          >
-            Show date
-          </label>
-        </div>
-        {selectedStyle &&
-          selectedStyle.extraOptions &&
-          selectedStyle.extraOptions.map((optionObj) => (
-            <React.Fragment key={optionObj.key}>
-              <div className="capitalize">{optionObj.key}</div>
+    <div className="space-y-6">
+      <div className="space-y-6">
+        {/* Layout Style Section */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-sm font-semibold mb-3">Layout Style</h3>
+            <div className="grid sm:grid-cols-[200px_1fr] gap-4 items-center">
+              <Label htmlFor="page-style" className="text-sm font-medium">
+                Display Style
+              </Label>
               <SelectWrapper
-                defaultValue={
-                  selectedExtraOptions[optionObj.key] ||
-                  optionObj.options[0].value
-                }
-                listOfItems={optionObj.options.map((opt: any) => ({
-                  name: opt.label,
-                  value: opt.value,
+                key="page-style-select"
+                defaultValue={selectedStyleOption}
+                listOfItems={WALL_OF_LOVE_STYLE_CHOICES.map((choice) => ({
+                  name: choice.label,
+                  value: choice.value,
                 }))}
                 onChange={(value) => {
-                  setSelectedExtraOptions((prev: any) => ({
-                    ...prev,
-                    [optionObj.key]: value,
-                  }));
+                  setSelectedStyleOption(value);
                 }}
                 disabled={isSaving}
               />
-            </React.Fragment>
-          ))}
+            </div>
+          </div>
+
+          {/* Style-specific options */}
+          {selectedStyle && selectedStyle.extraOptions && (
+            <div className="space-y-3">
+              {selectedStyle.extraOptions.map((optionObj) => (
+                <div
+                  key={optionObj.key}
+                  className="grid sm:grid-cols-[200px_1fr] gap-4 items-center"
+                >
+                  <Label className="text-sm font-medium capitalize">
+                    {optionObj.key === "cardVariant"
+                      ? "Card Style"
+                      : optionObj.key}
+                  </Label>
+                  <SelectWrapper
+                    defaultValue={
+                      selectedExtraOptions[optionObj.key] ||
+                      optionObj.options[0].value
+                    }
+                    listOfItems={optionObj.options.map((opt: any) => ({
+                      name: opt.label,
+                      value: opt.value,
+                    }))}
+                    onChange={(value) => {
+                      setSelectedExtraOptions((prev: any) => ({
+                        ...prev,
+                        [optionObj.key]: value,
+                      }));
+                    }}
+                    disabled={isSaving}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Separator />
+
+        {/* Display Options Section */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold">Display Options</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="wol-showRating"
+                  className="text-sm font-medium cursor-pointer"
+                >
+                  Show Rating
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Display star ratings on testimonial cards
+                </p>
+              </div>
+              <Switch
+                checked={selectedExtraOptions.showRating !== "false"}
+                onCheckedChange={(checked) => {
+                  setSelectedExtraOptions((prev: any) => ({
+                    ...prev,
+                    showRating: checked ? "true" : "false",
+                  }));
+                }}
+                disabled={isSaving}
+                id="wol-showRating"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="wol-showDate"
+                  className="text-sm font-medium cursor-pointer"
+                >
+                  Show Date
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Display submission date on testimonial cards
+                </p>
+              </div>
+              <Switch
+                checked={selectedExtraOptions.showDate !== "false"}
+                onCheckedChange={(checked) => {
+                  setSelectedExtraOptions((prev: any) => ({
+                    ...prev,
+                    showDate: checked ? "true" : "false",
+                  }));
+                }}
+                disabled={isSaving}
+                id="wol-showDate"
+              />
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <Button
+            onClick={saveSettings}
+            disabled={isSaving || !hasChanges()}
+            size="lg"
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
       </div>
-      <Button
-        onClick={saveSettings}
-        disabled={isSaving || !hasChanges()}
-        className="mt-2"
-      >
-        {isSaving ? "Saving..." : "Save Changes"}
-      </Button>
-      {/* Preview changes */}
-      <div className="relative">
-        <WallOfLovePreview
-          selectedStyle={selectedStyleOption}
-          selectedStyleOption={selectedExtraOptions}
-        />
-      </div>
+
+      {/* Preview Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Preview</CardTitle>
+          <CardDescription>
+            See how your Wall of Love will look with the current settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <WallOfLovePreview
+            selectedStyle={selectedStyleOption}
+            selectedStyleOption={selectedExtraOptions}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

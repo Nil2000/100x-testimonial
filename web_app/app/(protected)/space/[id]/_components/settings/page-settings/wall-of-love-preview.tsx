@@ -7,8 +7,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Marquee } from "@/components/ui/marquee";
-import { ArrowRightIcon } from "lucide-react";
-import Image from "next/image";
+import { ArrowRightIcon, StarIcon } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
 type Props = {
@@ -20,116 +19,152 @@ export default function WallOfLovePreviewContainer({
   selectedStyle,
   selectedStyleOption,
 }: Props) {
-  console.log(selectedStyleOption);
   return (
     <div
-      className="relative w-full sm:w-[70vw] lg:w-[800px] h-[50vh] border rounded-md space-y-2"
+      className="relative w-full bg-gradient-to-br from-background via-background to-muted/20 rounded-lg border overflow-hidden"
       key="preview-container-wall-of-love"
     >
-      <div className="h-1/3 w-2/3 mx-auto pt-2 flex flex-col items-center justify-center">
-        <Image
-          src="https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Wall of love"
-          width={1974}
-          height={400}
-          className="object-cover rounded-md h-full w-full"
-        />
+      {/* Header Section */}
+      <div className="w-full bg-background/80 backdrop-blur-sm border-b px-6 py-8 text-center">
+        <div className="max-w-2xl mx-auto space-y-2">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Wall of Love
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            See what our customers are saying
+          </p>
+        </div>
       </div>
-      {selectedStyle == "list" && (
-        <div className="w-2/3 mx-auto h-2/3 p-2">{generateList()}</div>
-      )}
-      {selectedStyle == "carousel" && (
-        <div className="w-1/2 mx-auto h-max p-2 flex justify-center">
-          {generateCarousel(selectedStyleOption)}
-        </div>
-      )}
-      {selectedStyle == "infiniteScrollHorizontal" && (
-        <div className="relative w-2/3 mx-auto h-2/3 p-2 overflow-hidden">
-          {generateInfiniteScroll({
-            direction: "horizontal",
-            rows: Number(selectedStyleOption.rows),
-          })}
-        </div>
-      )}
-      {selectedStyle == "infiniteScrollVertical" && (
-        <div className="w-2/3 mx-auto h-2/3 p-2 overflow-hidden">
-          {generateInfiniteScroll({
-            direction: "vertical",
-            columns: Number(selectedStyleOption.columns),
-          })}
-        </div>
-      )}
-      {/* <div className="w-2/3 mx-auto h-2/3 p-2 overflow-hidden">
-        {generateInfiniteScroll({
-          direction: "horizontal",
-          rows: Number(selectedStyleOption.rows),
-        })}
-      </div> */}
-      {/* <div className="w-[50vw] mx-auto h-2/3 p-2 overflow-hidden">
-        <MarqueeDemo />
-      </div> */}
+
+      {/* Preview Content */}
+      <div className="w-full p-6 min-h-[400px] flex items-center justify-center">
+        {selectedStyle == "list" && (
+          <div className="w-full max-w-5xl mx-auto">
+            {generateList(selectedStyleOption)}
+          </div>
+        )}
+        {selectedStyle == "carousel" && (
+          <div className="w-full max-w-4xl mx-auto flex justify-center">
+            {generateCarousel(selectedStyleOption)}
+          </div>
+        )}
+        {selectedStyle == "infiniteScrollHorizontal" && (
+          <div className="relative w-full max-w-5xl mx-auto overflow-hidden">
+            {generateInfiniteScroll({
+              direction: "horizontal",
+              rows: Number(selectedStyleOption.rows),
+              cardVariant: selectedStyleOption.cardVariant,
+              showRating: selectedStyleOption.showRating,
+              showDate: selectedStyleOption.showDate,
+              gap: selectedStyleOption.gap,
+            })}
+          </div>
+        )}
+        {selectedStyle == "infiniteScrollVertical" && (
+          <div className="w-full max-w-5xl mx-auto overflow-hidden">
+            {generateInfiniteScroll({
+              direction: "vertical",
+              columns: Number(selectedStyleOption.columns),
+              cardVariant: selectedStyleOption.cardVariant,
+              showRating: selectedStyleOption.showRating,
+              showDate: selectedStyleOption.showDate,
+              gap: selectedStyleOption.gap,
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Fade Effect */}
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent pointer-events-none" />
     </div>
   );
 }
 
-const generateList = () => {
+const generateList = (styleOptions: any) => {
+  const columns = parseInt(styleOptions?.columns || "3");
+  const gapClass = getGapClass(styleOptions?.gap);
+  const cardVariant = styleOptions?.cardVariant || "classic";
+  const showRating = styleOptions?.showRating !== "false";
+  const showDate = styleOptions?.showDate !== "false";
+
+  const columnsArray = Array.from({ length: columns }, (_, i) => i);
+
   return (
-    <div className="flex gap-2 h-full w-full">
-      <div className="flex flex-col items-center h-full gap-2 w-1/3">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div
-            key={index + "list1"}
-            className="w-full h-10 bg-primary mb-2 rounded-md flex items-center justify-center"
-          >
-            <p className="text-gray-700 text-sm">List Item {index + 1}</p>
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-col items-center h-full gap-2 w-1/3">
-        {Array.from({ length: 4 }, (_, index) => (
-          <div
-            key={index + "list2"}
-            className="w-full h-10 bg-primary mb-2 rounded-md flex items-center justify-center"
-          >
-            <p className="text-gray-700 text-sm">List Item {index + 1}</p>
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-col items-center h-full gap-2 w-1/3">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div
-            key={index + "list3"}
-            className="w-full h-10 bg-primary mb-2 rounded-md flex items-center justify-center"
-          >
-            <p className="text-gray-700 text-sm">List Item {index + 1}</p>
-          </div>
-        ))}
-      </div>
+    <div className={cn("flex h-full w-full", gapClass)}>
+      {columnsArray.map((colIndex) => (
+        <div
+          key={`col-${colIndex}`}
+          className={cn("flex flex-col h-full w-full", gapClass)}
+        >
+          {Array.from({ length: colIndex === 1 ? 4 : 3 }, (_, index) => (
+            <Card
+              key={index + `list${colIndex}`}
+              className={cn(
+                "w-full p-2 flex flex-col items-center justify-center",
+                getCardVariantClasses(cardVariant)
+              )}
+            >
+              <p className="text-[8px] font-semibold">
+                Testimonial {index + 1}
+              </p>
+              {showRating && (
+                <div className="flex gap-0.5 mt-1">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <StarIcon
+                      key={i}
+                      className="w-2 h-2 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                </div>
+              )}
+              {showDate && (
+                <p className="text-[6px] text-muted-foreground mt-1">
+                  Dec 7, 2025
+                </p>
+              )}
+            </Card>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
 
 const generateCarousel = (selectedStyleOption: any) => {
+  const columns = parseInt(selectedStyleOption?.columns || "2");
+  const cardVariant = selectedStyleOption?.cardVariant || "classic";
+  const showRating = selectedStyleOption?.showRating !== "false";
+  const showDate = selectedStyleOption?.showDate !== "false";
+
   const basisClass =
-    selectedStyleOption.columns == 1
-      ? ""
-      : selectedStyleOption.columns == 2
-      ? "basis-1/2"
-      : "basis-1/3";
+    columns == 1 ? "" : columns == 2 ? "basis-1/2" : "basis-1/3";
   const carouselClass =
-    selectedStyleOption.columns == 1
-      ? "w-1/3"
-      : selectedStyleOption.columns == 2
-      ? "w-2/3"
-      : "w-full";
+    columns == 1 ? "w-1/3" : columns == 2 ? "w-2/3" : "w-full";
   return (
     <Carousel className={carouselClass}>
       <CarouselContent>
         {Array.from({ length: 5 }, (_, index) => (
           <CarouselItem className={basisClass} key={index}>
-            <Card className="bg-secondary">
-              <CardContent className="flex items-center justify-center p-6 h-[10rem]">
-                <span className="text-3xl font-semibold">{index + 1}</span>
+            <Card className={cn(getCardVariantClasses(cardVariant))}>
+              <CardContent className="flex flex-col items-center justify-center p-3 h-[8rem]">
+                <span className="text-xs font-semibold">
+                  Testimonial {index + 1}
+                </span>
+                {showRating && (
+                  <div className="flex gap-0.5 mt-2">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <StarIcon
+                        key={i}
+                        className="w-3 h-3 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                )}
+                {showDate && (
+                  <p className="text-[8px] text-muted-foreground mt-2">
+                    Dec 7, 2025
+                  </p>
+                )}
               </CardContent>
             </Card>
           </CarouselItem>
@@ -147,17 +182,28 @@ const generateInfiniteScroll = (selectedStyleOption: {
   columns?: number;
   rows?: number;
   direction?: string;
+  cardVariant?: string;
+  showRating?: string;
+  showDate?: string;
+  gap?: string;
 }) => {
   const direction = selectedStyleOption.direction;
   const noOfRowsOrColumns =
     direction == "horizontal"
       ? selectedStyleOption.rows
       : selectedStyleOption.columns;
+  const cardVariant = selectedStyleOption?.cardVariant || "classic";
+  const showRating = selectedStyleOption?.showRating !== "false";
+  const showDate = selectedStyleOption?.showDate !== "false";
+  const gapClass = getGapClass(selectedStyleOption?.gap);
+
   return (
     <div
-      className={`relative flex w-full h-[30vh] ${
-        direction == "vertical" ? "flex-row" : "flex-col"
-      } items-center justify-center overflow-hidden gap-2`}
+      className={cn(
+        "relative flex w-full h-[30vh] items-center justify-center overflow-hidden",
+        direction == "vertical" ? "flex-row" : "flex-col",
+        gapClass
+      )}
     >
       {Array.from({ length: noOfRowsOrColumns! }, (_, index) => (
         <Marquee
@@ -169,12 +215,28 @@ const generateInfiniteScroll = (selectedStyleOption: {
           )}
           reverse={index % 2 == 0 ? true : false}
         >
-          {Array.from({ length: 5 }, (_, index) => (
+          {Array.from({ length: 5 }, (_, cardIndex) => (
             <Card
-              className="bg-secondary flex items-center justify-center h-9 w-9 rounded-md"
-              key={index}
+              className={cn(
+                "flex flex-col items-center justify-center h-12 w-16 rounded-md p-1",
+                getCardVariantClasses(cardVariant)
+              )}
+              key={cardIndex}
             >
-              <span className="md:text-2xl font-semibold">{index + 1}</span>
+              <span className="text-[8px] font-semibold">T{cardIndex + 1}</span>
+              {showRating && (
+                <div className="flex gap-0.5 mt-0.5">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <StarIcon
+                      key={i}
+                      className="w-1.5 h-1.5 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                </div>
+              )}
+              {showDate && (
+                <p className="text-[6px] text-muted-foreground mt-0.5">Dec 7</p>
+              )}
             </Card>
           ))}
         </Marquee>
@@ -195,4 +257,28 @@ const generateInfiniteScroll = (selectedStyleOption: {
       ></div>
     </div>
   );
+};
+
+const getCardVariantClasses = (variant: string) => {
+  switch (variant) {
+    case "glass":
+      return "bg-white/20 backdrop-blur-lg border-white/40 shadow-lg text-foreground";
+    case "dark":
+      return "bg-zinc-900 text-white border-zinc-700 shadow-xl";
+    case "classic":
+    default:
+      return "bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-foreground shadow-sm";
+  }
+};
+
+const getGapClass = (gap?: string) => {
+  switch (gap) {
+    case "tight":
+      return "gap-1";
+    case "relaxed":
+      return "gap-3";
+    case "normal":
+    default:
+      return "gap-2";
+  }
 };
