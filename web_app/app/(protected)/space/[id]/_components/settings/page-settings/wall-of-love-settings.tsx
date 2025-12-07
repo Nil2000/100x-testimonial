@@ -6,9 +6,18 @@ import WallOfLovePreview from "./wall-of-love-preview";
 import { useSpaceStore } from "@/store/spaceStore";
 import { saveWallOfLoveSettings } from "@/actions/spaceActions";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 export default function WallOfLovePage() {
   const { spaceInfo, updateWallOfLoveSettings } = useSpaceStore();
+
+  const SWITCH_DEFAULTS = React.useMemo(
+    () => ({
+      showRating: "true",
+      showDate: "true",
+    }),
+    []
+  );
 
   // Initialize state from store or defaults
   const currentWallOfLoveSettings = spaceInfo.theme?.wallOfLove;
@@ -25,18 +34,21 @@ export default function WallOfLovePage() {
   );
 
   React.useEffect(() => {
-    if (selectedStyle && selectedStyle.extraOptions) {
-      const initialOptions: any = {};
+    const initialOptions: any = {
+      ...SWITCH_DEFAULTS,
+      ...(currentWallOfLoveSettings?.styleOptions as any),
+    };
+
+    if (selectedStyle?.extraOptions) {
       selectedStyle.extraOptions.forEach((optionObj) => {
         initialOptions[optionObj.key] =
           (currentWallOfLoveSettings?.styleOptions as any)?.[optionObj.key] ||
           optionObj.options[0].value;
       });
-      setSelectedExtraOptions(initialOptions);
-    } else {
-      setSelectedExtraOptions({});
     }
-  }, [selectedStyle, currentWallOfLoveSettings]);
+
+    setSelectedExtraOptions(initialOptions);
+  }, [selectedStyle, currentWallOfLoveSettings, SWITCH_DEFAULTS]);
 
   // Function to check if current settings are different from saved settings
   const hasChanges = () => {
@@ -113,6 +125,46 @@ export default function WallOfLovePage() {
           }}
           disabled={isSaving}
         />
+        <div className="capitalize">showRating</div>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={selectedExtraOptions.showRating !== "false"}
+            onCheckedChange={(checked) => {
+              setSelectedExtraOptions((prev: any) => ({
+                ...prev,
+                showRating: checked ? "true" : "false",
+              }));
+            }}
+            disabled={isSaving}
+            id="wol-showRating"
+          />
+          <label
+            htmlFor="wol-showRating"
+            className="text-sm text-muted-foreground"
+          >
+            Show rating
+          </label>
+        </div>
+        <div className="capitalize">showDate</div>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={selectedExtraOptions.showDate !== "false"}
+            onCheckedChange={(checked) => {
+              setSelectedExtraOptions((prev: any) => ({
+                ...prev,
+                showDate: checked ? "true" : "false",
+              }));
+            }}
+            disabled={isSaving}
+            id="wol-showDate"
+          />
+          <label
+            htmlFor="wol-showDate"
+            className="text-sm text-muted-foreground"
+          >
+            Show date
+          </label>
+        </div>
         {selectedStyle &&
           selectedStyle.extraOptions &&
           selectedStyle.extraOptions.map((optionObj) => (

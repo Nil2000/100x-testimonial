@@ -18,6 +18,10 @@ type Props = {
   styleOptions?: {
     columns?: string;
     rows?: string;
+    cardVariant?: string;
+    showRating?: string;
+    showDate?: string;
+    gap?: string;
   };
 };
 
@@ -30,16 +34,21 @@ export default function TestimonialsList({
 
   const renderListStyle = () => {
     const columns = parseInt(styleOptions.columns || "3");
+    const gapClass = getGapClass(styleOptions.gap);
     const dividedTestimonials = divideTestimonials(testimonials, columns);
 
     return (
-      <div className="flex gap-4 flex-col sm:flex-row">
+      <div className={`flex ${gapClass} flex-col sm:flex-row`}>
         {dividedTestimonials.map((column, colIndex) => (
-          <div key={colIndex} className={`flex flex-col gap-4 w-full sm:w-1/2`}>
+          <div
+            key={colIndex}
+            className={`flex flex-col ${gapClass} w-full sm:w-1/2`}
+          >
             {column.map((testimonial) => (
               <div className="gap-4">
                 <WallOfLoveCard
                   testimonial={testimonial}
+                  styleOptions={styleOptions}
                   key={testimonial.id}
                 />
               </div>
@@ -83,6 +92,7 @@ export default function TestimonialsList({
                 <div className="w-full p-1">
                   <WallOfLoveCard
                     testimonial={testimonial}
+                    styleOptions={styleOptions}
                     key={testimonial.id}
                   />
                 </div>
@@ -98,12 +108,13 @@ export default function TestimonialsList({
 
   const renderInfiniteScrollHorizontal = () => {
     const rows = parseInt(styleOptions.rows || "1");
+    const gapClass = getGapClass(styleOptions.gap);
     const dividedByRows = divideTestimonialsIntoRows(testimonials, rows);
     const duplicatedTestimonials = dividedByRows.map((row) => [...row, ...row]);
 
     return (
       <div className="w-full overflow-hidden relative">
-        <div className="flex flex-col gap-4 overflow-hidden">
+        <div className={`flex flex-col ${gapClass} overflow-hidden`}>
           {duplicatedTestimonials.map((row, rowIndex) => (
             <Marquee key={rowIndex} pauseOnHover reverse={rowIndex % 2 === 0}>
               {row.map((testimonial, index) => (
@@ -111,7 +122,10 @@ export default function TestimonialsList({
                   key={`${testimonial.id}-${index}`}
                   className="flex-shrink-0 w-[200px] h-min"
                 >
-                  <WallOfLoveCard testimonial={testimonial} />
+                  <WallOfLoveCard
+                    testimonial={testimonial}
+                    styleOptions={styleOptions}
+                  />
                 </div>
               ))}
             </Marquee>
@@ -125,6 +139,7 @@ export default function TestimonialsList({
 
   const renderInfiniteScrollVertical = () => {
     const columns = parseInt(styleOptions.columns || "2");
+    const gapClass = getGapClass(styleOptions.gap);
     const dividedTestimonials = divideTestimonials(testimonials, columns);
     const duplicatedColumns = dividedTestimonials.map((column) => [
       ...column,
@@ -133,7 +148,9 @@ export default function TestimonialsList({
 
     return (
       <div className="w-full overflow-hidden relative h-[600px]">
-        <div className="flex gap-4 overflow-hidden h-full justify-center w-full">
+        <div
+          className={`flex ${gapClass} overflow-hidden h-full justify-center w-full`}
+        >
           {duplicatedColumns.map((column, colIndex) => (
             <Marquee
               key={colIndex}
@@ -147,7 +164,10 @@ export default function TestimonialsList({
                   key={`${testimonial.id}-${index}`}
                   className="flex-shrink-0 w-full h-min"
                 >
-                  <WallOfLoveCard testimonial={testimonial} />
+                  <WallOfLoveCard
+                    testimonial={testimonial}
+                    styleOptions={styleOptions}
+                  />
                 </div>
               ))}
             </Marquee>
@@ -175,6 +195,18 @@ export default function TestimonialsList({
 
   return <div className="w-full z-20 sm:px-5 px-2">{renderContent()}</div>;
 }
+
+const getGapClass = (gap?: string) => {
+  switch (gap) {
+    case "tight":
+      return "gap-2";
+    case "relaxed":
+      return "gap-6";
+    case "normal":
+    default:
+      return "gap-4";
+  }
+};
 
 // Helper function to divide testimonials into columns
 const divideTestimonials = (

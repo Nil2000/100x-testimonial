@@ -31,6 +31,10 @@ type SpaceInfo = {
       styleOptions: {
         columns?: string;
         rows?: string;
+        cardVariant?: string;
+        showRating?: string;
+        showDate?: string;
+        gap?: string;
       };
     };
   };
@@ -47,6 +51,10 @@ interface SpaceStore {
     styleOptions: {
       columns?: string;
       rows?: string;
+      cardVariant?: string;
+      showRating?: string;
+      showDate?: string;
+      gap?: string;
     };
   }) => void;
 }

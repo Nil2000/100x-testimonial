@@ -16,6 +16,10 @@ type Props = {
     styleOptions: {
       columns?: string;
       rows?: string;
+      cardVariant?: string;
+      showRating?: string;
+      showDate?: string;
+      gap?: string;
     };
   };
 };

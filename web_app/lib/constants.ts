@@ -113,6 +113,32 @@ export const WALL_OF_LOVE_STYLE_CHOICES = [
   {
     label: "List",
     value: "list",
+    extraOptions: [
+      {
+        key: "columns",
+        options: [
+          { label: "1 Column", value: "1" },
+          { label: "2 Columns", value: "2" },
+          { label: "3 Columns", value: "3" },
+        ],
+      },
+      {
+        key: "cardVariant",
+        options: [
+          { label: "Classic", value: "classic" },
+          { label: "Glass", value: "glass" },
+          { label: "Dark", value: "dark" },
+        ],
+      },
+      {
+        key: "gap",
+        options: [
+          { label: "Compact", value: "tight" },
+          { label: "Cozy", value: "normal" },
+          { label: "Comfy", value: "relaxed" },
+        ],
+      },
+    ],
   },
   {
     label: "Carousel",
@@ -124,6 +150,22 @@ export const WALL_OF_LOVE_STYLE_CHOICES = [
           { label: "1 Column", value: "1" },
           { label: "2 Columns", value: "2" },
           { label: "3 Columns", value: "3" },
+        ],
+      },
+      {
+        key: "cardVariant",
+        options: [
+          { label: "Classic", value: "classic" },
+          { label: "Glass", value: "glass" },
+          { label: "Dark", value: "dark" },
+        ],
+      },
+      {
+        key: "gap",
+        options: [
+          { label: "Compact", value: "tight" },
+          { label: "Cozy", value: "normal" },
+          { label: "Comfy", value: "relaxed" },
         ],
       },
     ],
@@ -140,6 +182,22 @@ export const WALL_OF_LOVE_STYLE_CHOICES = [
           { label: "3 Rows", value: "3" },
         ],
       },
+      {
+        key: "cardVariant",
+        options: [
+          { label: "Classic", value: "classic" },
+          { label: "Glass", value: "glass" },
+          { label: "Dark", value: "dark" },
+        ],
+      },
+      {
+        key: "gap",
+        options: [
+          { label: "Compact", value: "tight" },
+          { label: "Cozy", value: "normal" },
+          { label: "Comfy", value: "relaxed" },
+        ],
+      },
     ],
   },
   {
@@ -152,6 +210,22 @@ export const WALL_OF_LOVE_STYLE_CHOICES = [
           { label: "1 Column", value: "1" },
           { label: "2 Columns", value: "2" },
           { label: "3 Columns", value: "3" },
+        ],
+      },
+      {
+        key: "cardVariant",
+        options: [
+          { label: "Classic", value: "classic" },
+          { label: "Glass", value: "glass" },
+          { label: "Dark", value: "dark" },
+        ],
+      },
+      {
+        key: "gap",
+        options: [
+          { label: "Compact", value: "tight" },
+          { label: "Cozy", value: "normal" },
+          { label: "Comfy", value: "relaxed" },
         ],
       },
     ],
