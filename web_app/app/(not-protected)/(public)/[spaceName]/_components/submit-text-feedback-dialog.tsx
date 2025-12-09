@@ -19,7 +19,7 @@ import { Feedback } from "@/schemas/feedbackSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import feedbackSchema from "@/schemas/feedbackSchema";
 import { submitTextFeedback } from "@/actions/feedbackActions";
-import { FeedbackType } from "@/lib/db";
+import { FeedbackType } from "@/generated/prisma/enums";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";

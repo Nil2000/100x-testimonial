@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React from "react";
-import { CollectionType } from "@/lib/db";
+import { CollectionType } from "@/generated/prisma/enums";
 import { Button } from "@/components/ui/button";
 import { Pen, Video } from "lucide-react";
 import ThankYouDialog from "./thanks-dialog";
@@ -71,19 +71,27 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
   return (
     <div className={`min-h-screen ${theme?.bg}`}>
       <RequestTestimonialPageNavbar themeType={theme?.type || "default"} />
-      <div className="lg:max-w-[1000px] w-full flex flex-col justify-center items-center mx-auto space-y-8 h-[calc(100vh-4.5rem)]">
+      <div className="flex justify-center items-center min-h-[calc(100vh-4.5rem)] py-10 md:py-14 px-4 relative">
+        {/* Decorative Elements */}
+        {theme && (
+          <>
+            <div
+              className="absolute top-10 left-10 w-20 h-20 rounded-full opacity-20 blur-2xl"
+              style={{ background: theme.colorPalette[0] }}
+            />
+            <div
+              className="absolute bottom-10 right-10 w-32 h-32 rounded-full opacity-20 blur-3xl"
+              style={{ background: theme.colorPalette[1] }}
+            />
+          </>
+        )}
+
         <div
           className={cx(
-            "rounded-lg p-8 w-full max-w-md flex flex-col gap-4 overflow-y-auto",
+            "rounded-xl p-6 md:p-8 w-full max-w-lg flex flex-col gap-4 backdrop-blur-sm relative z-10 transition-all duration-300",
             theme
-              ? theme.textClass +
-                  " " +
-                  theme.border +
-                  " " +
-                  theme.shadow +
-                  " " +
-                  theme.alignment
-              : "text-center"
+              ? `${theme.textClass} ${theme.border} ${theme.shadow} ${theme.alignment}`
+              : "text-center border-2 bg-card/80 shadow-md"
           )}
           style={{
             fontFamily: `'${effectiveFont}', ${
@@ -94,62 +102,75 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
           }}
         >
           {space.logo && space.theme?.themeOptions?.showBrandLogo && (
-            <div className="flex justify-center mb-4">
-              <Image
-                src={space.logo}
-                alt="Public space"
-                width={80}
-                height={80}
-                className="object-cover"
-              />
+            <div className="flex justify-center mb-3">
+              <div className="relative w-16 h-16 rounded-xl overflow-hidden ring-2 ring-offset-2 ring-primary/20 shadow-md">
+                <Image
+                  src={space.logo}
+                  alt="Brand Logo"
+                  width={64}
+                  height={64}
+                  className="object-cover"
+                />
+              </div>
             </div>
           )}
-          <h1 className={`text-4xl font-bold text-center ${theme?.textClass}`}>
-            {space.headerTitle}
-          </h1>
-          <p
-            className={`text-center text-xl text-muted-foreground ${theme?.textClass}`}
-          >
-            {space.headerSubtitle}
-          </p>
-          <h2
-            className={`uppercase font-semibold leading-6 mb-4 ${theme?.textClass}`}
-          >
-            Questions
-          </h2>
-          <ul
-            className={`mb-4 text-sm pl-3 ${
-              theme ? theme.listStyle : "list-square"
-            } ${theme ? theme.alignment : "text-left"}`}
-            style={{
-              listStyleType:
-                theme && theme.listStyle.includes("none") ? "none" : undefined,
-            }}
-          >
-            {space.questions.map((question: any) => (
-              <li key={question.id} className="text-muted-foreground">
-                {question.title}
-              </li>
-            ))}
-          </ul>
-          <div className="flex justify-center space-x-2">
+          <div className="space-y-3">
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight">
+              {space.headerTitle}
+            </h1>
+            <p
+              className={cx(
+                "text-sm md:text-base font-medium leading-relaxed",
+                !theme ? "text-muted-foreground" : "opacity-80"
+              )}
+            >
+              {space.headerSubtitle}
+            </p>
+          </div>
+          <div className="space-y-3 mt-2">
+            <div
+              className={cx(
+                "inline-block px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-wider",
+                theme?.type === "dark" ? "bg-white/10" : "bg-black/5"
+              )}
+            >
+              Questions
+            </div>
+            <ul
+              className={cx(
+                "space-y-2 text-sm pl-5",
+                theme ? theme.listStyle : "list-disc",
+                theme ? theme.alignment : "text-left"
+              )}
+              style={{
+                listStyleType:
+                  theme && theme.listStyle.includes("none")
+                    ? "none"
+                    : undefined,
+              }}
+            >
+              {space.questions.map((question: any) => (
+                <li key={question.id} className="leading-relaxed">
+                  {question.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex gap-3 mt-6 flex-col sm:flex-row justify-center">
             {(space.collectionType === CollectionType.VIDEO ||
               space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
               <>
                 <Button
+                  type="button"
+                  size="default"
                   onClick={() => setOpenRecord(true)}
                   className={cx(
-                    theme ? `${theme.primaryButtonColor} text-white` : "",
-                    "group"
+                    "flex-1 sm:flex-none gap-2 font-medium shadow-sm",
+                    theme ? `${theme.primaryButtonColor} text-white` : ""
                   )}
                 >
-                  <Video
-                    className="me-1 transition-transform group-hover:-translate-x-0.5"
-                    size={16}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                  <h2>Record a video</h2>
+                  <Video className="w-4 h-4" />
+                  Record Video
                 </Button>
                 <RecordVideoDialog
                   open={openRecord}
@@ -167,20 +188,17 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
               space.collectionType === CollectionType.TEXT_AND_VIDEO) && (
               <>
                 <Button
+                  type="button"
+                  size="default"
+                  onClick={() => setOpenTextFeedback(true)}
                   className={cx(
-                    theme ? `${theme.secondaryButtonColor} text-white` : "",
-                    "group"
+                    "flex-1 sm:flex-none gap-2 font-medium shadow-sm",
+                    theme ? theme.secondaryButtonColor : ""
                   )}
                   variant={!theme ? "secondary" : "default"}
-                  onClick={() => setOpenTextFeedback(true)}
                 >
-                  <Pen
-                    className="me-1 transition-transform group-hover:-translate-x-0.5"
-                    size={16}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                  <h2>Write as text</h2>
+                  <Pen className="w-4 h-4" />
+                  Write Text
                 </Button>
                 <SubmitTextFeedbackDialog
                   space={space}
