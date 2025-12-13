@@ -68,6 +68,8 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
     }
   }, [space]);
 
+  console.log(theme);
+
   return (
     <div className={`min-h-screen ${theme?.bg}`}>
       <RequestTestimonialPageNavbar themeType={theme?.type || "default"} />

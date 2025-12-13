@@ -2,17 +2,23 @@
 import Image from "next/image";
 import React from "react";
 import { cx } from "class-variance-authority";
+import { useTheme } from "next-themes";
 
 type Props = {
   themeType: string | null;
 };
 
 export default function RequestTestimonialPageNavbar({ themeType }: Props) {
+  const { theme } = useTheme();
   return (
     <nav
       className={cx(
         "w-full px-6 md:px-8 py-4 border-b flex items-center justify-between backdrop-blur-sm",
-        themeType === "dark"
+        themeType === "default"
+          ? theme === "dark"
+            ? "border-white/10 bg-black/20"
+            : "border-black/10 bg-white/20"
+          : themeType === "dark"
           ? "border-white/10 bg-black/20"
           : "border-black/10 bg-white/20"
       )}

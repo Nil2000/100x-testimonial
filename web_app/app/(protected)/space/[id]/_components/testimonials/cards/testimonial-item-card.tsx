@@ -3,13 +3,12 @@ import { Heart, Loader2, Share2, Star, Trash2, Calendar } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { deleteFeedback, toggleWallOfLove } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
-import VideoCustomComponent from "@/components/videojs-component";
-import { videoJSOptions } from "@/lib/constants";
 import { TestimonialResponse } from "@/lib/types";
 import ButtonWrapperTestimonailCard from "@/components/button-wrapper-testimonial";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ShareButton from "../../sharing/share-controls";
 import { toast } from "sonner";
+import VideoDisplayComponent from "@/components/video-display-component";
 
 type Props = {
   testimonial: TestimonialResponse;
@@ -30,7 +29,6 @@ export default function TestimonialCard({
 }: Props) {
   const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
   const [isPending, startTransition] = useTransition();
-  const playerRef = React.useRef<HTMLVideoElement>(null);
 
   const toggleLike = async () => {
     startTransition(() => {
@@ -60,10 +58,6 @@ export default function TestimonialCard({
       removeFromList(testimonial.id);
       toast.success("Testimonial deleted successfully!");
     });
-  };
-
-  const handlePlayerReady = (player: any) => {
-    playerRef.current = player;
   };
 
   return (
@@ -114,21 +108,7 @@ export default function TestimonialCard({
               {testimonial.answer}
             </div>
           ) : (
-            <div className="flex flex-col items-center relative w-full rounded-lg overflow-hidden">
-              <VideoCustomComponent
-                options={{
-                  ...videoJSOptions,
-                  fill: true,
-                  sources: [
-                    {
-                      src: testimonial.videoUrl,
-                      type: "video/mp4",
-                    },
-                  ],
-                }}
-                onReady={handlePlayerReady}
-              />
-            </div>
+            <VideoDisplayComponent videoUrl={testimonial.videoUrl || ""} />
           )}
         </div>
 

@@ -45,11 +45,10 @@ export default function TestimonialsList({
             className={`flex flex-col ${gapClass} w-full sm:w-1/2`}
           >
             {column.map((testimonial) => (
-              <div className="gap-4">
+              <div className="gap-4" key={testimonial.id}>
                 <WallOfLoveCard
                   testimonial={testimonial}
                   styleOptions={styleOptions}
-                  key={testimonial.id}
                 />
               </div>
             ))}
@@ -93,7 +92,6 @@ export default function TestimonialsList({
                   <WallOfLoveCard
                     testimonial={testimonial}
                     styleOptions={styleOptions}
-                    key={testimonial.id}
                   />
                 </div>
               </CarouselItem>

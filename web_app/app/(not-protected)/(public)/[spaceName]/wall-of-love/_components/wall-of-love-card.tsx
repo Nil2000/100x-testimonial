@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import VideoDisplayComponent from "@/components/video-display-component";
 import { TestimonialResponse } from "@/lib/types";
 import { UserRoundIcon } from "lucide-react";
 import React from "react";
@@ -35,9 +36,14 @@ export default function WallOfLoveCard({
       <h3 className="font-bold font-poppins text-xs sm:text-base">
         {testimonial.name}
       </h3>
-      <p className="text-center font-dm_serif text-xs sm:text-sm">
-        {testimonial.answer}
-      </p>
+      {testimonial.feedbackType === "TEXT" && (
+        <p className="text-center font-dm_serif text-xs sm:text-sm">
+          {testimonial.answer}
+        </p>
+      )}
+      {testimonial.feedbackType === "VIDEO" && (
+        <VideoDisplayComponent videoUrl={testimonial.videoUrl || ""} />
+      )}
       {showRating && (
         <div className="text-xs">{renderStars(testimonial.rating)}</div>
       )}
