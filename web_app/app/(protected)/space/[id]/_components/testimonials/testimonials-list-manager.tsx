@@ -6,7 +6,7 @@ import Loading from "@/components/loader";
 import { useDebounce } from "@uidotdev/usehooks";
 import { feedbackPerPage } from "@/lib/constants";
 import PaginationComponent from "@/components/pagination-component";
-import { TestimonialResponse } from "@/lib/types";
+import { SOCIAL_PLATFORM, TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Import, PlusIcon, SearchIcon } from "lucide-react";
 import TestimonialSortDropdown from "./testimonial-sort-dropdown";
@@ -51,6 +51,7 @@ type Props = {
   wallOfLove?: boolean;
   archived?: boolean;
   isSocial?: boolean;
+  socialPlatform?: SOCIAL_PLATFORM;
 };
 
 export default function TestimonialsListManager({
@@ -58,6 +59,7 @@ export default function TestimonialsListManager({
   wallOfLove,
   archived,
   isSocial,
+  socialPlatform,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
@@ -172,7 +174,7 @@ export default function TestimonialsListManager({
             <SearchIcon size={16} />
           </div>
         </div>
-        {isSocial && (
+        {isSocial && socialPlatform && (
           <Button variant="outline" onClick={() => setOpenImportDialog(true)}>
             <Import size={16} className="text-muted-foreground/80 mr-2" />{" "}
             Import
@@ -256,7 +258,7 @@ export default function TestimonialsListManager({
         testimonialId={selectedTestimonial?.id!}
         spaceName={spaceInfo.name}
       />
-      {isSocial && (
+      {isSocial && socialPlatform && (
         <ImportSocialDialog
           isOpen={openImportDialog}
           onClose={(result) => {
@@ -273,7 +275,7 @@ export default function TestimonialsListManager({
               );
             }
           }}
-          platform={"X"}
+          platform={socialPlatform}
           spaceId={spaceInfo.id}
         />
       )}

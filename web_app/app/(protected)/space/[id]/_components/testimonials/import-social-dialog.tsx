@@ -12,6 +12,7 @@ import axios from "axios";
 import { Import, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { SOCIAL_PLATFORM } from "@/lib/types";
 
 interface ImportSocialDialogResult {
   type: "success" | "error" | "cancel";
@@ -22,7 +23,7 @@ interface ImportSocialDialogResult {
 interface ImportSocialDialogProps {
   isOpen: boolean;
   onClose: (result: ImportSocialDialogResult) => void;
-  platform: "X"; // e.g., "X", "LinkedIn"
+  platform: SOCIAL_PLATFORM; // e.g., "X", "LinkedIn"
   spaceId: string;
 }
 
@@ -91,7 +92,7 @@ export default function ImportSocialDialog({
       const errorMessage = "Failed to import tweet. Please try again.";
       toast.error(errorMessage);
       setImporting(false);
-      onClose({ type: 'error', error: errorMessage });
+      onClose({ type: "error", error: errorMessage });
     }
   };
 

@@ -97,10 +97,8 @@ export default function CreateSpaceForm({
         mimeType: file.type,
         size: file.size,
       });
-      toast.success("Logo uploaded successfully!");
       return url;
     } catch (error) {
-      toast.error("Failed to upload logo. Please try again.");
       throw error;
     }
   };

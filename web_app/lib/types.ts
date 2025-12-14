@@ -1,4 +1,8 @@
-import { AnalysisStatus, SentimentType, SourceType } from "./db";
+import {
+  AnalysisStatus,
+  SentimentType,
+  SourceType,
+} from "@/generated/prisma/enums";
 import { IconType } from "react-icons/lib";
 
 export interface CreateSpaceQuestion {
@@ -96,6 +100,8 @@ export type PAGE_TYPE = "req-test-page" | "wall-of-love-page";
 //   | "time-spent-on-wall-of-love";
 
 export type POSTHOG_METRIC_TYPE = "page-view" | "completed-testimonial";
+
+export type SOCIAL_PLATFORM = "X" | "INSTAGRAM";
 
 export interface MetricResponse {
   metric: Metric[];

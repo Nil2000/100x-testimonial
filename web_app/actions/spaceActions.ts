@@ -270,14 +270,14 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
       addToWallOfLove: true,
     },
   });
-  
+
   // Extract wall of love settings from theme
   const theme = space.theme as any;
   const wallOfLoveSettings = theme?.wallOfLove || {
     style: "list",
-    styleOptions: { columns: "3" }
+    styleOptions: { columns: "3" },
   };
-  
+
   return {
     error: null,
     data: feedbacks,
@@ -293,6 +293,10 @@ export const saveWallOfLoveSettings = async (
     styleOptions: {
       columns?: string;
       rows?: string;
+      cardVariant?: string;
+      showRating?: string;
+      showDate?: string;
+      gap?: string;
     };
   }
 ) => {

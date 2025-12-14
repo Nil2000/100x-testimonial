@@ -69,7 +69,9 @@ export default function TestimonialEditFormView() {
     try {
       const url = await uploadFileToBucket({
         file: file,
-        key: `space/${spaceName}/space-logo/${createId() + createId()}.${file.type.split("/")[1]}`,
+        key: `space/${spaceName}/space-logo/${createId() + createId()}.${
+          file.type.split("/")[1]
+        }`,
         mimeType: file.type,
         size: file.size,
       });
@@ -113,10 +115,7 @@ export default function TestimonialEditFormView() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4 mt-2 w-full sm:max-w-[400px] mx-auto"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full">
       <div className="space-y-2">
         <Label htmlFor="spaceName">Space name</Label>
         <Controller
@@ -253,7 +252,7 @@ export default function TestimonialEditFormView() {
             <Select
               onValueChange={(e) => {
                 field.onChange(e);
-                updateSpaceField("collectionType", field.value);
+                updateSpaceField("collectionType", e);
               }}
               value={field.value}
             >

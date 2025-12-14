@@ -25,11 +25,16 @@ export default function MetricsChart({ chartData }: Props) {
     },
   };
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-md font-medium mb-4">Page Views & Visitors</h3>
-        <Card className="pr-4 pt-4">
-          <ChartContainer config={areaChartConfig} className="h-[250px] w-full">
+    <div className="space-y-4">
+      <Card className="shadow-sm">
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-chart-1"></div>
+            <h3 className="text-sm font-semibold">
+              Page Views & Visitors Over Time
+            </h3>
+          </div>
+          <ChartContainer config={areaChartConfig} className="h-[300px] w-full">
             <AreaChart
               accessibilityLayer
               data={chartData}
@@ -38,7 +43,7 @@ export default function MetricsChart({ chartData }: Props) {
                 right: 12,
                 bottom: 12,
               }}
-              height={250}
+              height={300}
             >
               <CartesianGrid vertical={false} />
               <XAxis
@@ -96,8 +101,8 @@ export default function MetricsChart({ chartData }: Props) {
               />
             </AreaChart>
           </ChartContainer>
-        </Card>
-      </div>
+        </div>
+      </Card>
     </div>
   );
 }

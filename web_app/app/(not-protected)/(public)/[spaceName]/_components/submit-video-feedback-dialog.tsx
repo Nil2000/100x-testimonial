@@ -323,7 +323,7 @@ export default function SubmitVideoFeedbackDialog({
               {errors.videoUrl.message}
             </p>
           )}
-          <DialogFooter>
+          <DialogFooter className="pt-4">
             <Button
               onClick={() => {
                 onClose();
