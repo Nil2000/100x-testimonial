@@ -1,45 +1,78 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brush, Edit, FileStack } from "lucide-react";
+import {
+  Brush,
+  Edit,
+  FileStack,
+  Settings,
+  MessageSquareText,
+  Palette,
+} from "lucide-react";
 import SpaceEditorTabs from "./settings/space-editor-tabs";
 import TestimonialsManagementView from "./testimonials/testimonials-management-view";
 import PageSettingsTabs from "./settings/page-settings/page-settings-tabs";
+import { cn } from "@/lib/utils";
+
+const tabs = [
+  {
+    value: "edit",
+    label: "Edit Space",
+    shortLabel: "Edit",
+    icon: Settings,
+    content: <SpaceEditorTabs />,
+  },
+  {
+    value: "testimonials",
+    label: "Manage Testimonials",
+    shortLabel: "Testimonials",
+    icon: MessageSquareText,
+    content: <TestimonialsManagementView />,
+  },
+  {
+    value: "design",
+    label: "Pages Design",
+    shortLabel: "Design",
+    icon: Palette,
+    content: <PageSettingsTabs />,
+  },
+];
 
 export default function HorizontalTabs() {
   return (
-    <Tabs defaultValue="tab-1">
-      <TabsList className="relative h-auto w-full gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-border justify-start">
-        <TabsTrigger
-          value="tab-1"
-          className="overflow-hidden rounded-b-none border-x border-t border-border bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
+    <Tabs defaultValue="edit" className="w-full">
+      <div className="relative">
+        <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-transparent p-0">
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className={cn(
+                "relative rounded-none border-b-2 border-transparent bg-transparent px-4 py-3",
+                "text-muted-foreground hover:text-foreground",
+                "data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none",
+                "transition-all duration-200"
+              )}
+            >
+              <tab.icon className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.shortLabel}</span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
+
+      {tabs.map((tab) => (
+        <TabsContent
+          key={tab.value}
+          value={tab.value}
+          className={cn(
+            "mt-4 min-h-[calc(100vh-14rem)] animate-in fade-in-50 duration-300",
+            tab.value === "design" && "space-y-4"
+          )}
         >
-          <Edit size={16} className="inline-block -mb-1 me-1" />
-          Edit Space
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-2"
-          className="overflow-hidden rounded-b-none border-x border-t border-border bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
-        >
-          <FileStack size={16} className="inline-block -mb-1 me-1" />
-          Manage testimonials
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-3"
-          className="overflow-hidden rounded-b-none border-x border-t border-border bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
-        >
-          <Brush size={16} className="inline-block -mb-1 me-1" />
-          Pages Design
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="tab-1" className="min-h-[calc(100vh-8rem)]">
-        <SpaceEditorTabs />
-      </TabsContent>
-      <TabsContent value="tab-2">
-        <TestimonialsManagementView />
-      </TabsContent>
-      <TabsContent value="tab-3" className="space-y-4">
-        <PageSettingsTabs />
-      </TabsContent>
+          {tab.content}
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }

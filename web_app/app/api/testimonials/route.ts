@@ -84,7 +84,6 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    console.log(feedbacks);
     return NextResponse.json(feedbacks);
   } catch (error) {
     console.error(error);

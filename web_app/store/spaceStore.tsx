@@ -1,4 +1,4 @@
-import { CollectionType } from "@/lib/db";
+import { CollectionType } from "@/generated/prisma/enums";
 import { create } from "zustand";
 
 interface Question {
@@ -31,6 +31,10 @@ type SpaceInfo = {
       styleOptions: {
         columns?: string;
         rows?: string;
+        cardVariant?: string;
+        showRating?: string;
+        showDate?: string;
+        gap?: string;
       };
     };
   };
@@ -47,6 +51,10 @@ interface SpaceStore {
     styleOptions: {
       columns?: string;
       rows?: string;
+      cardVariant?: string;
+      showRating?: string;
+      showDate?: string;
+      gap?: string;
     };
   }) => void;
 }
