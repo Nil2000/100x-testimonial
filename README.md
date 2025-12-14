@@ -19,39 +19,13 @@ The repo contains:
 
 ## Services / Infrastructure Used
 
-- **PostgreSQL**
-
-  - **What**: primary relational database
-  - **Why**: stores users, spaces, questions, testimonials/feedback and settings
-
-- **Prisma**
-
-  - **What**: ORM + migrations
-  - **Why**: type-safe DB access from the Next.js app and consistent schema migrations
-
-- **NextAuth (Auth.js v5 beta)**
-
-  - **What**: authentication for the dashboard
-  - **Why**: handles OAuth sign-in (Google) and session/jwt management
-
-- **MinIO (S3-compatible object storage)**
-
-  - **What**: stores uploaded assets (space logos, testimonial media, imported media)
-  - **Why**: S3 API compatibility while being easy to run locally via Docker
-
-- **Apache Kafka**
-
-  - **What**: message queue between `web_app` and `processor`
-  - **Why**: offloads heavy/slow work (e.g. video/text processing, analysis) from request/response paths
-
-- **OpenAI (optional)**
-
-  - **What**: used by `processor` for analysis tasks
-  - **Why**: enables automated sentiment/spam detection and video transcription (when enabled/configured)
-
-- **PostHog (optional)**
-  - **What**: product analytics
-  - **Why**: tracks page views / engagement and powers metrics queries for analytics dashboards
+- **PostgreSQL**: Primary database for users, spaces, questions, and testimonials/feedback.
+- **Prisma**: ORM + migrations for type-safe database access.
+- **NextAuth (Auth.js v5 beta)**: Dashboard authentication (Google OAuth) and session/JWT handling.
+- **MinIO (S3-compatible storage)**: Stores uploaded assets (logos, images, videos) and imported media in local/dev.
+- **Apache Kafka**: Message queue for async processing between `web_app` and `processor`.
+- **OpenAI (optional)**: Used by `processor` for analysis/transcription (requires `OPENAI_API_KEY`).
+- **PostHog (optional)**: Analytics and metrics queries (requires PostHog env vars).
 
 ## Local Development Setup
 
