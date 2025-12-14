@@ -52,6 +52,15 @@ This starts:
 
 ### 2) Configure environment variables
 
+Copy the example env files and then update the values as needed:
+
+```bash
+cp web_app/.env.example web_app/.env
+cp processor/.env.example processor/.env
+```
+
+Make sure `INTERNAL_API_KEY` matches in both files (the processor calls `web_app` via `/api/update_feedback`).
+
 This repo expects environment variables for:
 
 - Database
