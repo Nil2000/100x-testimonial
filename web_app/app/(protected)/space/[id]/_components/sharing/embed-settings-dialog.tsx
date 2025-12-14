@@ -293,6 +293,7 @@ export default function EmbedSettingsDialog({
                   setHeaderFont={(value) => updateSetting("headerFont", value)}
                   bodyFont={settings.bodyFont}
                   setBodyFont={(value) => updateSetting("bodyFont", value)}
+                  hideBodyText={testimonial?.feedbackType === "VIDEO"}
                 />
               </TabsContent>
             </Tabs>
@@ -399,14 +400,25 @@ export default function EmbedSettingsDialog({
                   {!testimonial.isSocial && (
                     <p>{renderStars(testimonial.rating)}</p>
                   )}
-                  <div
-                    style={{
-                      fontSize: `${settings.bodySize}px`,
-                      fontFamily: settings.bodyFont,
-                    }}
-                  >
-                    {testimonial.answer}
-                  </div>
+                  {testimonial.feedbackType !== "VIDEO" && (
+                    <div
+                      style={{
+                        fontSize: `${settings.bodySize}px`,
+                        fontFamily: settings.bodyFont,
+                      }}
+                    >
+                      {testimonial.answer}
+                    </div>
+                  )}
+                  {testimonial.feedbackType === "VIDEO" && (
+                    <div>
+                      <video
+                        src={testimonial.videoUrl!}
+                        controls
+                        className="w-full h-auto"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
