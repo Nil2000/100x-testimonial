@@ -7,8 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Copy } from "lucide-react";
+import { Copy, Link2, Check } from "lucide-react";
 import React from "react";
+import { toast } from "sonner";
 
 type Props = {
   isOpen: boolean;
@@ -23,15 +24,20 @@ export default function ShareableLinkDialog({
   testimonialId,
   spaceName,
 }: Props) {
+  const [copied, setCopied] = React.useState(false);
+  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceName}/testimonial/${testimonialId}`;
+
   const handleCopyLink = () => {
-    const link = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceName}/testimonial/${testimonialId}`;
     navigator.clipboard
       .writeText(link)
       .then(() => {
-        console.log("Link copied to clipboard:", link);
+        setCopied(true);
+        toast.success("Link copied to clipboard!");
+        setTimeout(() => setCopied(false), 2000);
       })
       .catch((error) => {
         console.error("Failed to copy link:", error);
+        toast.error("Failed to copy link. Please try again.");
       });
   };
 
@@ -44,29 +50,61 @@ export default function ShareableLinkDialog({
         }
       }}
     >
-      <DialogContent className="font-sans">
-        <DialogHeader>
-          <DialogTitle>Get Link</DialogTitle>
-          <DialogDescription></DialogDescription>
+      <DialogContent className="font-sans sm:max-w-md">
+        <DialogHeader className="space-y-3">
+          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+            <Link2 className="w-6 h-6 text-primary" />
+          </div>
+          <DialogTitle className="text-center text-xl">
+            Share Testimonial
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Anyone with this link can view this testimonial
+          </DialogDescription>
         </DialogHeader>
-        <div
-          className="font-mono
-          text-sm text-muted-foreground mb-4
-          bg-muted-foreground/10
-          border border-muted-foreground/20
-          p-2 rounded-md
-        "
-        >{`${process.env.NEXT_PUBLIC_BASE_URL}/${spaceName}/testimonial/${testimonialId}`}</div>
-        <DialogFooter>
+        <div className="space-y-4 py-4">
+          <div className="relative">
+            <div className="font-mono text-xs text-foreground/80 bg-muted/50 border-2 border-border rounded-lg p-3 pr-12 break-all max-w-full">
+              {link}
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="absolute right-1 top-1 h-8 w-8 p-0"
+              onClick={handleCopyLink}
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        </div>
+        <DialogFooter className="sm:justify-center gap-2">
           <Button
-            variant="secondary"
-            onClick={() => {
-              onClose();
-              handleCopyLink();
-            }}
+            variant="outline"
+            onClick={onClose}
+            className="flex-1 sm:flex-none"
           >
-            <Copy className="mr-2 opacity-60" size={16} />
-            Copy link
+            Close
+          </Button>
+          <Button
+            onClick={handleCopyLink}
+            className="flex-1 sm:flex-none"
+            disabled={copied}
+          >
+            {copied ? (
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="mr-2 h-4 w-4" />
+                Copy Link
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
