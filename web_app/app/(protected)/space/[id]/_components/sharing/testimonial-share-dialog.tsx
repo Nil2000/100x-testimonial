@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TestimonialResponse } from "@/lib/types";
-import React, { useState } from "react";
+import React from "react";
 import { TbBorderRadius } from "react-icons/tb";
 import { RiShadowFill } from "react-icons/ri";
 import { TbBackground } from "react-icons/tb";
@@ -43,32 +43,43 @@ export default function TestimonialShareDialog({
   feedbackInfo,
 }: TestimonialShareDialogProps) {
   const { theme } = useTheme();
-  const [alignment, setAlignment] = useState("left");
-  const [padding, setPadding] = useState(10);
-  const [width, setWidth] = useState("auto");
-  const [height, setHeight] = useState("auto");
-  const [borderRadius, setBorderRadius] = useState("medium");
-  const [shadowType, setShadowType] = useState("none");
-  const [shadowSize, setShadowSize] = useState("small");
-  const [shadowColor, setShadowColor] = useState("#000000");
-  const [background, setBackground] = useState("#ffffff");
-  const [gradient, setGradient] = useState("");
-  const [backgroundType, setBackgroundType] = useState("solid");
-  const [cardBackground, setCardBackground] = useState("#000000");
-  const [cardBackgroundType, setCardBackgroundType] = useState("solid");
-  const [showBorder, setShowBorder] = useState(true);
-  const [borderColor, setBorderColor] = useState("#000000");
-  const [borderThickness, setBorderThickness] = useState(1);
-  const [headerColor, setHeaderColor] = useState(
-    theme === "dark" ? "#000000" : "#ffffff"
-  );
-  const [bodyColor, setBodyColor] = useState(
-    theme === "dark" ? "#000000" : "#ffffff"
-  );
-  const [headerSize, setHeaderSize] = useState(20);
-  const [bodySize, setBodySize] = useState(16);
-  const [headerFont, setHeaderFont] = useState("");
-  const [bodyFont, setBodyFont] = useState("");
+
+  const getDefaultSettings = () => ({
+    alignment: "left",
+    padding: 10,
+    width: "auto",
+    height: "auto",
+    borderRadius: "medium",
+    shadowType: "none",
+    shadowSize: "small",
+    shadowColor: "#000000",
+    background: "#ffffff",
+    gradient: "",
+    backgroundType: "solid",
+    cardBackground: "#ffffff",
+    cardBackgroundType: "solid",
+    showBorder: true,
+    borderColor: "#000000",
+    borderThickness: 1,
+    headerColor: "#000",
+    bodyColor: "#000",
+    headerSize: 20,
+    bodySize: 16,
+    headerFont: "",
+    bodyFont: "",
+  });
+
+  const [settings, setSettings] = React.useState(getDefaultSettings);
+
+  const updateSetting = (key: string, value: any) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const ratioValue =
+    settings.width === "auto" && settings.height === "auto"
+      ? "auto"
+      : `${settings.width}x${settings.height}`;
+
   const [isDownloading, setIsDownloading] = React.useState(false);
   const [isCopying, setIsCopying] = React.useState(false);
   const downloadNodeRef = React.useRef<HTMLDivElement>(null);
@@ -152,9 +163,9 @@ export default function TestimonialShareDialog({
                   Alignment
                 </Label>
                 <RadioGroup
-                  defaultValue="left"
                   className="flex"
-                  onValueChange={setAlignment}
+                  value={settings.alignment}
+                  onValueChange={(value) => updateSetting("alignment", value)}
                 >
                   <div className="flex items-center gap-2">
                     <RadioGroupItem id="left" value="left" />
@@ -165,8 +176,8 @@ export default function TestimonialShareDialog({
                     <Label htmlFor="center">Center</Label>
                   </div>
                   <div className="flex items-center gap-2">
-                    <RadioGroupItem id="Right" value="Right" />
-                    <Label htmlFor="Right">Right</Label>
+                    <RadioGroupItem id="right" value="right" />
+                    <Label htmlFor="right">Right</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -175,11 +186,11 @@ export default function TestimonialShareDialog({
                   Padding
                 </Label>
                 <Slider
-                  defaultValue={[padding]}
+                  value={[settings.padding]}
                   min={0}
                   max={250}
                   step={5}
-                  onValueChange={(value) => setPadding(value[0])}
+                  onValueChange={(value) => updateSetting("padding", value[0])}
                   id="padding"
                   className="[&>:last-child>span]:border-background [&>:last-child>span]:bg-primary **:data-[slot=slider-thumb]:shadow-none [&>:last-child>span]:h-6 [&>:last-child>span]:w-2.5 [&>:last-child>span]:border-[3px] [&>:last-child>span]:ring-offset-0"
                 />
@@ -190,17 +201,17 @@ export default function TestimonialShareDialog({
                 Aspect Ratio
               </Label>
               <RadioGroup
-                defaultValue="auto"
+                value={ratioValue}
                 className="flex"
                 onValueChange={(value) => {
                   if (value === "auto") {
-                    setWidth("auto");
-                    setHeight("auto");
+                    updateSetting("width", "auto");
+                    updateSetting("height", "auto");
                     return;
                   }
                   const [w, h] = value.split("x").map(String);
-                  setWidth(w);
-                  setHeight(h);
+                  updateSetting("width", w);
+                  updateSetting("height", h);
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -251,57 +262,73 @@ export default function TestimonialShareDialog({
               </TabsList>
               <TabsContent value="border">
                 <BorderTabContent
-                  showBorder={showBorder}
-                  setShowBorder={setShowBorder}
-                  borderRadius={borderRadius}
-                  setBorderRadius={setBorderRadius}
-                  borderColor={borderColor}
-                  setBorderColor={setBorderColor}
-                  borderThickness={borderThickness}
-                  setBorderThickness={setBorderThickness}
+                  showBorder={settings.showBorder}
+                  setShowBorder={(value) => updateSetting("showBorder", value)}
+                  borderRadius={settings.borderRadius}
+                  setBorderRadius={(value) =>
+                    updateSetting("borderRadius", value)
+                  }
+                  borderColor={settings.borderColor}
+                  setBorderColor={(value) =>
+                    updateSetting("borderColor", value)
+                  }
+                  borderThickness={settings.borderThickness}
+                  setBorderThickness={(value) =>
+                    updateSetting("borderThickness", value)
+                  }
                 />
               </TabsContent>
               <TabsContent value="shadow">
                 <ShadowTabContent
-                  shadowType={shadowType}
-                  setShadowType={setShadowType}
-                  shadowSize={shadowSize}
-                  setShadowSize={setShadowSize}
-                  shadowColor={shadowColor}
-                  setShadowColor={setShadowColor}
+                  shadowType={settings.shadowType}
+                  setShadowType={(value) => updateSetting("shadowType", value)}
+                  shadowSize={settings.shadowSize}
+                  setShadowSize={(value) => updateSetting("shadowSize", value)}
+                  shadowColor={settings.shadowColor}
+                  setShadowColor={(value) =>
+                    updateSetting("shadowColor", value)
+                  }
                 />
               </TabsContent>
               <TabsContent value="background" className="space-y-3">
                 <BackgroundTabContent
-                  background={background}
-                  setBackground={setBackground}
-                  gradient={gradient}
-                  setGradient={setGradient}
-                  backgroundType={backgroundType}
-                  setBackgroundType={setBackgroundType}
+                  background={settings.background}
+                  setBackground={(value) => updateSetting("background", value)}
+                  gradient={settings.gradient}
+                  setGradient={(value) => updateSetting("gradient", value)}
+                  backgroundType={settings.backgroundType}
+                  setBackgroundType={(value) =>
+                    updateSetting("backgroundType", value)
+                  }
                 />
                 <BackgroundTabContent
-                  background={cardBackground}
-                  setBackground={setCardBackground}
-                  backgroundType={cardBackgroundType}
-                  setBackgroundType={setCardBackgroundType}
+                  background={settings.cardBackground}
+                  setBackground={(value) =>
+                    updateSetting("cardBackground", value)
+                  }
+                  backgroundType={settings.cardBackgroundType}
+                  setBackgroundType={(value) =>
+                    updateSetting("cardBackgroundType", value)
+                  }
                   title="Card Background"
                 />
               </TabsContent>
               <TabsContent value="test">
                 <TextTabContent
-                  headerColor={headerColor}
-                  setHeaderColor={setHeaderColor}
-                  bodyColor={bodyColor}
-                  setBodyColor={setBodyColor}
-                  headerSize={headerSize}
-                  setHeaderSize={setHeaderSize}
-                  bodySize={bodySize}
-                  setBodySize={setBodySize}
-                  headerFont={headerFont}
-                  setHeaderFont={setHeaderFont}
-                  bodyFont={bodyFont}
-                  setBodyFont={setBodyFont}
+                  headerColor={settings.headerColor}
+                  setHeaderColor={(value) =>
+                    updateSetting("headerColor", value)
+                  }
+                  bodyColor={settings.bodyColor}
+                  setBodyColor={(value) => updateSetting("bodyColor", value)}
+                  headerSize={settings.headerSize}
+                  setHeaderSize={(value) => updateSetting("headerSize", value)}
+                  bodySize={settings.bodySize}
+                  setBodySize={(value) => updateSetting("bodySize", value)}
+                  headerFont={settings.headerFont}
+                  setHeaderFont={(value) => updateSetting("headerFont", value)}
+                  bodyFont={settings.bodyFont}
+                  setBodyFont={(value) => updateSetting("bodyFont", value)}
                 />
               </TabsContent>
             </Tabs>
@@ -316,20 +343,24 @@ export default function TestimonialShareDialog({
             <div
               ref={downloadNodeRef}
               className={`flex justify-center items-center w-full
-                  ${backgroundType === "gradient" ? gradient : ""}
+                  ${
+                    settings.backgroundType === "gradient"
+                      ? settings.gradient
+                      : ""
+                  }
                 `}
               style={{
                 aspectRatio: `${
-                  width === "auto" && height === "auto"
+                  settings.width === "auto" && settings.height === "auto"
                     ? "auto"
-                    : width + "/" + height
+                    : settings.width + "/" + settings.height
                 }`,
-                textAlign: alignment as "left" | "center" | "right",
-                padding: `${padding * 2}px ${padding}px`,
+                textAlign: settings.alignment as "left" | "center" | "right",
+                padding: `${settings.padding * 2}px ${settings.padding}px`,
                 backgroundColor:
-                  backgroundType === "solid"
-                    ? background
-                    : backgroundType === "transparent"
+                  settings.backgroundType === "solid"
+                    ? settings.background
+                    : settings.backgroundType === "transparent"
                     ? "transparent"
                     : "transparent",
               }}
@@ -339,36 +370,36 @@ export default function TestimonialShareDialog({
                 `}
                 style={{
                   backgroundColor:
-                    cardBackgroundType === "solid"
-                      ? cardBackground
-                      : cardBackgroundType === "transparent"
+                    settings.cardBackgroundType === "solid"
+                      ? settings.cardBackground
+                      : settings.cardBackgroundType === "transparent"
                       ? "transparent"
                       : "transparent",
-                  border: showBorder
-                    ? `${borderThickness}px solid ${borderColor}`
+                  border: settings.showBorder
+                    ? `${settings.borderThickness}px solid ${settings.borderColor}`
                     : "none",
                   borderRadius:
-                    borderRadius === "small"
+                    settings.borderRadius === "small"
                       ? "5px"
-                      : borderRadius === "medium"
+                      : settings.borderRadius === "medium"
                       ? "10px"
                       : "15px",
                   boxShadow:
-                    shadowType === "none"
+                    settings.shadowType === "none"
                       ? "none"
-                      : shadowType === "standard"
-                      ? shadowSize === "small"
-                        ? `0 4px 6px -1px ${shadowColor}40, 0 2px 4px -2px ${shadowColor}40`
-                        : shadowSize === "medium"
-                        ? `0 10px 15px -3px ${shadowColor}40, 0 4px 6px -4px ${shadowColor}40`
-                        : `0 25px 50px -12px ${shadowColor}40`
-                      : shadowSize === "small"
-                      ? `3px 3px 0 0 ${shadowColor}77`
-                      : shadowSize === "medium"
-                      ? `6px 6px 0 0 ${shadowColor}77`
-                      : `9px 9px 0 0 ${shadowColor}77`,
-                  color: bodyColor,
-                  fontFamily: bodyFont,
+                      : settings.shadowType === "standard"
+                      ? settings.shadowSize === "small"
+                        ? `0 4px 6px -1px ${settings.shadowColor}40, 0 2px 4px -2px ${settings.shadowColor}40`
+                        : settings.shadowSize === "medium"
+                        ? `0 10px 15px -3px ${settings.shadowColor}40, 0 4px 6px -4px ${settings.shadowColor}40`
+                        : `0 25px 50px -12px ${settings.shadowColor}40`
+                      : settings.shadowSize === "small"
+                      ? `3px 3px 0 0 ${settings.shadowColor}77`
+                      : settings.shadowSize === "medium"
+                      ? `6px 6px 0 0 ${settings.shadowColor}77`
+                      : `9px 9px 0 0 ${settings.shadowColor}77`,
+                  color: settings.bodyColor,
+                  fontFamily: settings.bodyFont,
                 }}
               >
                 <div className="flex items-center gap-4">
@@ -388,9 +419,9 @@ export default function TestimonialShareDialog({
                   <h3
                     className="font-bold"
                     style={{
-                      color: headerColor,
-                      fontSize: `${headerSize}px`,
-                      fontFamily: headerFont,
+                      color: settings.headerColor,
+                      fontSize: `${settings.headerSize}px`,
+                      fontFamily: settings.headerFont,
                     }}
                   >
                     {feedbackInfo.name}
@@ -401,8 +432,8 @@ export default function TestimonialShareDialog({
                 )}
                 <div
                   style={{
-                    fontSize: `${bodySize}px`,
-                    fontFamily: bodyFont,
+                    fontSize: `${settings.bodySize}px`,
+                    fontFamily: settings.bodyFont,
                   }}
                 >
                   {feedbackInfo.source === "X" && feedbackInfo.metadata

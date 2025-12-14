@@ -32,7 +32,7 @@ export default function ShadowTabContent({
             value={shadowType}
             onValueChange={setShadowType}
             defaultValue="none"
-            className="flex flex-col gap-2"
+            className="flex flex-row gap-2"
           >
             <div className="flex items-center gap-2">
               <RadioGroupItem id="none" value="none" />
@@ -64,7 +64,7 @@ export default function ShadowTabContent({
               value={shadowSize}
               onValueChange={setShadowSize}
               defaultValue="small"
-              className="flex flex-col gap-2"
+              className="flex flex-row gap-2"
             >
               <div className="flex items-center gap-2">
                 <RadioGroupItem id="small" value="small" />
