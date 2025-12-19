@@ -64,7 +64,7 @@ export default function ColorPalette({
             type="color"
             value={selectedColor}
             onChange={(e) => setSelectedColor(e.target.value)}
-            className="w-12 h-9 p-1 cursor-pointer"
+            className="w-12 h-12 cursor-pointer rounded-md"
             title="Pick custom color"
           />
           <Input

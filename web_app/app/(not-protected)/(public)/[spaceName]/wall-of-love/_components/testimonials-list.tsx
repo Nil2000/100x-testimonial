@@ -38,7 +38,7 @@ export default function TestimonialsList({
     const dividedTestimonials = divideTestimonials(testimonials, columns);
 
     return (
-      <div className={`flex ${gapClass} flex-col sm:flex-row`}>
+      <div className={`flex ${gapClass} flex-col sm:flex-row justify-center`}>
         {dividedTestimonials.map((column, colIndex) => (
           <div
             key={colIndex}

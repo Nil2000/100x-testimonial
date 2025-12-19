@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import VideoDisplayComponent from "@/components/video-display-component";
 import { TestimonialResponse } from "@/lib/types";
@@ -29,6 +29,7 @@ export default function WallOfLoveCard({
       )}`}
     >
       <Avatar className="sm:w-12 sm:h-12 w-10 h-10">
+        <AvatarImage src={testimonial.profileImageUrl || ""} />
         <AvatarFallback className="p-2">
           <UserRoundIcon size={30} className="opacity-60" aria-hidden="true" />
         </AvatarFallback>
@@ -60,9 +61,9 @@ export default function WallOfLoveCard({
 const getCardVariantClasses = (variant: string) => {
   switch (variant) {
     case "glass":
-      return "bg-white/20 backdrop-blur-lg border-white/40 shadow-lg text-white";
+      return "bg-white/20 backdrop-blur-lg border-white/40 shadow-lg";
     case "dark":
-      return "bg-zinc-900 text-white border-zinc-700 shadow-xl";
+      return "bg-zinc-900 border-zinc-700 shadow-xl";
     case "classic":
     default:
       return "bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-foreground shadow-sm";
