@@ -86,7 +86,7 @@ export default function TestimonialCard({
                 <div className="flex items-center gap-1 mt-1">
                   <Calendar className="h-3 w-3 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
-                    {renderDate(testimonial.createdAt.toString())}
+                    {renderDateAndTime(testimonial.createdAt.toString())}
                   </span>
                 </div>
               </div>
@@ -152,11 +152,14 @@ export default function TestimonialCard({
   );
 }
 
-const renderDate = (date: string) => {
+const renderDateAndTime = (date: string) => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   });
 };
 

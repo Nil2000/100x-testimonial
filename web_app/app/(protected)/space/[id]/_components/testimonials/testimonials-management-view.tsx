@@ -69,12 +69,12 @@ const testimonialManagementTabs = [
       />
     ),
   },
-  {
-    tabTitle: "Social",
-    tabDescription: "Imported social testimonials",
-    tabIcon: Send,
-    tabContent: <SocialTestimonialsTab />,
-  },
+  // {
+  //   tabTitle: "Social",
+  //   tabDescription: "Imported social testimonials",
+  //   tabIcon: Send,
+  //   tabContent: <SocialTestimonialsTab />,
+  // },
 ];
 
 export default function TestimonialsManagementView() {
