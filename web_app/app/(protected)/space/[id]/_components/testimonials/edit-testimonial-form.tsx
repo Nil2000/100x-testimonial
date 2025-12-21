@@ -125,7 +125,7 @@ export default function TestimonialEditFormView() {
             <>
               <Input placeholder="Space name" {...field} disabled />
               <h1 className="text-muted-foreground text-sm">
-                Public url will be testimonial.to/
+                Public url will be {process.env.NEXT_PUBLIC_BASE_URL}/
                 {field.value || "your-space-name"}
               </h1>
               <p className="text-destructive text-xs">
