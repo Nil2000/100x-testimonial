@@ -1,5 +1,5 @@
 import { startGettingMessageFromQueue } from "./queue/client";
-import { processVideoMessage } from "./utility/processVideoMessaga";
+import { processVideoMessage } from "./utility/processVideoMessage";
 
 const videoProcessorIp = {
   topic: process.env.REDIS_VIDEO_QUEUE || "video-queue",

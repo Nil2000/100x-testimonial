@@ -1,11 +1,16 @@
-import { analyzeSentiment } from "../open_ai/analyzeSentiment";
-import { analyzeSpam } from "../open_ai/analyzeSpam";
-import { getVideoTranscription } from "../open_ai/getVIdeoTranscription";
-import type { TextFeedback, VideoFeedback } from "../types";
-import { deleteTempFile, downloadToTemp } from "./downloadToTemp";
+import { analyzeSentiment } from "../ai/analyzeSentiment";
+import { analyzeSpam } from "../ai/analyzeSpam";
+import { getVideoTranscription } from "../ai/getVideoTranscription";
+import type { VideoFeedback } from "../types";
 import { updateFeedback } from "./updateFeedback";
 
-const generateForTextFeedback = (feedback: TextFeedback) => {
+type Props = {
+  answer: string;
+  name: string;
+  email: string;
+};
+
+const generateForTextFeedback = (feedback: Props) => {
   return `feedback: ${feedback.answer}, name: ${feedback.name}, email: ${feedback.email}`;
 };
 
@@ -27,20 +32,12 @@ export const processVideoMessage = async (message: string) => {
 
     const { videoUrl, name, email, spaceId } = videoMessage;
 
-    const filePath = await downloadToTemp(videoUrl);
-
-    console.log(`File downloaded to: ${filePath}`);
-
-    const transcription = await getVideoTranscription(filePath);
-
-    console.log(`Transcription: ${transcription}`);
+    const transcription = await getVideoTranscription(videoUrl);
 
     const messageToAnalyze = generateForTextFeedback({
-      id: videoMessage.id,
-      answer: transcription,
+      answer: transcription as string,
       name,
       email,
-      spaceId,
     });
 
     const isSpam = await analyzeSpam(messageToAnalyze);
@@ -55,11 +52,10 @@ export const processVideoMessage = async (message: string) => {
         analysisStatus: "COMPLETED",
       });
 
-      deleteTempFile(filePath);
       return;
     }
 
-    const sentiment = await analyzeSentiment(transcription);
+    const sentiment = await analyzeSentiment(transcription as string);
 
     console.log(`Sentiment Analysis: ${sentiment}`);
 
@@ -70,8 +66,6 @@ export const processVideoMessage = async (message: string) => {
       sentiment,
       analysisStatus: "COMPLETED",
     });
-
-    deleteTempFile(filePath);
   } catch (error) {
     console.log("Error processing video message:", error);
   }

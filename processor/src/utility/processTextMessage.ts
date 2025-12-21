@@ -1,6 +1,5 @@
-import axios from "axios";
-import { analyzeSentiment } from "../open_ai/analyzeSentiment";
-import { analyzeSpam } from "../open_ai/analyzeSpam";
+import { analyzeSentiment } from "../ai/analyzeSentiment";
+import { analyzeSpam } from "../ai/analyzeSpam";
 import type { TextFeedback } from "../types";
 import { updateFeedback } from "./updateFeedback";
 
