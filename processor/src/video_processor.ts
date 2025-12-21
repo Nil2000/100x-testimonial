@@ -2,8 +2,8 @@ import { startGettingMessageFromQueue } from "./queue/client";
 import { processVideoMessage } from "./utility/processVideoMessaga";
 
 const videoProcessorIp = {
-  topic: process.env.KAFKA_VIDEO_TOPIC || "video-processor-topic",
-  groupId: process.env.KAFKA_VIDEO_GROUP_ID || "video-processor-group",
+  topic: process.env.REDIS_VIDEO_QUEUE || "video-queue",
+  groupId: "video-processor-group",
   processMessage: async (message: string) => {
     processVideoMessage(message).catch((error) => {
       console.error("Error processing video message:", error.message);
@@ -13,7 +13,7 @@ const videoProcessorIp = {
 };
 
 startGettingMessageFromQueue(videoProcessorIp).catch((error) => {
-  console.error("Error starting Kafka consumer:", error.message);
+  console.error("Error starting Redis consumer:", error.message);
   console.log(error.stack);
   process.exit(1);
 });

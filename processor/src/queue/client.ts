@@ -1,48 +1,51 @@
-import { Kafka } from "kafkajs";
+import Redis from "ioredis";
 
-const getKafkaConsumer = (groupId: string) => {
-  const kafka = new Kafka({
-    clientId: process.env.KAFKA_CLIENT_ID || "kafka-client",
-    brokers: [process.env.KAFKA_BROKER || "localhost:9092"],
-  });
-  const consumer = kafka.consumer({ groupId });
-  return consumer;
+const getRedisClient = () => {
+  if (!process.env.REDIS_URL) {
+    throw new Error("REDIS_URL must be set");
+  }
+
+  const redis = new Redis(process.env.REDIS_URL);
+  return redis;
 };
 
 type Props = {
   topic: string;
-  groupId: string;
   processMessage: (message: string) => Promise<void>;
 };
 
 export const startGettingMessageFromQueue = async ({
   topic,
-  groupId,
   processMessage,
 }: Props) => {
-  const consumer = getKafkaConsumer(groupId);
+  const redis = getRedisClient();
 
-  await consumer.connect();
-  await consumer.subscribe({
-    topic,
-    fromBeginning: false,
-  });
+  console.log(`Listening to Redis queue: ${topic}`);
 
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        offset: message.offset,
-        value: message?.value?.toString(),
-        topic,
-        partition,
-      });
+  // Continuously listen for messages using blocking pop
+  while (true) {
+    try {
+      // blpop returns [queueName, message] or null if timeout
+      const result = await redis.blpop(topic, 0); // 0 means block indefinitely
 
-      if (message.value) {
-        processMessage(message.value.toString()).catch((error) => {
-          console.error("Error processing message:", error.message);
-          console.log(error.stack);
+      if (result) {
+        const [queueName, message] = result;
+        console.log({
+          queue: queueName,
+          message,
+          timestamp: new Date().toISOString(),
         });
+
+        try {
+          await processMessage(message);
+        } catch (error) {
+          console.error("Error processing message:", error);
+        }
       }
-    },
-  });
+    } catch (error) {
+      console.error("Error consuming from Redis queue:", error);
+      // Wait a bit before retrying
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
 };
