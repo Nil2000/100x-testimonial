@@ -1,32 +1,22 @@
-import { createId } from "@paralleldrive/cuid2";
-import { getProducer } from "./client";
-import { KAFKA_QUEUE } from "../constants";
+import { getRedisClient } from "./client";
 
 export const sendMessageToQueue = async (
   message: string,
-  feedbackType: "TEXT" | "VIDEO",
-  key?: string
+  feedbackType: "TEXT" | "VIDEO"
 ) => {
   try {
-    const producer = await getProducer();
+    const redis = await getRedisClient();
 
-    if (!producer) {
-      throw new Error("Producer not initialized");
+    if (!process.env.REDIS_TEXT_QUEUE || !process.env.REDIS_VIDEO_QUEUE) {
+      throw new Error("Redis queue environment variables not configured");
     }
 
-    const topic =
+    const queueName =
       feedbackType === "TEXT"
-        ? process.env.KAFKA_TEXT_TOPIC || KAFKA_QUEUE.text_topic
-        : process.env.KAFKA_VIDEO_TOPIC || KAFKA_QUEUE.video_topic;
-    await producer.send({
-      topic,
-      messages: [
-        {
-          key: key || createId(), // Generate a unique key for the message
-          value: message, // The message content
-        },
-      ],
-    });
+        ? process.env.REDIS_TEXT_QUEUE
+        : process.env.REDIS_VIDEO_QUEUE;
+
+    await redis.rpush(queueName, message);
 
     return {
       message: "Message sent successfully",

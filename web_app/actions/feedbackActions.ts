@@ -54,8 +54,7 @@ export const submitTextFeedback = async (
           email: feedback.email,
           spaceId: feedback.spaceId,
         }),
-        "TEXT",
-        feedback.id
+        "TEXT"
       );
 
       if (response.error) {
@@ -155,8 +154,7 @@ export const submitVideoFeedback = async (
           email: feedback.email,
           spaceId: feedback.spaceId,
         }),
-        "VIDEO",
-        feedback.id
+        "VIDEO"
       );
 
       if (response.error) {
