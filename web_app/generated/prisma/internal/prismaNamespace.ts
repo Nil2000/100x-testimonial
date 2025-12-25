@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.0.1
- * Query Engine version: f09f2815f091dbba658cdcd2264306d88bb5bda6
+ * Prisma Client JS version: 7.2.0
+ * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.0.1",
-  engine: "f09f2815f091dbba658cdcd2264306d88bb5bda6"
+  client: "7.2.0",
+  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
 }
 
 /**
@@ -1105,7 +1105,8 @@ export const SpaceScalarFieldEnum = {
   headerSubtitle: 'headerSubtitle',
   collectionType: 'collectionType',
   collectStar: 'collectStar',
-  isAnalysisEnabled: 'isAnalysisEnabled',
+  isSentimentEnabled: 'isSentimentEnabled',
+  isSpamEnabled: 'isSpamEnabled',
   theme: 'theme',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -1154,9 +1155,10 @@ export const FeedbackScalarFieldEnum = {
   imageUrl: 'imageUrl',
   profileImageUrl: 'profileImageUrl',
   isSpam: 'isSpam',
+  spamStatus: 'spamStatus',
   isSocial: 'isSocial',
   sentiment: 'sentiment',
-  analysisStatus: 'analysisStatus',
+  sentimentStatus: 'sentimentStatus',
   source: 'source',
   sourceUrl: 'sourceUrl',
   metadata: 'metadata',
@@ -1319,20 +1321,6 @@ export type ListEnumFeedbackTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
- * Reference to a field of type 'SentimentType'
- */
-export type EnumSentimentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SentimentType'>
-    
-
-
-/**
- * Reference to a field of type 'SentimentType[]'
- */
-export type ListEnumSentimentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SentimentType[]'>
-    
-
-
-/**
  * Reference to a field of type 'AnalysisStatus'
  */
 export type EnumAnalysisStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnalysisStatus'>
@@ -1343,6 +1331,20 @@ export type EnumAnalysisStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'AnalysisStatus[]'
  */
 export type ListEnumAnalysisStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnalysisStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SentimentType'
+ */
+export type EnumSentimentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SentimentType'>
+    
+
+
+/**
+ * Reference to a field of type 'SentimentType[]'
+ */
+export type ListEnumSentimentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SentimentType[]'>
     
 
 
@@ -1422,7 +1424,7 @@ export type PrismaClientOptions = ({
    *  { emit: 'stdout', level: 'error' }
    * 
    * ```
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
+   * Read more in our [docs](https://pris.ly/d/logging).
    */
   log?: (LogLevel | LogDefinition)[]
   /**
@@ -1450,6 +1452,22 @@ export type PrismaClientOptions = ({
    * ```
    */
   omit?: GlobalOmitConfig
+  /**
+   * SQL commenter plugins that add metadata to SQL queries as comments.
+   * Comments follow the sqlcommenter format: https://google.github.io/sqlcommenter/
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   comments: [
+   *     traceContext(),
+   *     queryInsights(),
+   *   ],
+   * })
+   * ```
+   */
+  comments?: runtime.SqlCommenterPlugin[]
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit

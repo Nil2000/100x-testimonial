@@ -32,7 +32,8 @@ export type SpaceMinAggregateOutputType = {
   headerSubtitle: string | null
   collectionType: $Enums.CollectionType | null
   collectStar: boolean | null
-  isAnalysisEnabled: boolean | null
+  isSentimentEnabled: boolean | null
+  isSpamEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -47,7 +48,8 @@ export type SpaceMaxAggregateOutputType = {
   headerSubtitle: string | null
   collectionType: $Enums.CollectionType | null
   collectStar: boolean | null
-  isAnalysisEnabled: boolean | null
+  isSentimentEnabled: boolean | null
+  isSpamEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -62,7 +64,8 @@ export type SpaceCountAggregateOutputType = {
   headerSubtitle: number
   collectionType: number
   collectStar: number
-  isAnalysisEnabled: number
+  isSentimentEnabled: number
+  isSpamEnabled: number
   theme: number
   createdAt: number
   updatedAt: number
@@ -80,7 +83,8 @@ export type SpaceMinAggregateInputType = {
   headerSubtitle?: true
   collectionType?: true
   collectStar?: true
-  isAnalysisEnabled?: true
+  isSentimentEnabled?: true
+  isSpamEnabled?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -95,7 +99,8 @@ export type SpaceMaxAggregateInputType = {
   headerSubtitle?: true
   collectionType?: true
   collectStar?: true
-  isAnalysisEnabled?: true
+  isSentimentEnabled?: true
+  isSpamEnabled?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -110,7 +115,8 @@ export type SpaceCountAggregateInputType = {
   headerSubtitle?: true
   collectionType?: true
   collectStar?: true
-  isAnalysisEnabled?: true
+  isSentimentEnabled?: true
+  isSpamEnabled?: true
   theme?: true
   createdAt?: true
   updatedAt?: true
@@ -199,7 +205,8 @@ export type SpaceGroupByOutputType = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled: boolean
+  isSentimentEnabled: boolean
+  isSpamEnabled: boolean
   theme: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
@@ -236,7 +243,8 @@ export type SpaceWhereInput = {
   headerSubtitle?: Prisma.StringFilter<"Space"> | string
   collectionType?: Prisma.EnumCollectionTypeFilter<"Space"> | $Enums.CollectionType
   collectStar?: Prisma.BoolFilter<"Space"> | boolean
-  isAnalysisEnabled?: Prisma.BoolFilter<"Space"> | boolean
+  isSentimentEnabled?: Prisma.BoolFilter<"Space"> | boolean
+  isSpamEnabled?: Prisma.BoolFilter<"Space"> | boolean
   theme?: Prisma.JsonNullableFilter<"Space">
   createdAt?: Prisma.DateTimeFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Space"> | Date | string
@@ -256,7 +264,8 @@ export type SpaceOrderByWithRelationInput = {
   headerSubtitle?: Prisma.SortOrder
   collectionType?: Prisma.SortOrder
   collectStar?: Prisma.SortOrder
-  isAnalysisEnabled?: Prisma.SortOrder
+  isSentimentEnabled?: Prisma.SortOrder
+  isSpamEnabled?: Prisma.SortOrder
   theme?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -279,7 +288,8 @@ export type SpaceWhereUniqueInput = Prisma.AtLeast<{
   headerSubtitle?: Prisma.StringFilter<"Space"> | string
   collectionType?: Prisma.EnumCollectionTypeFilter<"Space"> | $Enums.CollectionType
   collectStar?: Prisma.BoolFilter<"Space"> | boolean
-  isAnalysisEnabled?: Prisma.BoolFilter<"Space"> | boolean
+  isSentimentEnabled?: Prisma.BoolFilter<"Space"> | boolean
+  isSpamEnabled?: Prisma.BoolFilter<"Space"> | boolean
   theme?: Prisma.JsonNullableFilter<"Space">
   createdAt?: Prisma.DateTimeFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Space"> | Date | string
@@ -299,7 +309,8 @@ export type SpaceOrderByWithAggregationInput = {
   headerSubtitle?: Prisma.SortOrder
   collectionType?: Prisma.SortOrder
   collectStar?: Prisma.SortOrder
-  isAnalysisEnabled?: Prisma.SortOrder
+  isSentimentEnabled?: Prisma.SortOrder
+  isSpamEnabled?: Prisma.SortOrder
   theme?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -321,7 +332,8 @@ export type SpaceScalarWhereWithAggregatesInput = {
   headerSubtitle?: Prisma.StringWithAggregatesFilter<"Space"> | string
   collectionType?: Prisma.EnumCollectionTypeWithAggregatesFilter<"Space"> | $Enums.CollectionType
   collectStar?: Prisma.BoolWithAggregatesFilter<"Space"> | boolean
-  isAnalysisEnabled?: Prisma.BoolWithAggregatesFilter<"Space"> | boolean
+  isSentimentEnabled?: Prisma.BoolWithAggregatesFilter<"Space"> | boolean
+  isSpamEnabled?: Prisma.BoolWithAggregatesFilter<"Space"> | boolean
   theme?: Prisma.JsonNullableWithAggregatesFilter<"Space">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Space"> | Date | string
@@ -337,7 +349,8 @@ export type SpaceCreateInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -356,7 +369,8 @@ export type SpaceUncheckedCreateInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -375,7 +389,8 @@ export type SpaceUpdateInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -394,7 +409,8 @@ export type SpaceUncheckedUpdateInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -413,7 +429,8 @@ export type SpaceCreateManyInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -429,7 +446,8 @@ export type SpaceUpdateManyMutationInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -444,7 +462,8 @@ export type SpaceUncheckedUpdateManyInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -470,7 +489,8 @@ export type SpaceCountOrderByAggregateInput = {
   headerSubtitle?: Prisma.SortOrder
   collectionType?: Prisma.SortOrder
   collectStar?: Prisma.SortOrder
-  isAnalysisEnabled?: Prisma.SortOrder
+  isSentimentEnabled?: Prisma.SortOrder
+  isSpamEnabled?: Prisma.SortOrder
   theme?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -486,7 +506,8 @@ export type SpaceMaxOrderByAggregateInput = {
   headerSubtitle?: Prisma.SortOrder
   collectionType?: Prisma.SortOrder
   collectStar?: Prisma.SortOrder
-  isAnalysisEnabled?: Prisma.SortOrder
+  isSentimentEnabled?: Prisma.SortOrder
+  isSpamEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -501,7 +522,8 @@ export type SpaceMinOrderByAggregateInput = {
   headerSubtitle?: Prisma.SortOrder
   collectionType?: Prisma.SortOrder
   collectStar?: Prisma.SortOrder
-  isAnalysisEnabled?: Prisma.SortOrder
+  isSentimentEnabled?: Prisma.SortOrder
+  isSpamEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -613,7 +635,8 @@ export type SpaceCreateWithoutCreatedByInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -631,7 +654,8 @@ export type SpaceUncheckedCreateWithoutCreatedByInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -678,7 +702,8 @@ export type SpaceScalarWhereInput = {
   headerSubtitle?: Prisma.StringFilter<"Space"> | string
   collectionType?: Prisma.EnumCollectionTypeFilter<"Space"> | $Enums.CollectionType
   collectStar?: Prisma.BoolFilter<"Space"> | boolean
-  isAnalysisEnabled?: Prisma.BoolFilter<"Space"> | boolean
+  isSentimentEnabled?: Prisma.BoolFilter<"Space"> | boolean
+  isSpamEnabled?: Prisma.BoolFilter<"Space"> | boolean
   theme?: Prisma.JsonNullableFilter<"Space">
   createdAt?: Prisma.DateTimeFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Space"> | Date | string
@@ -694,7 +719,8 @@ export type SpaceCreateWithoutQuestionsInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -712,7 +738,8 @@ export type SpaceUncheckedCreateWithoutQuestionsInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -746,7 +773,8 @@ export type SpaceUpdateWithoutQuestionsInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -764,7 +792,8 @@ export type SpaceUncheckedUpdateWithoutQuestionsInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -782,7 +811,8 @@ export type SpaceCreateWithoutThankyouSpaceInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -800,7 +830,8 @@ export type SpaceUncheckedCreateWithoutThankyouSpaceInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -834,7 +865,8 @@ export type SpaceUpdateWithoutThankyouSpaceInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -852,7 +884,8 @@ export type SpaceUncheckedUpdateWithoutThankyouSpaceInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -870,7 +903,8 @@ export type SpaceCreateWithoutFeedbacksInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -888,7 +922,8 @@ export type SpaceUncheckedCreateWithoutFeedbacksInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -922,7 +957,8 @@ export type SpaceUpdateWithoutFeedbacksInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -940,7 +976,8 @@ export type SpaceUncheckedUpdateWithoutFeedbacksInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -958,7 +995,8 @@ export type SpaceCreateManyCreatedByInput = {
   headerSubtitle: string
   collectionType: $Enums.CollectionType
   collectStar: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -973,7 +1011,8 @@ export type SpaceUpdateWithoutCreatedByInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -991,7 +1030,8 @@ export type SpaceUncheckedUpdateWithoutCreatedByInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1009,7 +1049,8 @@ export type SpaceUncheckedUpdateManyWithoutCreatedByInput = {
   headerSubtitle?: Prisma.StringFieldUpdateOperationsInput | string
   collectionType?: Prisma.EnumCollectionTypeFieldUpdateOperationsInput | $Enums.CollectionType
   collectStar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isAnalysisEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSentimentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSpamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1064,7 +1105,8 @@ export type SpaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   headerSubtitle?: boolean
   collectionType?: boolean
   collectStar?: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1085,7 +1127,8 @@ export type SpaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   headerSubtitle?: boolean
   collectionType?: boolean
   collectStar?: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1102,7 +1145,8 @@ export type SpaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   headerSubtitle?: boolean
   collectionType?: boolean
   collectStar?: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1119,7 +1163,8 @@ export type SpaceSelectScalar = {
   headerSubtitle?: boolean
   collectionType?: boolean
   collectStar?: boolean
-  isAnalysisEnabled?: boolean
+  isSentimentEnabled?: boolean
+  isSpamEnabled?: boolean
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1127,7 +1172,7 @@ export type SpaceSelectScalar = {
   isPublished?: boolean
 }
 
-export type SpaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "logo" | "headerTitle" | "headerSubtitle" | "collectionType" | "collectStar" | "isAnalysisEnabled" | "theme" | "createdAt" | "updatedAt" | "createdById" | "isPublished", ExtArgs["result"]["space"]>
+export type SpaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "logo" | "headerTitle" | "headerSubtitle" | "collectionType" | "collectStar" | "isSentimentEnabled" | "isSpamEnabled" | "theme" | "createdAt" | "updatedAt" | "createdById" | "isPublished", ExtArgs["result"]["space"]>
 export type SpaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   questions?: boolean | Prisma.Space$questionsArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1158,7 +1203,8 @@ export type $SpacePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     headerSubtitle: string
     collectionType: $Enums.CollectionType
     collectStar: boolean
-    isAnalysisEnabled: boolean
+    isSentimentEnabled: boolean
+    isSpamEnabled: boolean
     theme: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
@@ -1598,7 +1644,8 @@ export interface SpaceFieldRefs {
   readonly headerSubtitle: Prisma.FieldRef<"Space", 'String'>
   readonly collectionType: Prisma.FieldRef<"Space", 'CollectionType'>
   readonly collectStar: Prisma.FieldRef<"Space", 'Boolean'>
-  readonly isAnalysisEnabled: Prisma.FieldRef<"Space", 'Boolean'>
+  readonly isSentimentEnabled: Prisma.FieldRef<"Space", 'Boolean'>
+  readonly isSpamEnabled: Prisma.FieldRef<"Space", 'Boolean'>
   readonly theme: Prisma.FieldRef<"Space", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Space", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Space", 'DateTime'>

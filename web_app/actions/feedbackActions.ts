@@ -45,7 +45,8 @@ export const submitTextFeedback = async (
       },
     });
 
-    if (space.isAnalysisEnabled) {
+    if (space.isSentimentEnabled || space.isSpamEnabled) {
+      // if either sentiment or spam is enabled
       const response = await sendMessageToQueue(
         JSON.stringify({
           id: feedback.id,
@@ -63,10 +64,12 @@ export const submitTextFeedback = async (
         };
       }
     } else {
+      // if both sentiment and spam are disabled
       await db.feedback.update({
         where: { id: feedback.id },
         data: {
-          analysisStatus: "FAILED",
+          sentimentStatus: "FAILED",
+          spamStatus: "FAILED",
         },
       });
     }
@@ -145,7 +148,8 @@ export const submitVideoFeedback = async (
       },
     });
 
-    if (space.isAnalysisEnabled) {
+    if (space.isSentimentEnabled || space.isSpamEnabled) {
+      // if either sentiment or spam is enabled
       const response = await sendMessageToQueue(
         JSON.stringify({
           id: feedback.id,
@@ -162,6 +166,15 @@ export const submitVideoFeedback = async (
           error: response.error,
         };
       }
+    } else {
+      // if both sentiment and spam are disabled
+      await db.feedback.update({
+        where: { id: feedback.id },
+        data: {
+          sentimentStatus: "FAILED",
+          spamStatus: "FAILED",
+        },
+      });
     }
 
     return {
