@@ -4,6 +4,8 @@ export interface TextFeedback {
   name: string;
   email: string;
   spaceId: string;
+  isSentimentEnabled: boolean;
+  isSpamEnabled: boolean;
 }
 
 export interface VideoFeedback {
@@ -12,4 +14,6 @@ export interface VideoFeedback {
   name: string;
   email: string;
   spaceId: string;
+  isSentimentEnabled: boolean;
+  isSpamEnabled: boolean;
 }

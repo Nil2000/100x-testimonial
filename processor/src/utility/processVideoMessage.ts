@@ -15,17 +15,22 @@ const generateForTextFeedback = (feedback: Props) => {
 };
 
 export const processVideoMessage = async (message: string) => {
+  let isSpam = false;
+  let sentiment = "";
   try {
     const videoMessage = JSON.parse(message) as VideoFeedback;
 
     console.log("Processing video message:", videoMessage);
 
+    // if video url is empty
     if (!videoMessage.videoUrl) {
       await updateFeedback({
         feedbackId: videoMessage.id,
         spaceId: videoMessage.spaceId,
         isSpam: true,
-        analysisStatus: "COMPLETED",
+        sentiment: "",
+        spamStatus: "COMPLETED",
+        sentimentStatus: "COMPLETED",
       });
       return;
     }
@@ -40,33 +45,39 @@ export const processVideoMessage = async (message: string) => {
       email,
     });
 
-    const isSpam = await analyzeSpam(messageToAnalyze);
-
-    console.log(`Spam Analysis: ${isSpam}`);
-
-    if (isSpam) {
-      await updateFeedback({
-        feedbackId: videoMessage.id,
-        spaceId,
-        isSpam,
-        analysisStatus: "COMPLETED",
-      });
-
-      return;
+    if (videoMessage.isSpamEnabled) {
+      isSpam = await analyzeSpam(messageToAnalyze);
+      console.log(`Spam Analysis: ${isSpam}`);
     }
 
-    const sentiment = await analyzeSentiment(transcription as string);
-
-    console.log(`Sentiment Analysis: ${sentiment}`);
+    if (videoMessage.isSentimentEnabled) {
+      sentiment = await analyzeSentiment(transcription as string);
+      console.log(`Sentiment Analysis: ${sentiment}`);
+    }
 
     await updateFeedback({
       feedbackId: videoMessage.id,
       spaceId,
       isSpam,
       sentiment,
-      analysisStatus: "COMPLETED",
+      spamStatus: "COMPLETED",
+      sentimentStatus: "COMPLETED",
     });
   } catch (error) {
-    console.log("Error processing video message:", error);
+    console.error("Error processing video message:", error);
+    // Update status to FAILED on error
+    try {
+      const videoMessage = JSON.parse(message) as VideoFeedback;
+      await updateFeedback({
+        feedbackId: videoMessage.id,
+        spaceId: videoMessage.spaceId,
+        isSpam: false,
+        sentiment: "",
+        spamStatus: "FAILED",
+        sentimentStatus: "FAILED",
+      });
+    } catch (parseError) {
+      console.error("Failed to parse error message:", parseError);
+    }
   }
 };

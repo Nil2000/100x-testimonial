@@ -54,6 +54,8 @@ export const submitTextFeedback = async (
           name: feedback.name,
           email: feedback.email,
           spaceId: feedback.spaceId,
+          isSentimentEnabled: space.isSentimentEnabled,
+          isSpamEnabled: space.isSpamEnabled,
         }),
         "TEXT"
       );
@@ -157,6 +159,8 @@ export const submitVideoFeedback = async (
           name: feedback.name,
           email: feedback.email,
           spaceId: feedback.spaceId,
+          isSentimentEnabled: space.isSentimentEnabled,
+          isSpamEnabled: space.isSpamEnabled,
         }),
         "VIDEO"
       );

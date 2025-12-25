@@ -3,7 +3,8 @@ export const updateFeedback = async (data: {
   spaceId: string;
   sentiment?: string;
   isSpam: boolean;
-  analysisStatus: string;
+  spamStatus: string;
+  sentimentStatus: string;
 }) => {
   try {
     const response = await fetch(
@@ -22,8 +23,7 @@ export const updateFeedback = async (data: {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const result = await response.json();
-    console.log("Feedback updated successfully:", result);
+    console.log("Feedback updated successfully");
   } catch (error) {
     console.error("Error updating feedback via API:", error);
     throw error;
