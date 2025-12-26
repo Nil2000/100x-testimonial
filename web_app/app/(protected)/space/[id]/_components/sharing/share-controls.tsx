@@ -25,9 +25,9 @@ export default function ShareButton({
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Open edit menu"
-          className="text-muted-foreground hover:text-primary"
+          className="text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200"
         >
-          <Share2 size={16} aria-hidden="true" />
+          <Share2 size={18} aria-hidden="true" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="font-sans ">

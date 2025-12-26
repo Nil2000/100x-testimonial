@@ -20,9 +20,9 @@ export default function ButtonWrapperTestimonailCard({
   return (
     <button className={cn(className)} onClick={handleButtonClick}>
       {isPending ? (
-        <Loader2 className="animate-spin text-muted-foreground" size={24} />
+        <Loader2 className="animate-spin text-muted-foreground" size={18} />
       ) : (
-        <ButtonIcon size={24} />
+        <ButtonIcon size={18} />
       )}
     </button>
   );
