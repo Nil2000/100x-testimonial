@@ -1,4 +1,5 @@
-import { AnalysisStatus, db, SentimentType } from "@/lib/db";
+import { db } from "@/lib/db";
+import { AnalysisStatus, SentimentType } from "@/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest, res: NextResponse) {
@@ -12,8 +13,14 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     return NextResponse.json({ error: "No body provided" }, { status: 400 });
   }
 
-  const { feedbackId, spaceId, sentiment, analysisStatus, isSpam } =
-    await req.json();
+  const {
+    feedbackId,
+    spaceId,
+    sentiment,
+    spamStatus,
+    sentimentStatus,
+    isSpam,
+  } = await req.json();
 
   try {
     const spaceExists = await db.space.findFirst({
@@ -58,12 +65,12 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     }
 
     if (
-      analysisStatus &&
-      typeof analysisStatus !== "string" &&
-      !Object.values(AnalysisStatus).includes(analysisStatus)
+      spamStatus &&
+      typeof spamStatus !== "string" &&
+      !Object.values(AnalysisStatus).includes(spamStatus)
     ) {
       return NextResponse.json(
-        { error: "Invalid analysis status type" },
+        { error: "Invalid spam status type" },
         { status: 400 }
       );
     }
@@ -74,13 +81,12 @@ export async function PUT(req: NextRequest, res: NextResponse) {
       updatedFields.sentiment = sentiment;
     }
 
-    if (analysisStatus) {
-      updatedFields.analysisStatus = analysisStatus;
-    }
-
     if (isSpam) {
       updatedFields.isSpam = isSpam;
     }
+
+    updatedFields.spamStatus = spamStatus;
+    updatedFields.sentimentStatus = sentimentStatus;
 
     const updatedFeedback = await db.feedback.update({
       where: {

@@ -1,6 +1,5 @@
-import axios from "axios";
-import { analyzeSentiment } from "../open_ai/analyzeSentiment";
-import { analyzeSpam } from "../open_ai/analyzeSpam";
+import { analyzeSentiment } from "../ai/analyzeSentiment";
+import { analyzeSpam } from "../ai/analyzeSpam";
 import type { TextFeedback } from "../types";
 import { updateFeedback } from "./updateFeedback";
 
@@ -9,46 +8,61 @@ const generateForTextFeedback = (feedback: TextFeedback) => {
 };
 
 export const processTextMessage = async (message: string) => {
+  let isSpam = false;
+  let sentiment = "";
   try {
     const feedback = JSON.parse(message) as TextFeedback;
 
+    // if feedback is empty
     if (!feedback.answer) {
       await updateFeedback({
         feedbackId: feedback.id,
         spaceId: feedback.spaceId,
         isSpam: true,
-        analysisStatus: "COMPLETED",
-      });
-    }
-
-    const messageToAnalyze = generateForTextFeedback(feedback);
-
-    const isSpam = await analyzeSpam(messageToAnalyze);
-
-    console.log("Spam analysis result:", isSpam);
-
-    if (isSpam) {
-      await updateFeedback({
-        feedbackId: feedback.id,
-        spaceId: feedback.spaceId,
-        isSpam: true,
-        analysisStatus: "COMPLETED",
+        sentiment: "",
+        spamStatus: "COMPLETED",
+        sentimentStatus: "COMPLETED",
       });
       return;
     }
 
-    const sentiment = await analyzeSentiment(messageToAnalyze);
+    console.log(feedback.isSentimentEnabled, feedback.isSpamEnabled);
 
-    console.log("Sentiment analysis result:", sentiment);
+    const messageToAnalyze = generateForTextFeedback(feedback);
+
+    if (feedback.isSpamEnabled) {
+      isSpam = await analyzeSpam(messageToAnalyze);
+      console.log("Spam analysis result:", isSpam);
+    }
+
+    if (feedback.isSentimentEnabled) {
+      sentiment = await analyzeSentiment(messageToAnalyze);
+      console.log("Sentiment analysis result:", sentiment);
+    }
 
     await updateFeedback({
       feedbackId: feedback.id,
       spaceId: feedback.spaceId,
       sentiment,
-      isSpam: false,
-      analysisStatus: "COMPLETED",
+      isSpam,
+      spamStatus: "COMPLETED",
+      sentimentStatus: "COMPLETED",
     });
   } catch (error) {
     console.error("Error processing text message:", error);
+    // Update status to FAILED on error
+    try {
+      const feedback = JSON.parse(message) as TextFeedback;
+      await updateFeedback({
+        feedbackId: feedback.id,
+        spaceId: feedback.spaceId,
+        isSpam: false,
+        sentiment: "",
+        spamStatus: "FAILED",
+        sentimentStatus: "FAILED",
+      });
+    } catch (parseError) {
+      console.error("Failed to parse error message:", parseError);
+    }
   }
 };

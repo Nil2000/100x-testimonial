@@ -23,7 +23,6 @@ type PublicSpaceViewProps = {
 };
 
 export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
-  console.log(space);
   const [openThanks, setOpenThanks] = React.useState(false);
   const [openRecord, setOpenRecord] = React.useState(false);
   const [openUpload, setOpenUpload] = React.useState(false);
@@ -67,8 +66,6 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
       handleFontSelect("Roboto");
     }
   }, [space]);
-
-  console.log(theme);
 
   return (
     <div className={`min-h-screen ${theme?.bg}`}>

@@ -1,5 +1,6 @@
 import {
   AnalysisStatus,
+  FeedbackType,
   SentimentType,
   SourceType,
 } from "@/generated/prisma/enums";
@@ -56,18 +57,20 @@ export interface TestimonialResponse {
   spaceId: string;
   createdAt: Date;
   updatedAt: Date;
-  feedbackType: string;
+  feedbackType: FeedbackType;
   addToWallOfLove: boolean;
   videoUrl: string | null;
   imageUrl: string | null;
   profileImageUrl: string | null;
   isSpam: boolean;
+  spamStatus: AnalysisStatus;
   isSocial: boolean;
   sentiment: SentimentType;
-  analysisStatus: AnalysisStatus;
+  sentimentStatus: AnalysisStatus;
   source: SourceType;
   sourceUrl: string | null;
-  metadata: any;
+  metadata: string | null;
+  styleSettings: any;
 }
 
 export type SingleTestimonialWithSpaceLogo = TestimonialResponse & {

@@ -15,7 +15,7 @@ import { TestimonialResponse } from "@/lib/types";
 import { TbBorderRadius } from "react-icons/tb";
 import { RiShadowFill } from "react-icons/ri";
 import { TbBackground } from "react-icons/tb";
-import { Text, UserRound, Layout } from "lucide-react";
+import { Text, UserRound, Layout, Code2, Copy, Save } from "lucide-react";
 import BorderTabContent from "./customization/BorderTabContent";
 import ShadowTabContent from "./customization/ShadowTabContent";
 import BackgroundTabContent from "./customization/BackgroundTabContent";
@@ -57,8 +57,8 @@ export default function EmbedSettingsDialog({
     backgroundType: "solid",
     cardBackground: "#ffffff",
     cardBackgroundType: "solid",
-    headerColor: theme === "dark" ? "#ffffff" : "#000000",
-    bodyColor: theme === "dark" ? "#ffffff" : "#000000",
+    headerColor: "#000",
+    bodyColor: "#000",
     headerSize: 20,
     bodySize: 16,
     headerFont: "",
@@ -125,16 +125,27 @@ export default function EmbedSettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto max-w-3xl overflow-x-hidden p-6">
-        <DialogHeader className="max-w-[48rem]">
-          <DialogTitle>Embed Settings</DialogTitle>
-          <DialogDescription>
-            Customize the appearance of your embedded testimonial
-          </DialogDescription>
+      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto max-w-4xl overflow-x-hidden p-6">
+        <DialogHeader className="space-y-3 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Code2 className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl">Embed Settings</DialogTitle>
+              <DialogDescription className="text-sm">
+                Customize the appearance of your embedded testimonial
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
-        <div className="max-w-[48rem] space-y-3">
+        <div className="space-y-6">
           {/* Settings Panel */}
-          <div className="space-y-4">
+          <div className="bg-muted/30 rounded-lg p-4 border">
+            <h3 className="font-semibold text-sm flex items-center gap-2 mb-4">
+              <span className="w-1 h-4 bg-primary rounded-full"></span>
+              Customization Options
+            </h3>
             <Tabs defaultValue="layout" className="w-full">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="layout" className="flex items-center gap-1">
@@ -162,31 +173,41 @@ export default function EmbedSettingsDialog({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="layout" className="space-y-3 mt-3">
-                <div className="space-y-3">
-                  <Label>Alignment:</Label>
+              <TabsContent value="layout" className="space-y-4 mt-3">
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-muted-foreground">
+                    Alignment
+                  </Label>
                   <RadioGroup
                     value={settings.alignment}
-                    className="flex"
+                    className="flex gap-3"
                     onValueChange={(value) => updateSetting("alignment", value)}
                   >
                     <div className="flex items-center gap-2">
                       <RadioGroupItem id="left" value="left" />
-                      <Label htmlFor="left">Left</Label>
+                      <Label htmlFor="left" className="cursor-pointer">
+                        Left
+                      </Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <RadioGroupItem id="center" value="center" />
-                      <Label htmlFor="center">Center</Label>
+                      <Label htmlFor="center" className="cursor-pointer">
+                        Center
+                      </Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <RadioGroupItem id="right" value="right" />
-                      <Label htmlFor="right">Right</Label>
+                      <Label htmlFor="right" className="cursor-pointer">
+                        Right
+                      </Label>
                     </div>
                   </RadioGroup>
                 </div>
 
-                <div className="space-y-3">
-                  <Label>Padding: {settings.padding}px</Label>
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-muted-foreground">
+                    Padding: {settings.padding}px
+                  </Label>
                   <Slider
                     value={[settings.padding]}
                     min={0}
@@ -232,10 +253,7 @@ export default function EmbedSettingsDialog({
                 />
               </TabsContent>
 
-              <TabsContent
-                value="background"
-                className="grid grid-cols-2 gap-x-3 mt-3"
-              >
+              <TabsContent value="background" className="space-y-4 mt-3">
                 <BackgroundTabContent
                   background={settings.background}
                   setBackground={(value) => updateSetting("background", value)}
@@ -275,141 +293,178 @@ export default function EmbedSettingsDialog({
                   setHeaderFont={(value) => updateSetting("headerFont", value)}
                   bodyFont={settings.bodyFont}
                   setBodyFont={(value) => updateSetting("bodyFont", value)}
+                  hideBodyText={testimonial?.feedbackType === "VIDEO"}
                 />
               </TabsContent>
             </Tabs>
           </div>
 
           {/* Preview Panel */}
-          <div className="space-y-4">
-            <Label className="text-sm font-medium">Preview:</Label>
-            <div
-              className={`flex justify-center items-center w-full border rounded-lg
+          <div className="bg-muted/30 rounded-lg p-4 border">
+            <h3 className="font-semibold text-sm flex items-center gap-2 mb-4">
+              <span className="w-1 h-4 bg-primary rounded-full"></span>
+              Preview
+            </h3>
+            <div className="bg-background rounded-lg p-4 border-2 border-dashed">
+              <div
+                className={`flex justify-center items-center w-full border rounded-lg
                 ${
                   settings.backgroundType === "gradient"
                     ? settings.gradient
                     : ""
                 }
               `}
-              style={{
-                aspectRatio: "auto",
-                textAlign: settings.alignment as "left" | "center" | "right",
-                padding: `${settings.padding}px`,
-                backgroundColor:
-                  settings.backgroundType === "solid"
-                    ? settings.background
-                    : settings.backgroundType === "transparent"
-                    ? "transparent"
-                    : "transparent",
-              }}
-            >
-              <div
-                className={`p-4 border-2 rounded-md h-min w-full space-y-2`}
                 style={{
+                  aspectRatio: "auto",
+                  textAlign: settings.alignment as "left" | "center" | "right",
+                  padding: `${settings.padding}px`,
                   backgroundColor:
-                    settings.cardBackgroundType === "solid"
-                      ? settings.cardBackground
-                      : settings.cardBackgroundType === "transparent"
+                    settings.backgroundType === "solid"
+                      ? settings.background
+                      : settings.backgroundType === "transparent"
                       ? "transparent"
                       : "transparent",
-                  border: settings.showBorder
-                    ? `${settings.borderThickness}px solid ${settings.borderColor}`
-                    : "none",
-                  borderRadius:
-                    settings.borderRadius === "small"
-                      ? "5px"
-                      : settings.borderRadius === "medium"
-                      ? "10px"
-                      : "15px",
-                  boxShadow:
-                    settings.shadowType === "none"
-                      ? "none"
-                      : settings.shadowType === "standard"
-                      ? settings.shadowSize === "small"
-                        ? `0 4px 6px -1px ${settings.shadowColor}40, 0 2px 4px -2px ${settings.shadowColor}40`
-                        : settings.shadowSize === "medium"
-                        ? `0 10px 15px -3px ${settings.shadowColor}40, 0 4px 6px -4px ${settings.shadowColor}40`
-                        : `0 25px 50px -12px ${settings.shadowColor}40`
-                      : settings.shadowSize === "small"
-                      ? `3px 3px 0 0 ${settings.shadowColor}`
-                      : settings.shadowSize === "medium"
-                      ? `6px 6px 0 0 ${settings.shadowColor}`
-                      : `9px 9px 0 0 ${settings.shadowColor}`,
-                  color: settings.bodyColor,
-                  fontFamily: settings.bodyFont,
                 }}
               >
                 <div
-                  className="flex items-center gap-3"
+                  className={`p-4 border-2 rounded-md h-min w-full space-y-2`}
                   style={{
-                    justifyContent:
-                      settings.alignment === "left"
-                        ? "flex-start"
-                        : settings.alignment === "center"
-                        ? "center"
-                        : "flex-end",
-                  }}
-                >
-                  {testimonial.profileImageUrl ? (
-                    <img
-                      src={testimonial.profileImageUrl}
-                      alt="User Image"
-                      className="rounded-full w-10 h-10 object-cover"
-                      width={40}
-                      height={40}
-                    />
-                  ) : (
-                    <div className="rounded-full w-10 h-10 bg-secondary flex items-center justify-center text-foreground">
-                      <UserRound size={20} />
-                    </div>
-                  )}
-                  <h3
-                    className="font-bold"
-                    style={{
-                      color: settings.headerColor,
-                      fontSize: `${settings.headerSize}px`,
-                      fontFamily: settings.headerFont,
-                    }}
-                  >
-                    {testimonial.name}
-                  </h3>
-                </div>
-                {!testimonial.isSocial && (
-                  <p>{renderStars(testimonial.rating)}</p>
-                )}
-                <div
-                  style={{
-                    fontSize: `${settings.bodySize}px`,
+                    backgroundColor:
+                      settings.cardBackgroundType === "solid"
+                        ? settings.cardBackground
+                        : settings.cardBackgroundType === "transparent"
+                        ? "transparent"
+                        : "transparent",
+                    border: settings.showBorder
+                      ? `${settings.borderThickness}px solid ${settings.borderColor}`
+                      : "none",
+                    borderRadius:
+                      settings.borderRadius === "small"
+                        ? "5px"
+                        : settings.borderRadius === "medium"
+                        ? "10px"
+                        : "15px",
+                    boxShadow:
+                      settings.shadowType === "none"
+                        ? "none"
+                        : settings.shadowType === "standard"
+                        ? settings.shadowSize === "small"
+                          ? `0 4px 6px -1px ${settings.shadowColor}40, 0 2px 4px -2px ${settings.shadowColor}40`
+                          : settings.shadowSize === "medium"
+                          ? `0 10px 15px -3px ${settings.shadowColor}40, 0 4px 6px -4px ${settings.shadowColor}40`
+                          : `0 25px 50px -12px ${settings.shadowColor}40`
+                        : settings.shadowSize === "small"
+                        ? `3px 3px 0 0 ${settings.shadowColor}`
+                        : settings.shadowSize === "medium"
+                        ? `6px 6px 0 0 ${settings.shadowColor}`
+                        : `9px 9px 0 0 ${settings.shadowColor}`,
+                    color: settings.bodyColor,
                     fontFamily: settings.bodyFont,
                   }}
                 >
-                  {testimonial.answer}
+                  <div
+                    className="flex items-center gap-3"
+                    style={{
+                      justifyContent:
+                        settings.alignment === "left"
+                          ? "flex-start"
+                          : settings.alignment === "center"
+                          ? "center"
+                          : "flex-end",
+                    }}
+                  >
+                    {testimonial.profileImageUrl ? (
+                      <img
+                        src={testimonial.profileImageUrl}
+                        alt="User Image"
+                        className="rounded-full w-10 h-10 object-cover"
+                        width={40}
+                        height={40}
+                      />
+                    ) : (
+                      <div className="rounded-full w-10 h-10 bg-secondary flex items-center justify-center text-foreground">
+                        <UserRound size={20} />
+                      </div>
+                    )}
+                    <h3
+                      className="font-bold"
+                      style={{
+                        color: settings.headerColor,
+                        fontSize: `${settings.headerSize}px`,
+                        fontFamily: settings.headerFont,
+                      }}
+                    >
+                      {testimonial.name}
+                    </h3>
+                  </div>
+                  {!testimonial.isSocial && (
+                    <p>{renderStars(testimonial.rating)}</p>
+                  )}
+                  {testimonial.feedbackType !== "VIDEO" && (
+                    <div
+                      style={{
+                        fontSize: `${settings.bodySize}px`,
+                        fontFamily: settings.bodyFont,
+                      }}
+                    >
+                      {testimonial.answer}
+                    </div>
+                  )}
+                  {testimonial.feedbackType === "VIDEO" && (
+                    <div>
+                      <video
+                        src={testimonial.videoUrl!}
+                        controls
+                        className="w-full h-auto"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Embed Code Section */}
+          <div className="bg-muted/30 rounded-lg p-4 border">
+            <h3 className="font-semibold text-sm flex items-center gap-2 mb-4">
+              <span className="w-1 h-4 bg-primary rounded-full"></span>
+              Embed Code
+            </h3>
+            <CodeBlock codeString={generateEmbedCode()} language="html" />
+          </div>
         </div>
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Embed Code:</Label>
-          <CodeBlock codeString={generateEmbedCode()} language="html" />
-        </div>
+
         {/* Footer */}
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              navigator.clipboard.writeText(generateEmbedCode());
-              toast.success("Embed code copied to clipboard!");
-            }}
-          >
-            Copy Code
-          </Button>
-          <Button
-            onClick={handleGenerateEmbedCode}
-            disabled={isPending || !hasChanges}
-          >
-            {isPending ? "Saving..." : "Save Settings"}
-          </Button>
+        <div className="flex justify-between items-center pt-4 border-t">
+          {hasChanges ? (
+            <p className="text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1">
+              <span className="w-2 h-2 bg-amber-600 dark:bg-amber-500 rounded-full animate-pulse"></span>
+              Unsaved changes
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground">All changes saved</p>
+          )}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(generateEmbedCode());
+                toast.success("Embed code copied to clipboard!");
+              }}
+              className="gap-2"
+            >
+              <Copy className="h-4 w-4" />
+              Copy Code
+            </Button>
+            <Button
+              onClick={handleGenerateEmbedCode}
+              disabled={isPending || !hasChanges}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {isPending ? "Saving..." : "Save Settings"}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

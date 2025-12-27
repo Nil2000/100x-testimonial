@@ -137,7 +137,7 @@ export default function SubmitTextFeedbackDialog({
           <h2>Write as text</h2>
         </Button>
       </DialogTrigger> */}
-      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto">
+      <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto space-y-2">
         <DialogHeader>
           <DialogTitle>Write text testimonial to</DialogTitle>
           <DialogDescription></DialogDescription>

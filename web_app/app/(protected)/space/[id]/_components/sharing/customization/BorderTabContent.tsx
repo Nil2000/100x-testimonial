@@ -28,54 +28,76 @@ export default function BorderTabContent({
   setBorderThickness,
 }: BorderTabContentProps) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:max-w-3xl">
-      <div className="flex items-center gap-x-4">
-        <Label>Show Border:</Label>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+        <div className="space-y-1">
+          <Label className="text-sm font-medium">Show Border</Label>
+          <p className="text-xs text-muted-foreground">
+            Toggle border visibility
+          </p>
+        </div>
         <Switch
           checked={showBorder}
           onCheckedChange={() => setShowBorder(!showBorder)}
         />
       </div>
-      <div className="space-y-3">
-        <Label>Border Radius:</Label>
-        <div>
-          <RadioGroup
-            value={borderRadius}
-            onValueChange={setBorderRadius}
-            defaultValue="small"
-            className="flex gap-2"
-          >
-            <div className="flex items-center gap-2">
-              <RadioGroupItem id="small" value="small" />
-              <Label htmlFor="small">Small</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem id="medium" value="medium" />
-              <Label htmlFor="medium">Medium</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem id="large" value="large" />
-              <Label htmlFor="large">Large</Label>
-            </div>
-          </RadioGroup>
+
+      {showBorder && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-muted-foreground">
+              Border Radius
+            </Label>
+            <RadioGroup
+              value={borderRadius}
+              onValueChange={setBorderRadius}
+              defaultValue="small"
+              className="flex gap-3"
+            >
+              <div className="flex items-center gap-2">
+                <RadioGroupItem id="small" value="small" />
+                <Label htmlFor="small" className="cursor-pointer">
+                  Small
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem id="medium" value="medium" />
+                <Label htmlFor="medium" className="cursor-pointer">
+                  Medium
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem id="large" value="large" />
+                <Label htmlFor="large" className="cursor-pointer">
+                  Large
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-muted-foreground">
+              Border Thickness: {borderThickness}px
+            </Label>
+            <Slider
+              defaultValue={[borderThickness]}
+              min={1}
+              max={10}
+              step={1}
+              onValueChange={(value) => setBorderThickness(value[0])}
+              className="[&>:last-child>span]:border-background [&>:last-child>span]:bg-primary **:data-[slot=slider-thumb]:shadow-none [&>:last-child>span]:h-6 [&>:last-child>span]:w-2.5 [&>:last-child>span]:border-[3px] [&>:last-child>span]:ring-offset-0"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <ColorPalette
+              selectedColor={borderColor}
+              setSelectedColor={setBorderColor}
+              title="Border Color"
+            />
+          </div>
         </div>
-      </div>
-      <ColorPalette
-        selectedColor={borderColor}
-        setSelectedColor={setBorderColor}
-        title="Border Color:"
-      />
-      <div className="max-w-sm space-y-3">
-        <Label>Border Thickness:</Label>
-        <Slider
-          defaultValue={[borderThickness]}
-          min={1}
-          max={10}
-          step={1}
-          onValueChange={(value) => setBorderThickness(value[0])}
-          className="[&>:last-child>span]:border-background [&>:last-child>span]:bg-primary **:data-[slot=slider-thumb]:shadow-none [&>:last-child>span]:h-6 [&>:last-child>span]:w-2.5 [&>:last-child>span]:border-[3px] [&>:last-child>span]:ring-offset-0"
-        />
-      </div>
+      )}
     </div>
   );
 }

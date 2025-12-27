@@ -294,18 +294,18 @@ export type EnumFeedbackTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumFeedbackTypeFilter<$PrismaModel> | $Enums.FeedbackType
 }
 
-export type EnumSentimentTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel> | $Enums.SentimentType
-}
-
 export type EnumAnalysisStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.AnalysisStatus | Prisma.EnumAnalysisStatusFieldRefInput<$PrismaModel>
   in?: $Enums.AnalysisStatus[] | Prisma.ListEnumAnalysisStatusFieldRefInput<$PrismaModel>
   notIn?: $Enums.AnalysisStatus[] | Prisma.ListEnumAnalysisStatusFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumAnalysisStatusFilter<$PrismaModel> | $Enums.AnalysisStatus
+}
+
+export type EnumSentimentTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel> | $Enums.SentimentType
 }
 
 export type EnumSourceTypeFilter<$PrismaModel = never> = {
@@ -325,16 +325,6 @@ export type EnumFeedbackTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumFeedbackTypeFilter<$PrismaModel>
 }
 
-export type EnumSentimentTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSentimentTypeWithAggregatesFilter<$PrismaModel> | $Enums.SentimentType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
-}
-
 export type EnumAnalysisStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.AnalysisStatus | Prisma.EnumAnalysisStatusFieldRefInput<$PrismaModel>
   in?: $Enums.AnalysisStatus[] | Prisma.ListEnumAnalysisStatusFieldRefInput<$PrismaModel>
@@ -343,6 +333,16 @@ export type EnumAnalysisStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumAnalysisStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumAnalysisStatusFilter<$PrismaModel>
+}
+
+export type EnumSentimentTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSentimentTypeWithAggregatesFilter<$PrismaModel> | $Enums.SentimentType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
 }
 
 export type EnumSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -621,18 +621,18 @@ export type NestedEnumFeedbackTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumFeedbackTypeFilter<$PrismaModel> | $Enums.FeedbackType
 }
 
-export type NestedEnumSentimentTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel> | $Enums.SentimentType
-}
-
 export type NestedEnumAnalysisStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.AnalysisStatus | Prisma.EnumAnalysisStatusFieldRefInput<$PrismaModel>
   in?: $Enums.AnalysisStatus[] | Prisma.ListEnumAnalysisStatusFieldRefInput<$PrismaModel>
   notIn?: $Enums.AnalysisStatus[] | Prisma.ListEnumAnalysisStatusFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumAnalysisStatusFilter<$PrismaModel> | $Enums.AnalysisStatus
+}
+
+export type NestedEnumSentimentTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel> | $Enums.SentimentType
 }
 
 export type NestedEnumSourceTypeFilter<$PrismaModel = never> = {
@@ -652,16 +652,6 @@ export type NestedEnumFeedbackTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumFeedbackTypeFilter<$PrismaModel>
 }
 
-export type NestedEnumSentimentTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSentimentTypeWithAggregatesFilter<$PrismaModel> | $Enums.SentimentType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
-}
-
 export type NestedEnumAnalysisStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.AnalysisStatus | Prisma.EnumAnalysisStatusFieldRefInput<$PrismaModel>
   in?: $Enums.AnalysisStatus[] | Prisma.ListEnumAnalysisStatusFieldRefInput<$PrismaModel>
@@ -670,6 +660,16 @@ export type NestedEnumAnalysisStatusWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumAnalysisStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumAnalysisStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSentimentTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SentimentType | Prisma.EnumSentimentTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SentimentType[] | Prisma.ListEnumSentimentTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSentimentTypeWithAggregatesFilter<$PrismaModel> | $Enums.SentimentType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSentimentTypeFilter<$PrismaModel>
 }
 
 export type NestedEnumSourceTypeWithAggregatesFilter<$PrismaModel = never> = {

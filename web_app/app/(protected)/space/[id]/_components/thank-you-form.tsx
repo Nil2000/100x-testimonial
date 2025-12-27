@@ -99,7 +99,7 @@ export default function ThankYouForm() {
           )}
         />
       </div>
-      <div className="flex justify-center">
+      <div className="flex">
         <Button
           type="submit"
           className="w-full sm:max-w-[300px]"

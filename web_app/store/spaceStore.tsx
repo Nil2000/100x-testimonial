@@ -22,7 +22,8 @@ type SpaceInfo = {
     title: string;
     message: string;
   };
-  isAnalysisEnabled?: boolean;
+  isSentimentEnabled?: boolean;
+  isSpamEnabled?: boolean;
   theme: {
     theme: string | null;
     themeOptions: any;
@@ -70,7 +71,8 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
     name: "",
     questions: [],
     isPublished: false,
-    isAnalysisEnabled: false,
+    isSentimentEnabled: false,
+    isSpamEnabled: false,
     thanksSpace: {
       id: "",
       title: "",

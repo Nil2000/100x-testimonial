@@ -343,6 +343,58 @@ export const saveWallOfLoveSettings = async (
   }
 };
 
+export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  try {
+    await db.space.update({
+      where: {
+        id,
+      },
+      data: {
+        isSentimentEnabled: status,
+      },
+    });
+    return {
+      message: "Sentiment analysis status updated successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};
+
+export const toggleSpamDetection = async (id: string, status: boolean) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  try {
+    await db.space.update({
+      where: {
+        id,
+      },
+      data: {
+        isSpamEnabled: status,
+      },
+    });
+    return {
+      message: "Spam detection status updated successfully",
+    };
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
+};
+
 export const toggleAnalysis = async (id: string, status: boolean) => {
   const session = await auth();
   if (!session || !session.user) {
@@ -356,7 +408,7 @@ export const toggleAnalysis = async (id: string, status: boolean) => {
         id,
       },
       data: {
-        isAnalysisEnabled: status,
+        isSentimentEnabled: status,
       },
     });
     return {

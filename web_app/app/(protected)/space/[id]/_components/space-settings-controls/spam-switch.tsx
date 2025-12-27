@@ -1,10 +1,11 @@
-import { toggleAnalysis } from "@/actions/spaceActions";
+import { toggleSpamDetection } from "@/actions/spaceActions";
 import { Switch } from "@/components/ui/switch";
 import { useSpaceStore } from "@/store/spaceStore";
 import React from "react";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-export default function AnalysisSwitch() {
+export default function SpamSwitch() {
   const { spaceInfo, updateSpaceField } = useSpaceStore();
   const [loading, setLoading] = React.useState(false);
 
@@ -15,21 +16,17 @@ export default function AnalysisSwitch() {
       )}
       <div className="relative inline-grid h-9 grid-cols-[1fr_1fr] items-center text-sm font-medium">
         <Switch
-          checked={spaceInfo.isAnalysisEnabled}
+          checked={spaceInfo.isSpamEnabled}
           onCheckedChange={() => {
             setLoading(true);
-            toggleAnalysis(spaceInfo.id, !spaceInfo.isAnalysisEnabled).then(
+            toggleSpamDetection(spaceInfo.id, !spaceInfo.isSpamEnabled).then(
               (res) => {
                 if (res.error) {
-                  updateSpaceField(
-                    "isAnalysisEnabled",
-                    spaceInfo.isAnalysisEnabled
-                  );
+                  updateSpaceField("isSpamEnabled", spaceInfo.isSpamEnabled);
+                  toast.error("Failed to toggle spam detection");
                 } else {
-                  updateSpaceField(
-                    "isAnalysisEnabled",
-                    !spaceInfo.isAnalysisEnabled
-                  );
+                  updateSpaceField("isSpamEnabled", !spaceInfo.isSpamEnabled);
+                  toast.success(res.message);
                 }
                 setLoading(false);
               }
