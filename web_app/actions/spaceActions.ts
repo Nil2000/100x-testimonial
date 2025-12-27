@@ -218,6 +218,7 @@ export const spaceExists = async (spaceName: string) => {
     const existingSpace = await db.space.findFirst({
       where: {
         name: spaceName,
+        deletedAt: null,
       },
       include: {
         questions: {
@@ -257,6 +258,7 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
   const space = await db.space.findFirst({
     where: {
       name: spaceName,
+      deletedAt: null,
     },
   });
   if (!space) {
@@ -268,6 +270,7 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
     where: {
       spaceId: space.id,
       addToWallOfLove: true,
+      isArchived: false,
     },
   });
 
@@ -312,6 +315,7 @@ export const saveWallOfLoveSettings = async (
       where: {
         id: spaceId,
         createdById: session.user.id,
+        deletedAt: null,
       },
     });
 
@@ -433,6 +437,7 @@ export const deleteSpace = async (id: string) => {
       where: {
         id,
         createdById: session.user.id,
+        deletedAt: null,
       },
     });
 
@@ -442,10 +447,13 @@ export const deleteSpace = async (id: string) => {
       };
     }
 
-    await db.space.delete({
+    await db.space.update({
       where: {
         id,
         createdById: session.user.id,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
 

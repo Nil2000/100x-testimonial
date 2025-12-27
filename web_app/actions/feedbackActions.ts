@@ -314,3 +314,53 @@ export const updateFeedbackStyleSettings = async (
     };
   }
 };
+
+export const archiveFeedback = async (feedbackId: string) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    await db.feedback.update({
+      where: { id: feedbackId },
+      data: { isArchived: true },
+    });
+    return {
+      message: "Feedback archived successfully",
+    };
+  } catch (error) {
+    console.error("ARCHIVE_FEEDBACK_ERROR", error);
+    return {
+      error: "Failed to archive feedback",
+    };
+  }
+};
+
+export const unarchiveFeedback = async (feedbackId: string) => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    await db.feedback.update({
+      where: { id: feedbackId },
+      data: { isArchived: false },
+    });
+    return {
+      message: "Feedback unarchived successfully",
+    };
+  } catch (error) {
+    console.error("UNARCHIVE_FEEDBACK_ERROR", error);
+    return {
+      error: "Failed to unarchive feedback",
+    };
+  }
+};

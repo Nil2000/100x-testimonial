@@ -36,6 +36,7 @@ export type SpaceMinAggregateOutputType = {
   isSpamEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
   createdById: string | null
   isPublished: boolean | null
 }
@@ -52,6 +53,7 @@ export type SpaceMaxAggregateOutputType = {
   isSpamEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
   createdById: string | null
   isPublished: boolean | null
 }
@@ -69,6 +71,7 @@ export type SpaceCountAggregateOutputType = {
   theme: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   createdById: number
   isPublished: number
   _all: number
@@ -87,6 +90,7 @@ export type SpaceMinAggregateInputType = {
   isSpamEnabled?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   createdById?: true
   isPublished?: true
 }
@@ -103,6 +107,7 @@ export type SpaceMaxAggregateInputType = {
   isSpamEnabled?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   createdById?: true
   isPublished?: true
 }
@@ -120,6 +125,7 @@ export type SpaceCountAggregateInputType = {
   theme?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   createdById?: true
   isPublished?: true
   _all?: true
@@ -210,6 +216,7 @@ export type SpaceGroupByOutputType = {
   theme: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   createdById: string
   isPublished: boolean
   _count: SpaceCountAggregateOutputType | null
@@ -248,6 +255,7 @@ export type SpaceWhereInput = {
   theme?: Prisma.JsonNullableFilter<"Space">
   createdAt?: Prisma.DateTimeFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Space"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Space"> | Date | string | null
   createdById?: Prisma.StringFilter<"Space"> | string
   isPublished?: Prisma.BoolFilter<"Space"> | boolean
   questions?: Prisma.QuestionListRelationFilter
@@ -269,6 +277,7 @@ export type SpaceOrderByWithRelationInput = {
   theme?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   questions?: Prisma.QuestionOrderByRelationAggregateInput
@@ -293,6 +302,7 @@ export type SpaceWhereUniqueInput = Prisma.AtLeast<{
   theme?: Prisma.JsonNullableFilter<"Space">
   createdAt?: Prisma.DateTimeFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Space"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Space"> | Date | string | null
   createdById?: Prisma.StringFilter<"Space"> | string
   isPublished?: Prisma.BoolFilter<"Space"> | boolean
   questions?: Prisma.QuestionListRelationFilter
@@ -314,6 +324,7 @@ export type SpaceOrderByWithAggregationInput = {
   theme?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   _count?: Prisma.SpaceCountOrderByAggregateInput
@@ -337,6 +348,7 @@ export type SpaceScalarWhereWithAggregatesInput = {
   theme?: Prisma.JsonNullableWithAggregatesFilter<"Space">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Space"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Space"> | Date | string | null
   createdById?: Prisma.StringWithAggregatesFilter<"Space"> | string
   isPublished?: Prisma.BoolWithAggregatesFilter<"Space"> | boolean
 }
@@ -354,6 +366,7 @@ export type SpaceCreateInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
   questions?: Prisma.QuestionCreateNestedManyWithoutSpaceInput
   createdBy: Prisma.UserCreateNestedOneWithoutSpacesInput
@@ -374,6 +387,7 @@ export type SpaceUncheckedCreateInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   createdById: string
   isPublished?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutSpaceInput
@@ -394,6 +408,7 @@ export type SpaceUpdateInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUpdateManyWithoutSpaceNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutSpacesNestedInput
@@ -414,6 +429,7 @@ export type SpaceUncheckedUpdateInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutSpaceNestedInput
@@ -434,6 +450,7 @@ export type SpaceCreateManyInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   createdById: string
   isPublished?: boolean
 }
@@ -451,6 +468,7 @@ export type SpaceUpdateManyMutationInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -467,6 +485,7 @@ export type SpaceUncheckedUpdateManyInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -494,6 +513,7 @@ export type SpaceCountOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
 }
@@ -510,6 +530,7 @@ export type SpaceMaxOrderByAggregateInput = {
   isSpamEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
 }
@@ -526,6 +547,7 @@ export type SpaceMinOrderByAggregateInput = {
   isSpamEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
 }
@@ -640,6 +662,7 @@ export type SpaceCreateWithoutCreatedByInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
   questions?: Prisma.QuestionCreateNestedManyWithoutSpaceInput
   thankyouSpace?: Prisma.ThankYouSpaceCreateNestedOneWithoutSpaceInput
@@ -659,6 +682,7 @@ export type SpaceUncheckedCreateWithoutCreatedByInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutSpaceInput
   thankyouSpace?: Prisma.ThankYouSpaceUncheckedCreateNestedOneWithoutSpaceInput
@@ -707,6 +731,7 @@ export type SpaceScalarWhereInput = {
   theme?: Prisma.JsonNullableFilter<"Space">
   createdAt?: Prisma.DateTimeFilter<"Space"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Space"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Space"> | Date | string | null
   createdById?: Prisma.StringFilter<"Space"> | string
   isPublished?: Prisma.BoolFilter<"Space"> | boolean
 }
@@ -724,6 +749,7 @@ export type SpaceCreateWithoutQuestionsInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
   createdBy: Prisma.UserCreateNestedOneWithoutSpacesInput
   thankyouSpace?: Prisma.ThankYouSpaceCreateNestedOneWithoutSpaceInput
@@ -743,6 +769,7 @@ export type SpaceUncheckedCreateWithoutQuestionsInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   createdById: string
   isPublished?: boolean
   thankyouSpace?: Prisma.ThankYouSpaceUncheckedCreateNestedOneWithoutSpaceInput
@@ -778,6 +805,7 @@ export type SpaceUpdateWithoutQuestionsInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdBy?: Prisma.UserUpdateOneRequiredWithoutSpacesNestedInput
   thankyouSpace?: Prisma.ThankYouSpaceUpdateOneWithoutSpaceNestedInput
@@ -797,6 +825,7 @@ export type SpaceUncheckedUpdateWithoutQuestionsInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   thankyouSpace?: Prisma.ThankYouSpaceUncheckedUpdateOneWithoutSpaceNestedInput
@@ -816,6 +845,7 @@ export type SpaceCreateWithoutThankyouSpaceInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
   questions?: Prisma.QuestionCreateNestedManyWithoutSpaceInput
   createdBy: Prisma.UserCreateNestedOneWithoutSpacesInput
@@ -835,6 +865,7 @@ export type SpaceUncheckedCreateWithoutThankyouSpaceInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   createdById: string
   isPublished?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutSpaceInput
@@ -870,6 +901,7 @@ export type SpaceUpdateWithoutThankyouSpaceInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUpdateManyWithoutSpaceNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutSpacesNestedInput
@@ -889,6 +921,7 @@ export type SpaceUncheckedUpdateWithoutThankyouSpaceInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutSpaceNestedInput
@@ -908,6 +941,7 @@ export type SpaceCreateWithoutFeedbacksInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
   questions?: Prisma.QuestionCreateNestedManyWithoutSpaceInput
   createdBy: Prisma.UserCreateNestedOneWithoutSpacesInput
@@ -927,6 +961,7 @@ export type SpaceUncheckedCreateWithoutFeedbacksInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   createdById: string
   isPublished?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutSpaceInput
@@ -962,6 +997,7 @@ export type SpaceUpdateWithoutFeedbacksInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUpdateManyWithoutSpaceNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutSpacesNestedInput
@@ -981,6 +1017,7 @@ export type SpaceUncheckedUpdateWithoutFeedbacksInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutSpaceNestedInput
@@ -1000,6 +1037,7 @@ export type SpaceCreateManyCreatedByInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   isPublished?: boolean
 }
 
@@ -1016,6 +1054,7 @@ export type SpaceUpdateWithoutCreatedByInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUpdateManyWithoutSpaceNestedInput
   thankyouSpace?: Prisma.ThankYouSpaceUpdateOneWithoutSpaceNestedInput
@@ -1035,6 +1074,7 @@ export type SpaceUncheckedUpdateWithoutCreatedByInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutSpaceNestedInput
   thankyouSpace?: Prisma.ThankYouSpaceUncheckedUpdateOneWithoutSpaceNestedInput
@@ -1054,6 +1094,7 @@ export type SpaceUncheckedUpdateManyWithoutCreatedByInput = {
   theme?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -1110,6 +1151,7 @@ export type SpaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   createdById?: boolean
   isPublished?: boolean
   questions?: boolean | Prisma.Space$questionsArgs<ExtArgs>
@@ -1132,6 +1174,7 @@ export type SpaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   createdById?: boolean
   isPublished?: boolean
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1150,6 +1193,7 @@ export type SpaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   createdById?: boolean
   isPublished?: boolean
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1168,11 +1212,12 @@ export type SpaceSelectScalar = {
   theme?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   createdById?: boolean
   isPublished?: boolean
 }
 
-export type SpaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "logo" | "headerTitle" | "headerSubtitle" | "collectionType" | "collectStar" | "isSentimentEnabled" | "isSpamEnabled" | "theme" | "createdAt" | "updatedAt" | "createdById" | "isPublished", ExtArgs["result"]["space"]>
+export type SpaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "logo" | "headerTitle" | "headerSubtitle" | "collectionType" | "collectStar" | "isSentimentEnabled" | "isSpamEnabled" | "theme" | "createdAt" | "updatedAt" | "deletedAt" | "createdById" | "isPublished", ExtArgs["result"]["space"]>
 export type SpaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   questions?: boolean | Prisma.Space$questionsArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1208,6 +1253,7 @@ export type $SpacePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     theme: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
     createdById: string
     isPublished: boolean
   }, ExtArgs["result"]["space"]>
@@ -1649,6 +1695,7 @@ export interface SpaceFieldRefs {
   readonly theme: Prisma.FieldRef<"Space", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Space", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Space", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Space", 'DateTime'>
   readonly createdById: Prisma.FieldRef<"Space", 'String'>
   readonly isPublished: Prisma.FieldRef<"Space", 'Boolean'>
 }

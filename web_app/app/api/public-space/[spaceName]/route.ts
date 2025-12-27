@@ -24,6 +24,7 @@ export async function GET(
     const existingSpace = await db.space.findFirst({
       where: {
         name: spaceName,
+        deletedAt: null,
       },
       include: {
         questions: {
