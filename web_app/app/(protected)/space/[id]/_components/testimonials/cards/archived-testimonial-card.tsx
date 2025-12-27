@@ -1,78 +1,45 @@
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Heart,
-  Loader2,
-  Share2,
   Star,
-  Archive,
+  ArchiveRestore,
   Calendar,
   AlertTriangle,
   Smile,
   Frown,
   Meh,
 } from "lucide-react";
-import React, { useState, useTransition } from "react";
-import { archiveFeedback, toggleWallOfLove } from "@/actions/feedbackActions";
+import React from "react";
+import { unarchiveFeedback } from "@/actions/feedbackActions";
 import BadgeOfTestimonials from "./badge-testimonial-type";
 import { TestimonialResponse } from "@/lib/types";
 import ButtonWrapperTestimonailCard from "@/components/button-wrapper-testimonial";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ShareButton from "../../sharing/share-controls";
 import { toast } from "sonner";
 import VideoDisplayComponent from "@/components/video-display-component";
 
 type Props = {
   testimonial: TestimonialResponse;
-  removeFromWallOfLove: (id: string) => void;
-  shareForImage: (testimonial: any) => void;
-  shareForEmbed: (testimonial: any) => void;
-  getLink: (testimonial: any) => void;
   removeFromList: (id: string) => void;
 };
 
-export default function TestimonialCard({
+export default function ArchivedTestimonialCard({
   testimonial,
-  removeFromWallOfLove,
-  shareForImage,
-  shareForEmbed,
   removeFromList,
-  getLink,
 }: Props) {
-  const [isLiked, setIsLiked] = useState(testimonial.addToWallOfLove);
-  const [isPending, startTransition] = useTransition();
-
-  const toggleLike = async () => {
-    startTransition(() => {
-      toggleWallOfLove(testimonial.id, !isLiked).then((res) => {
-        if (res.error) {
-          console.error(res.error);
-          toast.error("Failed to update testimonial. Please try again.");
-          return;
-        }
-        setIsLiked(!isLiked);
-        if (testimonial.addToWallOfLove) {
-          removeFromWallOfLove(testimonial.id);
-        } else {
-          toast.success("Added to wall of love!");
-        }
-      });
-    });
-  };
-
-  const archiveTestimonial = async () => {
-    archiveFeedback(testimonial.id).then((res) => {
+  const unarchiveTestimonial = async () => {
+    unarchiveFeedback(testimonial.id).then((res) => {
       if (res.error) {
         console.error(res.error);
-        toast.error("Failed to archive testimonial. Please try again.");
+        toast.error("Failed to unarchive testimonial. Please try again.");
         return;
       }
       removeFromList(testimonial.id);
-      toast.success("Testimonial archived successfully!");
+      toast.success("Testimonial unarchived successfully!");
     });
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border/50">
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border/50 opacity-75">
       <CardContent className="p-0">
         {/* Header with badges */}
         <div className="flex items-center justify-between gap-2 px-4 py-2 bg-muted/20 border-b border-border/30">
@@ -174,40 +141,10 @@ export default function TestimonialCard({
             {testimonial.rating}/5 rating
           </div>
           <div className="flex items-center gap-3">
-            <ShareButton
-              handleShareImage={() => shareForImage(testimonial)}
-              handleEmbedTestimonial={() => shareForEmbed(testimonial)}
-              handleGetLink={() => getLink(testimonial)}
-              type={testimonial.feedbackType as "TEXT" | "VIDEO"}
-            />
-            <button
-              onClick={toggleLike}
-              className="rounded-lg hover:bg-background/80 transition-all duration-200"
-              title={
-                isLiked ? "Remove from wall of love" : "Add to wall of love"
-              }
-            >
-              {isPending ? (
-                <Loader2
-                  size={18}
-                  className="animate-spin text-muted-foreground"
-                />
-              ) : (
-                <Heart
-                  size={18}
-                  fill={isLiked ? "currentColor" : "none"}
-                  className={
-                    isLiked
-                      ? "text-red-500 transition-all"
-                      : "text-muted-foreground hover:text-red-500 hover:scale-110 transition-all"
-                  }
-                />
-              )}
-            </button>
             <ButtonWrapperTestimonailCard
-              buttonAction={archiveTestimonial}
-              buttonIcon={Archive}
-              className="rounded-lg text-muted-foreground hover:text-orange-500 hover:bg-background/80 hover:scale-110 transition-all duration-200"
+              buttonAction={unarchiveTestimonial}
+              buttonIcon={ArchiveRestore}
+              className="rounded-lg text-muted-foreground hover:text-green-500 hover:bg-background/80 hover:scale-110 transition-all duration-200"
             />
           </div>
         </div>

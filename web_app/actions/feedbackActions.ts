@@ -325,9 +325,10 @@ export const archiveFeedback = async (feedbackId: string) => {
   }
 
   try {
+    // while archiving, also remove from wall of love
     await db.feedback.update({
       where: { id: feedbackId },
-      data: { isArchived: true },
+      data: { isArchived: true, addToWallOfLove: false },
     });
     return {
       message: "Feedback archived successfully",
