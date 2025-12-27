@@ -20,7 +20,6 @@ export default function ThankYouForm() {
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<z.infer<typeof thankyouSchema>>({
     resolver: zodResolver(thankyouSchema),

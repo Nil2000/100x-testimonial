@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import LivePreviewbadge from "@/components/live-preview-badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Pen, Video } from "lucide-react";

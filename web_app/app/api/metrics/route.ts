@@ -1,11 +1,11 @@
-// @ts-ignore @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from "@/lib/auth";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { postHogExecQuery } from "@/lib/posthogUtils";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   const session = await auth();
 
   if (!session || !session.user) {
@@ -148,9 +148,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       );
     }
 
-    let combinedMetrics = [],
-      totalPageViews = 0,
-      totalVisitors = 0;
+    const combinedMetrics = [];
     for (let i = 0; i < pageViewMetricResponse[0].data.length; i++) {
       // totalPageViews += pageViewMetricResponse[0].data[i];
       // totalVisitors += uniqueVisitorMetricResponse[0].data[i];

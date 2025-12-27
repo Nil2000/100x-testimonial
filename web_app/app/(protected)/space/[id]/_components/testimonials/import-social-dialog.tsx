@@ -16,7 +16,7 @@ import { SOCIAL_PLATFORM } from "@/lib/types";
 
 interface ImportSocialDialogResult {
   type: "success" | "error" | "cancel";
-  data?: any;
+  data?: Record<string, string | number | boolean | null>;
   error?: string;
 }
 

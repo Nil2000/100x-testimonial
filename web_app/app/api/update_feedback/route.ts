@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { AnalysisStatus, SentimentType } from "@/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(req: NextRequest, res: NextResponse) {
+export async function PUT(req: NextRequest) {
   const token = req.headers.get("Authorization")?.split(" ")[1];
 
   if (!token || token.length === 0 || token !== process.env.INTERNAL_API_KEY) {
@@ -75,7 +75,10 @@ export async function PUT(req: NextRequest, res: NextResponse) {
       );
     }
 
-    const updatedFields: Record<string, any> = {};
+    const updatedFields: Record<
+      string,
+      string | boolean | AnalysisStatus | SentimentType | undefined
+    > = {};
 
     if (sentiment) {
       updatedFields.sentiment = sentiment;
