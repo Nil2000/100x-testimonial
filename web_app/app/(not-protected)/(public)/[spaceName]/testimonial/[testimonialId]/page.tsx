@@ -2,10 +2,7 @@ import { getFeedbackByIdAndSpaceNameWithSpaceLogo } from "@/actions/feedbackActi
 import { notFound } from "next/navigation";
 import React from "react";
 import TestimonialCard from "./_components/testimonial-card";
-import {
-  SingleTestimonialWithSpaceLogo,
-  TestimonialResponse,
-} from "@/lib/types";
+import { SingleTestimonialWithSpaceLogo } from "@/lib/types";
 import { spaceExists } from "@/actions/spaceActions";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";

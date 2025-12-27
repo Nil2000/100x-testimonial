@@ -33,7 +33,6 @@ export default function CreateSpaceForm({
   setHeaderTitlePreview,
   setCustomMessagePreview,
   setQuestionsPreview,
-  setCollectionTypePreview,
 }: {
   setFileSelected: React.Dispatch<React.SetStateAction<File | null>>;
   isFileSelected: File | null;
@@ -41,9 +40,6 @@ export default function CreateSpaceForm({
   setCustomMessagePreview: React.Dispatch<React.SetStateAction<string>>;
   setQuestionsPreview: React.Dispatch<
     React.SetStateAction<CreateSpaceQuestion[]>
-  >;
-  setCollectionTypePreview: React.Dispatch<
-    React.SetStateAction<CollectionType>
   >;
 }) {
   const {
@@ -86,9 +82,11 @@ export default function CreateSpaceForm({
   };
 
   const uploadFile = async (file: File, spaceName: string) => {
-    if (!file) return;
     console.log(file);
     try {
+      if (!file) {
+        throw new Error("No file selected");
+      }
       const url = await uploadFileToBucket({
         file: file,
         key: `space/${spaceName}/space-logo/${createId() + createId()}.${
@@ -108,9 +106,9 @@ export default function CreateSpaceForm({
     if (isFileSelected) {
       console.log("file selected", isFileSelected);
       uploadFile(isFileSelected, data.spaceName)
-        .then((msg: any) => {
+        .then((msg: { error?: unknown; url?: string }) => {
           if (msg.error) {
-            throw new Error(msg.error);
+            throw new Error(String(msg.error));
           }
           console.log(msg);
           data.logo = msg.url;

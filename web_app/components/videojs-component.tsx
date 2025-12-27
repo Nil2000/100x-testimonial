@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import "video.js/dist/video-js.css";
 import videojs from "video.js";

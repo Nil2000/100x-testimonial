@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpRight, MessageSquareHeart } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { TestimonialResponse } from "@/lib/types";
 
 type Props = {
   spaceName: string;
-  testimonialList: any;
-  spaceId: string;
+  testimonialList: TestimonialResponse[];
   wallOfLoveSettings?: {
     style: string;
     styleOptions: {
@@ -27,7 +27,6 @@ type Props = {
 export default function WallOfLovePage({
   spaceName,
   testimonialList,
-  spaceId,
   wallOfLoveSettings,
 }: Props) {
   console.log(wallOfLoveSettings);

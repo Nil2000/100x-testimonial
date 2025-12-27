@@ -275,14 +275,13 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
   });
 
   // Extract wall of love settings from theme
-  const theme = space.theme as any;
+  const theme = space.theme as Record<string, any>;
   const wallOfLoveSettings = theme?.wallOfLove || {
     style: "list",
     styleOptions: { columns: "3" },
   };
 
   return {
-    error: null,
     data: feedbacks,
     spaceId: space.id,
     wallOfLoveSettings,

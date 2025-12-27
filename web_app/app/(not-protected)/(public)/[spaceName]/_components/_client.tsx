@@ -6,7 +6,7 @@ import { CollectionType } from "@/generated/prisma/enums";
 import { Button } from "@/components/ui/button";
 import { Pen, Video } from "lucide-react";
 import ThankYouDialog from "./thanks-dialog";
-import { SpaceResponse } from "@/lib/types";
+import { Question, SpaceResponse } from "@/lib/types";
 import RecordVideoDialog from "./record-video-dialog";
 import UploadFileDialog from "./upload-file-dialog";
 import SubmitTextFeedbackDialog from "./submit-text-feedback-dialog";
@@ -148,7 +148,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
                     : undefined,
               }}
             >
-              {space.questions.map((question: any) => (
+              {space.questions.map((question: Question) => (
                 <li key={question.id} className="leading-relaxed">
                   {question.title}
                 </li>

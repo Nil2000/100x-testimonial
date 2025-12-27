@@ -16,7 +16,7 @@ import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
 import ShareableLinkDialog from "../sharing/shareable-link-dialog";
 import ImportSocialDialog from "./import-social-dialog";
 import { Button } from "@/components/ui/button";
-import SocialMedialTestimonialCard from "./cards/social-medial-testimonial-card";
+import SocialMediaTestimonialCard from "./cards/social-media-testimonial-card";
 import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
 import EmbedSettingsDialog from "../sharing/embed-settings-dialog";
@@ -219,7 +219,7 @@ export default function TestimonialsListManager({
             )
           )
         : getTestimonialsByPage().map((testimonial: any) => (
-            <SocialMedialTestimonialCard
+            <SocialMediaTestimonialCard
               key={createId()}
               testimonial={testimonial}
               removeFromWallOfLove={removeFromWallOfLove}

@@ -18,7 +18,6 @@ export default async function page({
     <WallOfLovePage
       spaceName={spaceName}
       testimonialList={response.data}
-      spaceId={response.spaceId!}
       wallOfLoveSettings={response.wallOfLoveSettings}
     />
   );

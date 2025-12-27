@@ -1,13 +1,6 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Brush,
-  Edit,
-  FileStack,
-  Settings,
-  MessageSquareText,
-  Palette,
-} from "lucide-react";
+import { Settings, MessageSquareText, Palette } from "lucide-react";
 import SpaceEditorTabs from "./settings/space-editor-tabs";
 import TestimonialsManagementView from "./testimonials/testimonials-management-view";
 import PageSettingsTabs from "./settings/page-settings/page-settings-tabs";

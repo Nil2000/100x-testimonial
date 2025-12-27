@@ -6,20 +6,17 @@ import { CheckCircle2, Pen } from "lucide-react";
 import ImagePrview from "./image-preview";
 import LivePreviewbadge from "@/components/live-preview-badge";
 import { CreateSpaceQuestion } from "@/lib/types";
-import { CollectionType } from "@/generated/prisma/enums";
 
 export default function PreviewSpace({
   selectedFile,
   headerTitle,
   customMessage,
   questions,
-  collectionType,
 }: {
   selectedFile: File | null;
   headerTitle: string;
   customMessage: string;
   questions: CreateSpaceQuestion[];
-  collectionType: CollectionType;
 }) {
   const validQuestions = questions.filter((q) => q.title.trim() !== "");
 

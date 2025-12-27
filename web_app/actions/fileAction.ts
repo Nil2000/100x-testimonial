@@ -1,6 +1,5 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { initClient } from "@/lib/storage/initClient";
 import { parseS3PublicBaseUrl } from "@/lib/storage/parseS3publicBaseUrl";
 

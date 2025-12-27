@@ -1,3 +1,4 @@
+// @ts-ignore @typescript-eslint/no-explicit-any
 import { auth } from "@/lib/auth";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { db } from "@/lib/db";

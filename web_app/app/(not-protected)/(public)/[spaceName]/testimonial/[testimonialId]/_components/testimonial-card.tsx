@@ -25,7 +25,7 @@ export default function TestimonialCard({ testimonial }: Props) {
         </div>
 
         {testimonial.answer && testimonial.answer.length > 0 && (
-          <p className="text-lg">"{testimonial.answer}"</p>
+          <p className="text-lg">&quot;{testimonial.answer}&quot;</p>
         )}
         {testimonial.videoUrl && (
           <video

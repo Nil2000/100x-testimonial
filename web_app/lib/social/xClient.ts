@@ -1,6 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Client } from "twitter-api-sdk";
-import { initClient } from "../storage/initClient";
-import { parseS3PublicBaseUrl } from "../storage/parseS3publicBaseUrl";
 import { uploadImageToS3, uploadVideoToS3 } from "../storage/uploadUtils";
 
 let xClient: Client | null;
@@ -77,7 +76,7 @@ const processTweetMedia = async (tweet: any, spaceId: string) => {
         spaceId
       );
     } else if (firstMedia.type === "video") {
-      let videoVariants = firstMedia.variants
+      const videoVariants = firstMedia.variants
         ?.filter((variant: any) => variant.content_type === "video/mp4")
         .sort((a: any, b: any) => b.bitrate - a.bitrate)[1];
       // Download and upload the video to S3

@@ -22,7 +22,7 @@ type Props = {
   removeFromList: (id: string) => void;
 };
 
-export default function SocialMedialTestimonialCard({
+export default function SocialMediaTestimonialCard({
   testimonial,
   removeFromWallOfLove,
   shareForImage,
@@ -103,7 +103,9 @@ export default function SocialMedialTestimonialCard({
         </div>
       </div>
       <div className="text-sm">
-        {processTwitterBodyUsingMetadata(JSON.parse(testimonial.metadata))}
+        {processTwitterBodyUsingMetadata(
+          JSON.parse(testimonial.metadata || "")
+        )}
       </div>
       {testimonial.videoUrl ? (
         <div className="flex flex-col items-center relative w-1/2">
