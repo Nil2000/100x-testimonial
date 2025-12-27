@@ -8,7 +8,7 @@ import { feedbackPerPage } from "@/lib/constants";
 import PaginationComponent from "@/components/pagination-component";
 import { SOCIAL_PLATFORM, TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
-import { Import, PlusIcon, SearchIcon } from "lucide-react";
+import { Import, SearchIcon } from "lucide-react";
 import TestimonialSortDropdown from "./testimonial-sort-dropdown";
 import TestimonialItemCard from "./cards/testimonial-item-card";
 import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
@@ -16,10 +16,9 @@ import ShareableLinkDialog from "../sharing/shareable-link-dialog";
 import ImportSocialDialog from "./import-social-dialog";
 import { Button } from "@/components/ui/button";
 import SocialMedialTestimonialCard from "./cards/social-medial-testimonial-card";
-import cuid2, { createId } from "@paralleldrive/cuid2";
+import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
 import EmbedSettingsDialog from "../sharing/embed-settings-dialog";
-import EmbedShareDialog from "../sharing/embed-share-dialog";
 
 // Sorting function
 const sortTestimonials = (
@@ -66,7 +65,6 @@ export default function TestimonialsListManager({
     []
   );
   const [isOpenShareImage, setIsOpenShareImage] = React.useState(false);
-  const [isOpenEmbedShare, setIsOpenEmbedShare] = React.useState(false);
   const [isOpenEmbedTestimonial, setIsOpenEmbedTestimonial] =
     React.useState(false);
   const [selectedTestimonial, setSelectedTestimonial] =
@@ -283,14 +281,6 @@ export default function TestimonialsListManager({
         isOpen={isOpenEmbedTestimonial && !!selectedTestimonial}
         onClose={() => {
           setIsOpenEmbedTestimonial(false);
-          setSelectedTestimonial(null);
-        }}
-        testimonial={selectedTestimonial!}
-      />
-      <EmbedShareDialog
-        isOpen={isOpenEmbedShare && !!selectedTestimonial}
-        onClose={() => {
-          setIsOpenEmbedShare(false);
           setSelectedTestimonial(null);
         }}
         testimonial={selectedTestimonial!}

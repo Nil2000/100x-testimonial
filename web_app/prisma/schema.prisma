@@ -76,23 +76,24 @@ enum CollectionType {
 }
 
 model Space {
-  id                String         @id @default(cuid())
-  name              String
-  logo              String?
-  headerTitle       String
-  headerSubtitle    String
-  questions         Question[]
-  collectionType    CollectionType
-  collectStar       Boolean
-  isAnalysisEnabled Boolean        @default(false)
-  theme             Json?          @db.Json
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  createdById       String
-  createdBy         User           @relation(fields: [createdById], references: [id])
-  thankyouSpace     ThankYouSpace?
-  isPublished       Boolean        @default(false)
-  feedbacks         Feedback[]
+  id                 String         @id @default(cuid())
+  name               String
+  logo               String?
+  headerTitle        String
+  headerSubtitle     String
+  questions          Question[]
+  collectionType     CollectionType
+  collectStar        Boolean
+  isSentimentEnabled Boolean        @default(false)
+  isSpamEnabled      Boolean        @default(false)
+  theme              Json?          @db.Json
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  createdById        String
+  createdBy          User           @relation(fields: [createdById], references: [id])
+  thankyouSpace      ThankYouSpace?
+  isPublished        Boolean        @default(false)
+  feedbacks          Feedback[]
 }
 
 model Question {
@@ -158,9 +159,10 @@ model Feedback {
   imageUrl        String?
   profileImageUrl String?
   isSpam          Boolean        @default(false)
+  spamStatus      AnalysisStatus @default(PENDING)
   isSocial        Boolean        @default(false)
   sentiment       SentimentType  @default(NEUTRAL)
-  analysisStatus  AnalysisStatus @default(PENDING)
+  sentimentStatus AnalysisStatus @default(PENDING)
   source          SourceType     @default(WEBSITE)
   sourceUrl       String?
   metadata        String?

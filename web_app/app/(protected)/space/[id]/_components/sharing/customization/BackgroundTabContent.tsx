@@ -43,29 +43,39 @@ export default function BackgroundTabContent({
   title = "Background",
 }: BackgroundTabContentProps) {
   return (
-    <div className="flex flex-col space-y-3">
-      <Label>{title} Type:</Label>
-      <RadioGroup
-        value={backgroundType}
-        onValueChange={setBackgroundType}
-        defaultValue="solid"
-        className="flex gap-2"
-      >
-        <div className="flex items-center gap-2">
-          <RadioGroupItem id="solid" value="solid" />
-          <Label htmlFor="solid">Solid</Label>
-        </div>
-        {setGradient && (
+    <div className="flex flex-col space-y-4">
+      <div className="space-y-2">
+        <Label className="text-xs font-medium text-muted-foreground">
+          {title} Type
+        </Label>
+        <RadioGroup
+          value={backgroundType}
+          onValueChange={setBackgroundType}
+          defaultValue="solid"
+          className="flex gap-3"
+        >
           <div className="flex items-center gap-2">
-            <RadioGroupItem id="gradient" value="gradient" />
-            <Label htmlFor="gradient">Gradient</Label>
+            <RadioGroupItem id="solid" value="solid" />
+            <Label htmlFor="solid" className="cursor-pointer">
+              Solid
+            </Label>
           </div>
-        )}
-        <div className="flex items-center gap-2">
-          <RadioGroupItem id="transparent" value="transparent" />
-          <Label htmlFor="transparent">Transparent</Label>
-        </div>
-      </RadioGroup>
+          {setGradient && (
+            <div className="flex items-center gap-2">
+              <RadioGroupItem id="gradient" value="gradient" />
+              <Label htmlFor="gradient" className="cursor-pointer">
+                Gradient
+              </Label>
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <RadioGroupItem id="transparent" value="transparent" />
+            <Label htmlFor="transparent" className="cursor-pointer">
+              Transparent
+            </Label>
+          </div>
+        </RadioGroup>
+      </div>
 
       {backgroundType === "solid" && (
         <ColorPalette
@@ -76,14 +86,22 @@ export default function BackgroundTabContent({
       )}
 
       {backgroundType === "gradient" && setGradient && (
-        <div className="space-y-3">
-          <Label>Gradient Options:</Label>
-          <div className="flex gap-2 flex-wrap">
+        <div className="space-y-2">
+          <Label className="text-xs font-medium text-muted-foreground">
+            Gradient Options
+          </Label>
+          <div className="grid grid-cols-8 gap-2">
             {gradientOptions.map((gradientClass, index) => (
-              <div
+              <button
                 key={index}
-                className={`w-8 h-8 cursor-pointer rounded-sm ${gradientClass}`}
+                type="button"
+                className={`w-10 h-10 cursor-pointer rounded-md transition-all hover:scale-110 ring-2 ${
+                  gradient === gradientClass
+                    ? "ring-primary ring-offset-2"
+                    : "ring-border hover:ring-primary/50"
+                } ${gradientClass}`}
                 onClick={() => setGradient(gradientClass)}
+                title={`Gradient ${index + 1}`}
               />
             ))}
           </div>

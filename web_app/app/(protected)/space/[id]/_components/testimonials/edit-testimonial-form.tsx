@@ -125,7 +125,7 @@ export default function TestimonialEditFormView() {
             <>
               <Input placeholder="Space name" {...field} disabled />
               <h1 className="text-muted-foreground text-sm">
-                Public url will be testimonial.to/
+                Public url will be {process.env.NEXT_PUBLIC_BASE_URL}/
                 {field.value || "your-space-name"}
               </h1>
               <p className="text-destructive text-xs">
@@ -243,7 +243,7 @@ export default function TestimonialEditFormView() {
           Add one more
         </Button>
       </div>
-      <div className="space-y-2">
+      <div className="grid sm:grid-cols-2 grid-cols-1 w-full items-center">
         <Label htmlFor="options">Collection type</Label>
         <Controller
           name="collectionType"
@@ -273,25 +273,22 @@ export default function TestimonialEditFormView() {
           )}
         />
       </div>
-      <div className="space-x-2 grid grid-cols-2">
-        <div className="flex flex-col gap-y-2">
-          <Label htmlFor="collectStarRatings">Collect star ratings</Label>
-          <Controller
-            name="collectStarRating"
-            control={control}
-            defaultValue={false}
-            render={({ field }) => (
-              <Switch
-                className="rounded-md [&_span]:rounded"
-                checked={field.value}
-                onCheckedChange={(e) => {
-                  field.onChange(e);
-                  updateSpaceField("collectStar", field.value);
-                }}
-              />
-            )}
-          />
-        </div>
+      <div className="grid sm:grid-cols-2 grid-cols-1 w-full items-center">
+        <Label htmlFor="collectStarRatings">Collect star ratings</Label>
+        <Controller
+          name="collectStarRating"
+          control={control}
+          defaultValue={false}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={(e) => {
+                field.onChange(e);
+                updateSpaceField("collectStar", field.value);
+              }}
+            />
+          )}
+        />
       </div>
       <div className="flex justify-start">
         <Button

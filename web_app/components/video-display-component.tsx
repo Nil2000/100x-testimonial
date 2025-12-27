@@ -21,7 +21,7 @@ export default function VideoDisplayComponent({
   }
 
   return (
-    <div className="flex flex-col items-center relative w-full rounded-lg overflow-hidden">
+    <div className="flex flex-col items-center relative w-full aspect-videorounded-lg overflow-hidden">
       <VideoCustomComponent
         options={{
           ...videoJSOptions,

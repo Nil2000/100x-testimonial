@@ -126,17 +126,22 @@ export default function PublicEmbed({ feedback }: PublicEmbedProps) {
             {feedback.name}
           </h3>
         </div>
-        {!feedback.isSocial && (
-          <p>{renderStars(feedback.rating)}</p>
+        {!feedback.isSocial && <p>{renderStars(feedback.rating)}</p>}
+        {feedback.feedbackType !== "VIDEO" && (
+          <div
+            style={{
+              fontSize: `${styles.bodySize}px`,
+              fontFamily: styles.bodyFont,
+            }}
+          >
+            {feedback.answer}
+          </div>
         )}
-        <div
-          style={{
-            fontSize: `${styles.bodySize}px`,
-            fontFamily: styles.bodyFont,
-          }}
-        >
-          {feedback.answer}
-        </div>
+        {feedback.feedbackType === "VIDEO" && (
+          <div>
+            <video src={feedback.videoUrl!} controls className="w-full" />
+          </div>
+        )}
       </div>
     </div>
   );

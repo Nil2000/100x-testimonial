@@ -43,7 +43,7 @@
     "dotenv": "^17.2.3",
     "embla-carousel-react": "^8.6.0",
     "html-to-image": "1.11.11",
-    "kafkajs": "^2.2.4",
+    "ioredis": "^5.8.2",
     "lucide-react": "^0.469.0",
     "minio": "^8.0.4",
     "motion": "^11.16.4",

@@ -2,11 +2,12 @@
 import { useSpaceStore } from "@/store/spaceStore";
 import React from "react";
 import PublishSpaceSwitch from "../space-settings-controls/publish-space-switch";
-import AnalysisSwitch from "../space-settings-controls/analysis-switch";
+import SentimentSwitch from "../space-settings-controls/sentiment-switch";
+import SpamSwitch from "../space-settings-controls/spam-switch";
 import DeleteSpaceDialog from "../space-settings-controls/delete-space-dialog";
 import { deleteSpace } from "@/actions/spaceActions";
 import { useRouter } from "next/navigation";
-import { Globe, Brain, AlertTriangle } from "lucide-react";
+import { Globe, Brain, Shield, AlertTriangle } from "lucide-react";
 
 export default function SpaceControlView() {
   const { spaceInfo } = useSpaceStore();
@@ -44,7 +45,7 @@ export default function SpaceControlView() {
           </div>
         </div>
 
-        {/* AI Analysis Section */}
+        {/* Sentiment Analysis Section */}
         <div className="rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-start gap-4 p-6">
             <div className="rounded-lg bg-violet-500/10 p-3">
@@ -52,19 +53,42 @@ export default function SpaceControlView() {
             </div>
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-lg">AI Analysis</h3>
+                <h3 className="font-semibold text-lg">Sentiment Analysis</h3>
                 <span className="text-xs bg-violet-500/10 text-violet-600 dark:text-violet-400 px-2 py-0.5 rounded-full font-medium">
                   Beta
                 </span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Enable AI-powered sentiment analysis and insights for your
-                testimonials. Get automated feedback categorization and
-                emotional tone detection.
+                Enable AI-powered sentiment analysis for your testimonials. Get
+                automated feedback categorization and emotional tone detection.
               </p>
             </div>
             <div className="flex-shrink-0">
-              <AnalysisSwitch />
+              <SentimentSwitch />
+            </div>
+          </div>
+        </div>
+
+        {/* Spam Detection Section */}
+        <div className="rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-start gap-4 p-6">
+            <div className="rounded-lg bg-orange-500/10 p-3">
+              <Shield className="h-5 w-5 text-orange-500" />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-lg">Spam Detection</h3>
+                <span className="text-xs bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2 py-0.5 rounded-full font-medium">
+                  Beta
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Automatically detect and filter spam testimonials. Protect your
+                wall of love from low-quality or irrelevant submissions.
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <SpamSwitch />
             </div>
           </div>
         </div>

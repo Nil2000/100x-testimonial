@@ -50,9 +50,10 @@ export type FeedbackMinAggregateOutputType = {
   imageUrl: string | null
   profileImageUrl: string | null
   isSpam: boolean | null
+  spamStatus: $Enums.AnalysisStatus | null
   isSocial: boolean | null
   sentiment: $Enums.SentimentType | null
-  analysisStatus: $Enums.AnalysisStatus | null
+  sentimentStatus: $Enums.AnalysisStatus | null
   source: $Enums.SourceType | null
   sourceUrl: string | null
   metadata: string | null
@@ -74,9 +75,10 @@ export type FeedbackMaxAggregateOutputType = {
   imageUrl: string | null
   profileImageUrl: string | null
   isSpam: boolean | null
+  spamStatus: $Enums.AnalysisStatus | null
   isSocial: boolean | null
   sentiment: $Enums.SentimentType | null
-  analysisStatus: $Enums.AnalysisStatus | null
+  sentimentStatus: $Enums.AnalysisStatus | null
   source: $Enums.SourceType | null
   sourceUrl: string | null
   metadata: string | null
@@ -98,9 +100,10 @@ export type FeedbackCountAggregateOutputType = {
   imageUrl: number
   profileImageUrl: number
   isSpam: number
+  spamStatus: number
   isSocial: number
   sentiment: number
-  analysisStatus: number
+  sentimentStatus: number
   source: number
   sourceUrl: number
   metadata: number
@@ -133,9 +136,10 @@ export type FeedbackMinAggregateInputType = {
   imageUrl?: true
   profileImageUrl?: true
   isSpam?: true
+  spamStatus?: true
   isSocial?: true
   sentiment?: true
-  analysisStatus?: true
+  sentimentStatus?: true
   source?: true
   sourceUrl?: true
   metadata?: true
@@ -157,9 +161,10 @@ export type FeedbackMaxAggregateInputType = {
   imageUrl?: true
   profileImageUrl?: true
   isSpam?: true
+  spamStatus?: true
   isSocial?: true
   sentiment?: true
-  analysisStatus?: true
+  sentimentStatus?: true
   source?: true
   sourceUrl?: true
   metadata?: true
@@ -181,9 +186,10 @@ export type FeedbackCountAggregateInputType = {
   imageUrl?: true
   profileImageUrl?: true
   isSpam?: true
+  spamStatus?: true
   isSocial?: true
   sentiment?: true
-  analysisStatus?: true
+  sentimentStatus?: true
   source?: true
   sourceUrl?: true
   metadata?: true
@@ -293,9 +299,10 @@ export type FeedbackGroupByOutputType = {
   imageUrl: string | null
   profileImageUrl: string | null
   isSpam: boolean
+  spamStatus: $Enums.AnalysisStatus
   isSocial: boolean
   sentiment: $Enums.SentimentType
-  analysisStatus: $Enums.AnalysisStatus
+  sentimentStatus: $Enums.AnalysisStatus
   source: $Enums.SourceType
   sourceUrl: string | null
   metadata: string | null
@@ -341,9 +348,10 @@ export type FeedbackWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   profileImageUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   isSpam?: Prisma.BoolFilter<"Feedback"> | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFilter<"Feedback"> | boolean
   sentiment?: Prisma.EnumSentimentTypeFilter<"Feedback"> | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFilter<"Feedback"> | $Enums.SourceType
   sourceUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableFilter<"Feedback"> | string | null
@@ -367,9 +375,10 @@ export type FeedbackOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   profileImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isSpam?: Prisma.SortOrder
+  spamStatus?: Prisma.SortOrder
   isSocial?: Prisma.SortOrder
   sentiment?: Prisma.SortOrder
-  analysisStatus?: Prisma.SortOrder
+  sentimentStatus?: Prisma.SortOrder
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -396,9 +405,10 @@ export type FeedbackWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   profileImageUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   isSpam?: Prisma.BoolFilter<"Feedback"> | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFilter<"Feedback"> | boolean
   sentiment?: Prisma.EnumSentimentTypeFilter<"Feedback"> | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFilter<"Feedback"> | $Enums.SourceType
   sourceUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableFilter<"Feedback"> | string | null
@@ -422,9 +432,10 @@ export type FeedbackOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   profileImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isSpam?: Prisma.SortOrder
+  spamStatus?: Prisma.SortOrder
   isSocial?: Prisma.SortOrder
   sentiment?: Prisma.SortOrder
-  analysisStatus?: Prisma.SortOrder
+  sentimentStatus?: Prisma.SortOrder
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -455,9 +466,10 @@ export type FeedbackScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
   profileImageUrl?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
   isSpam?: Prisma.BoolWithAggregatesFilter<"Feedback"> | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusWithAggregatesFilter<"Feedback"> | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolWithAggregatesFilter<"Feedback"> | boolean
   sentiment?: Prisma.EnumSentimentTypeWithAggregatesFilter<"Feedback"> | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusWithAggregatesFilter<"Feedback"> | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusWithAggregatesFilter<"Feedback"> | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeWithAggregatesFilter<"Feedback"> | $Enums.SourceType
   sourceUrl?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
@@ -479,9 +491,10 @@ export type FeedbackCreateInput = {
   imageUrl?: string | null
   profileImageUrl?: string | null
   isSpam?: boolean
+  spamStatus?: $Enums.AnalysisStatus
   isSocial?: boolean
   sentiment?: $Enums.SentimentType
-  analysisStatus?: $Enums.AnalysisStatus
+  sentimentStatus?: $Enums.AnalysisStatus
   source?: $Enums.SourceType
   sourceUrl?: string | null
   metadata?: string | null
@@ -505,9 +518,10 @@ export type FeedbackUncheckedCreateInput = {
   imageUrl?: string | null
   profileImageUrl?: string | null
   isSpam?: boolean
+  spamStatus?: $Enums.AnalysisStatus
   isSocial?: boolean
   sentiment?: $Enums.SentimentType
-  analysisStatus?: $Enums.AnalysisStatus
+  sentimentStatus?: $Enums.AnalysisStatus
   source?: $Enums.SourceType
   sourceUrl?: string | null
   metadata?: string | null
@@ -529,9 +543,10 @@ export type FeedbackUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -555,9 +570,10 @@ export type FeedbackUncheckedUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -580,9 +596,10 @@ export type FeedbackCreateManyInput = {
   imageUrl?: string | null
   profileImageUrl?: string | null
   isSpam?: boolean
+  spamStatus?: $Enums.AnalysisStatus
   isSocial?: boolean
   sentiment?: $Enums.SentimentType
-  analysisStatus?: $Enums.AnalysisStatus
+  sentimentStatus?: $Enums.AnalysisStatus
   source?: $Enums.SourceType
   sourceUrl?: string | null
   metadata?: string | null
@@ -604,9 +621,10 @@ export type FeedbackUpdateManyMutationInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -629,9 +647,10 @@ export type FeedbackUncheckedUpdateManyInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -664,9 +683,10 @@ export type FeedbackCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   profileImageUrl?: Prisma.SortOrder
   isSpam?: Prisma.SortOrder
+  spamStatus?: Prisma.SortOrder
   isSocial?: Prisma.SortOrder
   sentiment?: Prisma.SortOrder
-  analysisStatus?: Prisma.SortOrder
+  sentimentStatus?: Prisma.SortOrder
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
@@ -693,9 +713,10 @@ export type FeedbackMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   profileImageUrl?: Prisma.SortOrder
   isSpam?: Prisma.SortOrder
+  spamStatus?: Prisma.SortOrder
   isSocial?: Prisma.SortOrder
   sentiment?: Prisma.SortOrder
-  analysisStatus?: Prisma.SortOrder
+  sentimentStatus?: Prisma.SortOrder
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
@@ -717,9 +738,10 @@ export type FeedbackMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   profileImageUrl?: Prisma.SortOrder
   isSpam?: Prisma.SortOrder
+  spamStatus?: Prisma.SortOrder
   isSocial?: Prisma.SortOrder
   sentiment?: Prisma.SortOrder
-  analysisStatus?: Prisma.SortOrder
+  sentimentStatus?: Prisma.SortOrder
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
@@ -775,12 +797,12 @@ export type EnumFeedbackTypeFieldUpdateOperationsInput = {
   set?: $Enums.FeedbackType
 }
 
-export type EnumSentimentTypeFieldUpdateOperationsInput = {
-  set?: $Enums.SentimentType
-}
-
 export type EnumAnalysisStatusFieldUpdateOperationsInput = {
   set?: $Enums.AnalysisStatus
+}
+
+export type EnumSentimentTypeFieldUpdateOperationsInput = {
+  set?: $Enums.SentimentType
 }
 
 export type EnumSourceTypeFieldUpdateOperationsInput = {
@@ -802,9 +824,10 @@ export type FeedbackCreateWithoutSpaceInput = {
   imageUrl?: string | null
   profileImageUrl?: string | null
   isSpam?: boolean
+  spamStatus?: $Enums.AnalysisStatus
   isSocial?: boolean
   sentiment?: $Enums.SentimentType
-  analysisStatus?: $Enums.AnalysisStatus
+  sentimentStatus?: $Enums.AnalysisStatus
   source?: $Enums.SourceType
   sourceUrl?: string | null
   metadata?: string | null
@@ -826,9 +849,10 @@ export type FeedbackUncheckedCreateWithoutSpaceInput = {
   imageUrl?: string | null
   profileImageUrl?: string | null
   isSpam?: boolean
+  spamStatus?: $Enums.AnalysisStatus
   isSocial?: boolean
   sentiment?: $Enums.SentimentType
-  analysisStatus?: $Enums.AnalysisStatus
+  sentimentStatus?: $Enums.AnalysisStatus
   source?: $Enums.SourceType
   sourceUrl?: string | null
   metadata?: string | null
@@ -880,9 +904,10 @@ export type FeedbackScalarWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   profileImageUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   isSpam?: Prisma.BoolFilter<"Feedback"> | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFilter<"Feedback"> | boolean
   sentiment?: Prisma.EnumSentimentTypeFilter<"Feedback"> | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFilter<"Feedback"> | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFilter<"Feedback"> | $Enums.SourceType
   sourceUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableFilter<"Feedback"> | string | null
@@ -904,9 +929,10 @@ export type FeedbackCreateManySpaceInput = {
   imageUrl?: string | null
   profileImageUrl?: string | null
   isSpam?: boolean
+  spamStatus?: $Enums.AnalysisStatus
   isSocial?: boolean
   sentiment?: $Enums.SentimentType
-  analysisStatus?: $Enums.AnalysisStatus
+  sentimentStatus?: $Enums.AnalysisStatus
   source?: $Enums.SourceType
   sourceUrl?: string | null
   metadata?: string | null
@@ -928,9 +954,10 @@ export type FeedbackUpdateWithoutSpaceInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -952,9 +979,10 @@ export type FeedbackUncheckedUpdateWithoutSpaceInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -976,9 +1004,10 @@ export type FeedbackUncheckedUpdateManyWithoutSpaceInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSpam?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spamStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   isSocial?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentiment?: Prisma.EnumSentimentTypeFieldUpdateOperationsInput | $Enums.SentimentType
-  analysisStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
+  sentimentStatus?: Prisma.EnumAnalysisStatusFieldUpdateOperationsInput | $Enums.AnalysisStatus
   source?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1003,9 +1032,10 @@ export type FeedbackSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   imageUrl?: boolean
   profileImageUrl?: boolean
   isSpam?: boolean
+  spamStatus?: boolean
   isSocial?: boolean
   sentiment?: boolean
-  analysisStatus?: boolean
+  sentimentStatus?: boolean
   source?: boolean
   sourceUrl?: boolean
   metadata?: boolean
@@ -1029,9 +1059,10 @@ export type FeedbackSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   imageUrl?: boolean
   profileImageUrl?: boolean
   isSpam?: boolean
+  spamStatus?: boolean
   isSocial?: boolean
   sentiment?: boolean
-  analysisStatus?: boolean
+  sentimentStatus?: boolean
   source?: boolean
   sourceUrl?: boolean
   metadata?: boolean
@@ -1055,9 +1086,10 @@ export type FeedbackSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   imageUrl?: boolean
   profileImageUrl?: boolean
   isSpam?: boolean
+  spamStatus?: boolean
   isSocial?: boolean
   sentiment?: boolean
-  analysisStatus?: boolean
+  sentimentStatus?: boolean
   source?: boolean
   sourceUrl?: boolean
   metadata?: boolean
@@ -1081,16 +1113,17 @@ export type FeedbackSelectScalar = {
   imageUrl?: boolean
   profileImageUrl?: boolean
   isSpam?: boolean
+  spamStatus?: boolean
   isSocial?: boolean
   sentiment?: boolean
-  analysisStatus?: boolean
+  sentimentStatus?: boolean
   source?: boolean
   sourceUrl?: boolean
   metadata?: boolean
   styleSettings?: boolean
 }
 
-export type FeedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "answer" | "name" | "email" | "rating" | "permission" | "spaceId" | "createdAt" | "updatedAt" | "feedbackType" | "addToWallOfLove" | "videoUrl" | "imageUrl" | "profileImageUrl" | "isSpam" | "isSocial" | "sentiment" | "analysisStatus" | "source" | "sourceUrl" | "metadata" | "styleSettings", ExtArgs["result"]["feedback"]>
+export type FeedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "answer" | "name" | "email" | "rating" | "permission" | "spaceId" | "createdAt" | "updatedAt" | "feedbackType" | "addToWallOfLove" | "videoUrl" | "imageUrl" | "profileImageUrl" | "isSpam" | "spamStatus" | "isSocial" | "sentiment" | "sentimentStatus" | "source" | "sourceUrl" | "metadata" | "styleSettings", ExtArgs["result"]["feedback"]>
 export type FeedbackInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   space?: boolean | Prisma.SpaceDefaultArgs<ExtArgs>
 }
@@ -1122,9 +1155,10 @@ export type $FeedbackPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     imageUrl: string | null
     profileImageUrl: string | null
     isSpam: boolean
+    spamStatus: $Enums.AnalysisStatus
     isSocial: boolean
     sentiment: $Enums.SentimentType
-    analysisStatus: $Enums.AnalysisStatus
+    sentimentStatus: $Enums.AnalysisStatus
     source: $Enums.SourceType
     sourceUrl: string | null
     metadata: string | null
@@ -1568,9 +1602,10 @@ export interface FeedbackFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"Feedback", 'String'>
   readonly profileImageUrl: Prisma.FieldRef<"Feedback", 'String'>
   readonly isSpam: Prisma.FieldRef<"Feedback", 'Boolean'>
+  readonly spamStatus: Prisma.FieldRef<"Feedback", 'AnalysisStatus'>
   readonly isSocial: Prisma.FieldRef<"Feedback", 'Boolean'>
   readonly sentiment: Prisma.FieldRef<"Feedback", 'SentimentType'>
-  readonly analysisStatus: Prisma.FieldRef<"Feedback", 'AnalysisStatus'>
+  readonly sentimentStatus: Prisma.FieldRef<"Feedback", 'AnalysisStatus'>
   readonly source: Prisma.FieldRef<"Feedback", 'SourceType'>
   readonly sourceUrl: Prisma.FieldRef<"Feedback", 'String'>
   readonly metadata: Prisma.FieldRef<"Feedback", 'String'>

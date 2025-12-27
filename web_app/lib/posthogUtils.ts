@@ -83,7 +83,7 @@ export const postHogExecQuery = async (
   url: string
 ) => {
   const query = generateQuery(days, event, url);
-  console.log("PostHog query", JSON.stringify(query));
+  // console.log("PostHog query", JSON.stringify(query));
   const posthogResponse = await axios.post(
     process.env.POSTHOG_METRICS_QUERY_URL || "",
     query,
