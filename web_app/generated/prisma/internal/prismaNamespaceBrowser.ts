@@ -145,6 +145,7 @@ export const SpaceScalarFieldEnum = {
   theme: 'theme',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
   createdById: 'createdById',
   isPublished: 'isPublished'
 } as const
@@ -197,7 +198,8 @@ export const FeedbackScalarFieldEnum = {
   source: 'source',
   sourceUrl: 'sourceUrl',
   metadata: 'metadata',
-  styleSettings: 'styleSettings'
+  styleSettings: 'styleSettings',
+  isArchived: 'isArchived'
 } as const
 
 export type FeedbackScalarFieldEnum = (typeof FeedbackScalarFieldEnum)[keyof typeof FeedbackScalarFieldEnum]

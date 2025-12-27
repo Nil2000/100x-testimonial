@@ -13,10 +13,11 @@ export async function GET(
   }
 
   try {
-    const space = await db.space.findUnique({
+    const space = await db.space.findFirst({
       where: {
         id,
         createdById: session.user.id,
+        deletedAt: null,
       },
       include: {
         questions: {

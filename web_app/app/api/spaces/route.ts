@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     const spaces = await db.space.findMany({
       where: {
         createdById: session.user.id,
+        deletedAt: null,
       },
       select: {
         id: true,

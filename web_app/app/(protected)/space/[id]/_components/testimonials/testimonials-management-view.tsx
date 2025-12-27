@@ -8,6 +8,7 @@ import {
   HandHeart,
   MessageSquareWarningIcon,
   Send,
+  Archive,
 } from "lucide-react";
 import TestimonialsListManager from "./testimonials-list-manager";
 import SocialTestimonialsTab from "./social-testimonials-tab";
@@ -65,6 +66,18 @@ const testimonialManagementTabs = [
       <TestimonialsListManager
         key="spam-testimonials"
         category="SPAM"
+        isSocial={false}
+      />
+    ),
+  },
+  {
+    tabTitle: "Archived",
+    tabDescription: "Archived testimonials",
+    tabIcon: Archive,
+    tabContent: (
+      <TestimonialsListManager
+        key="archived-testimonials"
+        archived={true}
         isSocial={false}
       />
     ),

@@ -57,6 +57,7 @@ export type FeedbackMinAggregateOutputType = {
   source: $Enums.SourceType | null
   sourceUrl: string | null
   metadata: string | null
+  isArchived: boolean | null
 }
 
 export type FeedbackMaxAggregateOutputType = {
@@ -82,6 +83,7 @@ export type FeedbackMaxAggregateOutputType = {
   source: $Enums.SourceType | null
   sourceUrl: string | null
   metadata: string | null
+  isArchived: boolean | null
 }
 
 export type FeedbackCountAggregateOutputType = {
@@ -108,6 +110,7 @@ export type FeedbackCountAggregateOutputType = {
   sourceUrl: number
   metadata: number
   styleSettings: number
+  isArchived: number
   _all: number
 }
 
@@ -143,6 +146,7 @@ export type FeedbackMinAggregateInputType = {
   source?: true
   sourceUrl?: true
   metadata?: true
+  isArchived?: true
 }
 
 export type FeedbackMaxAggregateInputType = {
@@ -168,6 +172,7 @@ export type FeedbackMaxAggregateInputType = {
   source?: true
   sourceUrl?: true
   metadata?: true
+  isArchived?: true
 }
 
 export type FeedbackCountAggregateInputType = {
@@ -194,6 +199,7 @@ export type FeedbackCountAggregateInputType = {
   sourceUrl?: true
   metadata?: true
   styleSettings?: true
+  isArchived?: true
   _all?: true
 }
 
@@ -307,6 +313,7 @@ export type FeedbackGroupByOutputType = {
   sourceUrl: string | null
   metadata: string | null
   styleSettings: runtime.JsonValue | null
+  isArchived: boolean
   _count: FeedbackCountAggregateOutputType | null
   _avg: FeedbackAvgAggregateOutputType | null
   _sum: FeedbackSumAggregateOutputType | null
@@ -356,6 +363,7 @@ export type FeedbackWhereInput = {
   sourceUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableFilter<"Feedback"> | string | null
   styleSettings?: Prisma.JsonNullableFilter<"Feedback">
+  isArchived?: Prisma.BoolFilter<"Feedback"> | boolean
   space?: Prisma.XOR<Prisma.SpaceScalarRelationFilter, Prisma.SpaceWhereInput>
 }
 
@@ -383,6 +391,7 @@ export type FeedbackOrderByWithRelationInput = {
   sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   styleSettings?: Prisma.SortOrderInput | Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
   space?: Prisma.SpaceOrderByWithRelationInput
 }
 
@@ -413,6 +422,7 @@ export type FeedbackWhereUniqueInput = Prisma.AtLeast<{
   sourceUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableFilter<"Feedback"> | string | null
   styleSettings?: Prisma.JsonNullableFilter<"Feedback">
+  isArchived?: Prisma.BoolFilter<"Feedback"> | boolean
   space?: Prisma.XOR<Prisma.SpaceScalarRelationFilter, Prisma.SpaceWhereInput>
 }, "id">
 
@@ -440,6 +450,7 @@ export type FeedbackOrderByWithAggregationInput = {
   sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   styleSettings?: Prisma.SortOrderInput | Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
   _count?: Prisma.FeedbackCountOrderByAggregateInput
   _avg?: Prisma.FeedbackAvgOrderByAggregateInput
   _max?: Prisma.FeedbackMaxOrderByAggregateInput
@@ -474,6 +485,7 @@ export type FeedbackScalarWhereWithAggregatesInput = {
   sourceUrl?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
   styleSettings?: Prisma.JsonNullableWithAggregatesFilter<"Feedback">
+  isArchived?: Prisma.BoolWithAggregatesFilter<"Feedback"> | boolean
 }
 
 export type FeedbackCreateInput = {
@@ -499,6 +511,7 @@ export type FeedbackCreateInput = {
   sourceUrl?: string | null
   metadata?: string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: boolean
   space: Prisma.SpaceCreateNestedOneWithoutFeedbacksInput
 }
 
@@ -526,6 +539,7 @@ export type FeedbackUncheckedCreateInput = {
   sourceUrl?: string | null
   metadata?: string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: boolean
 }
 
 export type FeedbackUpdateInput = {
@@ -551,6 +565,7 @@ export type FeedbackUpdateInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   space?: Prisma.SpaceUpdateOneRequiredWithoutFeedbacksNestedInput
 }
 
@@ -578,6 +593,7 @@ export type FeedbackUncheckedUpdateInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FeedbackCreateManyInput = {
@@ -604,6 +620,7 @@ export type FeedbackCreateManyInput = {
   sourceUrl?: string | null
   metadata?: string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: boolean
 }
 
 export type FeedbackUpdateManyMutationInput = {
@@ -629,6 +646,7 @@ export type FeedbackUpdateManyMutationInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FeedbackUncheckedUpdateManyInput = {
@@ -655,6 +673,7 @@ export type FeedbackUncheckedUpdateManyInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FeedbackListRelationFilter = {
@@ -691,6 +710,7 @@ export type FeedbackCountOrderByAggregateInput = {
   sourceUrl?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   styleSettings?: Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
 }
 
 export type FeedbackAvgOrderByAggregateInput = {
@@ -720,6 +740,7 @@ export type FeedbackMaxOrderByAggregateInput = {
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
 }
 
 export type FeedbackMinOrderByAggregateInput = {
@@ -745,6 +766,7 @@ export type FeedbackMinOrderByAggregateInput = {
   source?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
 }
 
 export type FeedbackSumOrderByAggregateInput = {
@@ -832,6 +854,7 @@ export type FeedbackCreateWithoutSpaceInput = {
   sourceUrl?: string | null
   metadata?: string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: boolean
 }
 
 export type FeedbackUncheckedCreateWithoutSpaceInput = {
@@ -857,6 +880,7 @@ export type FeedbackUncheckedCreateWithoutSpaceInput = {
   sourceUrl?: string | null
   metadata?: string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: boolean
 }
 
 export type FeedbackCreateOrConnectWithoutSpaceInput = {
@@ -912,6 +936,7 @@ export type FeedbackScalarWhereInput = {
   sourceUrl?: Prisma.StringNullableFilter<"Feedback"> | string | null
   metadata?: Prisma.StringNullableFilter<"Feedback"> | string | null
   styleSettings?: Prisma.JsonNullableFilter<"Feedback">
+  isArchived?: Prisma.BoolFilter<"Feedback"> | boolean
 }
 
 export type FeedbackCreateManySpaceInput = {
@@ -937,6 +962,7 @@ export type FeedbackCreateManySpaceInput = {
   sourceUrl?: string | null
   metadata?: string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: boolean
 }
 
 export type FeedbackUpdateWithoutSpaceInput = {
@@ -962,6 +988,7 @@ export type FeedbackUpdateWithoutSpaceInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FeedbackUncheckedUpdateWithoutSpaceInput = {
@@ -987,6 +1014,7 @@ export type FeedbackUncheckedUpdateWithoutSpaceInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FeedbackUncheckedUpdateManyWithoutSpaceInput = {
@@ -1012,6 +1040,7 @@ export type FeedbackUncheckedUpdateManyWithoutSpaceInput = {
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   styleSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -1040,6 +1069,7 @@ export type FeedbackSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   sourceUrl?: boolean
   metadata?: boolean
   styleSettings?: boolean
+  isArchived?: boolean
   space?: boolean | Prisma.SpaceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedback"]>
 
@@ -1067,6 +1097,7 @@ export type FeedbackSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   sourceUrl?: boolean
   metadata?: boolean
   styleSettings?: boolean
+  isArchived?: boolean
   space?: boolean | Prisma.SpaceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedback"]>
 
@@ -1094,6 +1125,7 @@ export type FeedbackSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   sourceUrl?: boolean
   metadata?: boolean
   styleSettings?: boolean
+  isArchived?: boolean
   space?: boolean | Prisma.SpaceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedback"]>
 
@@ -1121,9 +1153,10 @@ export type FeedbackSelectScalar = {
   sourceUrl?: boolean
   metadata?: boolean
   styleSettings?: boolean
+  isArchived?: boolean
 }
 
-export type FeedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "answer" | "name" | "email" | "rating" | "permission" | "spaceId" | "createdAt" | "updatedAt" | "feedbackType" | "addToWallOfLove" | "videoUrl" | "imageUrl" | "profileImageUrl" | "isSpam" | "spamStatus" | "isSocial" | "sentiment" | "sentimentStatus" | "source" | "sourceUrl" | "metadata" | "styleSettings", ExtArgs["result"]["feedback"]>
+export type FeedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "answer" | "name" | "email" | "rating" | "permission" | "spaceId" | "createdAt" | "updatedAt" | "feedbackType" | "addToWallOfLove" | "videoUrl" | "imageUrl" | "profileImageUrl" | "isSpam" | "spamStatus" | "isSocial" | "sentiment" | "sentimentStatus" | "source" | "sourceUrl" | "metadata" | "styleSettings" | "isArchived", ExtArgs["result"]["feedback"]>
 export type FeedbackInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   space?: boolean | Prisma.SpaceDefaultArgs<ExtArgs>
 }
@@ -1163,6 +1196,7 @@ export type $FeedbackPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     sourceUrl: string | null
     metadata: string | null
     styleSettings: runtime.JsonValue | null
+    isArchived: boolean
   }, ExtArgs["result"]["feedback"]>
   composites: {}
 }
@@ -1610,6 +1644,7 @@ export interface FeedbackFieldRefs {
   readonly sourceUrl: Prisma.FieldRef<"Feedback", 'String'>
   readonly metadata: Prisma.FieldRef<"Feedback", 'String'>
   readonly styleSettings: Prisma.FieldRef<"Feedback", 'Json'>
+  readonly isArchived: Prisma.FieldRef<"Feedback", 'Boolean'>
 }
     
 

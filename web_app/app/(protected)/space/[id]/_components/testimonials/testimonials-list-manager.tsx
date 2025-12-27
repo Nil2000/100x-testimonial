@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Import, SearchIcon } from "lucide-react";
 import TestimonialSortDropdown from "./testimonial-sort-dropdown";
 import TestimonialItemCard from "./cards/testimonial-item-card";
+import ArchivedTestimonialCard from "./cards/archived-testimonial-card";
 import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
 import ShareableLinkDialog from "../sharing/shareable-link-dialog";
 import ImportSocialDialog from "./import-social-dialog";
@@ -189,26 +190,34 @@ export default function TestimonialsListManager({
         </div>
       )}
       {!isSocial
-        ? getTestimonialsByPage().map((testimonial: any) => (
-            <TestimonialItemCard
-              key={testimonial.id}
-              testimonial={testimonial}
-              removeFromWallOfLove={removeFromWallOfLove}
-              shareForEmbed={() => {
-                setSelectedTestimonial(testimonial);
-                setIsOpenEmbedTestimonial(true);
-              }}
-              shareForImage={() => {
-                setSelectedTestimonial(testimonial);
-                setIsOpenShareImage(true);
-              }}
-              getLink={() => {
-                setSelectedTestimonial(testimonial);
-                setOpenGetLinkDialog(true);
-              }}
-              removeFromList={removeFromList}
-            />
-          ))
+        ? getTestimonialsByPage().map((testimonial: any) =>
+            archived ? (
+              <ArchivedTestimonialCard
+                key={testimonial.id}
+                testimonial={testimonial}
+                removeFromList={removeFromList}
+              />
+            ) : (
+              <TestimonialItemCard
+                key={testimonial.id}
+                testimonial={testimonial}
+                removeFromWallOfLove={removeFromWallOfLove}
+                shareForEmbed={() => {
+                  setSelectedTestimonial(testimonial);
+                  setIsOpenEmbedTestimonial(true);
+                }}
+                shareForImage={() => {
+                  setSelectedTestimonial(testimonial);
+                  setIsOpenShareImage(true);
+                }}
+                getLink={() => {
+                  setSelectedTestimonial(testimonial);
+                  setOpenGetLinkDialog(true);
+                }}
+                removeFromList={removeFromList}
+              />
+            )
+          )
         : getTestimonialsByPage().map((testimonial: any) => (
             <SocialMedialTestimonialCard
               key={createId()}
