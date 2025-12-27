@@ -22,11 +22,23 @@ export async function GET(req: NextRequest) {
   try {
     let feedbacks;
 
+    // Handle archived testimonials
+    if (archived === "true") {
+      feedbacks = await db.feedback.findMany({
+        where: {
+          spaceId: spaceId,
+          isArchived: true,
+        },
+      });
+      return NextResponse.json(feedbacks);
+    }
+
     // Handle social testimonials with optional platform filtering
     if (isSocial === "true") {
       const whereClause: any = {
         spaceId: spaceId,
         isSocial: true,
+        isArchived: false,
       };
 
       // If category is specified for social testimonials, filter by platform
@@ -47,6 +59,7 @@ export async function GET(req: NextRequest) {
           spaceId: spaceId,
           isSpam: true,
           isSocial: false, // Exclude social testimonials from spam view
+          isArchived: false,
         },
       });
       return NextResponse.json(feedbacks);
@@ -59,6 +72,7 @@ export async function GET(req: NextRequest) {
           spaceId: spaceId,
           addToWallOfLove: addToWallOfLove === "true",
           isSocial: false, // Exclude social testimonials from wall of love by default
+          isArchived: false,
         },
       });
       return NextResponse.json(feedbacks);
@@ -71,16 +85,18 @@ export async function GET(req: NextRequest) {
           spaceId: spaceId,
           feedbackType: category,
           isSocial: false, // Exclude social testimonials
+          isArchived: false,
         },
       });
       return NextResponse.json(feedbacks);
     }
 
-    // Default case: get all non-social testimonials
+    // Default case: get all non-social, non-archived testimonials
     feedbacks = await db.feedback.findMany({
       where: {
         spaceId: spaceId,
         isSocial: false, // Exclude social testimonials by default
+        isArchived: false,
       },
     });
 

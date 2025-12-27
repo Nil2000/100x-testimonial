@@ -89,6 +89,7 @@ model Space {
   theme              Json?          @db.Json
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
+  deletedAt          DateTime?
   createdById        String
   createdBy          User           @relation(fields: [createdById], references: [id])
   thankyouSpace      ThankYouSpace?
@@ -167,6 +168,7 @@ model Feedback {
   sourceUrl       String?
   metadata        String?
   styleSettings   Json?          @db.Json
+  isArchived      Boolean        @default(false)
 
   space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }
