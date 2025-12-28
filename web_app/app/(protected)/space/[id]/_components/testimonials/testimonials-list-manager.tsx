@@ -124,14 +124,18 @@ export default function TestimonialsListManager({
     if (!id) return;
 
     if (wallOfLove) {
-      setTestimonials((prev) => prev.filter((t: any) => t.id !== id));
+      setTestimonials((prev) =>
+        prev.filter((t: TestimonialResponse) => t.id !== id)
+      );
       toast.success("Testimonial removed from wall of love");
     }
   };
 
   const removeFromList = (id: string) => {
     if (!id) return;
-    setTestimonials((prev) => prev.filter((t: any) => t.id !== id));
+    setTestimonials((prev) =>
+      prev.filter((t: TestimonialResponse) => t.id !== id)
+    );
     toast.success("Testimonial deleted successfully");
   };
 
@@ -190,7 +194,7 @@ export default function TestimonialsListManager({
         </div>
       )}
       {!isSocial
-        ? getTestimonialsByPage().map((testimonial: any) =>
+        ? getTestimonialsByPage().map((testimonial: TestimonialResponse) =>
             archived ? (
               <ArchivedTestimonialCard
                 key={testimonial.id}
@@ -218,7 +222,7 @@ export default function TestimonialsListManager({
               />
             )
           )
-        : getTestimonialsByPage().map((testimonial: any) => (
+        : getTestimonialsByPage().map((testimonial: TestimonialResponse) => (
             <SocialMediaTestimonialCard
               key={createId()}
               testimonial={testimonial}
@@ -262,7 +266,7 @@ export default function TestimonialsListManager({
           setOpenGetLinkDialog(false);
           setSelectedTestimonial(null);
         }}
-        testimonialId={selectedTestimonial?.id!}
+        testimonialId={selectedTestimonial?.id || ""}
         spaceName={spaceInfo.name}
       />
       {isSocial && socialPlatform && (
@@ -271,7 +275,10 @@ export default function TestimonialsListManager({
           onClose={(result) => {
             setOpenImportDialog(false);
             if (result.type === "success" && result.data) {
-              setTestimonials((prev) => [...prev, result.data]);
+              setTestimonials((prev) => [
+                ...prev,
+                result.data as unknown as TestimonialResponse,
+              ]);
               toast.success("Social media testimonial imported successfully!");
             }
             if (result.type === "error") {

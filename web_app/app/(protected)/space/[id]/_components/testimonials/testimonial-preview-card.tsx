@@ -6,6 +6,7 @@ import { CheckCircle2, Pen, Video } from "lucide-react";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
 import { CollectionType } from "@/generated/prisma/enums";
+import { Question } from "@/lib/types";
 
 export default function TestimonialPreview() {
   const { spaceInfo } = useSpaceStore();
@@ -62,7 +63,7 @@ export default function TestimonialPreview() {
             </h2>
             <ul className="space-y-2">
               {questions.length > 0 ? (
-                questions.map((question: any) => (
+                questions.map((question: Question) => (
                   <li
                     key={question.id}
                     className="flex items-start gap-2 text-sm text-foreground/80"

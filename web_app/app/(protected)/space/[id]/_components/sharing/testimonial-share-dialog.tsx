@@ -11,7 +11,11 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TestimonialResponse } from "@/lib/types";
+import {
+  TestimonialResponse,
+  TwitterEntity,
+  TwitterMetadata,
+} from "@/lib/types";
 import React from "react";
 import { TbBorderRadius } from "react-icons/tb";
 import { RiShadowFill } from "react-icons/ri";
@@ -28,7 +32,6 @@ import {
 } from "lucide-react";
 import TextTabContent from "./customization/TextTabContent";
 import { toPng, toBlob } from "html-to-image";
-import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 type TestimonialShareDialogProps = {
@@ -42,8 +45,6 @@ export default function TestimonialShareDialog({
   onClose,
   feedbackInfo,
 }: TestimonialShareDialogProps) {
-  const { theme } = useTheme();
-
   const getDefaultSettings = () => ({
     alignment: "left",
     padding: 10,
@@ -71,7 +72,7 @@ export default function TestimonialShareDialog({
 
   const [settings, setSettings] = React.useState(getDefaultSettings);
 
-  const updateSetting = (key: string, value: any) => {
+  const updateSetting = (key: string, value: string | number | boolean) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -475,18 +476,13 @@ export default function TestimonialShareDialog({
   );
 }
 
-const processTwitterBodyUsingMetadata = (metadata: any) => {
-  let text = metadata.data.text;
+const processTwitterBodyUsingMetadata = (metadata: TwitterMetadata) => {
+  const text = metadata.data.text;
 
-  let allEntities: Array<{
-    start: number;
-    end: number;
-    type: string;
-    data: any;
-  }> = [];
+  const allEntities: TwitterEntity[] = [];
 
   // Add all mentions
-  metadata.data.entities.mentions?.forEach((mention: any) => {
+  metadata.data.entities.mentions?.forEach((mention) => {
     allEntities.push({
       start: mention.start,
       end: mention.end,
@@ -496,7 +492,7 @@ const processTwitterBodyUsingMetadata = (metadata: any) => {
   });
 
   // Add all hashtags
-  metadata.data.entities.hashtags?.forEach((hashtag: any) => {
+  metadata.data.entities.hashtags?.forEach((hashtag) => {
     allEntities.push({
       start: hashtag.start,
       end: hashtag.end,
@@ -505,7 +501,7 @@ const processTwitterBodyUsingMetadata = (metadata: any) => {
     });
   });
   // Add all urls
-  metadata.data.entities.urls?.forEach((url: any) => {
+  metadata.data.entities.urls?.forEach((url) => {
     allEntities.push({
       start: url.start,
       end: url.end,

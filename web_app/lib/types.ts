@@ -142,3 +142,59 @@ export interface Metric {
   pageViews: number;
   visitors: number;
 }
+
+export type DeepObject = {
+  [key: string]: string | number | boolean | DeepObject | unknown;
+};
+
+export type JsonPrimitive = string | number | boolean | null;
+
+export type JsonValue =
+  | JsonPrimitive
+  | { [key: string]: JsonValue }
+  | JsonValue[];
+
+export type JsonObject = { [key: string]: JsonValue };
+
+export type TwitterMentionEntity = {
+  start: number;
+  end: number;
+  username: string;
+} & JsonObject;
+
+export type TwitterHashtagEntity = {
+  start: number;
+  end: number;
+  tag: string;
+} & JsonObject;
+
+export type TwitterUrlEntity = {
+  start: number;
+  end: number;
+  expanded_url: string;
+} & JsonObject;
+
+export type TwitterEntity =
+  | ({ type: "mention"; data: TwitterMentionEntity } & {
+      start: number;
+      end: number;
+    })
+  | ({ type: "hashtag"; data: TwitterHashtagEntity } & {
+      start: number;
+      end: number;
+    })
+  | ({ type: "url"; data: TwitterUrlEntity } & {
+      start: number;
+      end: number;
+    });
+
+export type TwitterMetadata = {
+  data: {
+    text: string;
+    entities: {
+      mentions?: TwitterMentionEntity[];
+      hashtags?: TwitterHashtagEntity[];
+      urls?: TwitterUrlEntity[];
+    } & JsonObject;
+  } & JsonObject;
+} & JsonObject;

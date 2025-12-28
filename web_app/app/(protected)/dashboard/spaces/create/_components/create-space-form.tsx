@@ -33,6 +33,7 @@ export default function CreateSpaceForm({
   setHeaderTitlePreview,
   setCustomMessagePreview,
   setQuestionsPreview,
+  setCollectionTypePreview,
 }: {
   setFileSelected: React.Dispatch<React.SetStateAction<File | null>>;
   isFileSelected: File | null;
@@ -40,6 +41,9 @@ export default function CreateSpaceForm({
   setCustomMessagePreview: React.Dispatch<React.SetStateAction<string>>;
   setQuestionsPreview: React.Dispatch<
     React.SetStateAction<CreateSpaceQuestion[]>
+  >;
+  setCollectionTypePreview: React.Dispatch<
+    React.SetStateAction<CollectionType>
   >;
 }) {
   const {
@@ -121,9 +125,9 @@ export default function CreateSpaceForm({
     }
     startTransition(() => {
       createSpace(data)
-        .then((res: any) => {
+        .then((res) => {
           if (res.error) {
-            throw new Error(res.error);
+            throw new Error(String(res.error));
           }
           console.log(res.message);
           toast.success("Space created successfully!");
@@ -324,7 +328,13 @@ export default function CreateSpaceForm({
               name="collectionType"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    setCollectionTypePreview(e as CollectionType);
+                  }}
+                  value={field.value}
+                >
                   <SelectTrigger name="options" className="w-full">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>

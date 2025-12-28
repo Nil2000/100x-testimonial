@@ -2,23 +2,32 @@
 import { Card } from "@/components/ui/card";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Pen } from "lucide-react";
+import { CheckCircle2, Pen, Video } from "lucide-react";
 import ImagePrview from "./image-preview";
 import LivePreviewbadge from "@/components/live-preview-badge";
 import { CreateSpaceQuestion } from "@/lib/types";
+import { CollectionType } from "@/generated/prisma/enums";
 
 export default function PreviewSpace({
   selectedFile,
   headerTitle,
   customMessage,
   questions,
+  collectionType,
 }: {
   selectedFile: File | null;
   headerTitle: string;
   customMessage: string;
   questions: CreateSpaceQuestion[];
+  collectionType: CollectionType;
 }) {
   const validQuestions = questions.filter((q) => q.title.trim() !== "");
+  const showText =
+    collectionType === CollectionType.TEXT ||
+    collectionType === CollectionType.TEXT_AND_VIDEO;
+  const showVideo =
+    collectionType === CollectionType.VIDEO ||
+    collectionType === CollectionType.TEXT_AND_VIDEO;
 
   return (
     <div className="space-y-3">
@@ -80,14 +89,26 @@ export default function PreviewSpace({
 
           {/* CTA Button */}
           <div className="w-full pt-2">
-            <Button className="w-full group gap-2" size="lg">
-              <Pen
-                className="transition-transform group-hover:-rotate-12"
-                size={16}
-                strokeWidth={2}
-              />
-              Write a Testimonial
-            </Button>
+            {showVideo && (
+              <Button className="w-full group gap-2" variant={"outline"}>
+                <Video
+                  className="transition-transform group-hover:-rotate-12"
+                  size={16}
+                  strokeWidth={2}
+                />
+                Upload video
+              </Button>
+            )}
+            {showText && (
+              <Button className="w-full group gap-2">
+                <Pen
+                  className="transition-transform group-hover:-rotate-12"
+                  size={16}
+                  strokeWidth={2}
+                />
+                Write as text
+              </Button>
+            )}
           </div>
         </div>
       </Card>
