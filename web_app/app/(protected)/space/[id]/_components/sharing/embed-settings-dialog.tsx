@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TestimonialResponse } from "@/lib/types";
+import { StyleSettings, TestimonialResponse } from "@/lib/types";
 import { TbBorderRadius } from "react-icons/tb";
 import { RiShadowFill } from "react-icons/ri";
 import { TbBackground } from "react-icons/tb";
@@ -29,7 +29,11 @@ import { toast } from "sonner";
 type EmbedSettingsDialogProps = {
   isOpen: boolean;
   onClose: () => void;
-  testimonial: (TestimonialResponse & { styleSettings?: any }) | null;
+  testimonial:
+    | (TestimonialResponse & {
+        styleSettings?: StyleSettings | null;
+      })
+    | null;
 };
 
 export default function EmbedSettingsDialog({
@@ -42,7 +46,7 @@ export default function EmbedSettingsDialog({
   const [isPending, startTransition] = useTransition();
 
   // Default settings object
-  const getDefaultSettings = () => ({
+  const getDefaultSettings: () => StyleSettings = () => ({
     alignment: "left",
     padding: 10,
     borderRadius: "medium",
@@ -67,11 +71,16 @@ export default function EmbedSettingsDialog({
 
   // Single settings object
   const [settings, setSettings] = useState(getDefaultSettings());
-  const [initialSettings, setInitialSettings] = useState<any>(null);
+  const [initialSettings, setInitialSettings] = useState<StyleSettings | null>(
+    null
+  );
   const [hasChanges, setHasChanges] = useState(false);
 
   // Helper function to update settings
-  const updateSetting = (key: string, value: any) => {
+  const updateSetting = (
+    key: string,
+    value: string | number | boolean | null
+  ) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -285,9 +294,9 @@ export default function EmbedSettingsDialog({
                   }
                   bodyColor={settings.bodyColor}
                   setBodyColor={(value) => updateSetting("bodyColor", value)}
-                  headerSize={settings.headerSize}
+                  headerSize={settings.headerSize!}
                   setHeaderSize={(value) => updateSetting("headerSize", value)}
-                  bodySize={settings.bodySize}
+                  bodySize={settings.bodySize!}
                   setBodySize={(value) => updateSetting("bodySize", value)}
                   headerFont={settings.headerFont}
                   setHeaderFont={(value) => updateSetting("headerFont", value)}

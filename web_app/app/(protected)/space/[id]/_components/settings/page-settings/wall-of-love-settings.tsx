@@ -34,9 +34,9 @@ export default function WallOfLovePage() {
   const [selectedStyleOption, setSelectedStyleOption] = React.useState<string>(
     currentWallOfLoveSettings?.style || WALL_OF_LOVE_STYLE_CHOICES[0].value
   );
-  const [selectedExtraOptions, setSelectedExtraOptions] = React.useState<any>(
-    currentWallOfLoveSettings?.styleOptions || {}
-  );
+  const [selectedExtraOptions, setSelectedExtraOptions] = React.useState<
+    Record<string, string | number | boolean>
+  >(currentWallOfLoveSettings?.styleOptions || {});
   const [isSaving, setIsSaving] = React.useState(false);
 
   const selectedStyle = WALL_OF_LOVE_STYLE_CHOICES.find(
@@ -44,7 +44,7 @@ export default function WallOfLovePage() {
   );
 
   React.useEffect(() => {
-    const initialOptions: any = {
+    const initialOptions: Record<string, string | number | boolean> = {
       ...SWITCH_DEFAULTS,
     };
 
@@ -79,7 +79,11 @@ export default function WallOfLovePage() {
 
     // Check if any option value has changed
     for (const key of selectedKeys) {
-      if ((currentStyleOptions as any)[key] !== selectedExtraOptions[key]) {
+      if (
+        (currentStyleOptions as Record<string, string | number | boolean>)[
+          key
+        ] !== selectedExtraOptions[key]
+      ) {
         return true;
       }
     }
@@ -155,18 +159,22 @@ export default function WallOfLovePage() {
                   </Label>
                   <SelectWrapper
                     defaultValue={
-                      selectedExtraOptions[optionObj.key] ||
+                      (selectedExtraOptions[optionObj.key] as string) ||
                       optionObj.options[0].value
                     }
-                    listOfItems={optionObj.options.map((opt: any) => ({
-                      name: opt.label,
-                      value: opt.value,
-                    }))}
+                    listOfItems={optionObj.options.map(
+                      (opt: { label: string; value: string }) => ({
+                        name: opt.label,
+                        value: opt.value,
+                      })
+                    )}
                     onChange={(value) => {
-                      setSelectedExtraOptions((prev: any) => ({
-                        ...prev,
-                        [optionObj.key]: value,
-                      }));
+                      setSelectedExtraOptions(
+                        (prev: Record<string, string | number | boolean>) => ({
+                          ...prev,
+                          [optionObj.key]: value,
+                        })
+                      );
                     }}
                     disabled={isSaving}
                   />
@@ -197,10 +205,12 @@ export default function WallOfLovePage() {
               <Switch
                 checked={selectedExtraOptions.showRating !== "false"}
                 onCheckedChange={(checked) => {
-                  setSelectedExtraOptions((prev: any) => ({
-                    ...prev,
-                    showRating: checked ? "true" : "false",
-                  }));
+                  setSelectedExtraOptions(
+                    (prev: Record<string, string | number | boolean>) => ({
+                      ...prev,
+                      showRating: checked ? "true" : "false",
+                    })
+                  );
                 }}
                 disabled={isSaving}
                 id="wol-showRating"
@@ -222,10 +232,12 @@ export default function WallOfLovePage() {
               <Switch
                 checked={selectedExtraOptions.showDate !== "false"}
                 onCheckedChange={(checked) => {
-                  setSelectedExtraOptions((prev: any) => ({
-                    ...prev,
-                    showDate: checked ? "true" : "false",
-                  }));
+                  setSelectedExtraOptions(
+                    (prev: Record<string, string | number | boolean>) => ({
+                      ...prev,
+                      showDate: checked ? "true" : "false",
+                    })
+                  );
                 }}
                 disabled={isSaving}
                 id="wol-showDate"

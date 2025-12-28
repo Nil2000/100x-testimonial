@@ -48,7 +48,9 @@ export default function TestimonialEditFormView() {
     },
   });
 
-  const handleQuestionsSequenceChange = (items: any) => {
+  const handleQuestionsSequenceChange = (
+    items: { id: string; title: string; maxLength: number }[]
+  ) => {
     setValue("questionList", items);
     updateSpaceField("questions", items);
   };
@@ -97,6 +99,8 @@ export default function TestimonialEditFormView() {
         data.logo = fileUrl.url;
         toast.success("Logo uploaded successfully!");
       } catch (error) {
+        console.error("Logo upload failed:", error);
+        toast.error("Failed to upload logo. Please try again.");
         return;
       }
     }
@@ -231,7 +235,7 @@ export default function TestimonialEditFormView() {
         <DragAndDropQuestions
           items={spaceInfo.questions}
           setItems={handleQuestionsSequenceChange}
-          handleDeleteItem={(index) => {}}
+          handleDeleteItem={() => {}}
         />
         <Button
           variant={"outline"}

@@ -2,7 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Heart,
   Loader2,
-  Share2,
   Star,
   Archive,
   Calendar,
@@ -24,9 +23,9 @@ import VideoDisplayComponent from "@/components/video-display-component";
 type Props = {
   testimonial: TestimonialResponse;
   removeFromWallOfLove: (id: string) => void;
-  shareForImage: (testimonial: any) => void;
-  shareForEmbed: (testimonial: any) => void;
-  getLink: (testimonial: any) => void;
+  shareForImage: (testimonial: TestimonialResponse) => void;
+  shareForEmbed: (testimonial: TestimonialResponse) => void;
+  getLink: (testimonial: TestimonialResponse) => void;
   removeFromList: (id: string) => void;
 };
 

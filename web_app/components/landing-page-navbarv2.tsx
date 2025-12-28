@@ -26,20 +26,6 @@ export default function LandingPageNavbarV2({ session }: Props) {
       setVisible(false);
     }
   });
-  const navItems = [
-    {
-      name: "Features",
-      link: "#features",
-    },
-    {
-      name: "Pricing",
-      link: "#pricing",
-    },
-    {
-      name: "Contact",
-      link: "#contact",
-    },
-  ];
   return (
     <motion.div
       ref={ref}

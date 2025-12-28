@@ -2,7 +2,7 @@
 
 import { forwardRef, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useForwardedRef } from "@/lib/use-forwarded-ref";
+import { useForwardedRef } from "@/lib/useForwardedRef";
 import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import {

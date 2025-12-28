@@ -12,7 +12,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 type Props = {
   selectedStyle: string;
-  selectedStyleOption?: any;
+  selectedStyleOption: Record<string, string | number | boolean | undefined>;
 };
 
 export default function WallOfLovePreviewContainer({
@@ -53,10 +53,10 @@ export default function WallOfLovePreviewContainer({
             {generateInfiniteScroll({
               direction: "horizontal",
               rows: Number(selectedStyleOption.rows),
-              cardVariant: selectedStyleOption.cardVariant,
-              showRating: selectedStyleOption.showRating,
-              showDate: selectedStyleOption.showDate,
-              gap: selectedStyleOption.gap,
+              cardVariant: String(selectedStyleOption.cardVariant),
+              showRating: String(selectedStyleOption.showRating),
+              showDate: String(selectedStyleOption.showDate),
+              gap: String(selectedStyleOption.gap),
             })}
           </div>
         )}
@@ -65,10 +65,10 @@ export default function WallOfLovePreviewContainer({
             {generateInfiniteScroll({
               direction: "vertical",
               columns: Number(selectedStyleOption.columns),
-              cardVariant: selectedStyleOption.cardVariant,
-              showRating: selectedStyleOption.showRating,
-              showDate: selectedStyleOption.showDate,
-              gap: selectedStyleOption.gap,
+              cardVariant: String(selectedStyleOption.cardVariant),
+              showRating: String(selectedStyleOption.showRating),
+              showDate: String(selectedStyleOption.showDate),
+              gap: String(selectedStyleOption.gap),
             })}
           </div>
         )}
@@ -80,10 +80,12 @@ export default function WallOfLovePreviewContainer({
   );
 }
 
-const generateList = (styleOptions: any) => {
-  const columns = parseInt(styleOptions?.columns || "3");
-  const gapClass = getGapClass(styleOptions?.gap);
-  const cardVariant = styleOptions?.cardVariant || "classic";
+const generateList = (
+  styleOptions: Record<string, string | number | boolean | undefined>
+) => {
+  const columns = parseInt(String(styleOptions?.columns || "3"));
+  const gapClass = getGapClass(String(styleOptions?.gap));
+  const cardVariant = String(styleOptions?.cardVariant || "classic");
   const showRating = styleOptions?.showRating !== "false";
   const showDate = styleOptions?.showDate !== "false";
 
@@ -130,9 +132,11 @@ const generateList = (styleOptions: any) => {
   );
 };
 
-const generateCarousel = (selectedStyleOption: any) => {
-  const columns = parseInt(selectedStyleOption?.columns || "2");
-  const cardVariant = selectedStyleOption?.cardVariant || "classic";
+const generateCarousel = (
+  selectedStyleOption: Record<string, string | number | boolean | undefined>
+) => {
+  const columns = parseInt(String(selectedStyleOption?.columns || "2"));
+  const cardVariant = String(selectedStyleOption?.cardVariant || "classic");
   const showRating = selectedStyleOption?.showRating !== "false";
   const showDate = selectedStyleOption?.showDate !== "false";
 

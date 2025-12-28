@@ -76,7 +76,7 @@ export default function SubmitVideoFeedbackDialog({
     ],
   };
 
-  const handlePlayerReady = (player: any) => {
+  const handlePlayerReady = (player: HTMLVideoElement) => {
     playerRef.current = player;
   };
 
@@ -135,7 +135,7 @@ export default function SubmitVideoFeedbackDialog({
             return;
           }
 
-          data.videoUrl = videoRes?.url!;
+          data.videoUrl = videoRes?.url || "";
           const feedbackRes = await submitVideoFeedback(spaceId, data);
 
           if (feedbackRes.error) {

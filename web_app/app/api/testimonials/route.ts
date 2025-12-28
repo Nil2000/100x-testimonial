@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     // Handle social testimonials with optional platform filtering
     if (isSocial === "true") {
-      const whereClause: any = {
+      const whereClause: Record<string, string | boolean | undefined> = {
         spaceId: spaceId,
         isSocial: true,
         isArchived: false,

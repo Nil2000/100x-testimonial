@@ -28,7 +28,7 @@ export default function TabbedInterfaceWrapper({
         <div className="overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
           <TabsList className="flex lg:flex-col h-auto w-max lg:w-full bg-muted/50 p-1.5 rounded-lg gap-1">
             {tabs.map((tab, index) => {
-              const Icon = tab.tabIcon as any;
+              const Icon = tab.tabIcon;
               return (
                 <TabsTrigger
                   value={`tab-${index}`}

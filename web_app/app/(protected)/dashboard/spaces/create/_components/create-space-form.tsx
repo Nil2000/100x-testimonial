@@ -86,9 +86,11 @@ export default function CreateSpaceForm({
   };
 
   const uploadFile = async (file: File, spaceName: string) => {
-    if (!file) return;
     console.log(file);
     try {
+      if (!file) {
+        throw new Error("No file selected");
+      }
       const url = await uploadFileToBucket({
         file: file,
         key: `space/${spaceName}/space-logo/${createId() + createId()}.${
@@ -108,9 +110,9 @@ export default function CreateSpaceForm({
     if (isFileSelected) {
       console.log("file selected", isFileSelected);
       uploadFile(isFileSelected, data.spaceName)
-        .then((msg: any) => {
+        .then((msg: { error?: unknown; url?: string }) => {
           if (msg.error) {
-            throw new Error(msg.error);
+            throw new Error(String(msg.error));
           }
           console.log(msg);
           data.logo = msg.url;
@@ -123,9 +125,9 @@ export default function CreateSpaceForm({
     }
     startTransition(() => {
       createSpace(data)
-        .then((res: any) => {
+        .then((res) => {
           if (res.error) {
-            throw new Error(res.error);
+            throw new Error(String(res.error));
           }
           console.log(res.message);
           toast.success("Space created successfully!");
@@ -326,7 +328,13 @@ export default function CreateSpaceForm({
               name="collectionType"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    setCollectionTypePreview(e as CollectionType);
+                  }}
+                  value={field.value}
+                >
                   <SelectTrigger name="options" className="w-full">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>

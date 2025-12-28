@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import React from "react";
 import AccordionMenuList from "./accordion-menu-list";
-import { manageTestimonialsSidebarElements } from "./constants";
+import { manageTestimonialsSidebarElements } from "./manage-sidebar.config";
 
 export default function ManageSidebar() {
   return (
@@ -14,7 +14,7 @@ export default function ManageSidebar() {
         <AccordionMenuList items={manageTestimonialsSidebarElements} />
       </TabsList>
       <div className="grow rounded-lg text-start min-h-[calc(100vh-8rem)]">
-        {manageTestimonialsSidebarElements.map((element, index) => (
+        {manageTestimonialsSidebarElements.map((element) => (
           <div key={`tab-${element.header}`}>
             {element.contents.map((content) => {
               return (

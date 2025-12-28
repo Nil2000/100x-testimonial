@@ -255,38 +255,43 @@ export const spaceExists = async (spaceName: string) => {
 };
 
 export const getTestimonialsForWallOfLove = async (spaceName: string) => {
-  const space = await db.space.findFirst({
-    where: {
-      name: spaceName,
-      deletedAt: null,
-    },
-  });
-  if (!space) {
+  try {
+    const space = await db.space.findFirst({
+      where: {
+        name: spaceName,
+        deletedAt: null,
+      },
+    });
+    if (!space) {
+      return {
+        error: "Space not found",
+      };
+    }
+    const feedbacks = await db.feedback.findMany({
+      where: {
+        spaceId: space.id,
+        addToWallOfLove: true,
+        isArchived: false,
+      },
+    });
+
+    // Extract wall of love settings from theme
+    const theme = space.theme as Record<string, any>;
+    const wallOfLoveSettings = theme?.wallOfLove || {
+      style: "list",
+      styleOptions: { columns: "3" },
+    };
+
     return {
-      error: "Space not found",
+      data: feedbacks,
+      spaceId: space.id,
+      wallOfLoveSettings,
+    };
+  } catch (error) {
+    return {
+      error: error,
     };
   }
-  const feedbacks = await db.feedback.findMany({
-    where: {
-      spaceId: space.id,
-      addToWallOfLove: true,
-      isArchived: false,
-    },
-  });
-
-  // Extract wall of love settings from theme
-  const theme = space.theme as any;
-  const wallOfLoveSettings = theme?.wallOfLove || {
-    style: "list",
-    styleOptions: { columns: "3" },
-  };
-
-  return {
-    error: null,
-    data: feedbacks,
-    spaceId: space.id,
-    wallOfLoveSettings,
-  };
 };
 
 export const saveWallOfLoveSettings = async (

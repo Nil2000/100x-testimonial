@@ -85,7 +85,7 @@ export default function HeroSection({ loggedIn }: { loggedIn: boolean }) {
       >
         Effortlessly collect, manage, and showcase testimonials with beautiful,
         <br />
-        customizable pages that boost your product's credibility.
+        customizable pages that boost your product&apos;s credibility.
       </motion.p>
       <motion.div
         initial={{ opacity: 0, y: 20 }}

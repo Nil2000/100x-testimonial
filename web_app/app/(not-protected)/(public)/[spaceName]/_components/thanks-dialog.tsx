@@ -21,7 +21,7 @@ export default function ThankYouDialog({
   message,
 }: ThankYouDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => onOpenChange()}>
+    <Dialog open={open} onOpenChange={() => onOpenChange()}>
       <DialogContent className="font-sans max-h-[calc(100vh-2rem)] overflow-y-auto flex flex-col items-center">
         <Image
           src={
