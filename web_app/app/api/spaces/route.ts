@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
   if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ error: "Invalid fields" }, { status: 400 });
+    console.error("Error fetching spaces:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

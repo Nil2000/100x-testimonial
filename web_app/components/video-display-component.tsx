@@ -11,7 +11,7 @@ export default function VideoDisplayComponent({
 }: VideoDisplayComponentProps) {
   const playerRef = React.useRef<HTMLVideoElement>(null);
 
-  const handlePlayerReady = (player: any) => {
+  const handlePlayerReady = (player: HTMLVideoElement) => {
     playerRef.current = player;
   };
 

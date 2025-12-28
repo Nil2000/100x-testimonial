@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";

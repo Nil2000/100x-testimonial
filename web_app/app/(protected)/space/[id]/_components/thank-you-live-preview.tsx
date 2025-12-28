@@ -1,5 +1,5 @@
 import LivePreviewbadge from "@/components/live-preview-badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
 import React from "react";

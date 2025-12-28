@@ -14,7 +14,10 @@ export default function DragAndDropQuestions({
   items,
   setItems,
 }: DragAndDropQuestionsProps) {
-  const handleOnDragEnd = (result: any) => {
+  const handleOnDragEnd = (result: {
+    destination: { index: number } | null;
+    source: { index: number };
+  }) => {
     if (!result.destination) return; // Exit if dropped outside a droppable area
 
     const reorderedItems = Array.from(items);

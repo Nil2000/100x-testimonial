@@ -3,9 +3,7 @@ import React from "react";
 import { UserRound } from "lucide-react";
 
 type PublicEmbedProps = {
-  feedback: TestimonialResponse & {
-    styleSettings: any;
-  };
+  feedback: TestimonialResponse;
 };
 
 export default function PublicEmbed({ feedback }: PublicEmbedProps) {

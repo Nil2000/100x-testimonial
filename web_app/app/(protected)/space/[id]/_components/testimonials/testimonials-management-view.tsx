@@ -7,11 +7,9 @@ import {
   LetterText,
   HandHeart,
   MessageSquareWarningIcon,
-  Send,
   Archive,
 } from "lucide-react";
 import TestimonialsListManager from "./testimonials-list-manager";
-import SocialTestimonialsTab from "./social-testimonials-tab";
 
 const testimonialManagementTabs = [
   {

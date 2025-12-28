@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import "video.js/dist/video-js.css";
 import videojs from "video.js";
@@ -24,7 +25,9 @@ export default function VideoCustomComponent({
       videoRef.current?.appendChild(videoElement);
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
-        onReady && onReady(player);
+        if (onReady) {
+          onReady(player);
+        }
       }));
 
       // You could update an existing player in the `else` block here

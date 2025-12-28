@@ -6,6 +6,7 @@ import SelectWrapper from "./select-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { UPLOAD_VIDEO_MAX_DURATION } from "@/lib/constants";
+import { toast } from "sonner";
 
 export default function REcordVideoDialogComponent({
   open,
@@ -26,7 +27,6 @@ export default function REcordVideoDialogComponent({
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const [recording, setRecording] = React.useState(false);
   const [recordedChunks, setRecordedChunks] = React.useState<Blob[]>([]);
-  const [deviceChanging, setDeviceChanging] = React.useState(false);
   const [leftTime, setLeftTime] = React.useState(UPLOAD_VIDEO_MAX_DURATION);
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -37,7 +37,7 @@ export default function REcordVideoDialogComponent({
       mediaRecorderRef.current
     ) {
       mediaRecorderRef.current.start();
-      let tempChunks: Blob[] = [];
+      const tempChunks: Blob[] = [];
       mediaRecorderRef.current.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) {
           tempChunks.push(e.data);
@@ -77,7 +77,6 @@ export default function REcordVideoDialogComponent({
     deviceLabel: string,
     deviceType: "audio" | "video"
   ) => {
-    setDeviceChanging(true);
     const device = deviceType === "audio" ? audioDevices : videoDevices;
     const deviceId = device.find(
       (device) => device.label === deviceLabel
@@ -109,7 +108,6 @@ export default function REcordVideoDialogComponent({
         }
         setUpMediaRecorder(stream);
         if (videoRef.current) videoRef.current.srcObject = stream;
-        setDeviceChanging(false);
       });
   };
 
@@ -144,6 +142,10 @@ export default function REcordVideoDialogComponent({
           });
         })
         .catch((err) => {
+          console.error("Error accessing media devices:", err);
+          toast.error(
+            "Failed to access camera and microphone. Please check your device settings."
+          );
           setCheckingPermission(false);
           setPermissionGranted(false);
         });

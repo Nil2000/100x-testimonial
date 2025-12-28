@@ -2,7 +2,6 @@
 
 import { useId, useState } from "react";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +12,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,

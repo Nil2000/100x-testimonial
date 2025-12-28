@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type Props = {
-  testimonials: TestimonialResponse[] | undefined;
+  testimonials: TestimonialResponse[];
   style?: string;
   styleOptions?: {
     columns?: string;

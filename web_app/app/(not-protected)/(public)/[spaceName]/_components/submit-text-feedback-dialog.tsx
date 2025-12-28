@@ -23,9 +23,10 @@ import { FeedbackType } from "@/generated/prisma/enums";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Question, SpaceResponse } from "@/lib/types";
 
 type Props = {
-  space: any;
+  space: SpaceResponse;
   showThankYou: () => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -72,7 +73,7 @@ export default function SubmitTextFeedbackDialog({
     return url;
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Feedback) => {
     if (!isFileSelected) {
       data.profileImageUrl = "";
     } else {
@@ -144,7 +145,7 @@ export default function SubmitTextFeedbackDialog({
         </DialogHeader>
         <h2 className="font-bold text-muted-foreground">Questions</h2>
         <ul className="list-disc list-inside">
-          {space.questions.map((question: any) => (
+          {space.questions.map((question: Question) => (
             <li key={question.id} className="text-muted-foreground">
               {question.title}
             </li>

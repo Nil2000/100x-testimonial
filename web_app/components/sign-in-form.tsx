@@ -39,9 +39,10 @@ export default function SignInForm() {
               toast.loading("Signing in...");
               const result = await signIn("google");
               if (result?.error) {
-                toast.error("Failed to sign in. Please try again.");
+                throw new Error(result?.error);
               }
             } catch (error) {
+              console.error(error);
               toast.error("Failed to sign in. Please try again.");
             }
           }}

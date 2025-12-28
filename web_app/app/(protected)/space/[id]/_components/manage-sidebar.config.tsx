@@ -1,7 +1,5 @@
 import {
-  Code2,
   HandHeart,
-  Heart,
   LetterText,
   MessageSquareWarningIcon,
   Send,

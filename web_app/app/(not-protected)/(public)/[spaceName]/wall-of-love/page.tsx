@@ -2,6 +2,7 @@ import { getTestimonialsForWallOfLove } from "@/actions/spaceActions";
 import { notFound } from "next/navigation";
 import React from "react";
 import WallOfLovePage from "./_components/_client";
+import { TestimonialResponse } from "@/lib/types";
 
 export default async function page({
   params,
@@ -17,8 +18,7 @@ export default async function page({
   return (
     <WallOfLovePage
       spaceName={spaceName}
-      testimonialList={response.data}
-      spaceId={response.spaceId!}
+      testimonialList={response.data as TestimonialResponse[]}
       wallOfLoveSettings={response.wallOfLoveSettings}
     />
   );
