@@ -7,7 +7,7 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "start": "bun run index.ts",
+    "start": "bun run src/index.ts",
     "text_processor": "bun run src/text_processor.ts",
     "video_processor": "bun run src/video_processor.ts"
   },

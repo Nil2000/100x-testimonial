@@ -1,25 +1,17 @@
 import { analyzeSentiment } from "../ai/analyzeSentiment";
 import { analyzeSpam } from "../ai/analyzeSpam";
 import { getVideoTranscription } from "../ai/getVideoTranscription";
-import type { VideoFeedback } from "../types";
+import type { Feedback } from "../types";
 import { updateFeedback } from "./updateFeedback";
 
-type Props = {
-  answer: string;
-  name: string;
-  email: string;
-};
-
-const generateForTextFeedback = (feedback: Props) => {
+const generateForTextFeedback = (feedback: Feedback) => {
   return `feedback: ${feedback.answer}, name: ${feedback.name}, email: ${feedback.email}`;
 };
 
-export const processVideoMessage = async (message: string) => {
+export const processVideoMessage = async (videoMessage: Feedback) => {
   let isSpam = false;
   let sentiment = "";
   try {
-    const videoMessage = JSON.parse(message) as VideoFeedback;
-
     console.log("Processing video message:", videoMessage);
 
     // if video url is empty
@@ -35,15 +27,11 @@ export const processVideoMessage = async (message: string) => {
       return;
     }
 
-    const { videoUrl, name, email, spaceId } = videoMessage;
+    const { videoUrl, spaceId } = videoMessage;
 
     const transcription = await getVideoTranscription(videoUrl);
 
-    const messageToAnalyze = generateForTextFeedback({
-      answer: transcription as string,
-      name,
-      email,
-    });
+    const messageToAnalyze = generateForTextFeedback(videoMessage);
 
     if (videoMessage.isSpamEnabled) {
       isSpam = await analyzeSpam(messageToAnalyze);
@@ -67,7 +55,6 @@ export const processVideoMessage = async (message: string) => {
     console.error("Error processing video message:", error);
     // Update status to FAILED on error
     try {
-      const videoMessage = JSON.parse(message) as VideoFeedback;
       await updateFeedback({
         feedbackId: videoMessage.id,
         spaceId: videoMessage.spaceId,
