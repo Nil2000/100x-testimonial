@@ -17,3 +17,15 @@ export interface VideoFeedback {
   isSentimentEnabled: boolean;
   isSpamEnabled: boolean;
 }
+
+export interface Feedback {
+  id: string;
+  answer: string | null;
+  videoUrl: string | null;
+  name: string;
+  email: string;
+  spaceId: string;
+  isSentimentEnabled: boolean;
+  isSpamEnabled: boolean;
+  isVideo: boolean;
+}

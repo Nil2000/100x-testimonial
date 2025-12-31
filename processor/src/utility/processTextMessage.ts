@@ -1,18 +1,16 @@
 import { analyzeSentiment } from "../ai/analyzeSentiment";
 import { analyzeSpam } from "../ai/analyzeSpam";
-import type { TextFeedback } from "../types";
+import type { Feedback } from "../types";
 import { updateFeedback } from "./updateFeedback";
 
-const generateForTextFeedback = (feedback: TextFeedback) => {
+const generateForTextFeedback = (feedback: Feedback) => {
   return `feedback: ${feedback.answer}, name: ${feedback.name}, email: ${feedback.email}`;
 };
 
-export const processTextMessage = async (message: string) => {
+export const processTextMessage = async (feedback: Feedback) => {
   let isSpam = false;
   let sentiment = "";
   try {
-    const feedback = JSON.parse(message) as TextFeedback;
-
     // if feedback is empty
     if (!feedback.answer) {
       await updateFeedback({
@@ -52,7 +50,6 @@ export const processTextMessage = async (message: string) => {
     console.error("Error processing text message:", error);
     // Update status to FAILED on error
     try {
-      const feedback = JSON.parse(message) as TextFeedback;
       await updateFeedback({
         feedbackId: feedback.id,
         spaceId: feedback.spaceId,

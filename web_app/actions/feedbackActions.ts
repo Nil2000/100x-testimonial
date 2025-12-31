@@ -8,6 +8,7 @@ import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 import videoFeedbackSchema, {
   VideoFeedback,
 } from "@/schemas/videoFeedbackSchema";
+import { isValid } from "zod";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -56,8 +57,8 @@ export const submitTextFeedback = async (
           spaceId: feedback.spaceId,
           isSentimentEnabled: space.isSentimentEnabled,
           isSpamEnabled: space.isSpamEnabled,
-        }),
-        "TEXT"
+          isVideo: false,
+        })
       );
 
       if (response.error) {
@@ -161,8 +162,8 @@ export const submitVideoFeedback = async (
           spaceId: feedback.spaceId,
           isSentimentEnabled: space.isSentimentEnabled,
           isSpamEnabled: space.isSpamEnabled,
-        }),
-        "VIDEO"
+          isVideo: true,
+        })
       );
 
       if (response.error) {
