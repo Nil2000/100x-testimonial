@@ -37,12 +37,15 @@ export const getVideoTranscription = async (videoUrl: string) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error: any = await response.json();
+      console.log(error);
+      console.error("API Error:", error.error.message);
+      throw new Error(error.error.message);
     }
 
-    const data = await response.json();
+    const data: any = await response.json();
     console.log("Transcription response:", JSON.stringify(data, null, 2));
-    return data;
+    return data.choices[0].message.content as string;
   } catch (error) {
     console.error("VIDEO_TRANSCRIPTION_ERROR", error);
     throw new Error("Failed to transcribe video");
