@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,7 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Check, Sparkles, Zap, Crown } from "lucide-react";
+import { Check, Sparkles, Zap, Crown, Loader2 } from "lucide-react";
+import { startUserTrial, getUserPlan } from "@/actions/subscriptionActions";
+import { toast } from "sonner";
 
 const pricingPlans = [
   {
@@ -39,12 +41,12 @@ const pricingPlans = [
   },
   {
     name: "Professional",
-    price: "$29",
+    price: "$20",
     period: "/month",
     description: "Best for growing businesses and agencies",
     icon: Zap,
     features: [
-      "2-3 spaces",
+      "3 spaces",
       "5 video feedbacks per space",
       "20 text testimonials per space",
       "AI spam detection",
@@ -57,8 +59,8 @@ const pricingPlans = [
   },
   {
     name: "Enterprise",
-    price: "$99",
-    period: "/month",
+    price: "$30",
+    period: "/space/month",
     description: "For large teams and organizations",
     icon: Crown,
     features: [
@@ -79,10 +81,56 @@ const pricingPlans = [
 export default function BuyPremiumPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [userPlan, setUserPlan] = useState<string>("FREE");
+  const [isTrialActive, setIsTrialActive] = useState(false);
+  const [daysLeftInTrial, setDaysLeftInTrial] = useState(0);
 
-  const handleSelectPlan = (planName: string) => {
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      const result = await getUserPlan();
+      if (result.success && result.data) {
+        setUserPlan(result.data.plan);
+        setIsTrialActive(result.data.isTrialActive);
+        setDaysLeftInTrial(result.data.daysLeftInTrial);
+      }
+    };
+    fetchUserPlan();
+  }, []);
+
+  const handleSelectPlan = async (planName: string) => {
     setSelectedPlan(planName);
-    setIsDialogOpen(true);
+
+    if (planName === "Starter") {
+      toast.info("You're already on the free plan!");
+      return;
+    }
+
+    if (planName === "Professional" || planName === "Enterprise") {
+      if (userPlan === "FREE") {
+        setIsDialogOpen(true);
+      } else if (userPlan === "TRIAL") {
+        setIsDialogOpen(true);
+      } else {
+        toast.info("Payment integration coming soon!");
+      }
+    }
+  };
+
+  const handleStartTrial = async () => {
+    setIsLoading(true);
+    const result = await startUserTrial();
+    setIsLoading(false);
+
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success(result.message || "Trial started successfully!");
+      setIsDialogOpen(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    }
   };
 
   return (
@@ -171,23 +219,81 @@ export default function BuyPremiumPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Payment Coming Soon!</DialogTitle>
+            <DialogTitle>
+              {userPlan === "FREE"
+                ? "Start Your 7-Day Free Trial"
+                : "Upgrade Your Plan"}
+            </DialogTitle>
             <DialogDescription>
               You selected the <strong>{selectedPlan}</strong> plan.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground">
-              Payment integration is currently under development. We&apos;ll
-              notify you once it&apos;s ready! In the meantime, you can contact
-              our sales team for manual setup.
-            </p>
+          <div className="py-4 space-y-4">
+            {userPlan === "FREE" ? (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Start your 7-day free trial to unlock all {selectedPlan}{" "}
+                  features:
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span>3 spaces with full customization</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span>5 video feedbacks per space</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span>AI spam detection & sentiment analysis</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span>Priority support</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-muted-foreground">
+                  After 7 days, you&apos;ll be moved back to the free plan
+                  unless you upgrade.
+                </p>
+              </>
+            ) : userPlan === "TRIAL" ? (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  You&apos;re currently on a trial with{" "}
+                  <strong>{daysLeftInTrial} days</strong> remaining.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Payment integration is currently under development. We&apos;ll
+                  notify you once it&apos;s ready!
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Payment integration is currently under development. We&apos;ll
+                notify you once it&apos;s ready!
+              </p>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Close
+              Cancel
             </Button>
-            <Button onClick={() => setIsDialogOpen(false)}>Got it!</Button>
+            {userPlan === "FREE" ? (
+              <Button onClick={handleStartTrial} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Starting Trial...
+                  </>
+                ) : (
+                  "Start Free Trial"
+                )}
+              </Button>
+            ) : (
+              <Button onClick={() => setIsDialogOpen(false)}>Got it!</Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
