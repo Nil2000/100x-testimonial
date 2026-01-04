@@ -2,11 +2,13 @@
 import React from "react";
 import SmallCardWrapper from "./overview-card-wrapper";
 import { FolderOpen, Luggage, PlusIcon, Sparkles } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import LoadingSpaceCard from "./loading-space-card-wrapper";
 import SpaceCard from "./space-card";
+import UpgradeDialog from "@/components/upgrade-dialog";
+import { UserPlanInfo } from "@/lib/accessControl";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface Space {
   id: string;
@@ -14,15 +16,23 @@ interface Space {
   logo: string | null;
 }
 
-export default function DashboardPage() {
+interface DashboardPageProps {
+  userPlan: string;
+  spaceLimit: number;
+  planInfo: UserPlanInfo | null;
+}
+
+export default function DashboardPage({ userPlan, spaceLimit, planInfo }: DashboardPageProps) {
+  const router = useRouter();
   const [spaces, setSpaces] = React.useState<Space[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [showUpgradeDialog, setShowUpgradeDialog] = React.useState(false);
 
   const fetchSpaces = async () => {
     axios
       .get("/api/spaces")
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setSpaces(res.data.data);
         setLoading(false);
       })
@@ -35,6 +45,17 @@ export default function DashboardPage() {
   React.useEffect(() => {
     fetchSpaces();
   }, []);
+
+  const handleCreateSpaceClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (spaces.length >= spaceLimit) {
+      setShowUpgradeDialog(true);
+      return;
+    }
+
+    router.push("/dashboard/spaces/create");
+  };
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 max-w-7xl mx-auto w-full">
       {/* Header Section */}
@@ -50,14 +71,28 @@ export default function DashboardPage() {
         <SmallCardWrapper
           smallText="Total Spaces"
           largeText={`${spaces.length}`}
-          subText="of 2 available"
+          subText={`of ${
+            spaceLimit === 999 ? "unlimited" : spaceLimit
+          } available`}
           icon={Sparkles}
           variant="default"
         />
         <SmallCardWrapper
           smallText="Current Plan"
-          largeText="Starter"
-          subText="Free tier"
+          largeText={
+            userPlan === "FREE"
+              ? "Starter"
+              : userPlan === "TRIAL"
+              ? "Trial"
+              : userPlan
+          }
+          subText={
+            userPlan === "FREE"
+              ? "Free tier"
+              : userPlan === "TRIAL"
+              ? "7-day trial"
+              : "Premium"
+          }
           icon={Luggage}
           enableButton
           variant="premium"
@@ -75,12 +110,10 @@ export default function DashboardPage() {
               Create and manage your testimonial collection spaces.
             </p>
           </div>
-          <Link href="/dashboard/spaces/create">
-            <Button className="gap-2 shadow-sm">
-              <PlusIcon size={16} strokeWidth={2} />
-              Create Space
-            </Button>
-          </Link>
+          <Button className="gap-2 shadow-sm" onClick={handleCreateSpaceClick}>
+            <PlusIcon size={16} strokeWidth={2} />
+            Create Space
+          </Button>
         </div>
 
         {loading ? (
@@ -113,15 +146,25 @@ export default function DashboardPage() {
               Create your first space to start collecting testimonials from your
               customers.
             </p>
-            <Link href="/dashboard/spaces/create">
-              <Button className="gap-2">
-                <PlusIcon size={16} />
-                Create Your First Space
-              </Button>
-            </Link>
+            <Button className="gap-2" onClick={handleCreateSpaceClick}>
+              <PlusIcon size={16} />
+              Create Your First Space
+            </Button>
           </div>
         )}
       </div>
+
+      <UpgradeDialog
+        open={showUpgradeDialog}
+        onOpenChange={setShowUpgradeDialog}
+        title="Space Limit Reached"
+        description={`You've reached the maximum of ${spaceLimit} space${
+          spaceLimit > 1 ? "s" : ""
+        } on your ${userPlan === "FREE" ? "free" : "current"} plan.`}
+        feature="spaces"
+        currentUsage={spaces.length}
+        limit={spaceLimit}
+      />
     </div>
   );
 }
