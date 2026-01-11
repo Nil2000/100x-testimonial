@@ -83,7 +83,6 @@ export default function BuyPremiumPage() {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [userPlan, setUserPlan] = useState<string>("FREE");
-  const [isTrialActive, setIsTrialActive] = useState(false);
   const [daysLeftInTrial, setDaysLeftInTrial] = useState(0);
 
   useEffect(() => {
@@ -91,7 +90,6 @@ export default function BuyPremiumPage() {
       const result = await getUserPlan();
       if (result.success && result.data) {
         setUserPlan(result.data.plan);
-        setIsTrialActive(result.data.isTrialActive);
         setDaysLeftInTrial(result.data.daysLeftInTrial);
       }
     };

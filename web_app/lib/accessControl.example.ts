@@ -10,7 +10,7 @@ import { checkUserAccess } from "@/lib/accessControl";
 // ============================================
 // EXAMPLE 1: Check if user can create a space
 // ============================================
-async function handleCreateSpace(userId: string) {
+async function _handleCreateSpace(userId: string) {
   const accessCheck = await checkUserAccess(userId, "space");
 
   if (!accessCheck.hasAccess) {
@@ -29,7 +29,7 @@ async function handleCreateSpace(userId: string) {
 // ============================================
 // EXAMPLE 2: Check if user can upload video feedback
 // ============================================
-async function handleVideoFeedbackUpload(userId: string, spaceId: string) {
+async function _handleVideoFeedbackUpload(userId: string, spaceId: string) {
   const accessCheck = await checkUserAccess(userId, "videoFeedback", spaceId);
 
   if (!accessCheck.hasAccess) {
@@ -57,7 +57,7 @@ async function handleVideoFeedbackUpload(userId: string, spaceId: string) {
 // ============================================
 // EXAMPLE 3: Check if user can add text testimonial
 // ============================================
-async function handleTextTestimonialSubmit(userId: string, spaceId: string) {
+async function _handleTextTestimonialSubmit(userId: string, spaceId: string) {
   const accessCheck = await checkUserAccess(userId, "textTestimonial", spaceId);
 
   if (!accessCheck.hasAccess) {
@@ -75,7 +75,8 @@ async function handleTextTestimonialSubmit(userId: string, spaceId: string) {
 // ============================================
 // EXAMPLE 4: Check if user can use AI spam detection
 // ============================================
-async function handleSpamAnalysis(userId: string, testimonialId: string) {
+async function _handleSpamAnalysis(userId: string, _testimonialId: string) {
+  void _testimonialId;
   const accessCheck = await checkUserAccess(userId, "aiSpam");
 
   if (!accessCheck.hasAccess) {
@@ -93,7 +94,8 @@ async function handleSpamAnalysis(userId: string, testimonialId: string) {
 // ============================================
 // EXAMPLE 5: Check if user can use AI sentiment analysis
 // ============================================
-async function handleSentimentAnalysis(userId: string, testimonialId: string) {
+async function _handleSentimentAnalysis(userId: string, _testimonialId: string) {
+  void _testimonialId;
   const accessCheck = await checkUserAccess(userId, "aiSentiment");
 
   if (!accessCheck.hasAccess) {
@@ -201,5 +203,11 @@ async function PlanUsageComponent({ userId }: { userId: string }) {
   );
 }
 */
+
+void _handleCreateSpace;
+void _handleVideoFeedbackUpload;
+void _handleTextTestimonialSubmit;
+void _handleSpamAnalysis;
+void _handleSentimentAnalysis;
 
 export {};

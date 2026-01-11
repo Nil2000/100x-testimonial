@@ -6,6 +6,7 @@ import {
   upgradeToPaid,
   getUserPlanInfo,
 } from "@/lib/accessControl";
+import { db } from "@/lib/db";
 
 export async function startUserTrial() {
   const session = await auth();
@@ -60,4 +61,38 @@ export async function getUserPlan() {
   }
 
   return { success: true, data: planInfo };
+}
+
+export async function getSubscriptionDetails() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return { error: "Unauthorized" };
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      plan: true,
+      subscriptionStatus: true,
+      trialStartDate: true,
+      trialEndDate: true,
+      subscriptionId: true,
+    },
+  });
+
+  if (!user) {
+    return { error: "User not found" };
+  }
+
+  return {
+    success: true,
+    data: {
+      plan: user.plan,
+      subscriptionStatus: user.subscriptionStatus,
+      trialStartDate: user.trialStartDate?.toISOString() ?? null,
+      trialEndDate: user.trialEndDate?.toISOString() ?? null,
+      subscriptionId: user.subscriptionId ?? null,
+    },
+  };
 }
