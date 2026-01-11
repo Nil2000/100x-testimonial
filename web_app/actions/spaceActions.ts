@@ -374,6 +374,25 @@ export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
       error: "Unauthorized",
     };
   }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true },
+  });
+
+  if (!user) {
+    return {
+      error: "User not found",
+    };
+  }
+
+  if (user.plan === "FREE") {
+    return {
+      error:
+        "Sentiment analysis is not available on the Free plan. Please upgrade to continue.",
+    };
+  }
+
   try {
     await db.space.update({
       where: {
@@ -400,6 +419,25 @@ export const toggleSpamDetection = async (id: string, status: boolean) => {
       error: "Unauthorized",
     };
   }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true },
+  });
+
+  if (!user) {
+    return {
+      error: "User not found",
+    };
+  }
+
+  if (user.plan === "FREE") {
+    return {
+      error:
+        "Spam detection is not available on the Free plan. Please upgrade to continue.",
+    };
+  }
+
   try {
     await db.space.update({
       where: {
