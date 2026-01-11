@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import LoadingSpaceCard from "./loading-space-card-wrapper";
 import SpaceCard from "./space-card";
 import UpgradeDialog from "@/components/upgrade-dialog";
-import { UserPlanInfo } from "@/lib/accessControl";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -19,10 +18,9 @@ interface Space {
 interface DashboardPageProps {
   userPlan: string;
   spaceLimit: number;
-  planInfo: UserPlanInfo | null;
 }
 
-export default function DashboardPage({ userPlan, spaceLimit, planInfo }: DashboardPageProps) {
+export default function DashboardPage({ userPlan, spaceLimit }: DashboardPageProps) {
   const router = useRouter();
   const [spaces, setSpaces] = React.useState<Space[]>([]);
   const [loading, setLoading] = React.useState(true);

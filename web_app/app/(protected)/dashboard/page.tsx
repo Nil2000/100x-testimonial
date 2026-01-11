@@ -1,32 +1,22 @@
+"use client";
+
 import React from "react";
 import DashboardPage from "../_components/_client";
-import { auth } from "@/lib/auth";
-import { getUserPlanInfo } from "@/lib/accessControl";
+import { usePlanStore } from "@/store/planStore";
 import { PLAN_LIMITS } from "@/lib/subscription";
 
-export default async function page() {
-  const session = await auth();
-  
-  let userPlan = "FREE";
-  let spaceLimit = 1;
-  let planInfo = null;
+export default function Page() {
+  const { subscription, loading, fetchSubscriptionDetails } = usePlanStore();
 
-  if (session?.user?.id) {
-    planInfo = await getUserPlanInfo(session.user.id);
-    if (planInfo) {
-      userPlan = planInfo.plan;
-      const limits = PLAN_LIMITS[planInfo.plan as keyof typeof PLAN_LIMITS];
-      if (limits) {
-        spaceLimit = limits.spaces === -1 ? 999 : limits.spaces;
-      }
+  React.useEffect(() => {
+    if (!subscription && !loading) {
+      fetchSubscriptionDetails();
     }
-  }
+  }, [subscription, loading, fetchSubscriptionDetails]);
 
-  return (
-    <DashboardPage 
-      userPlan={userPlan}
-      spaceLimit={spaceLimit}
-      planInfo={planInfo}
-    />
-  );
+  const userPlan = subscription?.plan ?? "FREE";
+  const limits = PLAN_LIMITS[userPlan as keyof typeof PLAN_LIMITS];
+  const spaceLimit = limits ? (limits.spaces === -1 ? 999 : limits.spaces) : 1;
+
+  return <DashboardPage userPlan={userPlan} spaceLimit={spaceLimit} />;
 }
