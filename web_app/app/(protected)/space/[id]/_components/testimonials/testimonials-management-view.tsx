@@ -17,7 +17,11 @@ const testimonialManagementTabs = [
     tabDescription: "View all testimonials",
     tabIcon: WalletCards,
     tabContent: (
-      <TestimonialsListManager key="all-testimonials" isSocial={false} />
+      <TestimonialsListManager
+        key="all-testimonials"
+        isSocial={false}
+        showQuotaWarning={true}
+      />
     ),
   },
   {
@@ -29,6 +33,7 @@ const testimonialManagementTabs = [
         key="video-testimonials"
         category="VIDEO"
         isSocial={false}
+        showQuotaWarning={true}
       />
     ),
   },
@@ -41,6 +46,7 @@ const testimonialManagementTabs = [
         key="text-testimonials"
         category="TEXT"
         isSocial={false}
+        showQuotaWarning={true}
       />
     ),
   },

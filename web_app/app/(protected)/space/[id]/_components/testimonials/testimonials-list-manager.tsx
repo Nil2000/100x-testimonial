@@ -20,6 +20,7 @@ import SocialMediaTestimonialCard from "./cards/social-media-testimonial-card";
 import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
 import EmbedSettingsDialog from "../sharing/embed-settings-dialog";
+import QuotaLimitWarning from "./quota-limit-warning";
 
 // Sorting function
 const sortTestimonials = (
@@ -52,6 +53,7 @@ type Props = {
   archived?: boolean;
   isSocial?: boolean;
   socialPlatform?: SOCIAL_PLATFORM;
+  showQuotaWarning?: boolean;
 };
 
 export default function TestimonialsListManager({
@@ -60,6 +62,7 @@ export default function TestimonialsListManager({
   archived,
   isSocial,
   socialPlatform,
+  showQuotaWarning = false,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
@@ -163,8 +166,24 @@ export default function TestimonialsListManager({
 
   const totalPages = Math.ceil(filteredTestimonials.length / feedbackPerPage);
 
+  const getQuotaCategory = (): "text" | "video" | "all" | null => {
+    if (!showQuotaWarning) return null;
+    if (category === "TEXT") return "text";
+    if (category === "VIDEO") return "video";
+    if (!category && !wallOfLove && !archived) return "all";
+    return null;
+  };
+
+  const quotaCategory = getQuotaCategory();
+
   return (
     <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
+      {quotaCategory && (
+        <QuotaLimitWarning
+          currentCount={testimonials.length}
+          category={quotaCategory}
+        />
+      )}
       <div className="w-full flex justify-between items-center">
         <div className="relative w-1/2">
           <Input
