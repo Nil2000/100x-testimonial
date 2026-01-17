@@ -20,8 +20,8 @@ export interface PlanLimits {
 export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
   [PlanType.FREE]: {
     spaces: 1,
-    videoFeedbacksPerSpace: 3,
-    textTestimonialsPerSpace: 15,
+    videoFeedbacksPerSpace: 2,
+    textTestimonialsPerSpace: 10,
     aiSpamDetection: false,
     aiSentimentAnalysis: false,
     customBranding: false,

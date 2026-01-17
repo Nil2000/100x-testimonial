@@ -71,6 +71,10 @@ export default function TestimonialsListManager({
   const [isOpenShareImage, setIsOpenShareImage] = React.useState(false);
   const [isOpenEmbedTestimonial, setIsOpenEmbedTestimonial] =
     React.useState(false);
+  const [quotaTotals, setQuotaTotals] = React.useState({
+    text: 0,
+    video: 0,
+  });
   const [selectedTestimonial, setSelectedTestimonial] =
     React.useState<TestimonialResponse | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -107,7 +111,11 @@ export default function TestimonialsListManager({
             isSocial: isSocial ? "true" : "false",
           },
         });
-        setTestimonials(response.data);
+        setTestimonials(response.data.records ?? []);
+        setQuotaTotals({
+          text: response.data.meta?.text?.total ?? 0,
+          video: response.data.meta?.video?.total ?? 0,
+        });
       } catch (error) {
         console.error("Failed to fetch testimonials", error);
         toast.error("Failed to load testimonials. Please try again.");
@@ -166,6 +174,20 @@ export default function TestimonialsListManager({
 
   const totalPages = Math.ceil(filteredTestimonials.length / feedbackPerPage);
 
+  const localTextCount = testimonials.filter(
+    (testimonial) =>
+      testimonial.feedbackType === "TEXT" ||
+      testimonial.feedbackType === "TEXT_AND_VIDEO"
+  ).length;
+  const localVideoCount = testimonials.filter(
+    (testimonial) =>
+      testimonial.feedbackType === "VIDEO" ||
+      testimonial.feedbackType === "TEXT_AND_VIDEO"
+  ).length;
+
+  const textCount = quotaTotals.text || localTextCount;
+  const videoCount = quotaTotals.video || localVideoCount;
+
   const getQuotaCategory = (): "text" | "video" | "all" | null => {
     if (!showQuotaWarning) return null;
     if (category === "TEXT") return "text";
@@ -180,7 +202,8 @@ export default function TestimonialsListManager({
     <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
       {quotaCategory && (
         <QuotaLimitWarning
-          currentCount={testimonials.length}
+          textCount={textCount}
+          videoCount={videoCount}
           category={quotaCategory}
         />
       )}

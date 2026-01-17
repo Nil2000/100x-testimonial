@@ -1,5 +1,9 @@
+import { getUserPlanInfo } from "@/lib/accessControl";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { PLAN_LIMITS } from "@/lib/subscription";
 import { NextRequest, NextResponse } from "next/server";
+import { FeedbackType, PlanType } from "@/generated/prisma/enums";
 
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
@@ -14,23 +18,54 @@ export async function GET(req: NextRequest) {
   const addToWallOfLove = params.get("addToWallOfLove");
   const isSocial = params.get("isSocial");
   const archived = params.get("archived");
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   if (!spaceId) {
     return NextResponse.json({ error: "SpaceId is required" }, { status: 400 });
   }
+  
+  const userPlanInfo = await getUserPlanInfo(session.user.id);
+
+  if (!userPlanInfo) {
+    console.error("Error retrieving plan info");
+    return NextResponse.json(
+      { error: "Error retrieving plan info" },
+      { status: 404 }
+    );
+  }
+
+  const planLimits = PLAN_LIMITS[userPlanInfo.plan as PlanType];
+  const textLimit = planLimits.textTestimonialsPerSpace;
+  const videoLimit = planLimits.videoFeedbacksPerSpace;
+  const resolveLimit = (limit: number) => (limit === -1 ? undefined : limit);
+
+  const respond = (records: unknown, meta: Record<string, unknown>) =>
+    NextResponse.json({ records, meta });
 
   try {
     let feedbacks;
 
     // Handle archived testimonials
     if (archived === "true") {
-      feedbacks = await db.feedback.findMany({
-        where: {
-          spaceId: spaceId,
-          isArchived: true,
-        },
-      });
-      return NextResponse.json(feedbacks);
+      const where = {
+        spaceId: spaceId,
+        isArchived: true,
+      };
+      const [records, total] = await Promise.all([
+        db.feedback.findMany({
+          where,
+          orderBy: {
+            createdAt: "asc",
+          },
+        }),
+        db.feedback.count({ where }),
+      ]);
+
+      return respond(records, { total });
     }
 
     // Handle social testimonials with optional platform filtering
@@ -46,61 +81,149 @@ export async function GET(req: NextRequest) {
         whereClause.source = category;
       }
 
-      feedbacks = await db.feedback.findMany({
-        where: whereClause,
-      });
-      return NextResponse.json(feedbacks);
+      const [records, total] = await Promise.all([
+        db.feedback.findMany({
+          where: whereClause,
+          orderBy: {
+            createdAt: "asc",
+          },
+        }),
+        db.feedback.count({ where: whereClause }),
+      ]);
+
+      return respond(records, { total });
     }
 
     // Handle spam testimonials
     if (category && category === "SPAM") {
-      feedbacks = await db.feedback.findMany({
-        where: {
-          spaceId: spaceId,
-          isSpam: true,
-          isSocial: false, // Exclude social testimonials from spam view
-          isArchived: false,
-        },
-      });
-      return NextResponse.json(feedbacks);
+      const where = {
+        spaceId: spaceId,
+        isSpam: true,
+        isSocial: false, // Exclude social testimonials from spam view
+        isArchived: false,
+      };
+      const [records, total] = await Promise.all([
+        db.feedback.findMany({
+          where,
+          orderBy: {
+            createdAt: "asc",
+          },
+        }),
+        db.feedback.count({ where }),
+      ]);
+
+      return respond(records, { total });
     }
 
     // Handle wall of love testimonials
     if (addToWallOfLove) {
-      feedbacks = await db.feedback.findMany({
-        where: {
-          spaceId: spaceId,
-          addToWallOfLove: addToWallOfLove === "true",
-          isSocial: false, // Exclude social testimonials from wall of love by default
-          isArchived: false,
-        },
-      });
-      return NextResponse.json(feedbacks);
-    }
-
-    // Handle specific feedback type categories (TEXT, VIDEO)
-    if (category && (category === "TEXT" || category === "VIDEO")) {
-      feedbacks = await db.feedback.findMany({
-        where: {
-          spaceId: spaceId,
-          feedbackType: category,
-          isSocial: false, // Exclude social testimonials
-          isArchived: false,
-        },
-      });
-      return NextResponse.json(feedbacks);
-    }
-
-    // Default case: get all non-social, non-archived testimonials
-    feedbacks = await db.feedback.findMany({
-      where: {
+      const where = {
         spaceId: spaceId,
-        isSocial: false, // Exclude social testimonials by default
+        addToWallOfLove: addToWallOfLove === "true",
+        isSocial: false, // Exclude social testimonials from wall of love by default
         isArchived: false,
-      },
-    });
+      };
+      const [records, total] = await Promise.all([
+        db.feedback.findMany({
+          where,
+          orderBy: {
+            createdAt: "asc",
+          },
+        }),
+        db.feedback.count({ where }),
+      ]);
 
-    return NextResponse.json(feedbacks);
+      return respond(records, { total });
+    }
+    const baseWhere = {
+      spaceId: spaceId,
+      isSocial: false,
+      isArchived: false,
+    };
+
+    if (category && category === "TEXT") {
+      const where = {
+        ...baseWhere,
+        feedbackType: FeedbackType.TEXT,
+      };
+      const [records, total] = await Promise.all([
+        db.feedback.findMany({
+          where,
+          orderBy: {
+            createdAt: "asc",
+          },
+          take: resolveLimit(textLimit),
+        }),
+        db.feedback.count({ where }),
+      ]);
+
+      return respond(records, { text: { total } });
+    }
+
+    if (category && category === "VIDEO") {
+      const where = {
+        ...baseWhere,
+        feedbackType: FeedbackType.VIDEO,
+      };
+      const [records, total] = await Promise.all([
+        db.feedback.findMany({
+          where,
+          orderBy: {
+            createdAt: "asc",
+          },
+          take: resolveLimit(videoLimit),
+        }),
+        db.feedback.count({ where }),
+      ]);
+
+      return respond(records, { video: { total } });
+    }
+
+    const [textRecords, textTotal, videoRecords, videoTotal] =
+      await Promise.all([
+        db.feedback.findMany({
+          where: {
+            ...baseWhere,
+            feedbackType: FeedbackType.TEXT,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+          take: resolveLimit(textLimit),
+        }),
+        db.feedback.count({
+          where: {
+            ...baseWhere,
+            feedbackType: FeedbackType.TEXT,
+          },
+        }),
+        db.feedback.findMany({
+          where: {
+            ...baseWhere,
+            feedbackType: FeedbackType.VIDEO,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+          take: resolveLimit(videoLimit),
+        }),
+        db.feedback.count({
+          where: {
+            ...baseWhere,
+            feedbackType: FeedbackType.VIDEO,
+          },
+        }),
+      ]);
+
+    const records = [...textRecords, ...videoRecords].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    return respond(records, {
+      text: { total: textTotal },
+      video: { total: videoTotal },
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error }, { status: 500 });
