@@ -2,6 +2,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
+import { checkUserAccess } from "@/lib/accessControl";
 import * as z from "zod";
 
 export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
@@ -12,6 +13,20 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
       error: "Unauthorized",
     };
   }
+
+  if (session.user.id) {
+    const accessCheck = await checkUserAccess(session.user.id, "space");
+
+    if (!accessCheck.hasAccess) {
+      return {
+        error: accessCheck.reason,
+        limitReached: true,
+        currentUsage: accessCheck.currentUsage,
+        limit: accessCheck.limit,
+      };
+    }
+  }
+
   const validateFields = spaceSchema.safeParse(values);
 
   if (validateFields.error) {
@@ -359,6 +374,25 @@ export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
       error: "Unauthorized",
     };
   }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true },
+  });
+
+  if (!user) {
+    return {
+      error: "User not found",
+    };
+  }
+
+  if (user.plan === "FREE") {
+    return {
+      error:
+        "Sentiment analysis is not available on the Free plan. Please upgrade to continue.",
+    };
+  }
+
   try {
     await db.space.update({
       where: {
@@ -385,6 +419,25 @@ export const toggleSpamDetection = async (id: string, status: boolean) => {
       error: "Unauthorized",
     };
   }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true },
+  });
+
+  if (!user) {
+    return {
+      error: "User not found",
+    };
+  }
+
+  if (user.plan === "FREE") {
+    return {
+      error:
+        "Spam detection is not available on the Free plan. Please upgrade to continue.",
+    };
+  }
+
   try {
     await db.space.update({
       where: {

@@ -18,6 +18,26 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
+export const PlanType = {
+  FREE: 'FREE',
+  TRIAL: 'TRIAL',
+  STARTER: 'STARTER',
+  PROFESSIONAL: 'PROFESSIONAL',
+  ENTERPRISE: 'ENTERPRISE'
+} as const
+
+export type PlanType = (typeof PlanType)[keyof typeof PlanType]
+
+
+export const SubscriptionStatus = {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
 export const CollectionType = {
   TEXT: 'TEXT',
   VIDEO: 'VIDEO',
