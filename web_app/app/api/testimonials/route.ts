@@ -47,7 +47,6 @@ export async function GET(req: NextRequest) {
     NextResponse.json({ records, meta });
 
   try {
-    let feedbacks;
 
     // Handle archived testimonials
     if (archived === "true") {

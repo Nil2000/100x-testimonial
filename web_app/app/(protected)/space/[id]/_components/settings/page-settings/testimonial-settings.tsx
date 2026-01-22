@@ -11,7 +11,6 @@ import { Switch } from "@/components/ui/switch";
 import { useFont } from "@/hooks/useFont";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
-import clsx from "clsx";
 import { cx } from "class-variance-authority";
 import { updateThemeForSpace } from "@/actions/themeActions";
 import { Theme, THEME_CHOICES } from "@/components/theme-constant";
