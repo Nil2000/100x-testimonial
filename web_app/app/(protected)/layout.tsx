@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "@/components/navbar";
+import PlanHydrator from "./_components/planHydrator";
 
 export default function ProtectedLayout({
   children,
@@ -10,7 +11,11 @@ export default function ProtectedLayout({
     <div className="min-h-screen bg-gradient-to-b from-muted/30 via-background to-background">
       <Navbar />
       <main className="pt-16 font-sans">
-        <div className="container mx-auto px-4 md:px-6 py-6">{children}</div>
+        <div className="container mx-auto px-4 md:px-6 py-6">
+          <PlanHydrator>
+            {children}
+          </PlanHydrator>
+        </div>
       </main>
     </div>
   );
