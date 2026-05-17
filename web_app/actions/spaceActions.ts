@@ -7,6 +7,14 @@ import {
   assertThankYouSpaceOwnership,
   requireAuth,
 } from "@/lib/authGuards";
+import {
+  getPublicSpaceSelect,
+  getWallOfLoveSettings,
+  publishedSpaceByNameWhere,
+  toPublicSpace,
+  toPublicTestimonial,
+} from "@/lib/publicData";
+import { isReservedSpaceSegment } from "@/lib/routes";
 import * as z from "zod";
 
 export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
@@ -241,40 +249,24 @@ export const changeSpaceStatus = async (id: string, status: boolean) => {
 };
 
 export const spaceExists = async (spaceName: string) => {
+  if (isReservedSpaceSegment(spaceName)) {
+    return null;
+  }
+
   try {
     const existingSpace = await db.space.findFirst({
       where: {
         name: spaceName,
-        deletedAt: null,
+        ...publishedSpaceByNameWhere,
       },
-      include: {
-        questions: {
-          select: {
-            id: true,
-            title: true,
-          },
-          orderBy: {
-            order: "asc",
-          },
-        },
-        thankyouSpace: {
-          select: {
-            title: true,
-            message: true,
-          },
-        },
-      },
+      select: getPublicSpaceSelect(),
     });
 
     if (!existingSpace) {
       return null;
     }
 
-    if (!existingSpace.isPublished) {
-      return null;
-    }
-
-    return existingSpace;
+    return toPublicSpace(existingSpace);
   } catch (error) {
     console.error(error);
     return null;
@@ -282,11 +274,19 @@ export const spaceExists = async (spaceName: string) => {
 };
 
 export const getTestimonialsForWallOfLove = async (spaceName: string) => {
+  if (isReservedSpaceSegment(spaceName)) {
+    return { error: "Space not found" };
+  }
+
   try {
     const space = await db.space.findFirst({
       where: {
         name: spaceName,
-        deletedAt: null,
+        ...publishedSpaceByNameWhere,
+      },
+      select: {
+        id: true,
+        theme: true,
       },
     });
     if (!space) {
@@ -299,20 +299,16 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
         spaceId: space.id,
         addToWallOfLove: true,
         isArchived: false,
+        isSpam: false,
+      },
+      orderBy: {
+        createdAt: "asc",
       },
     });
 
-    // Extract wall of love settings from theme
-    const theme = space.theme as Record<string, any>;
-    const wallOfLoveSettings = theme?.wallOfLove || {
-      style: "list",
-      styleOptions: { columns: "3" },
-    };
-
     return {
-      data: feedbacks,
-      spaceId: space.id,
-      wallOfLoveSettings,
+      data: feedbacks.map(toPublicTestimonial),
+      wallOfLoveSettings: getWallOfLoveSettings(space.theme),
     };
   } catch (error) {
     return {

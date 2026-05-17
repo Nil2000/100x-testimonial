@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { toPublicTestimonial } from "@/lib/publicData";
 import type { Feedback, Space, ThankYouSpace } from "@/generated/prisma/client";
+import type { TestimonialResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import type { Session } from "next-auth";
 
@@ -167,7 +169,10 @@ export async function assertPublicFeedbackInSpace(
   spaceName: string,
   feedbackId: string
 ): Promise<
-  { feedback: Feedback & { space: { logo: string | null } } } | GuardError
+  | {
+      feedback: TestimonialResponse & { space: { logo: string | null } };
+    }
+  | GuardError
 > {
   const spaceCheck = await assertPublishedSpaceByName(spaceName);
   if ("error" in spaceCheck) {
@@ -178,6 +183,9 @@ export async function assertPublicFeedbackInSpace(
     where: {
       id: feedbackId,
       spaceId: spaceCheck.space.id,
+      addToWallOfLove: true,
+      isArchived: false,
+      isSpam: false,
     },
     include: {
       space: {
@@ -192,5 +200,10 @@ export async function assertPublicFeedbackInSpace(
     return { error: "Feedback not found" };
   }
 
-  return { feedback };
+  return {
+    feedback: {
+      ...toPublicTestimonial(feedback),
+      space: feedback.space,
+    },
+  };
 }

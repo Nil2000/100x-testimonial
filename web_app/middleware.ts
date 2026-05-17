@@ -3,37 +3,39 @@ import authConfig from "./lib/auth.config";
 import { NextResponse } from "next/server";
 import {
   authPrefix,
-  authRoutes,
   DEFAULT_REDIRECT,
-  protectedRoutes,
+  isAuthRoute,
+  requiresAuthentication,
 } from "./lib/routes";
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
+  const pathname = nextUrl.pathname;
   const isLoggedIn = !!req.auth;
 
-  const isProtected = protectedRoutes.includes(nextUrl.pathname);
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isApiAuthRoutes = nextUrl.pathname.startsWith(authPrefix);
-
-  if (nextUrl.pathname === "/not-found") {
+  if (pathname === "/not-found") {
     return NextResponse.redirect(new URL("/404", nextUrl));
   }
 
-  if (isApiAuthRoutes) {
+  // NextAuth handlers — always public
+  if (pathname.startsWith(authPrefix)) {
     return NextResponse.next();
   }
 
-  if (isAuthRoute) {
+  if (isAuthRoute(pathname)) {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
     }
     return NextResponse.next();
   }
 
-  if (!isLoggedIn && isProtected) {
+  if (!isLoggedIn && requiresAuthentication(pathname)) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     return NextResponse.redirect(new URL("/auth/signin", nextUrl));
   }
 

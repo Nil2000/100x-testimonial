@@ -13,6 +13,7 @@ import {
   assertPublishedSpace,
   requireAuth,
 } from "@/lib/authGuards";
+import { toPublicTestimonial } from "@/lib/publicData";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -238,13 +239,21 @@ export const getFeedbackById = async (feedbackId: string) => {
     const feedback = await db.feedback.findFirst({
       where: {
         id: feedbackId,
+        addToWallOfLove: true,
+        isArchived: false,
+        isSpam: false,
         space: {
           isPublished: true,
           deletedAt: null,
         },
       },
     });
-    return feedback;
+
+    if (!feedback) {
+      return null;
+    }
+
+    return toPublicTestimonial(feedback);
   } catch (error) {
     console.error("GET_FEEDBACK_BY_ID_ERROR", error);
     return null;
