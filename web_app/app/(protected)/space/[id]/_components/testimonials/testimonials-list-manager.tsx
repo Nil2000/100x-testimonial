@@ -20,6 +20,7 @@ import SocialMediaTestimonialCard from "./cards/social-media-testimonial-card";
 import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
 import EmbedSettingsDialog from "../sharing/embed-settings-dialog";
+import QuotaLimitWarning from "./quota-limit-warning";
 
 // Sorting function
 const sortTestimonials = (
@@ -52,6 +53,7 @@ type Props = {
   archived?: boolean;
   isSocial?: boolean;
   socialPlatform?: SOCIAL_PLATFORM;
+  showQuotaWarning?: boolean;
 };
 
 export default function TestimonialsListManager({
@@ -60,6 +62,7 @@ export default function TestimonialsListManager({
   archived,
   isSocial,
   socialPlatform,
+  showQuotaWarning = false,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
@@ -68,6 +71,10 @@ export default function TestimonialsListManager({
   const [isOpenShareImage, setIsOpenShareImage] = React.useState(false);
   const [isOpenEmbedTestimonial, setIsOpenEmbedTestimonial] =
     React.useState(false);
+  const [quotaTotals, setQuotaTotals] = React.useState({
+    text: 0,
+    video: 0,
+  });
   const [selectedTestimonial, setSelectedTestimonial] =
     React.useState<TestimonialResponse | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -104,7 +111,11 @@ export default function TestimonialsListManager({
             isSocial: isSocial ? "true" : "false",
           },
         });
-        setTestimonials(response.data);
+        setTestimonials(response.data.records ?? []);
+        setQuotaTotals({
+          text: response.data.meta?.text?.total ?? 0,
+          video: response.data.meta?.video?.total ?? 0,
+        });
       } catch (error) {
         console.error("Failed to fetch testimonials", error);
         toast.error("Failed to load testimonials. Please try again.");
@@ -163,8 +174,39 @@ export default function TestimonialsListManager({
 
   const totalPages = Math.ceil(filteredTestimonials.length / feedbackPerPage);
 
+  const localTextCount = testimonials.filter(
+    (testimonial) =>
+      testimonial.feedbackType === "TEXT" ||
+      testimonial.feedbackType === "TEXT_AND_VIDEO"
+  ).length;
+  const localVideoCount = testimonials.filter(
+    (testimonial) =>
+      testimonial.feedbackType === "VIDEO" ||
+      testimonial.feedbackType === "TEXT_AND_VIDEO"
+  ).length;
+
+  const textCount = quotaTotals.text || localTextCount;
+  const videoCount = quotaTotals.video || localVideoCount;
+
+  const getQuotaCategory = (): "text" | "video" | "all" | null => {
+    if (!showQuotaWarning) return null;
+    if (category === "TEXT") return "text";
+    if (category === "VIDEO") return "video";
+    if (!category && !wallOfLove && !archived) return "all";
+    return null;
+  };
+
+  const quotaCategory = getQuotaCategory();
+
   return (
     <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
+      {quotaCategory && (
+        <QuotaLimitWarning
+          textCount={textCount}
+          videoCount={videoCount}
+          category={quotaCategory}
+        />
+      )}
       <div className="w-full flex justify-between items-center">
         <div className="relative w-1/2">
           <Input

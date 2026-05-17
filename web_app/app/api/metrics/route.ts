@@ -70,13 +70,13 @@ export async function GET(req: NextRequest) {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceExists.name}${
       page === METRIC_PAGE.WALL_PAGE ? "/wall-of-love" : ""
     }`;
-    console.log("url", url);
+    // console.log("url", url);
     const pageViewMetricResponse = await postHogExecQuery(
       days,
       POSTHOG_METRIC_EVENTS.PAGE_VIEW,
       url
     );
-    console.log("pageViewMetricResponse", pageViewMetricResponse);
+    // console.log("pageViewMetricResponse", pageViewMetricResponse);
 
     if (!pageViewMetricResponse) {
       return NextResponse.json(
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
       POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS,
       url
     );
-    console.log("uniqueVisitorMetricResponse", uniqueVisitorMetricResponse);
+    // console.log("uniqueVisitorMetricResponse", uniqueVisitorMetricResponse);
 
     if (!uniqueVisitorMetricResponse) {
       return NextResponse.json(
@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
         url
       );
 
-      console.log("completedTestimonialResponse", completedTestimonialResponse);
+      // console.log("completedTestimonialResponse", completedTestimonialResponse);
 
       if (!completedTestimonialResponse) {
         return NextResponse.json(
@@ -132,7 +132,7 @@ export async function GET(req: NextRequest) {
         POSTHOG_METRIC_EVENTS.TIME_SPENT_ON_WALL_OF_LOVE,
         url
       );
-      console.log("timeSpentResponse", timeSpentResponse);
+      // console.log("timeSpentResponse", timeSpentResponse);
       if (!timeSpentResponse) {
         return NextResponse.json(
           { error: "Unable to fetch time spent metrics." },

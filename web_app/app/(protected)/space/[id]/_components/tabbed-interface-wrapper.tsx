@@ -71,7 +71,7 @@ export default function TabbedInterfaceWrapper({
           >
             <div className="rounded-lg border bg-card p-4 md:p-6">
               {/* Content Header */}
-              <div className="mb-6 pb-4 border-b">
+              <div className="pb-4 border-b">
                 <h2 className="text-lg font-semibold">{tab.tabTitle}</h2>
                 {tab.tabDescription && (
                   <p className="text-sm text-muted-foreground mt-1">

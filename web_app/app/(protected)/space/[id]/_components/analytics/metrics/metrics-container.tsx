@@ -2,10 +2,10 @@ import React from "react";
 import MetricsCard from "./metrics-card";
 import { BookOpenCheck, Clock, Eye, Users2 } from "lucide-react";
 import { useSpaceStore } from "@/store/spaceStore";
-import Loading from "@/components/loader";
 import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
 import MetricsChart from "./metrics-chart";
 import { useMetrics } from "@/hooks/useMetrics";
+import { toast } from "sonner";
 
 type Props = {
   pageTitle: string;
@@ -31,8 +31,8 @@ export default function MetricsContainer({
   const fetchMetricsData = async () => {
     changePending(true);
     fetchMetrics(pageTitle, dateRange, spaceInfo.id)
-      .catch((error) => {
-        console.error("Error fetching metrics:", error);
+      .catch(() => {
+        toast.error("Error fetching metrics");
       })
       .finally(() => {
         changePending(false);
@@ -43,9 +43,9 @@ export default function MetricsContainer({
     fetchMetricsData();
   }, [dateRange, pageTitle]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   return (
     <div className="space-y-6">
@@ -77,7 +77,17 @@ export default function MetricsContainer({
       </div>
 
       {/* Chart */}
-      <MetricsChart chartData={metrics} />
+      {loading ? (
+        <div className="rounded-lg border bg-card shadow-sm">
+          <div className="p-6">
+            <div className="h-[200px] w-full flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">Loading metrics...</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <MetricsChart chartData={metrics} />
+      )}
     </div>
   );
 }

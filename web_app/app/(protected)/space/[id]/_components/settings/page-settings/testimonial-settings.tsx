@@ -11,15 +11,18 @@ import { Switch } from "@/components/ui/switch";
 import { useFont } from "@/hooks/useFont";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
-import clsx from "clsx";
 import { cx } from "class-variance-authority";
 import { updateThemeForSpace } from "@/actions/themeActions";
 import { Theme, THEME_CHOICES } from "@/components/theme-constant";
 import { Video, Pen } from "lucide-react";
+import { usePlanStore } from "@/store/planStore";
+import ThemeOptionCard from "./theme-option-card";
 
 export default function TestimonialPage() {
   const { spaceInfo, updateThemeField } = useSpaceStore();
+  const { subscription } = usePlanStore();
   const { fontSelected, handleFontSelect, fontList } = useFont();
+  const isFreePlan = (subscription?.plan ?? "FREE") === "FREE";
   const effectiveFont = fontSelected;
   const [theme, setTheme] = React.useState<Theme | null>(
     THEME_CHOICES.find((t) => t.value === spaceInfo.theme.theme) || null
@@ -29,12 +32,22 @@ export default function TestimonialPage() {
   );
   const [isPending, startTransition] = React.useTransition();
   const noTheme = !theme;
+  const freeThemeChoices = React.useMemo(() => {
+    const lightTheme = THEME_CHOICES.find((t) => t.type === "light");
+    const darkTheme = THEME_CHOICES.find((t) => t.type === "dark");
+    return [lightTheme, darkTheme].filter(Boolean) as Theme[];
+  }, []);
+  const availableThemes = THEME_CHOICES;
   const submitTheme = async () => {
     // Always include font in theme options regardless of theme selection
     const themeOptions = {
-      showBrandLogo,
+      showBrandLogo: isFreePlan ? false : showBrandLogo,
       font: effectiveFont,
     };
+
+    const selectedTheme = isFreePlan
+      ? theme && freeThemeChoices.find((t) => t.value === theme.value)
+      : theme;
 
     if (noTheme) {
       startTransition(async () => {
@@ -52,12 +65,12 @@ export default function TestimonialPage() {
 
     startTransition(async () => {
       await updateThemeForSpace({
-        theme: theme?.value,
+        theme: selectedTheme?.value ?? null,
         themeOptions,
         spaceId: spaceInfo?.id,
       });
 
-      updateThemeField("theme", theme?.value);
+      updateThemeField("theme", selectedTheme?.value ?? null);
       updateThemeField("themeOptions", themeOptions);
     });
   };
@@ -68,6 +81,16 @@ export default function TestimonialPage() {
       handleFontSelect(spaceInfo.theme.themeOptions.font);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (!isFreePlan) return;
+    if (showBrandLogo) {
+      setShowBrandLogo(false);
+    }
+    if (theme && !freeThemeChoices.some((t) => t.value === theme.value)) {
+      setTheme(freeThemeChoices[0] ?? null);
+    }
+  }, [isFreePlan, showBrandLogo, theme, availableThemes]);
 
   const checkDiff = () => {
     return (
@@ -128,6 +151,7 @@ export default function TestimonialPage() {
                   id="brand-logo-switch"
                   checked={showBrandLogo}
                   onCheckedChange={setShowBrandLogo}
+                  disabled={isFreePlan}
                 />
               </div>
             </div>
@@ -148,88 +172,22 @@ export default function TestimonialPage() {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto pr-2">
-                {THEME_CHOICES.map((themeOption) => {
+                {availableThemes.map((themeOption) => {
                   const isSelected = theme?.value === themeOption.value;
+                  const isThemeLocked =
+                    isFreePlan &&
+                    !freeThemeChoices.some((t) => t.value === themeOption.value);
                   return (
-                    <button
+                    <ThemeOptionCard
                       key={themeOption.value}
-                      type="button"
-                      disabled={noTheme}
-                      onClick={() => setTheme(themeOption)}
-                      className={clsx(
-                        "relative group rounded-lg border-2 p-3 text-left transition-all duration-200 hover:shadow-md",
-                        isSelected
-                          ? "border-primary bg-primary/5 shadow-sm"
-                          : "border-border hover:border-primary/50 bg-card",
-                        noTheme && "opacity-50 cursor-not-allowed"
-                      )}
-                    >
-                      {/* Selection Indicator */}
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                          <svg
-                            className="w-3 h-3 text-primary-foreground"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </div>
-                      )}
-
-                      {/* Theme Icon & Type Badge */}
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-2xl">{themeOption.icon}</span>
-                        <span
-                          className={clsx(
-                            "text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide",
-                            themeOption.type === "dark"
-                              ? "bg-slate-800 text-slate-100"
-                              : "bg-amber-100 text-amber-800"
-                          )}
-                        >
-                          {themeOption.type}
-                        </span>
-                      </div>
-
-                      {/* Theme Name */}
-                      <h4 className="font-semibold text-sm mb-1">
-                        {themeOption.label}
-                      </h4>
-
-                      {/* Theme Description */}
-                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
-                        {themeOption.description}
-                      </p>
-
-                      {/* Color Palette Preview */}
-                      <div className="flex gap-1.5 mb-2">
-                        {themeOption.colorPalette.map((color, idx) => (
-                          <div
-                            key={idx}
-                            className="h-6 flex-1 rounded border border-border/50 shadow-sm"
-                            style={{ backgroundColor: color }}
-                          />
-                        ))}
-                      </div>
-
-                      {/* Category Badge */}
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] text-muted-foreground font-medium">
-                          {themeOption.category}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">
-                          •
-                        </span>
-                        <span className="text-[10px] text-muted-foreground font-medium">
-                          {themeOption.defaultFont}
-                        </span>
-                      </div>
-                    </button>
+                      themeOption={themeOption}
+                      isSelected={isSelected}
+                      isDisabled={noTheme || isThemeLocked}
+                      onSelect={() => {
+                        if (isThemeLocked) return;
+                        setTheme(themeOption);
+                      }}
+                    />
                   );
                 })}
               </div>
@@ -249,8 +207,10 @@ export default function TestimonialPage() {
               <Select
                 value={effectiveFont}
                 onValueChange={(font) => {
+                  if (isFreePlan) return;
                   handleFontSelect(font);
                 }}
+                disabled={isFreePlan}
               >
                 <SelectTrigger className="w-full max-w-md">
                   <SelectValue placeholder="Select font" />

@@ -25,84 +25,82 @@ export default function MetricsChart({ chartData }: Props) {
     },
   };
   return (
-    <div className="space-y-4">
-      <Card className="shadow-sm">
-        <div className="p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-chart-1"></div>
-            <h3 className="text-sm font-semibold">
-              Page Views & Visitors Over Time
-            </h3>
-          </div>
-          <ChartContainer config={areaChartConfig} className="h-[300px] w-full">
-            <AreaChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                left: 12,
-                right: 12,
-                bottom: 12,
-              }}
-              height={300}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                interval={"equidistantPreserveStart"}
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return `${date.getMonth() + 1}/${date.getDate()}`;
-                }}
-              />
-              <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <defs>
-                <linearGradient id="fillPageViews" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={areaChartConfig.pageViews.color}
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={areaChartConfig.pageViews.color}
-                    stopOpacity={0.1}
-                  />
-                </linearGradient>
-                <linearGradient id="fillVisitors" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={areaChartConfig.visitors.color}
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={areaChartConfig.visitors.color}
-                    stopOpacity={0.1}
-                  />
-                </linearGradient>
-              </defs>
-              <Area
-                dataKey="pageViews"
-                type="natural"
-                fill="url(#fillPageViews)"
-                fillOpacity={0.4}
-                stroke={areaChartConfig.pageViews.color}
-              />
-              <Area
-                dataKey="visitors"
-                type="natural"
-                fill="url(#fillVisitors)"
-                fillOpacity={0.4}
-                stroke={areaChartConfig.visitors.color}
-              />
-            </AreaChart>
-          </ChartContainer>
+    <Card className="shadow-sm">
+      <div className="p-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-chart-1"></div>
+          <h3 className="text-sm font-semibold">
+            Page Views & Visitors Over Time
+          </h3>
         </div>
-      </Card>
-    </div>
+        <ChartContainer config={areaChartConfig} className="h-[200px] w-full">
+          <AreaChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 0,
+              right: 0,
+              bottom: 0,
+            }}
+            height={300}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={true}
+              tickMargin={8}
+              interval={"equidistantPreserveStart"}
+              tickFormatter={(value) => {
+                const date = new Date(value);
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+              }}
+            />
+            <YAxis tickLine={false} axisLine={true} tickMargin={8} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <defs>
+              <linearGradient id="fillPageViews" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={areaChartConfig.pageViews.color}
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={areaChartConfig.pageViews.color}
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillVisitors" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={areaChartConfig.visitors.color}
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={areaChartConfig.visitors.color}
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              dataKey="pageViews"
+              type="monotone"
+              fill="url(#fillPageViews)"
+              fillOpacity={0.4}
+              stroke={areaChartConfig.pageViews.color}
+            />
+            <Area
+              dataKey="visitors"
+              type="monotone"
+              fill="url(#fillVisitors)"
+              fillOpacity={0.4}
+              stroke={areaChartConfig.visitors.color}
+            />
+          </AreaChart>
+        </ChartContainer>
+      </div>
+    </Card>
   );
 }
