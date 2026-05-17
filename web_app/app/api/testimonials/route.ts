@@ -1,5 +1,9 @@
 import { getUserPlanInfo } from "@/lib/accessControl";
-import { auth } from "@/lib/auth";
+import {
+  assertSpaceOwnership,
+  forbiddenJsonResponse,
+  requireAuthApi,
+} from "@/lib/authGuards";
 import { db } from "@/lib/db";
 import { PLAN_LIMITS } from "@/lib/subscription";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,17 +22,21 @@ export async function GET(req: NextRequest) {
   const addToWallOfLove = params.get("addToWallOfLove");
   const isSocial = params.get("isSocial");
   const archived = params.get("archived");
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireAuthApi();
+  if ("response" in authResult) {
+    return authResult.response;
   }
 
   if (!spaceId) {
     return NextResponse.json({ error: "SpaceId is required" }, { status: 400 });
   }
-  
-  const userPlanInfo = await getUserPlanInfo(session.user.id);
+
+  const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
+  if ("error" in ownership) {
+    return forbiddenJsonResponse(ownership.error);
+  }
+
+  const userPlanInfo = await getUserPlanInfo(authResult.userId);
 
   if (!userPlanInfo) {
     console.error("Error retrieving plan info");

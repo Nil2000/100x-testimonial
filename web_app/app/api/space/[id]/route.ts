@@ -1,4 +1,8 @@
-import { auth } from "@/lib/auth";
+import {
+  assertSpaceOwnership,
+  forbiddenJsonResponse,
+  requireAuthApi,
+} from "@/lib/authGuards";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,16 +11,21 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireAuthApi();
+  if ("response" in authResult) {
+    return authResult.response;
+  }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return forbiddenJsonResponse(ownership.error);
   }
 
   try {
     const space = await db.space.findFirst({
       where: {
         id,
-        createdById: session.user.id,
+        createdById: authResult.userId,
         deletedAt: null,
       },
       include: {

@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { assertSpaceOwnership, requireAuth } from "@/lib/authGuards";
 
 type ThemeProps = {
   theme: string | null;
@@ -15,6 +16,16 @@ export const updateThemeForSpace = async ({
 }: ThemeProps) => {
   if (!spaceId) {
     throw new Error("Theme and spaceId are required");
+  }
+
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    throw new Error(authResult.error);
+  }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
+  if ("error" in ownership) {
+    throw new Error(ownership.error);
   }
 
   try {

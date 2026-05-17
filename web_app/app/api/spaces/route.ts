@@ -1,17 +1,17 @@
-import { auth } from "@/lib/auth";
+import { requireAuthApi } from "@/lib/authGuards";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireAuthApi();
+  if ("response" in authResult) {
+    return authResult.response;
   }
 
   try {
     const spaces = await db.space.findMany({
       where: {
-        createdById: session.user.id,
+        createdById: authResult.userId,
         deletedAt: null,
       },
       select: {
