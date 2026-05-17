@@ -36,21 +36,23 @@ export default function TestimonialsList({
     const columns = parseInt(styleOptions.columns || "3");
     const gapClass = getGapClass(styleOptions.gap);
     const dividedTestimonials = divideTestimonials(testimonials, columns);
+    const columnWidthClass = getColumnWidthClass(columns);
 
     return (
-      <div className={`flex ${gapClass} flex-col sm:flex-row justify-center`}>
+      <div
+        className={`flex ${gapClass} flex-col md:flex-row justify-center w-full`}
+      >
         {dividedTestimonials.map((column, colIndex) => (
           <div
             key={colIndex}
-            className={`flex flex-col ${gapClass} w-full sm:w-1/2`}
+            className={`flex flex-col ${gapClass} w-full ${columnWidthClass}`}
           >
             {column.map((testimonial) => (
-              <div className="gap-4" key={testimonial.id}>
-                <WallOfLoveCard
-                  testimonial={testimonial}
-                  styleOptions={styleOptions}
-                />
-              </div>
+              <WallOfLoveCard
+                key={testimonial.id}
+                testimonial={testimonial}
+                styleOptions={styleOptions}
+              />
             ))}
           </div>
         ))}
@@ -118,7 +120,7 @@ export default function TestimonialsList({
               {row.map((testimonial, index) => (
                 <div
                   key={`${testimonial.id}-${index}`}
-                  className="flex-shrink-0 w-[200px] h-min"
+                  className="flex-shrink-0 w-[320px] h-min mx-2"
                 >
                   <WallOfLoveCard
                     testimonial={testimonial}
@@ -197,12 +199,26 @@ export default function TestimonialsList({
 const getGapClass = (gap?: string) => {
   switch (gap) {
     case "tight":
-      return "gap-2";
+      return "gap-3";
     case "relaxed":
-      return "gap-6";
+      return "gap-8";
     case "normal":
     default:
-      return "gap-4";
+      return "gap-5";
+  }
+};
+
+const getColumnWidthClass = (columns: number) => {
+  switch (columns) {
+    case 1:
+      return "md:max-w-2xl";
+    case 2:
+      return "md:w-1/2";
+    case 4:
+      return "md:w-1/4";
+    case 3:
+    default:
+      return "md:w-1/3";
   }
 };
 
