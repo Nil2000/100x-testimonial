@@ -1,5 +1,6 @@
 "use server";
 
+import { withRetry } from "@/lib/retry";
 import { initClient } from "@/lib/storage/initClient";
 import { parseS3PublicBaseUrl } from "@/lib/storage/parseS3publicBaseUrl";
 
@@ -23,15 +24,19 @@ export const uploadFileToBucket = async ({
   }
   const filebuffer = Buffer.from((await file.arrayBuffer()) as ArrayBuffer);
   try {
-    await s3client.putObject(
-      process.env.S3_BUCKET!,
-      "public/" + key,
-      filebuffer,
-      size,
-      {
-        "Content-Type": mimeType,
-        "Cache-Control": "public, max-age=86400",
-      }
+    await withRetry(
+      () =>
+        s3client.putObject(
+          process.env.S3_BUCKET!,
+          "public/" + key,
+          filebuffer,
+          size,
+          {
+            "Content-Type": mimeType,
+            "Cache-Control": "public, max-age=86400",
+          }
+        ),
+      { label: "upload file to S3" }
     );
 
     return {

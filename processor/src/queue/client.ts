@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import { withRetry } from "../utility/retry";
 
 const getRedisClient = () => {
   if (!process.env.REDIS_URL) {
@@ -22,11 +23,12 @@ export const startGettingMessageFromQueue = async ({
 
   console.log(`Listening to Redis queue: ${topic}`);
 
-  // Continuously listen for messages using blocking pop
   while (true) {
     try {
-      // blpop returns [queueName, message] or null if timeout
-      const result = await redis.blpop(topic, 0); // 0 means block indefinitely
+      const result = await withRetry(
+        () => redis.blpop(topic, 0),
+        { label: `redis blpop (${topic})` }
+      );
 
       if (result) {
         const [queueName, message] = result;
@@ -44,7 +46,6 @@ export const startGettingMessageFromQueue = async ({
       }
     } catch (error) {
       console.error("Error consuming from Redis queue:", error);
-      // Wait a bit before retrying
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }

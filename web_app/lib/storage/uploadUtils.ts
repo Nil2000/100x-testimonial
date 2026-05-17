@@ -1,3 +1,4 @@
+import { HttpError, withRetry } from "../retry";
 import { initClient } from "./initClient";
 import { parseS3PublicBaseUrl } from "./parseS3publicBaseUrl";
 
@@ -10,31 +11,32 @@ export const uploadImageToS3 = async (
   const s3Client = initClient();
   const bucketName = process.env.S3_BUCKET!;
 
-  try {
-    // Download the image
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.statusText}`);
-    }
+  return withRetry(
+    async () => {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new HttpError(
+          `Failed to download image: ${response.statusText}`,
+          response.status
+        );
+      }
 
-    const imageBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(imageBuffer);
+      const imageBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(imageBuffer);
+      const fileName = `/public/space/${spaceId}/twitter-media/${mediaKey}.jpg`;
 
-    // Generate a unique filename
-    const fileName = `/public/space/${spaceId}/twitter-media/${mediaKey}.jpg`;
+      await s3Client.putObject(bucketName, fileName, buffer, buffer.length, {
+        "Content-Type": "image/jpeg",
+      });
 
-    // Upload to S3
-    await s3Client.putObject(bucketName, fileName, buffer, buffer.length, {
-      "Content-Type": "image/jpeg",
-    });
-
-    // Return the public URL
-    const baseUrl = parseS3PublicBaseUrl();
-    return `${baseUrl}/${fileName}`;
-  } catch (error) {
+      const baseUrl = parseS3PublicBaseUrl();
+      return `${baseUrl}/${fileName}`;
+    },
+    { label: "upload image to S3" }
+  ).catch((error) => {
     console.error("Error uploading image to S3:", error);
     throw error;
-  }
+  });
 };
 
 // Upload video to S3 storage
@@ -46,29 +48,30 @@ export const uploadVideoToS3 = async (
   const s3Client = initClient();
   const bucketName = process.env.S3_BUCKET!;
 
-  try {
-    // Download the video
-    const response = await fetch(videoUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to download video: ${response.statusText}`);
-    }
+  return withRetry(
+    async () => {
+      const response = await fetch(videoUrl);
+      if (!response.ok) {
+        throw new HttpError(
+          `Failed to download video: ${response.statusText}`,
+          response.status
+        );
+      }
 
-    const videoBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(videoBuffer);
+      const videoBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(videoBuffer);
+      const fileName = `/public/space/${spaceId}/twitter-media/${mediaKey}.mp4`;
 
-    // Generate a unique filename - use .mp4 for videos
-    const fileName = `/public/space/${spaceId}/twitter-media/${mediaKey}.mp4`;
+      await s3Client.putObject(bucketName, fileName, buffer, buffer.length, {
+        "Content-Type": "video/mp4",
+      });
 
-    // Upload to S3
-    await s3Client.putObject(bucketName, fileName, buffer, buffer.length, {
-      "Content-Type": "video/mp4",
-    });
-
-    // Return the public URL
-    const baseUrl = parseS3PublicBaseUrl();
-    return `${baseUrl}/${fileName}`;
-  } catch (error) {
+      const baseUrl = parseS3PublicBaseUrl();
+      return `${baseUrl}/${fileName}`;
+    },
+    { label: "upload video to S3" }
+  ).catch((error) => {
     console.error("Error uploading video to S3:", error);
     throw error;
-  }
+  });
 };
