@@ -1,11 +1,13 @@
 import { startGettingMessageFromQueue } from "./queue/client";
 import { processVideoMessage } from "./utility/processVideoMessage";
+import type { Feedback } from "./types";
 
 const videoProcessorIp = {
   topic: process.env.REDIS_VIDEO_QUEUE || "video-queue",
   groupId: "video-processor-group",
   processMessage: async (message: string) => {
-    processVideoMessage(message).catch((error) => {
+    const feedback = JSON.parse(message) as Feedback;
+    processVideoMessage(feedback).catch((error) => {
       console.error("Error processing video message:", error.message);
       console.log(error.stack);
     });
