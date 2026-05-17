@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Session } from "next-auth";
 import AvatarDropDownMenu from "./avatar-dropdown-menu";
+import ThemeToggle from "./theme-toggle";
 type Props = {
   session: Session | null;
 };
@@ -57,7 +58,8 @@ export default function LandingPageNavbarV2({ session }: Props) {
         <li>Pricing</li>
         <li>Contact</li>
       </ul>
-      <div className="flex space-x-4 font-bold">
+      <div className="flex items-center space-x-4 font-bold">
+        <ThemeToggle />
         {!session?.user ? (
           <Button className="group rounded-full p-5">
             <Link

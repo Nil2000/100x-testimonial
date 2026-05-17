@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { TestimonialResponse } from "@/lib/types";
+import ThemeToggle from "@/components/theme-toggle";
 
 type Props = {
   spaceName: string;
@@ -38,21 +39,20 @@ export default function WallOfLovePage({
   const total = testimonialList.length;
   const hasTestimonials = total > 0;
 
-  const averageRating =
-    hasTestimonials
-      ? testimonialList.reduce((sum, t) => sum + (t.rating || 0), 0) /
-        testimonialList.filter((t) => t.rating > 0).length
-      : 0;
+  const averageRating = hasTestimonials
+    ? testimonialList.reduce((sum, t) => sum + (t.rating || 0), 0) /
+      testimonialList.filter((t) => t.rating > 0).length
+    : 0;
 
   const videoCount = testimonialList.filter(
-    (t) => t.feedbackType === "VIDEO"
+    (t) => t.feedbackType === "VIDEO",
   ).length;
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
       <DecorativeBackground />
 
-      <header className="relative z-50 border-b border-border/40 bg-background/70 backdrop-blur-md sticky top-0">
+      <header className="z-50 border-b border-border/40 bg-background/70 backdrop-blur-md sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2.5 group">
@@ -68,6 +68,7 @@ export default function WallOfLovePage({
             </Link>
 
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <Link href={`/${spaceName}`} className="hidden sm:block">
                 <Button variant="ghost" size="sm" className="font-poppins">
                   Leave a testimonial
@@ -173,7 +174,10 @@ export default function WallOfLovePage({
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href={`/${spaceName}`}>
-                <Button size="lg" className="w-full sm:w-auto shadow-md font-poppins">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto shadow-md font-poppins"
+                >
                   <MessageSquareHeart className="w-4 h-4 mr-2" />
                   Submit Your Testimonial
                 </Button>
