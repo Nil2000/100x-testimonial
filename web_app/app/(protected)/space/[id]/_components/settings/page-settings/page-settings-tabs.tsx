@@ -1,26 +1,28 @@
-import React from "react";
+import { FileText, Heart } from "lucide-react";
+import VerticalSidebarTabsLayout from "../../tabs/vertical-sidebar-tabs-layout";
+import type { TabItem } from "../../tabs/tab-item.types";
 import TestimonialPage from "./testimonial-settings";
 import WallOfLovePage from "./wall-of-love-settings";
-import TabbedInterfaceWrapper from "../../tabbed-interface-wrapper";
-import { FileText, Heart } from "lucide-react";
 
-const PageUIDesignVerticalTabs = [
+const pageDesignTabs: TabItem[] = [
   {
-    tabTitle: "Testimonial Page",
-    tabDescription:
+    value: "testimonial-page",
+    label: "Testimonial Page",
+    description:
       "Customize theme, fonts, and branding for your testimonial collection page",
-    tabIcon: FileText,
-    tabContent: <TestimonialPage />,
+    icon: FileText,
+    content: <TestimonialPage />,
   },
   {
-    tabTitle: "Wall of Love",
-    tabDescription:
+    value: "wall-of-love",
+    label: "Wall of Love",
+    description:
       "Configure layout and display options for your testimonial showcase",
-    tabIcon: Heart,
-    tabContent: <WallOfLovePage />,
+    icon: Heart,
+    content: <WallOfLovePage />,
   },
 ];
 
-export default function PageUIDesignViewContent() {
-  return <TabbedInterfaceWrapper tabs={PageUIDesignVerticalTabs} />;
+export default function PageSettingsTabs() {
+  return <VerticalSidebarTabsLayout tabs={pageDesignTabs} />;
 }

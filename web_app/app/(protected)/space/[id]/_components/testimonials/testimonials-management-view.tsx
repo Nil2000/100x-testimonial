@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import TabbedInterfaceWrapper from "../tabbed-interface-wrapper";
+
 import {
   WalletCards,
   Video,
@@ -9,14 +8,17 @@ import {
   MessageSquareWarningIcon,
   Archive,
 } from "lucide-react";
+import VerticalSidebarTabsLayout from "../tabs/vertical-sidebar-tabs-layout";
+import type { TabItem } from "../tabs/tab-item.types";
 import TestimonialsListManager from "./testimonials-list-manager";
 
-const testimonialManagementTabs = [
+const testimonialManagementTabs: TabItem[] = [
   {
-    tabTitle: "All Testimonials",
-    tabDescription: "View all testimonials",
-    tabIcon: WalletCards,
-    tabContent: (
+    value: "all",
+    label: "All Testimonials",
+    description: "View all testimonials",
+    icon: WalletCards,
+    content: (
       <TestimonialsListManager
         key="all-testimonials"
         isSocial={false}
@@ -25,10 +27,11 @@ const testimonialManagementTabs = [
     ),
   },
   {
-    tabTitle: "Video",
-    tabDescription: "Video testimonials only",
-    tabIcon: Video,
-    tabContent: (
+    value: "video",
+    label: "Video",
+    description: "Video testimonials only",
+    icon: Video,
+    content: (
       <TestimonialsListManager
         key="video-testimonials"
         category="VIDEO"
@@ -38,10 +41,11 @@ const testimonialManagementTabs = [
     ),
   },
   {
-    tabTitle: "Text",
-    tabDescription: "Text testimonials only",
-    tabIcon: LetterText,
-    tabContent: (
+    value: "text",
+    label: "Text",
+    description: "Text testimonials only",
+    icon: LetterText,
+    content: (
       <TestimonialsListManager
         key="text-testimonials"
         category="TEXT"
@@ -51,10 +55,11 @@ const testimonialManagementTabs = [
     ),
   },
   {
-    tabTitle: "Liked",
-    tabDescription: "Your favorite testimonials",
-    tabIcon: HandHeart,
-    tabContent: (
+    value: "liked",
+    label: "Liked",
+    description: "Your favorite testimonials",
+    icon: HandHeart,
+    content: (
       <TestimonialsListManager
         key="liked-testimonials"
         wallOfLove={true}
@@ -63,10 +68,11 @@ const testimonialManagementTabs = [
     ),
   },
   {
-    tabTitle: "Spam",
-    tabDescription: "Filtered spam testimonials",
-    tabIcon: MessageSquareWarningIcon,
-    tabContent: (
+    value: "spam",
+    label: "Spam",
+    description: "Filtered spam testimonials",
+    icon: MessageSquareWarningIcon,
+    content: (
       <TestimonialsListManager
         key="spam-testimonials"
         category="SPAM"
@@ -75,10 +81,11 @@ const testimonialManagementTabs = [
     ),
   },
   {
-    tabTitle: "Archived",
-    tabDescription: "Archived testimonials",
-    tabIcon: Archive,
-    tabContent: (
+    value: "archived",
+    label: "Archived",
+    description: "Archived testimonials",
+    icon: Archive,
+    content: (
       <TestimonialsListManager
         key="archived-testimonials"
         archived={true}
@@ -86,14 +93,8 @@ const testimonialManagementTabs = [
       />
     ),
   },
-  // {
-  //   tabTitle: "Social",
-  //   tabDescription: "Imported social testimonials",
-  //   tabIcon: Send,
-  //   tabContent: <SocialTestimonialsTab />,
-  // },
 ];
 
 export default function TestimonialsManagementView() {
-  return <TabbedInterfaceWrapper tabs={testimonialManagementTabs} />;
+  return <VerticalSidebarTabsLayout tabs={testimonialManagementTabs} />;
 }
