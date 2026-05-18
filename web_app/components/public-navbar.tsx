@@ -5,6 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import ThemeToggle from "./theme-toggle";
 
 export default function PublicNavbar() {
   const searchParams = useSearchParams();
@@ -34,20 +35,23 @@ export default function PublicNavbar() {
             </span>
           </Link>
 
-          {/* CTA Button - Only show when not centered */}
-          {!isCentered && (
-            <Link href="/api/auth/signin">
-              <Button className="group gap-2" size="sm">
-                <span className="hidden sm:inline">Get Started</span>
-                <span className="sm:hidden">Sign In</span>
-                <ArrowRight
-                  className="opacity-60 transition-transform group-hover:translate-x-0.5"
-                  size={16}
-                  strokeWidth={2}
-                />
-              </Button>
-            </Link>
-          )}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            {/* CTA Button - Only show when not centered */}
+            {!isCentered && (
+              <Link href="/api/auth/signin">
+                <Button className="group gap-2" size="sm">
+                  <span className="hidden sm:inline">Get Started</span>
+                  <span className="sm:hidden">Sign In</span>
+                  <ArrowRight
+                    className="opacity-60 transition-transform group-hover:translate-x-0.5"
+                    size={16}
+                    strokeWidth={2}
+                  />
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </nav>
     </header>

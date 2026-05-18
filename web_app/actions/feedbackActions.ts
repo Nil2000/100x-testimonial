@@ -1,6 +1,5 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { FeedbackType } from "@/generated/prisma/enums";
 import { sendMessageToQueue } from "@/lib/queue/sendMessage";
@@ -8,7 +7,13 @@ import feedbackSchema, { Feedback } from "@/schemas/feedbackSchema";
 import videoFeedbackSchema, {
   VideoFeedback,
 } from "@/schemas/videoFeedbackSchema";
-import { isValid } from "zod";
+import {
+  assertFeedbackOwnership,
+  assertPublicFeedbackInSpace,
+  assertPublishedSpace,
+  requireAuth,
+} from "@/lib/authGuards";
+import { toPublicTestimonial } from "@/lib/publicData";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -23,15 +28,12 @@ export const submitTextFeedback = async (
     };
   }
 
-  const space = await db.space.findUnique({
-    where: { id: spaceId },
-  });
-
-  if (!space) {
-    return {
-      error: "Space not found",
-    };
+  const spaceCheck = await assertPublishedSpace(spaceId);
+  if ("error" in spaceCheck) {
+    return { error: spaceCheck.error };
   }
+
+  const { space } = spaceCheck;
 
   try {
     const feedback = await db.feedback.create({
@@ -47,7 +49,6 @@ export const submitTextFeedback = async (
     });
 
     if (space.isSentimentEnabled || space.isSpamEnabled) {
-      // if either sentiment or spam is enabled
       const response = await sendMessageToQueue(
         JSON.stringify({
           id: feedback.id,
@@ -67,7 +68,6 @@ export const submitTextFeedback = async (
         };
       }
     } else {
-      // if both sentiment and spam are disabled
       await db.feedback.update({
         where: { id: feedback.id },
         data: {
@@ -92,12 +92,17 @@ export const toggleWallOfLove = async (
   feedbackId: string,
   addToWallOfLove: boolean
 ) => {
-  const session = await auth();
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
 
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const ownership = await assertFeedbackOwnership(
+    authResult.userId,
+    feedbackId
+  );
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   try {
@@ -128,15 +133,12 @@ export const submitVideoFeedback = async (
     };
   }
 
-  const space = await db.space.findUnique({
-    where: { id: spaceId },
-  });
-
-  if (!space) {
-    return {
-      error: "Space not found",
-    };
+  const spaceCheck = await assertPublishedSpace(spaceId);
+  if ("error" in spaceCheck) {
+    return { error: spaceCheck.error };
   }
+
+  const { space } = spaceCheck;
 
   try {
     const feedback = await db.feedback.create({
@@ -152,7 +154,6 @@ export const submitVideoFeedback = async (
     });
 
     if (space.isSentimentEnabled || space.isSpamEnabled) {
-      // if either sentiment or spam is enabled
       const response = await sendMessageToQueue(
         JSON.stringify({
           id: feedback.id,
@@ -172,7 +173,6 @@ export const submitVideoFeedback = async (
         };
       }
     } else {
-      // if both sentiment and spam are disabled
       await db.feedback.update({
         where: { id: feedback.id },
         data: {
@@ -194,12 +194,17 @@ export const submitVideoFeedback = async (
 };
 
 export const deleteFeedback = async (feedbackId: string) => {
-  const session = await auth();
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
 
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const ownership = await assertFeedbackOwnership(
+    authResult.userId,
+    feedbackId
+  );
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   try {
@@ -221,27 +226,25 @@ export const getFeedbackByIdAndSpaceNameWithSpaceLogo = async (
   spaceName: string,
   feedbackId: string
 ) => {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const result = await assertPublicFeedbackInSpace(spaceName, feedbackId);
+  if ("error" in result) {
+    return null;
   }
 
+  return result.feedback;
+};
+
+export const getFeedbackById = async (feedbackId: string) => {
   try {
     const feedback = await db.feedback.findFirst({
       where: {
         id: feedbackId,
+        addToWallOfLove: true,
+        isArchived: false,
+        isSpam: false,
         space: {
-          name: spaceName,
-        },
-      },
-      include: {
-        space: {
-          select: {
-            logo: true,
-          },
+          isPublished: true,
+          deletedAt: null,
         },
       },
     });
@@ -249,23 +252,8 @@ export const getFeedbackByIdAndSpaceNameWithSpaceLogo = async (
     if (!feedback) {
       return null;
     }
-    return feedback;
-  } catch (error) {
-    console.error("GET_FEEDBACK_BY_ID_AND_SPACENAME_ERROR", error);
-    return {
-      error: "Failed to fetch feedback",
-    };
-  }
-};
 
-export const getFeedbackById = async (feedbackId: string) => {
-  try {
-    const feedback = await db.feedback.findUnique({
-      where: {
-        id: feedbackId,
-      },
-    });
-    return feedback;
+    return toPublicTestimonial(feedback);
   } catch (error) {
     console.error("GET_FEEDBACK_BY_ID_ERROR", error);
     return null;
@@ -276,27 +264,20 @@ export const updateFeedbackStyleSettings = async (
   feedbackId: string,
   styleSettings: any
 ) => {
-  const session = await auth();
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
 
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const ownership = await assertFeedbackOwnership(
+    authResult.userId,
+    feedbackId
+  );
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   try {
-    const feedback = await db.feedback.findUnique({
-      where: {
-        id: feedbackId,
-      },
-    });
-
-    if (!feedback) {
-      return {
-        error: "Feedback not found",
-      };
-    }
-
     await db.feedback.update({
       where: {
         id: feedbackId,
@@ -317,16 +298,20 @@ export const updateFeedbackStyleSettings = async (
 };
 
 export const archiveFeedback = async (feedbackId: string) => {
-  const session = await auth();
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
 
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const ownership = await assertFeedbackOwnership(
+    authResult.userId,
+    feedbackId
+  );
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   try {
-    // while archiving, also remove from wall of love
     await db.feedback.update({
       where: { id: feedbackId },
       data: { isArchived: true, addToWallOfLove: false },
@@ -343,12 +328,17 @@ export const archiveFeedback = async (feedbackId: string) => {
 };
 
 export const unarchiveFeedback = async (feedbackId: string) => {
-  const session = await auth();
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
 
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const ownership = await assertFeedbackOwnership(
+    authResult.userId,
+    feedbackId
+  );
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   try {

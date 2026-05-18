@@ -1,9 +1,19 @@
+import {
+  assertSpaceOwnership,
+  forbiddenJsonResponse,
+  requireAuthApi,
+} from "@/lib/authGuards";
 import { getTweetById } from "@/lib/social/xClient";
 import { uploadImageToS3 } from "@/lib/storage/uploadUtils";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const authResult = await requireAuthApi();
+  if ("response" in authResult) {
+    return authResult.response;
+  }
+
   const { tweetId, spaceId } = await req.json();
 
   if (!tweetId) {
@@ -12,6 +22,11 @@ export async function POST(req: NextRequest) {
 
   if (!spaceId) {
     return NextResponse.json({ error: "SpaceId is required" }, { status: 400 });
+  }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
+  if ("error" in ownership) {
+    return forbiddenJsonResponse(ownership.error);
   }
 
   try {

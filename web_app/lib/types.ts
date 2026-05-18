@@ -31,6 +31,7 @@ export interface ThankYouSpace {
   message: string;
 }
 
+/** Space fields safe to expose on public collection pages. */
 export interface SpaceResponse {
   id: string;
   name: string;
@@ -39,10 +40,6 @@ export interface SpaceResponse {
   headerSubtitle: string;
   collectionType: string;
   collectStar: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  createdById: string;
-  isPublished: boolean;
   questions: Question[];
   thankyouSpace: ThankYouSpace | null;
   theme: any;

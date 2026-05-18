@@ -1,3 +1,5 @@
+import { HttpError, withRetry } from "./retry";
+
 export const updateFeedback = async (data: {
   feedbackId: string;
   spaceId: string;
@@ -6,26 +8,29 @@ export const updateFeedback = async (data: {
   spamStatus: string;
   sentimentStatus: string;
 }) => {
-  try {
-    const response = await fetch(
-      `${process.env.APP_URL}/api/update_feedback/`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.INTERNAL_API_KEY}`,
-        },
+  await withRetry(
+    async () => {
+      const response = await fetch(
+        `${process.env.APP_URL}/api/update_feedback/`,
+        {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.INTERNAL_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new HttpError(
+          `HTTP error! status: ${response.status}`,
+          response.status
+        );
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    console.log("Feedback updated successfully");
-  } catch (error) {
-    console.error("Error updating feedback via API:", error);
-    throw error;
-  }
+      console.log("Feedback updated successfully");
+    },
+    { label: "update_feedback callback" }
+  );
 };

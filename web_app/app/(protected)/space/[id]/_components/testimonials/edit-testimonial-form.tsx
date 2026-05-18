@@ -76,6 +76,10 @@ export default function TestimonialEditFormView() {
         }`,
         mimeType: file.type,
         size: file.size,
+        validation: {
+          type: "space-owner-by-name",
+          spaceName,
+        },
       });
       toast.success("Logo uploaded successfully!");
       return url;

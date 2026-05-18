@@ -2,7 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import VideoDisplayComponent from "@/components/video-display-component";
 import { TestimonialResponse } from "@/lib/types";
-import { UserRoundIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Quote, Star, UserRoundIcon } from "lucide-react";
 import React from "react";
 
 type StyleOptions = {
@@ -22,61 +23,129 @@ export default function WallOfLoveCard({
   const showRating = styleOptions.showRating !== "false";
   const showDate = styleOptions.showDate !== "false";
 
+  const variantClasses = getCardVariantClasses(cardVariant);
+  const isDark = cardVariant === "dark";
+  const isGlass = cardVariant === "glass";
+
   return (
     <Card
-      className={`flex flex-col items-center gap-2 p-4 w-full h-max border ${getCardVariantClasses(
-        cardVariant
-      )}`}
+      className={cn(
+        "group relative flex flex-col gap-4 p-5 sm:p-6 w-full h-full overflow-hidden",
+        "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+        variantClasses
+      )}
     >
-      <Avatar className="sm:w-12 sm:h-12 w-10 h-10">
-        <AvatarImage src={testimonial.profileImageUrl || ""} />
-        <AvatarFallback className="p-2">
-          <UserRoundIcon size={30} className="opacity-60" aria-hidden="true" />
-        </AvatarFallback>
-      </Avatar>
-      <h3 className="font-bold font-poppins text-xs sm:text-base">
-        {testimonial.name}
-      </h3>
-      {testimonial.feedbackType === "TEXT" && (
-        <p className="text-center font-dm_serif text-xs sm:text-sm">
+      <Quote
+        className={cn(
+          "absolute -top-2 -right-2 w-20 h-20 rotate-180 pointer-events-none transition-transform duration-300 group-hover:scale-110",
+          isDark
+            ? "text-white/5"
+            : isGlass
+            ? "text-white/30"
+            : "text-primary/5"
+        )}
+        strokeWidth={1}
+        aria-hidden="true"
+      />
+
+      {showRating && testimonial.rating > 0 && (
+        <div className="flex items-center gap-0.5">
+          {renderStars(testimonial.rating, isDark)}
+        </div>
+      )}
+
+      {testimonial.feedbackType === "VIDEO" && testimonial.videoUrl ? (
+        <div className="rounded-lg overflow-hidden -mx-1">
+          <VideoDisplayComponent videoUrl={testimonial.videoUrl} />
+        </div>
+      ) : (
+        <p
+          className={cn(
+            "font-poppins text-sm sm:text-[15px] leading-relaxed relative z-10",
+            isDark ? "text-zinc-100" : "text-foreground/90"
+          )}
+        >
           {testimonial.answer}
         </p>
       )}
-      {testimonial.feedbackType === "VIDEO" && (
-        <VideoDisplayComponent videoUrl={testimonial.videoUrl || ""} />
-      )}
-      {showRating && (
-        <div className="text-xs">{renderStars(testimonial.rating)}</div>
-      )}
-      {showDate && (
-        <div className="text-xs mx-auto">
-          <span className="text-xs text-muted-foreground">
-            {renderDate(testimonial.createdAt.toDateString())}
-          </span>
+
+      <div className="mt-auto pt-2 flex items-center justify-between gap-3 relative z-10">
+        <div className="flex items-center gap-3 min-w-0">
+          <Avatar
+            className={cn(
+              "w-10 h-10 ring-2 ring-offset-2 transition-all",
+              isDark
+                ? "ring-white/10 ring-offset-zinc-900"
+                : isGlass
+                ? "ring-white/40 ring-offset-transparent"
+                : "ring-primary/10 ring-offset-background"
+            )}
+          >
+            <AvatarImage src={testimonial.profileImageUrl || ""} />
+            <AvatarFallback className="bg-primary/10">
+              <UserRoundIcon
+                size={18}
+                className="text-primary/70"
+                aria-hidden="true"
+              />
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <h3
+              className={cn(
+                "font-poppins font-semibold text-sm truncate",
+                isDark ? "text-white" : "text-foreground"
+              )}
+            >
+              {testimonial.name}
+            </h3>
+            {showDate && (
+              <p
+                className={cn(
+                  "text-xs font-poppins truncate",
+                  isDark ? "text-zinc-400" : "text-muted-foreground"
+                )}
+              >
+                {renderDate(testimonial.createdAt)}
+              </p>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </Card>
   );
 }
+
 const getCardVariantClasses = (variant: string) => {
   switch (variant) {
     case "glass":
-      return "bg-white/20 backdrop-blur-lg border-white/40 shadow-lg";
+      return "bg-white/30 backdrop-blur-xl border border-white/50 shadow-lg";
     case "dark":
-      return "bg-zinc-900 border-zinc-700 shadow-xl";
+      return "bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800 shadow-xl";
     case "classic":
     default:
-      return "bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-foreground shadow-sm";
+      return "bg-card border border-border/60 shadow-sm hover:border-primary/30";
   }
 };
-const renderStars = (rating: number) => {
-  return Array.from({ length: rating }, (_, index) => (
-    <span key={index} className="text-xs">
-      ⭐
-    </span>
+
+const renderStars = (rating: number, isDark: boolean) => {
+  return Array.from({ length: 5 }, (_, index) => (
+    <Star
+      key={index}
+      size={14}
+      className={cn(
+        "transition-colors",
+        index < rating
+          ? "fill-amber-400 text-amber-400"
+          : isDark
+          ? "text-zinc-700"
+          : "text-muted-foreground/30"
+      )}
+    />
   ));
 };
-const renderDate = (date: string) => {
+
+const renderDate = (date: Date) => {
   return new Date(date).toLocaleString("en-US", {
     month: "short",
     day: "numeric",

@@ -1,56 +1,53 @@
 "use client";
-import React from "react";
-import TabbedInterfaceWrapper from "../tabbed-interface-wrapper";
-import TestimonialDetailView from "../testimonials/testimonial-detail-view";
-import ThankYouView from "../thank-you-view";
-import SpaceSettingsView from "./space-settings-view";
-import AnalyticsDashboard from "../analytics/analytics-dashboard";
+
 import {
   MessageSquareText,
   Heart,
   Settings2,
   BarChart3,
-  type LucideIcon,
 } from "lucide-react";
+import VerticalSidebarTabsLayout from "../tabs/vertical-sidebar-tabs-layout";
+import type { TabItem } from "../tabs/tab-item.types";
+import TestimonialDetailView from "../testimonials/testimonial-detail-view";
+import ThankYouView from "../thank-you-view";
+import SpaceSettingsView from "./space-settings-view";
+import AnalyticsDashboard from "../analytics/analytics-dashboard";
 
-export type TabConfig = {
-  tabTitle: string;
-  tabDescription: string;
-  tabIcon: LucideIcon;
-  tabContent: React.ReactNode;
-};
-
-const EditSpaceVerticalTabs: TabConfig[] = [
+const editSpaceTabs: TabItem[] = [
   {
-    tabTitle: "Testimonial Form",
-    tabDescription: "Customize your collection form",
-    tabIcon: MessageSquareText,
-    tabContent: <TestimonialDetailView />,
+    value: "testimonial-form",
+    label: "Testimonial Form",
+    description: "Customize your collection form",
+    icon: MessageSquareText,
+    content: <TestimonialDetailView />,
   },
   {
-    tabTitle: "Thank You Page",
-    tabDescription: "Post-submission experience",
-    tabIcon: Heart,
-    tabContent: <ThankYouView />,
+    value: "thank-you",
+    label: "Thank You Page",
+    description: "Post-submission experience",
+    icon: Heart,
+    content: <ThankYouView />,
   },
   {
-    tabTitle: "Space Settings",
-    tabDescription: "Publish & manage your space",
-    tabIcon: Settings2,
-    tabContent: <SpaceSettingsView />,
+    value: "space-settings",
+    label: "Space Settings",
+    description: "Publish & manage your space",
+    icon: Settings2,
+    content: <SpaceSettingsView />,
   },
   {
-    tabTitle: "Analytics",
-    tabDescription: "Track performance metrics",
-    tabIcon: BarChart3,
-    tabContent: <AnalyticsDashboard />,
+    value: "analytics",
+    label: "Analytics",
+    description: "Track performance metrics",
+    icon: BarChart3,
+    content: <AnalyticsDashboard />,
   },
 ];
 
 export default function SpaceEditorTabs() {
   return (
     <div className="h-full">
-      <TabbedInterfaceWrapper tabs={EditSpaceVerticalTabs} />
+      <VerticalSidebarTabsLayout tabs={editSpaceTabs} />
     </div>
   );
 }
