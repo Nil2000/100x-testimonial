@@ -1,4 +1,5 @@
 import { OPENROUTER_API_URL, OPENROUTER_TEXT_MODEL } from "../constants";
+import type { OpenRouterChatCompletion } from "./openrouter";
 
 export const analyzeSentiment = async (message: string) => {
   try {
@@ -29,10 +30,10 @@ Message: ${message}`,
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = (await response.json()) as any;
+    const data = (await response.json()) as OpenRouterChatCompletion;
 
     if (data.error) {
-      throw new Error(data.error.message);
+      throw new Error(data.error.message ?? "OpenRouter request failed");
     }
 
     const result = data.choices?.[0]?.message?.content?.toUpperCase().trim();

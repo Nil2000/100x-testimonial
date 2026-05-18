@@ -1,4 +1,4 @@
-name: Check build on PR
+name: CI: Web App
 on:
   pull_request:
     branches:
@@ -7,7 +7,7 @@ on:
       - "web_app/**"
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -16,19 +16,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 11
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web_app/pnpm-lock.yaml
 
       - name: Load env
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Prisma generate
         run: pnpm run db:generate
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint
 
       - name: Build
         run: pnpm run build
