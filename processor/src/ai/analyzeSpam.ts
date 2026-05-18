@@ -1,5 +1,6 @@
 import { OPENROUTER_API_URL, OPENROUTER_TEXT_MODEL } from "../constants";
 import { HttpError, withRetry } from "../utility/retry";
+import type { OpenRouterChatCompletion } from "./openrouter";
 
 export const analyzeSpam = async (message: string) => {
   if (!process.env.OPENROUTER_API_KEY) {
@@ -30,17 +31,14 @@ Testimonial: ${message}`,
       if (!response.ok) {
         throw new HttpError(
           `HTTP error! status: ${response.status}`,
-          response.status
+          response.status,
         );
       }
 
-      const data = (await response.json()) as {
-        error?: { message?: string };
-        choices?: Array<{ message?: { content?: string } }>;
-      };
+      const data = (await response.json()) as OpenRouterChatCompletion;
 
       if (data.error) {
-        throw new Error(data.error.message ?? "OpenRouter API error");
+        throw new Error(data.error.message ?? "OpenRouter request failed");
       }
 
       const result = data.choices?.[0]?.message?.content?.toLowerCase().trim();
@@ -51,7 +49,7 @@ Testimonial: ${message}`,
 
       return false;
     },
-    { label: "spam analysis" }
+    { label: "spam analysis" },
   ).catch((error) => {
     console.error("SPAM_ANALYSIS_ERROR", error);
     throw new Error("Failed to analyze spam");

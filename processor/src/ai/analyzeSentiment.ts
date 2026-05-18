@@ -1,5 +1,6 @@
 import { OPENROUTER_API_URL, OPENROUTER_TEXT_MODEL } from "../constants";
 import { HttpError, withRetry } from "../utility/retry";
+import type { OpenRouterChatCompletion } from "./openrouter";
 
 export const analyzeSentiment = async (message: string) => {
   if (!process.env.OPENROUTER_API_KEY) {
@@ -30,17 +31,14 @@ Message: ${message}`,
       if (!response.ok) {
         throw new HttpError(
           `HTTP error! status: ${response.status}`,
-          response.status
+          response.status,
         );
       }
 
-      const data = (await response.json()) as {
-        error?: { message?: string };
-        choices?: Array<{ message?: { content?: string } }>;
-      };
+      const data = (await response.json()) as OpenRouterChatCompletion;
 
       if (data.error) {
-        throw new Error(data.error.message ?? "OpenRouter API error");
+        throw new Error(data.error.message ?? "OpenRouter request failed");
       }
 
       const result = data.choices?.[0]?.message?.content?.toUpperCase().trim();
@@ -54,11 +52,11 @@ Message: ${message}`,
       }
 
       console.warn(
-        `Unexpected sentiment result: ${result}, defaulting to NEUTRAL`
+        `Unexpected sentiment result: ${result}, defaulting to NEUTRAL`,
       );
       return "NEUTRAL" as const;
     },
-    { label: "sentiment analysis" }
+    { label: "sentiment analysis" },
   ).catch((error) => {
     console.error("SENTIMENT_ANALYSIS_ERROR", error);
     throw new Error("Failed to analyze sentiment");

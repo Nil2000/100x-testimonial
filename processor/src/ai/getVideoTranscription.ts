@@ -1,5 +1,6 @@
 import { OPENROUTER_API_URL, OPENROUTER_VIDEO_MODEL } from "../constants";
 import { HttpError, withRetry } from "../utility/retry";
+import type { OpenRouterChatCompletion } from "./openrouter";
 
 export const getVideoTranscription = async (videoUrl: string) => {
   if (!process.env.OPENROUTER_API_KEY) {
@@ -41,9 +42,7 @@ export const getVideoTranscription = async (videoUrl: string) => {
       if (!response.ok) {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
-          const errorBody = (await response.json()) as {
-            error?: { message?: string };
-          };
+          const errorBody = (await response.json()) as OpenRouterChatCompletion;
           if (errorBody.error?.message) {
             errorMessage = errorBody.error.message;
           }
@@ -53,13 +52,20 @@ export const getVideoTranscription = async (videoUrl: string) => {
         throw new HttpError(errorMessage, response.status);
       }
 
-      const data = (await response.json()) as {
-        choices: Array<{ message: { content: string } }>;
-      };
+      const data = (await response.json()) as OpenRouterChatCompletion;
+
+      if (data.error) {
+        throw new Error(data.error.message ?? "OpenRouter request failed");
+      }
+
       console.log("Transcription response:", JSON.stringify(data, null, 2));
-      return data.choices[0].message.content;
+      const content = data.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error("No transcription returned from OpenRouter");
+      }
+      return content;
     },
-    { label: "video transcription" }
+    { label: "video transcription" },
   ).catch((error) => {
     console.error("VIDEO_TRANSCRIPTION_ERROR", error);
     throw new Error("Failed to transcribe video");
