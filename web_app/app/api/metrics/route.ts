@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth } from "@/lib/auth";
+import {
+  assertSpaceOwnership,
+  forbiddenJsonResponse,
+  requireAuthApi,
+} from "@/lib/authGuards";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
-import { db } from "@/lib/db";
 import { postHogExecQuery } from "@/lib/posthogUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      {
-        status: 401,
-      }
-    );
+  const authResult = await requireAuthApi();
+  if ("response" in authResult) {
+    return authResult.response;
   }
 
   const params = req.nextUrl.searchParams;
@@ -53,20 +50,12 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const spaceExists = await db.space.findUnique({
-      where: {
-        id: spaceId,
-      },
-    });
-
-    if (!spaceExists) {
-      return NextResponse.json(
-        { error: "Space not found" },
-        {
-          status: 404,
-        }
-      );
+    const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
+    if ("error" in ownership) {
+      return forbiddenJsonResponse(ownership.error);
     }
+
+    const spaceExists = ownership.space;
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceExists.name}${
       page === METRIC_PAGE.WALL_PAGE ? "/wall-of-love" : ""
     }`;

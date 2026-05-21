@@ -1,4 +1,8 @@
-import { auth } from "@/lib/auth";
+import {
+  assertSpaceOwnershipByName,
+  forbiddenJsonResponse,
+  requireAuthApi,
+} from "@/lib/authGuards";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,9 +12,17 @@ export async function GET(
 ) {
   const { spaceName } = await params;
 
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireAuthApi();
+  if ("response" in authResult) {
+    return authResult.response;
+  }
+
+  const ownership = await assertSpaceOwnershipByName(
+    authResult.userId,
+    spaceName
+  );
+  if ("error" in ownership) {
+    return forbiddenJsonResponse(ownership.error);
   }
 
   if (!spaceName) {
@@ -23,7 +35,7 @@ export async function GET(
   try {
     const existingSpace = await db.space.findFirst({
       where: {
-        name: spaceName,
+        id: ownership.space.id,
         deletedAt: null,
       },
       include: {
@@ -47,13 +59,6 @@ export async function GET(
 
     if (!existingSpace) {
       return NextResponse.json({ error: "Space not found" }, { status: 404 });
-    }
-
-    if (!existingSpace.isPublished) {
-      return NextResponse.json(
-        { error: "Space not published" },
-        { status: 400 }
-      );
     }
 
     return NextResponse.json({ space: existingSpace }, { status: 200 });

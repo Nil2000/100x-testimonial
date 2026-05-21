@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import React from "react";
-import HorizontalTabs from "./horizontal-tabs";
+import SpacePageHorizontalTabs from "./space-page-horizontal-tabs";
 import { useSpaceStore } from "@/store/spaceStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -138,7 +138,7 @@ export default function SpacePage({ id }: { id: string }) {
       </div>
 
       {/* Main Content */}
-      <HorizontalTabs />
+      <SpacePageHorizontalTabs />
     </div>
   );
 }

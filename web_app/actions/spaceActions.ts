@@ -1,30 +1,38 @@
 "use server";
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
 import { checkUserAccess } from "@/lib/accessControl";
+import {
+  assertSpaceOwnership,
+  assertThankYouSpaceOwnership,
+  requireAuth,
+} from "@/lib/authGuards";
+import {
+  getPublicSpaceSelect,
+  getWallOfLoveSettings,
+  publishedSpaceByNameWhere,
+  toPublicSpace,
+  toPublicTestimonial,
+} from "@/lib/publicData";
+import { isReservedSpaceSegment } from "@/lib/routes";
 import * as z from "zod";
 
 export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
 
-  if (session.user.id) {
-    const accessCheck = await checkUserAccess(session.user.id, "space");
+  const { userId } = authResult;
+  const accessCheck = await checkUserAccess(userId, "space");
 
-    if (!accessCheck.hasAccess) {
-      return {
-        error: accessCheck.reason,
-        limitReached: true,
-        currentUsage: accessCheck.currentUsage,
-        limit: accessCheck.limit,
-      };
-    }
+  if (!accessCheck.hasAccess) {
+    return {
+      error: accessCheck.reason,
+      limitReached: true,
+      currentUsage: accessCheck.currentUsage,
+      limit: accessCheck.limit,
+    };
   }
 
   const validateFields = spaceSchema.safeParse(values);
@@ -77,7 +85,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
         updatedAt: new Date(Date.now()),
         createdBy: {
           connect: {
-            id: session.user.id,
+            id: userId,
           },
         },
         thankyouSpace: {
@@ -109,12 +117,16 @@ export const updateSpace = async (
   id: string,
   values: z.infer<typeof spaceSchema>
 ) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
+  }
+
   const validateFields = spaceSchema.safeParse(values);
   if (validateFields.error) {
     return {
@@ -169,12 +181,11 @@ export const updateSpace = async (
 export const updateThanksSpace = async (
   values: z.infer<typeof thankyouSchema>
 ) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
+
   const validateFields = thankyouSchema.safeParse(values);
   if (validateFields.error) {
     return {
@@ -182,6 +193,11 @@ export const updateThanksSpace = async (
     };
   }
   const { id, title, message } = validateFields.data;
+
+  const ownership = await assertThankYouSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
+  }
   try {
     await db.thankYouSpace.update({
       where: {
@@ -203,12 +219,16 @@ export const updateThanksSpace = async (
 };
 
 export const changeSpaceStatus = async (id: string, status: boolean) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
+  }
+
   try {
     await db.space.update({
       where: {
@@ -229,40 +249,24 @@ export const changeSpaceStatus = async (id: string, status: boolean) => {
 };
 
 export const spaceExists = async (spaceName: string) => {
+  if (isReservedSpaceSegment(spaceName)) {
+    return null;
+  }
+
   try {
     const existingSpace = await db.space.findFirst({
       where: {
         name: spaceName,
-        deletedAt: null,
+        ...publishedSpaceByNameWhere,
       },
-      include: {
-        questions: {
-          select: {
-            id: true,
-            title: true,
-          },
-          orderBy: {
-            order: "asc",
-          },
-        },
-        thankyouSpace: {
-          select: {
-            title: true,
-            message: true,
-          },
-        },
-      },
+      select: getPublicSpaceSelect(),
     });
 
     if (!existingSpace) {
       return null;
     }
 
-    if (!existingSpace.isPublished) {
-      return null;
-    }
-
-    return existingSpace;
+    return toPublicSpace(existingSpace);
   } catch (error) {
     console.error(error);
     return null;
@@ -270,11 +274,19 @@ export const spaceExists = async (spaceName: string) => {
 };
 
 export const getTestimonialsForWallOfLove = async (spaceName: string) => {
+  if (isReservedSpaceSegment(spaceName)) {
+    return { error: "Space not found" };
+  }
+
   try {
     const space = await db.space.findFirst({
       where: {
         name: spaceName,
-        deletedAt: null,
+        ...publishedSpaceByNameWhere,
+      },
+      select: {
+        id: true,
+        theme: true,
       },
     });
     if (!space) {
@@ -287,20 +299,16 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
         spaceId: space.id,
         addToWallOfLove: true,
         isArchived: false,
+        isSpam: false,
+      },
+      orderBy: {
+        createdAt: "asc",
       },
     });
 
-    // Extract wall of love settings from theme
-    const theme = space.theme as Record<string, any>;
-    const wallOfLoveSettings = theme?.wallOfLove || {
-      style: "list",
-      styleOptions: { columns: "3" },
-    };
-
     return {
-      data: feedbacks,
-      spaceId: space.id,
-      wallOfLoveSettings,
+      data: feedbacks.map(toPublicTestimonial),
+      wallOfLoveSettings: getWallOfLoveSettings(space.theme),
     };
   } catch (error) {
     return {
@@ -323,28 +331,18 @@ export const saveWallOfLoveSettings = async (
     };
   }
 ) => {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   try {
-    const space = await db.space.findFirst({
-      where: {
-        id: spaceId,
-        createdById: session.user.id,
-        deletedAt: null,
-      },
-    });
-
-    if (!space) {
-      return {
-        error: "Space not found or unauthorized",
-      };
-    }
-
+    const { space } = ownership;
     const currentTheme = (space.theme as any) || {};
     const updatedTheme = {
       ...currentTheme,
@@ -368,15 +366,18 @@ export const saveWallOfLoveSettings = async (
 };
 
 export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   const user = await db.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: authResult.userId },
     select: { plan: true },
   });
 
@@ -413,15 +414,18 @@ export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
 };
 
 export const toggleSpamDetection = async (id: string, status: boolean) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
   }
 
   const user = await db.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: authResult.userId },
     select: { plan: true },
   });
 
@@ -458,12 +462,16 @@ export const toggleSpamDetection = async (id: string, status: boolean) => {
 };
 
 export const toggleAnalysis = async (id: string, status: boolean) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
+  }
+
   try {
     await db.space.update({
       where: {
@@ -484,31 +492,21 @@ export const toggleAnalysis = async (id: string, status: boolean) => {
 };
 
 export const deleteSpace = async (id: string) => {
-  const session = await auth();
-  if (!session || !session.user) {
-    return {
-      error: "Unauthorized",
-    };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
+
+  const ownership = await assertSpaceOwnership(authResult.userId, id);
+  if ("error" in ownership) {
+    return { error: ownership.error };
+  }
+
   try {
-    const isSpaceOwner = await db.space.findFirst({
-      where: {
-        id,
-        createdById: session.user.id,
-        deletedAt: null,
-      },
-    });
-
-    if (!isSpaceOwner) {
-      return {
-        error: "You are not the owner of this space",
-      };
-    }
-
     await db.space.update({
       where: {
         id,
-        createdById: session.user.id,
+        createdById: authResult.userId,
       },
       data: {
         deletedAt: new Date(),

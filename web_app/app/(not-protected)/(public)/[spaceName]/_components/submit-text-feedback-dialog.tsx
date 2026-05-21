@@ -69,6 +69,7 @@ export default function SubmitTextFeedbackDialog({
       }`,
       mimeType: file.type,
       size: file.size,
+      validation: { type: "public-space", spaceName },
     });
     return url;
   };

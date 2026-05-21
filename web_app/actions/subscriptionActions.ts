@@ -1,21 +1,20 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import {
   startTrial,
   upgradeToPaid,
   getUserPlanInfo,
 } from "@/lib/accessControl";
+import { requireAuth } from "@/lib/authGuards";
 import { db } from "@/lib/db";
 
 export async function startUserTrial() {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return { error: "Unauthorized" };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
 
-  const result = await startTrial(session.user.id);
+  const result = await startTrial(authResult.userId);
 
   if (!result.success) {
     return { error: result.error };
@@ -32,13 +31,12 @@ export async function upgradeUserToPaid(
   plan: "PROFESSIONAL" | "ENTERPRISE",
   subscriptionId: string
 ) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return { error: "Unauthorized" };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
 
-  const result = await upgradeToPaid(session.user.id, plan, subscriptionId);
+  const result = await upgradeToPaid(authResult.userId, plan, subscriptionId);
 
   if (!result.success) {
     return { error: result.error };
@@ -48,13 +46,12 @@ export async function upgradeUserToPaid(
 }
 
 export async function getUserPlan() {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return { error: "Unauthorized" };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
 
-  const planInfo = await getUserPlanInfo(session.user.id);
+  const planInfo = await getUserPlanInfo(authResult.userId);
 
   if (!planInfo) {
     return { error: "User not found" };
@@ -64,14 +61,13 @@ export async function getUserPlan() {
 }
 
 export async function getSubscriptionDetails() {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return { error: "Unauthorized" };
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
   }
 
   const user = await db.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: authResult.userId },
     select: {
       plan: true,
       subscriptionStatus: true,

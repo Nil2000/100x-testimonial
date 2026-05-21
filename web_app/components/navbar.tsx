@@ -5,6 +5,7 @@ import { ArrowRight, LayoutDashboard, Sparkles } from "lucide-react";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import AvatarDropdownMenu from "./avatar-dropdown-menu";
+import ThemeToggle from "./theme-toggle";
 
 export default async function Navbar() {
   const session = await auth();
@@ -56,6 +57,7 @@ export default async function Navbar() {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             {!session?.user ? (
               <Link href="/api/auth/signin">
                 <Button className="group gap-2">
