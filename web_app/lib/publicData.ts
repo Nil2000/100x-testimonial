@@ -52,9 +52,7 @@ export type WallOfLoveSettings = {
   };
 };
 
-export function getWallOfLoveSettings(
-  theme: unknown
-): WallOfLoveSettings {
+export function getWallOfLoveSettings(theme: unknown): WallOfLoveSettings {
   const record = theme as Record<string, unknown> | null;
   const settings = record?.wallOfLove as WallOfLoveSettings | undefined;
 
@@ -72,8 +70,9 @@ export function sanitizePublicTheme(theme: unknown) {
     return theme;
   }
 
-  const { wallOfLove: _wallOfLove, ...rest } = theme as Record<string, unknown>;
-  return rest;
+  const record = { ...(theme as Record<string, unknown>) };
+  delete record.wallOfLove;
+  return record;
 }
 
 export function toPublicSpace(space: PublicSpaceRecord): SpaceResponse {
@@ -92,9 +91,7 @@ export function toPublicSpace(space: PublicSpaceRecord): SpaceResponse {
 }
 
 /** Fields safe to expose on public wall, embed, and share pages. */
-export function toPublicTestimonial(
-  feedback: Feedback
-): TestimonialResponse {
+export function toPublicTestimonial(feedback: Feedback): TestimonialResponse {
   return {
     id: feedback.id,
     answer: feedback.answer,
@@ -118,6 +115,7 @@ export function toPublicTestimonial(
     source: feedback.source,
     sourceUrl: feedback.sourceUrl,
     metadata: null,
-    styleSettings: feedback.styleSettings as TestimonialResponse["styleSettings"],
+    styleSettings:
+      feedback.styleSettings as TestimonialResponse["styleSettings"],
   };
 }
