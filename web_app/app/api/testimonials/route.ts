@@ -11,16 +11,9 @@ import { FeedbackType, PlanType } from "@/generated/prisma/enums";
 
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
-  const category = params.get("category") as
-    | "TEXT"
-    | "VIDEO"
-    | "SPAM"
-    | "X"
-    | "LINKEDIN"
-    | "INSTAGRAM";
+  const category = params.get("category") as "TEXT" | "VIDEO" | "SPAM";
   const spaceId = params.get("spaceId");
   const addToWallOfLove = params.get("addToWallOfLove");
-  const isSocial = params.get("isSocial");
   const archived = params.get("archived");
   const authResult = await requireAuthApi();
   if ("response" in authResult) {
@@ -70,32 +63,6 @@ export async function GET(req: NextRequest) {
           },
         }),
         db.feedback.count({ where }),
-      ]);
-
-      return respond(records, { total });
-    }
-
-    // Handle social testimonials with optional platform filtering
-    if (isSocial === "true") {
-      const whereClause: Record<string, string | boolean | undefined> = {
-        spaceId: spaceId,
-        isSocial: true,
-        isArchived: false,
-      };
-
-      // If category is specified for social testimonials, filter by platform
-      if (category && ["X", "LINKEDIN", "INSTAGRAM"].includes(category)) {
-        whereClause.source = category;
-      }
-
-      const [records, total] = await Promise.all([
-        db.feedback.findMany({
-          where: whereClause,
-          orderBy: {
-            createdAt: "asc",
-          },
-        }),
-        db.feedback.count({ where: whereClause }),
       ]);
 
       return respond(records, { total });

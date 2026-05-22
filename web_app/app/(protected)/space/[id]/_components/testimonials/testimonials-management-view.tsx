@@ -21,7 +21,6 @@ const testimonialManagementTabs: TabItem[] = [
     content: (
       <TestimonialsListManager
         key="all-testimonials"
-        isSocial={false}
         showQuotaWarning={true}
       />
     ),
@@ -35,7 +34,6 @@ const testimonialManagementTabs: TabItem[] = [
       <TestimonialsListManager
         key="video-testimonials"
         category="VIDEO"
-        isSocial={false}
         showQuotaWarning={true}
       />
     ),
@@ -49,7 +47,6 @@ const testimonialManagementTabs: TabItem[] = [
       <TestimonialsListManager
         key="text-testimonials"
         category="TEXT"
-        isSocial={false}
         showQuotaWarning={true}
       />
     ),
@@ -63,7 +60,6 @@ const testimonialManagementTabs: TabItem[] = [
       <TestimonialsListManager
         key="liked-testimonials"
         wallOfLove={true}
-        isSocial={false}
       />
     ),
   },
@@ -76,7 +72,6 @@ const testimonialManagementTabs: TabItem[] = [
       <TestimonialsListManager
         key="spam-testimonials"
         category="SPAM"
-        isSocial={false}
       />
     ),
   },
@@ -89,7 +84,6 @@ const testimonialManagementTabs: TabItem[] = [
       <TestimonialsListManager
         key="archived-testimonials"
         archived={true}
-        isSocial={false}
       />
     ),
   },

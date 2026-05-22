@@ -124,7 +124,7 @@ export default function PublicEmbed({ feedback }: PublicEmbedProps) {
             {feedback.name}
           </h3>
         </div>
-        {!feedback.isSocial && <p>{renderStars(feedback.rating)}</p>}
+        <p>{renderStars(feedback.rating)}</p>
         {feedback.feedbackType !== "VIDEO" && (
           <div
             style={{

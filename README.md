@@ -93,10 +93,6 @@ This repo expects environment variables for:
   - `REDIS_TEXT_GROUP_ID` (processor)
   - `REDIS_VIDEO_GROUP_ID` (processor)
 
-- Social import (X/Twitter)
-
-  - `TWITTER_TOKEN`
-
 - Analytics (PostHog)
 
   - `NEXT_PUBLIC_POSTHOG_KEY`

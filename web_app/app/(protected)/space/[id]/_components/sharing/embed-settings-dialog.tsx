@@ -406,9 +406,7 @@ export default function EmbedSettingsDialog({
                       {testimonial.name}
                     </h3>
                   </div>
-                  {!testimonial.isSocial && (
-                    <p>{renderStars(testimonial.rating)}</p>
-                  )}
+                  <p>{renderStars(testimonial.rating)}</p>
                   {testimonial.feedbackType !== "VIDEO" && (
                     <div
                       style={{

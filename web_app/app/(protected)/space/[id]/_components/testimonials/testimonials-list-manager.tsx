@@ -6,18 +6,14 @@ import Loading from "@/components/loader";
 import { useDebounce } from "@uidotdev/usehooks";
 import { feedbackPerPage } from "@/lib/constants";
 import PaginationComponent from "@/components/pagination-component";
-import { SOCIAL_PLATFORM, TestimonialResponse } from "@/lib/types";
+import { TestimonialResponse } from "@/lib/types";
 import { Input } from "@/components/ui/input";
-import { Import, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import TestimonialSortDropdown from "./testimonial-sort-dropdown";
 import TestimonialItemCard from "./cards/testimonial-item-card";
 import ArchivedTestimonialCard from "./cards/archived-testimonial-card";
 import TestimonialShareDialog from "../sharing/testimonial-share-dialog";
 import ShareableLinkDialog from "../sharing/shareable-link-dialog";
-import ImportSocialDialog from "./import-social-dialog";
-import { Button } from "@/components/ui/button";
-import SocialMediaTestimonialCard from "./cards/social-media-testimonial-card";
-import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
 import EmbedSettingsDialog from "../sharing/embed-settings-dialog";
 import QuotaLimitWarning from "./quota-limit-warning";
@@ -51,8 +47,6 @@ type Props = {
   category?: string;
   wallOfLove?: boolean;
   archived?: boolean;
-  isSocial?: boolean;
-  socialPlatform?: SOCIAL_PLATFORM;
   showQuotaWarning?: boolean;
 };
 
@@ -60,8 +54,6 @@ export default function TestimonialsListManager({
   category,
   wallOfLove,
   archived,
-  isSocial,
-  socialPlatform,
   showQuotaWarning = false,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -79,11 +71,10 @@ export default function TestimonialsListManager({
     React.useState<TestimonialResponse | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [sortBy, setSortBy] = React.useState("name-asc"); // Added state for sorting
+  const [sortBy, setSortBy] = React.useState("name-asc");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { spaceInfo } = useSpaceStore();
   const [openGetlinkDialog, setOpenGetLinkDialog] = React.useState(false);
-  const [openImportDialog, setOpenImportDialog] = React.useState(false);
 
   const handleNextPage = () => {
     const isItemsLeft =
@@ -108,7 +99,6 @@ export default function TestimonialsListManager({
             spaceId: spaceInfo.id,
             addToWallOfLove: wallOfLove,
             archived,
-            isSocial: isSocial ? "true" : "false",
           },
         });
         setTestimonials(response.data.records ?? []);
@@ -125,7 +115,7 @@ export default function TestimonialsListManager({
     };
 
     fetchTestimonials();
-  }, [category, isSocial]);
+  }, [category, wallOfLove, archived, spaceInfo.id]);
 
   if (isLoading) {
     return <Loading />;
@@ -164,7 +154,7 @@ export default function TestimonialsListManager({
     );
   });
 
-  const sortedTestimonials = sortTestimonials(filteredTestimonials, sortBy); // Apply sorting
+  const sortedTestimonials = sortTestimonials(filteredTestimonials, sortBy);
 
   const getTestimonialsByPage = () => {
     const start = (currentPage - 1) * feedbackPerPage;
@@ -219,12 +209,6 @@ export default function TestimonialsListManager({
             <SearchIcon size={16} />
           </div>
         </div>
-        {isSocial && socialPlatform && (
-          <Button variant="outline" onClick={() => setOpenImportDialog(true)}>
-            <Import size={16} className="text-muted-foreground/80 mr-2" />{" "}
-            Import
-          </Button>
-        )}
         <TestimonialSortDropdown
           onChange={setSortBy}
           defaultValue={"name-asc"}
@@ -235,55 +219,34 @@ export default function TestimonialsListManager({
           No testimonials found
         </div>
       )}
-      {!isSocial
-        ? getTestimonialsByPage().map((testimonial: TestimonialResponse) =>
-            archived ? (
-              <ArchivedTestimonialCard
-                key={testimonial.id}
-                testimonial={testimonial}
-                removeFromList={removeFromList}
-              />
-            ) : (
-              <TestimonialItemCard
-                key={testimonial.id}
-                testimonial={testimonial}
-                removeFromWallOfLove={removeFromWallOfLove}
-                shareForEmbed={() => {
-                  setSelectedTestimonial(testimonial);
-                  setIsOpenEmbedTestimonial(true);
-                }}
-                shareForImage={() => {
-                  setSelectedTestimonial(testimonial);
-                  setIsOpenShareImage(true);
-                }}
-                getLink={() => {
-                  setSelectedTestimonial(testimonial);
-                  setOpenGetLinkDialog(true);
-                }}
-                removeFromList={removeFromList}
-              />
-            )
-          )
-        : getTestimonialsByPage().map((testimonial: TestimonialResponse) => (
-            <SocialMediaTestimonialCard
-              key={createId()}
-              testimonial={testimonial}
-              removeFromWallOfLove={removeFromWallOfLove}
-              shareForEmbed={() => {
-                setSelectedTestimonial(testimonial);
-                setIsOpenEmbedTestimonial(true);
-              }}
-              shareForImage={() => {
-                setSelectedTestimonial(testimonial);
-                setIsOpenShareImage(true);
-              }}
-              getLink={() => {
-                setSelectedTestimonial(testimonial);
-                setOpenGetLinkDialog(true);
-              }}
-              removeFromList={removeFromList}
-            />
-          ))}
+      {getTestimonialsByPage().map((testimonial: TestimonialResponse) =>
+        archived ? (
+          <ArchivedTestimonialCard
+            key={testimonial.id}
+            testimonial={testimonial}
+            removeFromList={removeFromList}
+          />
+        ) : (
+          <TestimonialItemCard
+            key={testimonial.id}
+            testimonial={testimonial}
+            removeFromWallOfLove={removeFromWallOfLove}
+            shareForEmbed={() => {
+              setSelectedTestimonial(testimonial);
+              setIsOpenEmbedTestimonial(true);
+            }}
+            shareForImage={() => {
+              setSelectedTestimonial(testimonial);
+              setIsOpenShareImage(true);
+            }}
+            getLink={() => {
+              setSelectedTestimonial(testimonial);
+              setOpenGetLinkDialog(true);
+            }}
+            removeFromList={removeFromList}
+          />
+        )
+      )}
       {filteredTestimonials.length > 0 && (
         <div className="w-full flex justify-center">
           <PaginationComponent
@@ -311,30 +274,6 @@ export default function TestimonialsListManager({
         testimonialId={selectedTestimonial?.id || ""}
         spaceName={spaceInfo.name}
       />
-      {isSocial && socialPlatform && (
-        <ImportSocialDialog
-          isOpen={openImportDialog}
-          onClose={(result) => {
-            setOpenImportDialog(false);
-            if (result.type === "success" && result.data) {
-              setTestimonials((prev) => [
-                ...prev,
-                result.data as unknown as TestimonialResponse,
-              ]);
-              toast.success("Social media testimonial imported successfully!");
-            }
-            if (result.type === "error") {
-              console.error("Import error:", result.error);
-              toast.error(
-                result.error ||
-                  "Failed to import testimonial. Please try again."
-              );
-            }
-          }}
-          platform={socialPlatform}
-          spaceId={spaceInfo.id}
-        />
-      )}
       <EmbedSettingsDialog
         isOpen={isOpenEmbedTestimonial && !!selectedTestimonial}
         onClose={() => {

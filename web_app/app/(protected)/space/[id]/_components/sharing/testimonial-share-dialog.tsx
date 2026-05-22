@@ -11,11 +11,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  TestimonialResponse,
-  TwitterEntity,
-  TwitterMetadata,
-} from "@/lib/types";
+import { TestimonialResponse } from "@/lib/types";
 import React from "react";
 import { TbBorderRadius } from "react-icons/tb";
 import { RiShadowFill } from "react-icons/ri";
@@ -428,20 +424,14 @@ export default function TestimonialShareDialog({
                     {feedbackInfo.name}
                   </h3>
                 </div>
-                {!feedbackInfo.isSocial && (
-                  <p>{renderStars(feedbackInfo.rating)}</p>
-                )}
+                <p>{renderStars(feedbackInfo.rating)}</p>
                 <div
                   style={{
                     fontSize: `${settings.bodySize}px`,
                     fontFamily: settings.bodyFont,
                   }}
                 >
-                  {feedbackInfo.source === "X" && feedbackInfo.metadata
-                    ? processTwitterBodyUsingMetadata(
-                        JSON.parse(feedbackInfo.metadata)
-                      )
-                    : feedbackInfo.answer}
+                  {feedbackInfo.answer}
                 </div>
               </div>
             </div>
@@ -475,102 +465,6 @@ export default function TestimonialShareDialog({
     </Dialog>
   );
 }
-
-const processTwitterBodyUsingMetadata = (metadata: TwitterMetadata) => {
-  const text = metadata.data.text;
-
-  const allEntities: TwitterEntity[] = [];
-
-  // Add all mentions
-  metadata.data.entities.mentions?.forEach((mention) => {
-    allEntities.push({
-      start: mention.start,
-      end: mention.end,
-      type: "mention",
-      data: mention,
-    });
-  });
-
-  // Add all hashtags
-  metadata.data.entities.hashtags?.forEach((hashtag) => {
-    allEntities.push({
-      start: hashtag.start,
-      end: hashtag.end,
-      type: "hashtag",
-      data: hashtag,
-    });
-  });
-  // Add all urls
-  metadata.data.entities.urls?.forEach((url) => {
-    allEntities.push({
-      start: url.start,
-      end: url.end,
-      type: "url",
-      data: url,
-    });
-  });
-
-  //Sorting allentities
-  allEntities.sort((a, b) => a.start - b.start);
-
-  // Build JSX elements
-  const elements: React.ReactNode[] = [];
-  let lastIndex = 0;
-
-  allEntities.forEach((entity, index) => {
-    // Add text before this entity
-    if (entity.start > lastIndex) {
-      elements.push(text.slice(lastIndex, entity.start));
-    }
-
-    // Add the entity as a link
-    const entityText = text.slice(entity.start, entity.end);
-
-    if (entity.type === "mention") {
-      elements.push(
-        <a
-          key={`mention-${index}`}
-          href={`https://x.com/${entity.data.username}`}
-          target="_blank"
-          className="text-blue-500 hover:underline"
-        >
-          {entityText}
-        </a>
-      );
-    } else if (entity.type === "hashtag") {
-      elements.push(
-        <a
-          key={`hashtag-${index}`}
-          href={`https://x.com/hashtag/${entity.data.tag}`}
-          target="_blank"
-          className="text-blue-500 hover:underline"
-        >
-          {entityText}
-        </a>
-      );
-    } else if (entity.type === "url") {
-      elements.push(
-        <a
-          key={`url-${index}`}
-          href={entity.data.expanded_url}
-          target="_blank"
-          className="text-blue-500 hover:underline"
-        >
-          {entity.data.expanded_url}
-        </a>
-      );
-    }
-
-    lastIndex = entity.end;
-  });
-
-  // Add remaining text
-  if (lastIndex < text.length) {
-    elements.push(text.slice(lastIndex));
-  }
-
-  return <span>{elements}</span>;
-};
 
 const renderStars = (rating: number) => {
   return Array.from({ length: rating }, (_, index) => (
