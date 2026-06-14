@@ -71,6 +71,10 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        display: ["var(--font-dm-serif)", "serif"],
+        dm_serif: ["var(--font-dm-serif)", "serif"],
+        poppins: ["var(--font-poppins)", "ui-sans-serif", "sans-serif"],
+        geist: ["var(--font-geist-sans)", "ui-sans-serif", "sans-serif"],
       },
       listStyleType: {
         square: "square",
