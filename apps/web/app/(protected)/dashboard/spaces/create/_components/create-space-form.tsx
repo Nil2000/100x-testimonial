@@ -86,7 +86,6 @@ export default function CreateSpaceForm({
   };
 
   const uploadFile = async (file: File, spaceName: string) => {
-    console.log(file);
     try {
       if (!file) {
         throw new Error("No file selected");
@@ -106,38 +105,31 @@ export default function CreateSpaceForm({
   };
 
   const onSubmit = (data: z.infer<typeof spaceSchema>) => {
-    console.log(data);
-    if (isFileSelected) {
-      console.log("file selected", isFileSelected);
-      uploadFile(isFileSelected, data.spaceName)
-        .then((msg: { error?: unknown; url?: string }) => {
-          if (msg.error) {
-            throw new Error(String(msg.error));
+    startTransition(async () => {
+      try {
+        if (isFileSelected) {
+          const msg = await uploadFile(isFileSelected, data.spaceName);
+          if (msg.error || !msg.url) {
+            throw new Error(String(msg.error ?? "Logo upload failed"));
           }
-          console.log(msg);
           data.logo = msg.url;
           toast.success("Logo uploaded successfully!");
-        })
-        .catch((err) => {
-          console.error(err);
-          toast.error("Failed to upload logo. Please try again.");
-        });
-    }
-    startTransition(() => {
-      createSpace(data)
-        .then((res) => {
-          if (res.error) {
-            throw new Error(String(res.error));
-          }
-          console.log(res.message);
-          toast.success("Space created successfully!");
-          //redirect to the newly created space
-          router.push("/dashboard");
-        })
-        .catch((err) => {
-          console.error(err);
-          toast.error("Failed to create space. Please try again.");
-        });
+        }
+
+        const res = await createSpace(data);
+        if (res.error) {
+          throw new Error(String(res.error));
+        }
+        toast.success("Space created successfully!");
+        router.push("/dashboard");
+      } catch (err) {
+        console.error(err);
+        toast.error(
+          err instanceof Error
+            ? err.message
+            : "Failed to create space. Please try again.",
+        );
+      }
     });
   };
 
@@ -206,7 +198,7 @@ export default function CreateSpaceForm({
                         setFileSelected(null);
                         setValue("logo", "");
                         const node = document.getElementById(
-                          "file"
+                          "file",
                         ) as HTMLInputElement;
                         if (node) node.value = "";
                       }}
