@@ -21,14 +21,19 @@ This file is the **source of truth for AI coding agents** working in this reposi
 
 ```
 testimonial-100x/
-├── web_app/          # Next.js 15 app (UI, server actions, API routes, Prisma)
-├── processor/        # Bun background worker (Redis consumer, AI analysis)
-├── docker-compose.dev.yml   # Local Postgres, MinIO, Redis
-├── README.md         # Human-oriented setup guide (some env names may be outdated)
-└── AGENTS.md         # This file
+├── package.json            # Root workspace (pnpm + turbo)
+├── pnpm-workspace.yaml     # apps/*, packages/*
+├── turbo.json
+├── apps/
+│   ├── web/                # Next.js 15 app (UI, server actions, API routes, Prisma)
+│   └── processor/          # Bun background worker (Redis consumer, AI analysis)
+├── packages/               # Shared packages (none yet)
+├── docker-compose.dev.yml  # Local Postgres, MinIO, Redis
+├── README.md               # Human-oriented setup guide (some env names may be outdated)
+└── AGENTS.md               # This file
 ```
 
-There is **no single root package.json**. `web_app` and `processor` are independent packages with their own dependencies and scripts.
+pnpm workspaces + Turborepo at the root. Install once from repo root (`pnpm install`). Processor still runs with Bun; web is Next.js via pnpm.
 
 ---
 
@@ -41,16 +46,16 @@ There is **no single root package.json**. `web_app` and `processor` are independ
 | Package manager (web) | pnpm 11 |
 | Runtime (processor) | Bun |
 | Database | PostgreSQL 17 |
-| ORM | Prisma 7 (`web_app/prisma/schema.prisma`) |
-| Prisma client output | `web_app/generated/prisma/` (not `@prisma/client` default path) |
+| ORM | Prisma 7 (`apps/web/prisma/schema.prisma`) |
+| Prisma client output | `apps/web/generated/prisma/` (not `@prisma/client` default path) |
 | Auth | NextAuth v5 beta (`next-auth@5.0.0-beta.25`), Google OAuth only |
 | File storage | MinIO (S3-compatible) via `minio` npm package |
 | Queue | Redis (ioredis), list-based `rpush` / `blpop` |
 | AI (processor) | **OpenRouter API** (`OPENROUTER_API_KEY`) — not direct OpenAI |
 | Analytics (optional) | PostHog |
-| UI components | shadcn/ui (Radix + Tailwind) in `web_app/components/ui/` |
+| UI components | shadcn/ui (Radix + Tailwind) in `apps/web/components/ui/` |
 | Styling | Tailwind CSS 3, `next-themes` for dark mode |
-| Forms | react-hook-form + zod schemas in `web_app/schemas/` |
+| Forms | react-hook-form + zod schemas in `apps/web/schemas/` |
 | State | zustand (local UI state where used) |
 
 ---
@@ -78,11 +83,11 @@ Use these terms consistently. **Do not rename** without a migration.
 - `Feedback` — `answer`, `videoUrl`, `rating`, `addToWallOfLove`, `isSpam`, `sentiment`, `styleSettings` (JSON), `isArchived`
 - `Question`, `ThankYouSpace`, `Account` (OAuth), `VerificationToken`, `PasswordResetToken`
 
-Enums live in `web_app/generated/prisma/enums` after `prisma generate`. Import enums from `@/generated/prisma/enums` or `@/generated/prisma/client`.
+Enums live in `apps/web/generated/prisma/enums` after `prisma generate`. Import enums from `@/generated/prisma/enums` or `@/generated/prisma/client`.
 
 ### Subscription plans
 
-Defined in `web_app/lib/subscription.ts` — `FREE`, `TRIAL`, `STARTER`, `PROFESSIONAL`, `ENTERPRISE`. Limits enforced via `web_app/lib/accessControl.ts` (`checkUserAccess`). Trial duration: 7 days.
+Defined in `apps/web/lib/subscription.ts` — `FREE`, `TRIAL`, `STARTER`, `PROFESSIONAL`, `ENTERPRISE`. Limits enforced via `apps/web/lib/accessControl.ts` (`checkUserAccess`). Trial duration: 7 days.
 
 ---
 
@@ -99,7 +104,7 @@ Defined in `web_app/lib/subscription.ts` — `FREE`, `TRIAL`, `STARTER`, `PROFES
 | `/{spaceName}/testimonial/[testimonialId]` | Single public testimonial view |
 | `/embed/[feedbackId]` | Embeddable single testimonial widget |
 
-`spaceName` must **not** match reserved segments in `web_app/lib/routes.ts` (`dashboard`, `space`, `auth`, `api`, `embed`, etc.).
+`spaceName` must **not** match reserved segments in `apps/web/lib/routes.ts` (`dashboard`, `space`, `auth`, `api`, `embed`, etc.).
 
 ### Protected pages (session required)
 
@@ -110,9 +115,9 @@ Defined in `web_app/lib/subscription.ts` — `FREE`, `TRIAL`, `STARTER`, `PROFES
 | `/space/[id]` | Space admin (testimonials, settings, sharing, analytics) |
 | `/buy-premium` | Upgrade flow |
 
-Auth enforced in `web_app/middleware.ts` using helpers from `web_app/lib/routes.ts`.
+Auth enforced in `apps/web/middleware.ts` using helpers from `apps/web/lib/routes.ts`.
 
-### API routes (`web_app/app/api/`)
+### API routes (`apps/web/app/api/`)
 
 | Route | Auth | Purpose |
 |-------|------|---------|
@@ -148,11 +153,11 @@ prisma/                 # Schema & migrations
 
 ### Path alias
 
-`@/*` maps to `web_app/*` (see `web_app/tsconfig.json`).
+`@/*` maps to `apps/web/*` (see `apps/web/tsconfig.json`).
 
 ### Server actions (preferred for mutations)
 
-Located in `web_app/actions/`:
+Located in `apps/web/actions/`:
 
 - `spaceActions.ts` — create/update/publish spaces, thank-you page
 - `feedbackActions.ts` — submit text/video feedback, wall-of-love toggle, archive
@@ -161,21 +166,21 @@ Located in `web_app/actions/`:
 - `userActions.ts` — user profile
 - `subscriptionActions.ts` — plan/trial
 
-**Pattern:** Actions return `{ error: string }` or `{ message: string }` (sometimes extra fields). Use `requireAuth()` and `assertSpaceOwnership()` / `assertFeedbackOwnership()` from `web_app/lib/authGuards.ts` for authorization.
+**Pattern:** Actions return `{ error: string }` or `{ message: string }` (sometimes extra fields). Use `requireAuth()` and `assertSpaceOwnership()` / `assertFeedbackOwnership()` from `apps/web/lib/authGuards.ts` for authorization.
 
 ### Auth implementation
 
-- Config: `web_app/lib/auth.config.ts` (Google provider)
-- Full setup: `web_app/lib/auth.ts` (Prisma adapter, JWT session, role in token)
+- Config: `apps/web/lib/auth.config.ts` (Google provider)
+- Full setup: `apps/web/lib/auth.ts` (Prisma adapter, JWT session, role in token)
 - Session includes `user.id` and `user.role` (`ADMIN` | `SUPERADMIN` | `MEMBER`)
 - **Credentials provider exists in callbacks but Google is the active provider**
 
 ### File uploads
 
-- MinIO client: `web_app/lib/storage/initClient.ts`
+- MinIO client: `apps/web/lib/storage/initClient.ts`
 - Uploads go to `S3_BUCKET` under `public/{key}` prefix
-- Public URL built via `web_app/lib/storage/parseS3publicBaseUrl.ts`
-- Server action: `uploadFileToBucket` in `web_app/actions/fileAction.ts`
+- Public URL built via `apps/web/lib/storage/parseS3publicBaseUrl.ts`
+- Server action: `uploadFileToBucket` in `apps/web/actions/fileAction.ts`
 
 ### Async feedback processing
 
@@ -192,14 +197,14 @@ Public form submit (feedbackActions)
 
 Processor entry points:
 
-- `processor/src/text_processor.ts` — listens on `REDIS_TEXT_QUEUE` (default `text-queue`)
-- `processor/src/video_processor.ts` — listens on `REDIS_VIDEO_QUEUE` (default `video-queue`)
+- `apps/processor/src/text_processor.ts` — listens on `REDIS_TEXT_QUEUE` (default `text-queue`)
+- `apps/processor/src/video_processor.ts` — listens on `REDIS_VIDEO_QUEUE` (default `video-queue`)
 
 ---
 
 ## Environment Variables
 
-### `web_app/.env` (from `.env.example`)
+### `apps/web/.env` (from `.env.example`)
 
 | Variable | Required | Notes |
 |----------|----------|-------|
@@ -218,7 +223,7 @@ Processor entry points:
 | `NEXT_PUBLIC_UPLOAD_VIDEO_MAX_SIZE` | No | MB, default 5 |
 | `NEXT_PUBLIC_UPLOAD_VIDEO_MAX_DURATION` | No | Minutes, default 5 |
 
-### `processor/.env`
+### `apps/processor/.env`
 
 | Variable | Required | Notes |
 |----------|----------|-------|
@@ -234,11 +239,11 @@ Processor entry points:
 
 **Verify these in code before assuming they are fixed.**
 
-1. **Redis queue env mismatch:** `web_app/lib/queue/sendMessage.ts` uses `REDIS_QUEUE`, but `web_app/.env.example` documents `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`. Processor listens on separate text/video queues. Text and video feedback both call the same `sendMessageToQueue` — routing to the correct queue may need `REDIS_QUEUE` set explicitly or code changes. Do not assume split queues work end-to-end without checking.
+1. **Redis queue env mismatch:** `apps/web/lib/queue/sendMessage.ts` uses `REDIS_QUEUE`, but `apps/web/.env.example` documents `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`. Processor listens on separate text/video queues. Text and video feedback both call the same `sendMessageToQueue` — routing to the correct queue may need `REDIS_QUEUE` set explicitly or code changes. Do not assume split queues work end-to-end without checking.
 
 2. **README env vars are partially outdated:** Root `README.md` mentions `REDIS_HOST`, `REDIS_PORT`, `OPENAI_API_KEY`. Actual code uses `REDIS_URL` and `OPENROUTER_API_KEY`.
 
-3. **Kafka constants are dead code:** `KAFKA_QUEUE` in `web_app/lib/constants.ts` is legacy naming. The system uses Redis lists, not Kafka.
+3. **Kafka constants are dead code:** `KAFKA_QUEUE` in `apps/web/lib/constants.ts` is legacy naming. The system uses Redis lists, not Kafka.
 
 4. **Prisma client path:** Import from `@/generated/prisma/client` and `@/generated/prisma/enums`, not `@prisma/client`.
 
@@ -274,12 +279,12 @@ Processor entry points:
 
 ### Validation
 
-- Zod schemas in `web_app/schemas/`
+- Zod schemas in `apps/web/schemas/`
 - Validate in server actions with `schema.safeParse(values)` before DB writes
 
 ### Database
 
-- Schema changes: edit `web_app/prisma/schema.prisma` → `pnpm prisma migrate dev`
+- Schema changes: edit `apps/web/prisma/schema.prisma` → `pnpm prisma migrate dev`
 - Always run `pnpm db:generate` after schema changes
 - Use `db` export from `@/lib/db` (PrismaPg adapter)
 
@@ -324,23 +329,28 @@ docker compose -f docker-compose.dev.yml up -d
 
 Starts Postgres (`5432`), MinIO (`9000`/`9001`), Redis (`6379`).
 
+### Install (repo root)
+
+```bash
+pnpm install
+```
+
 ### Web app
 
 ```bash
-cd web_app
+cd apps/web
 cp .env.example .env   # configure values
-pnpm install
 pnpm db:generate
 pnpm prisma migrate dev
 pnpm dev               # http://localhost:3000
+# or from root: pnpm turbo run dev --filter=web
 ```
 
 ### Processor (optional)
 
 ```bash
-cd processor
+cd apps/processor
 cp .env.example .env
-bun install
 bun run text_processor
 bun run video_processor   # separate terminal
 ```
@@ -348,11 +358,8 @@ bun run video_processor   # separate terminal
 ### CI checks (match before PR)
 
 ```bash
-# web_app
-cd web_app && pnpm run typecheck && pnpm run lint && pnpm run build
-
-# processor
-cd processor && bun run typecheck && bun run lint
+# from repo root
+pnpm turbo run typecheck lint build
 ```
 
 ---
@@ -361,19 +368,19 @@ cd processor && bun run typecheck && bun run lint
 
 | Need to… | Look at |
 |----------|---------|
-| Change auth / session | `web_app/lib/auth.ts`, `auth.config.ts`, `middleware.ts` |
-| Add route protection | `web_app/lib/routes.ts`, `middleware.ts` |
-| Add DB model | `web_app/prisma/schema.prisma` |
-| Add mutation | `web_app/actions/*.ts` |
-| Add API endpoint | `web_app/app/api/**/route.ts` |
-| Check plan limits | `web_app/lib/subscription.ts`, `accessControl.ts` |
-| Public data shaping | `web_app/lib/publicData.ts` |
-| Queue publish | `web_app/lib/queue/sendMessage.ts` |
-| Queue consume | `processor/src/queue/client.ts` |
-| AI analysis | `processor/src/ai/`, `processor/src/utility/processTextMessage.ts` |
-| Upload files | `web_app/actions/fileAction.ts`, `lib/storage/` |
-| UI primitives | `web_app/components/ui/` |
-| App logo | `web_app/components/app-logo.tsx` |
+| Change auth / session | `apps/web/lib/auth.ts`, `auth.config.ts`, `middleware.ts` |
+| Add route protection | `apps/web/lib/routes.ts`, `middleware.ts` |
+| Add DB model | `apps/web/prisma/schema.prisma` |
+| Add mutation | `apps/web/actions/*.ts` |
+| Add API endpoint | `apps/web/app/api/**/route.ts` |
+| Check plan limits | `apps/web/lib/subscription.ts`, `accessControl.ts` |
+| Public data shaping | `apps/web/lib/publicData.ts` |
+| Queue publish | `apps/web/lib/queue/sendMessage.ts` |
+| Queue consume | `apps/processor/src/queue/client.ts` |
+| AI analysis | `apps/processor/src/ai/`, `apps/processor/src/utility/processTextMessage.ts` |
+| Upload files | `apps/web/actions/fileAction.ts`, `lib/storage/` |
+| UI primitives | `apps/web/components/ui/` |
+| App logo | `apps/web/components/app-logo.tsx` |
 
 ---
 
@@ -382,7 +389,7 @@ cd processor && bun run typecheck && bun run lint
 1. **Read relevant action + guard + schema** before editing UI.
 2. **Check Prisma schema** if touching data shape — add migration.
 3. **Update both sides** if changing processor ↔ web app contract (`/api/update_feedback` payload, queue message JSON).
-4. **Keep `INTERNAL_API_KEY` in sync** across `web_app` and `processor` envs.
+4. **Keep `INTERNAL_API_KEY` in sync** across `apps/web` and `apps/processor` envs.
 5. **Test public vs protected paths** — middleware behavior differs for pages vs API.
 6. **Do not commit** `.env` files or secrets.
 7. **Minimize scope** — match existing patterns; no drive-by refactors.
@@ -400,4 +407,4 @@ cd processor && bun run typecheck && bun run lint
 
 ---
 
-*Last aligned with codebase: June 2026. Update this file when architecture, env vars, or major conventions change.*
+*Last aligned with codebase: July 2026. Update this file when architecture, env vars, or major conventions change.*
