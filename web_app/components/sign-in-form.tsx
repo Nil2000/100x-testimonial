@@ -10,20 +10,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
-import Image from "next/image";
+import AppLogo from "./app-logo";
 
 export default function SignInForm() {
   return (
     <Card className="font-sans border shadow-xl">
       <CardHeader className="space-y-4 text-center pb-8">
         <div className="mx-auto w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center p-3">
-          <Image
-            src="/logo.svg"
-            alt="Logo"
-            width={80}
-            height={80}
-            className="w-full h-full"
-          />
+          <AppLogo width={80} height={80} className="w-full h-full" />
         </div>
         <div className="space-y-2">
           <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>

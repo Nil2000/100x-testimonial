@@ -1,3 +1,4 @@
+import AppLogo from "@/components/app-logo";
 import Image from "next/image";
 import React from "react";
 
@@ -17,13 +18,7 @@ export default function ImagePrview({
         />
       ) : (
         <div className="h-full w-full flex items-center justify-center bg-muted">
-          <Image
-            src="/logo.svg"
-            width={40}
-            height={40}
-            alt="logo"
-            className="opacity-50"
-          />
+          <AppLogo width={40} height={40} className="opacity-50" />
         </div>
       )}
     </div>

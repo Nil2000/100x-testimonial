@@ -1,6 +1,6 @@
 "use client";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import AppLogo from "./app-logo";
 import React from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -22,9 +22,7 @@ export default function PublicNavbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="relative">
-              <Image
-                src="/logo.svg"
-                alt="Logo"
+              <AppLogo
                 width={32}
                 height={32}
                 className="transition-transform group-hover:scale-105"

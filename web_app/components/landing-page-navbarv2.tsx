@@ -2,8 +2,8 @@
 import React, { useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { Button } from "./ui/button";
+import AppLogo from "./app-logo";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Session } from "next-auth";
@@ -38,7 +38,7 @@ export default function LandingPageNavbarV2({ session }: Props) {
       ref={ref}
       className={cn(
         "fixed inset-x-0 top-0 z-40 mx-auto flex h-16 items-center justify-between px-4 font-poppins sm:px-6",
-        visible && "border border-border bg-background/70"
+        visible && "border border-border bg-background/70",
       )}
       animate={{
         y: visible ? "1rem" : 0,
@@ -52,7 +52,7 @@ export default function LandingPageNavbarV2({ session }: Props) {
       transition={{ type: "spring", stiffness: 220, damping: 30 }}
     >
       <Link href="/" className="flex items-center gap-2">
-        <Image src={"/logo.svg"} alt="100xTestimonials logo" width={28} height={28} />
+        <AppLogo width={32} height={32} />
         <span className="text-lg font-semibold tracking-tight sm:text-xl">
           100x<span className="text-primary">Testimonials</span>
         </span>

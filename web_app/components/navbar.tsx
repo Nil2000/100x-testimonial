@@ -1,6 +1,6 @@
-import Image from "next/image";
 import React from "react";
 import { Button } from "./ui/button";
+import AppLogo from "./app-logo";
 import { ArrowRight, LayoutDashboard, Sparkles } from "lucide-react";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
@@ -16,9 +16,7 @@ export default async function Navbar() {
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
             <div className="relative">
-              <Image
-                src="/logo.svg"
-                alt="Logo"
+              <AppLogo
                 width={32}
                 height={32}
                 className="transition-transform group-hover:scale-105"

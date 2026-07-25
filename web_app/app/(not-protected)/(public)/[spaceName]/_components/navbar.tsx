@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import AppLogo from "@/components/app-logo";
 import React from "react";
 import { cx } from "class-variance-authority";
 import { useTheme } from "next-themes";
@@ -9,13 +9,22 @@ type Props = {
 };
 
 export default function RequestTestimonialPageNavbar({ themeType }: Props) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const logoThemeOverride =
+    themeType === "dark"
+      ? "dark"
+      : themeType === "light"
+        ? "light"
+        : resolvedTheme === "dark"
+          ? "dark"
+          : "light";
+
   return (
     <nav
       className={cx(
         "w-full px-6 md:px-8 py-4 border-b flex items-center justify-between backdrop-blur-sm",
         themeType === "default"
-          ? theme === "dark"
+          ? resolvedTheme === "dark"
             ? "border-white/10 bg-black/20"
             : "border-black/10 bg-white/20"
           : themeType === "dark"
@@ -25,7 +34,7 @@ export default function RequestTestimonialPageNavbar({ themeType }: Props) {
     >
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Image src="/logo.svg" alt="Logo" width={20} height={20} />
+          <AppLogo width={20} height={20} themeOverride={logoThemeOverride} />
         </div>
         <h2
           className={cx(

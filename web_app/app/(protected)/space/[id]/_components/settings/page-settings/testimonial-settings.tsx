@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useFont } from "@/hooks/useFont";
 import { useSpaceStore } from "@/store/spaceStore";
+import AppLogo from "@/components/app-logo";
 import Image from "next/image";
 import { cx } from "class-variance-authority";
 import { updateThemeForSpace } from "@/actions/themeActions";
@@ -282,7 +283,17 @@ export default function TestimonialPage() {
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Image src="/logo.svg" alt="Logo" width={20} height={20} />
+                <AppLogo
+                  width={20}
+                  height={20}
+                  themeOverride={
+                    !noTheme && theme?.type === "dark"
+                      ? "dark"
+                      : !noTheme && theme?.type === "light"
+                        ? "light"
+                        : undefined
+                  }
+                />
               </div>
               <h2
                 className={cx(
@@ -344,13 +355,28 @@ export default function TestimonialPage() {
               {showBrandLogo && (
                 <div className="flex justify-center mb-3">
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden ring-2 ring-offset-2 ring-primary/20 shadow-md">
-                    <Image
-                      src={spaceInfo?.logo || "/logo.svg"}
-                      alt="Brand Logo"
-                      width={64}
-                      height={64}
-                      className="object-cover"
-                    />
+                    {spaceInfo?.logo ? (
+                      <Image
+                        src={spaceInfo.logo}
+                        alt="Brand Logo"
+                        width={64}
+                        height={64}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <AppLogo
+                        width={64}
+                        height={64}
+                        themeOverride={
+                          !noTheme && theme?.type === "dark"
+                            ? "dark"
+                            : !noTheme && theme?.type === "light"
+                              ? "light"
+                              : undefined
+                        }
+                        className="object-cover"
+                      />
+                    )}
                   </div>
                 </div>
               )}
