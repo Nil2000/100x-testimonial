@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  // ponytail: loose envMode until uniform .env / strict pass-through list is set up.
+  // Upgrade path: switch to strict and declare env/passThroughEnv per task.
+  "envMode": "loose",
+  "tasks": {
+    "db:generate": {
+      "inputs": ["prisma/schema.prisma", "prisma.config.ts"],
+      "outputs": ["generated/**"]
+    },
+    "build": {
+      "dependsOn": ["^build", "db:generate"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["db:generate"]
+    },
+    "lint": {},
+    "typecheck": {
+      "dependsOn": ["db:generate"]
+    }
+  }
+}
