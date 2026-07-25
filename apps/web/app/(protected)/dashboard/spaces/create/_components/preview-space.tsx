@@ -6,7 +6,7 @@ import { CheckCircle2, Pen, Video } from "lucide-react";
 import ImagePrview from "./image-preview";
 import LivePreviewbadge from "@/components/live-preview-badge";
 import { CreateSpaceQuestion } from "@/lib/types";
-import { CollectionType } from "@/generated/prisma/enums";
+import { CollectionType } from "@repo/db/enums";
 
 export default function PreviewSpace({
   selectedFile,

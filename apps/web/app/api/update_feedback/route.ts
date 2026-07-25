@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { AnalysisStatus, SentimentType } from "@/generated/prisma/client";
+import { db } from "@repo/db";
+import { AnalysisStatus, SentimentType } from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {

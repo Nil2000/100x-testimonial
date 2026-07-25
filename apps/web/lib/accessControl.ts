@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@repo/db";
 import { PlanType, PLAN_LIMITS, TRIAL_DURATION_DAYS } from "@/lib/subscription";
 
 export interface AccessCheckResult {

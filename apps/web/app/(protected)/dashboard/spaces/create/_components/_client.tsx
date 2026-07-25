@@ -7,7 +7,7 @@ import { sampleQuestions } from "@/lib/constants";
 import { CreateSpaceQuestion } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CollectionType } from "@/generated/prisma/enums";
+import { CollectionType } from "@repo/db/enums";
 
 export default function CreateSpacePage() {
   const [isMounted, setIsMounted] = React.useState(false);

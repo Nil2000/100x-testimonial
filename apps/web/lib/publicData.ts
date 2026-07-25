@@ -1,4 +1,4 @@
-import type { Feedback, Prisma } from "@/generated/prisma/client";
+import type { Feedback, Prisma } from "@repo/db/client";
 import type { SpaceResponse, TestimonialResponse } from "@/lib/types";
 
 export type PublicSpaceRecord = Prisma.SpaceGetPayload<{

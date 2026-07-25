@@ -6,7 +6,7 @@ import {
   getUserPlanInfo,
 } from "@/lib/accessControl";
 import { requireAuth } from "@/lib/authGuards";
-import { db } from "@/lib/db";
+import { db } from "@repo/db";
 
 export async function startUserTrial() {
   const authResult = await requireAuth();

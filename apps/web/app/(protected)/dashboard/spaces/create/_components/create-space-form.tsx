@@ -18,7 +18,7 @@ import { useForm, Controller } from "react-hook-form";
 import { dropDownOptionsTextVideo, sampleQuestions } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { spaceSchema } from "@/schemas/spaceSchema";
-import { CollectionType } from "@/generated/prisma/enums";
+import { CollectionType } from "@repo/db/enums";
 import { z } from "zod";
 import { createSpace } from "@/actions/spaceActions";
 import { CreateSpaceQuestion } from "@/lib/types";

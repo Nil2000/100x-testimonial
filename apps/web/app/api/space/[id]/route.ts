@@ -3,7 +3,7 @@ import {
   forbiddenJsonResponse,
   requireAuthApi,
 } from "@/lib/authGuards";
-import { db } from "@/lib/db";
+import { db } from "@repo/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

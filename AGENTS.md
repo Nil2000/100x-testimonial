@@ -25,9 +25,10 @@ testimonial-100x/
 ├── pnpm-workspace.yaml     # apps/*, packages/*
 ├── turbo.json
 ├── apps/
-│   ├── web/                # Next.js 15 app (UI, server actions, API routes, Prisma)
+│   ├── web/                # Next.js 15 app (UI, server actions, API routes)
 │   └── processor/          # Bun background worker (Redis consumer, AI analysis)
-├── packages/               # Shared packages (none yet)
+├── packages/
+│   └── db/                 # Prisma schema, migrations, client (`@repo/db`)
 ├── docker-compose.dev.yml  # Local Postgres, MinIO, Redis
 ├── README.md               # Human-oriented setup guide (some env names may be outdated)
 └── AGENTS.md               # This file
@@ -46,8 +47,8 @@ pnpm workspaces + Turborepo at the root. Install once from repo root (`pnpm inst
 | Package manager (web) | pnpm 11 |
 | Runtime (processor) | Bun |
 | Database | PostgreSQL 17 |
-| ORM | Prisma 7 (`apps/web/prisma/schema.prisma`) |
-| Prisma client output | `apps/web/generated/prisma/` (not `@prisma/client` default path) |
+| ORM | Prisma 7 (`packages/db/prisma/schema.prisma`, package `@repo/db`) |
+| Prisma client output | `packages/db/generated/prisma/` (import via `@repo/db`, `@repo/db/client`, `@repo/db/enums`) |
 | Auth | NextAuth v5 beta (`next-auth@5.0.0-beta.25`), Google OAuth only |
 | File storage | MinIO (S3-compatible) via `minio` npm package |
 | Queue | Redis (ioredis), list-based `rpush` / `blpop` |
@@ -83,7 +84,7 @@ Use these terms consistently. **Do not rename** without a migration.
 - `Feedback` — `answer`, `videoUrl`, `rating`, `addToWallOfLove`, `isSpam`, `sentiment`, `styleSettings` (JSON), `isArchived`
 - `Question`, `ThankYouSpace`, `Account` (OAuth), `VerificationToken`, `PasswordResetToken`
 
-Enums live in `apps/web/generated/prisma/enums` after `prisma generate`. Import enums from `@/generated/prisma/enums` or `@/generated/prisma/client`.
+Enums live in `@repo/db/enums` after `prisma generate`. Import enums from `@repo/db/enums` or `@repo/db/client`.
 
 ### Subscription plans
 
@@ -143,13 +144,13 @@ app/                    # Next.js App Router pages & layouts
   (not-protected)/      # Public routes
 actions/                # Server actions ("use server") — primary mutation layer
 app/api/                # REST API routes (some used by client, processor uses update_feedback)
-lib/                    # Shared utilities, auth, db, queue, storage, guards
+lib/                    # Shared utilities, auth, queue, storage, guards
 components/             # React components (ui/ = shadcn)
 schemas/                # Zod validation schemas
 data/                   # Data access helpers (e.g. data/user.ts)
-generated/prisma/       # Prisma client (auto-generated, do not hand-edit)
-prisma/                 # Schema & migrations
 ```
+
+Prisma lives in `packages/db` (`@repo/db`), not under the web app.
 
 ### Path alias
 
@@ -204,34 +205,35 @@ Processor entry points:
 
 ## Environment Variables
 
-### `apps/web/.env` (from `.env.example`)
+Single root env file. Copy once:
+
+```bash
+cp .env.example .env
+```
+
+Scripts load it via `dotenv-cli` (`dotenv -e .env -- …` at root, `dotenv -e ../../.env -- …` in apps/packages). Do not rely on per-app `.env` for new setup (existing app `.env` files are left alone for you to migrate).
+
+### Root `.env` (from `.env.example`)
 
 | Variable | Required | Notes |
 |----------|----------|-------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `NEXT_PUBLIC_BASE_URL` | Yes | e.g. `http://localhost:3000` |
-| `INTERNAL_API_KEY` | Yes | Must match processor; secures `/api/update_feedback` |
+| `AUTH_SECRET` | Yes | NextAuth secret |
+| `INTERNAL_API_KEY` | Yes | Must match web ↔ processor; secures `/api/update_feedback` |
 | `GOOGLE_CLIENT_ID` | Yes (prod) | Google OAuth |
 | `GOOGLE_CLIENT_SECRET` | Yes (prod) | Google OAuth |
 | `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_SSL` | Yes | MinIO/S3 config |
 | `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` | Yes | Storage credentials |
 | `S3_PUBLIC_CUSTOM_DOMAIN` | No | Custom CDN domain for public URLs |
 | `REDIS_URL` | Yes (if using analysis) | e.g. `redis://localhost:6379` |
-| `REDIS_TEXT_QUEUE`, `REDIS_VIDEO_QUEUE` | In .env.example | See queue mismatch note below |
-| `REDIS_QUEUE` | Used by code | `sendMessageToQueue` reads this — **not in .env.example** |
+| `REDIS_QUEUE` | Yes (if using analysis) | List used by `sendMessageToQueue` |
+| `REDIS_TEXT_QUEUE`, `REDIS_VIDEO_QUEUE` | Yes (processor) | Queues processors `blpop` |
+| `APP_URL` | Yes (processor) | Web app base URL for callbacks |
+| `OPENROUTER_API_KEY` | Yes (if analysis enabled) | AI provider |
 | `NEXT_PUBLIC_POSTHOG_*`, `POSTHOG_*` | No | Analytics |
 | `NEXT_PUBLIC_UPLOAD_VIDEO_MAX_SIZE` | No | MB, default 5 |
 | `NEXT_PUBLIC_UPLOAD_VIDEO_MAX_DURATION` | No | Minutes, default 5 |
-
-### `apps/processor/.env`
-
-| Variable | Required | Notes |
-|----------|----------|-------|
-| `REDIS_URL` | Yes | Same Redis as web app |
-| `REDIS_TEXT_QUEUE`, `REDIS_VIDEO_QUEUE` | Yes | Queue names processors listen on |
-| `APP_URL` | Yes | Web app base URL for callbacks |
-| `INTERNAL_API_KEY` | Yes | Must match web app |
-| `OPENROUTER_API_KEY` | Yes (if analysis enabled) | AI provider |
 
 ---
 
@@ -239,13 +241,13 @@ Processor entry points:
 
 **Verify these in code before assuming they are fixed.**
 
-1. **Redis queue env mismatch:** `apps/web/lib/queue/sendMessage.ts` uses `REDIS_QUEUE`, but `apps/web/.env.example` documents `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`. Processor listens on separate text/video queues. Text and video feedback both call the same `sendMessageToQueue` — routing to the correct queue may need `REDIS_QUEUE` set explicitly or code changes. Do not assume split queues work end-to-end without checking.
+1. **Redis queue split:** Web `sendMessageToQueue` pushes to `REDIS_QUEUE`; processors listen on `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`. Root `.env.example` sets them to the same default for local text flow — video still needs the matching queue name or split publish logic.
 
 2. **README env vars are partially outdated:** Root `README.md` mentions `REDIS_HOST`, `REDIS_PORT`, `OPENAI_API_KEY`. Actual code uses `REDIS_URL` and `OPENROUTER_API_KEY`.
 
 3. **Kafka constants are dead code:** `KAFKA_QUEUE` in `apps/web/lib/constants.ts` is legacy naming. The system uses Redis lists, not Kafka.
 
-4. **Prisma client path:** Import from `@/generated/prisma/client` and `@/generated/prisma/enums`, not `@prisma/client`.
+4. **Prisma client path:** Import from `@repo/db`, `@repo/db/client`, and `@repo/db/enums` — not `@prisma/client` or `@/generated/prisma`.
 
 5. **No tRPC, no GraphQL** — mutations are server actions; some reads use API routes.
 
@@ -284,9 +286,9 @@ Processor entry points:
 
 ### Database
 
-- Schema changes: edit `apps/web/prisma/schema.prisma` → `pnpm prisma migrate dev`
+- Schema changes: edit `packages/db/prisma/schema.prisma` → `pnpm db:migrate`
 - Always run `pnpm db:generate` after schema changes
-- Use `db` export from `@/lib/db` (PrismaPg adapter)
+- Use `db` export from `@repo/db`
 
 ### Error handling in actions
 
@@ -312,8 +314,8 @@ Always use guards from `@/lib/authGuards`:
 ### Imports
 
 ```typescript
-import { db } from "@/lib/db";
-import { FeedbackType } from "@/generated/prisma/enums";
+import { db } from "@repo/db";
+import { FeedbackType } from "@repo/db/enums";
 import { requireAuth } from "@/lib/authGuards";
 ```
 
@@ -332,6 +334,7 @@ Starts Postgres (`5432`), MinIO (`9000`/`9001`), Redis (`6379`).
 ### Install (repo root)
 
 ```bash
+cp .env.example .env   # then fill in secrets
 pnpm install
 ```
 
@@ -339,20 +342,28 @@ pnpm install
 
 ```bash
 cd apps/web
-cp .env.example .env   # configure values
-pnpm db:generate
-pnpm prisma migrate dev
+# env comes from repo-root .env via dotenv-cli in scripts
+pnpm db:generate       # from root, or: pnpm --filter @repo/db db:generate
+pnpm db:migrate        # from root
 pnpm dev               # http://localhost:3000
 # or from root: pnpm turbo run dev --filter=web
+```
+
+### Database (`@repo/db`)
+
+```bash
+pnpm db:generate       # prisma generate in packages/db
+pnpm db:migrate        # prisma migrate dev
+pnpm db:studio
 ```
 
 ### Processor (optional)
 
 ```bash
-cd apps/processor
-cp .env.example .env
-bun run text_processor
-bun run video_processor   # separate terminal
+# from root (loads root .env)
+pnpm processor:text
+pnpm processor:video
+# or: cd apps/processor && pnpm text_processor
 ```
 
 ### CI checks (match before PR)
@@ -370,7 +381,7 @@ pnpm turbo run typecheck lint build
 |----------|---------|
 | Change auth / session | `apps/web/lib/auth.ts`, `auth.config.ts`, `middleware.ts` |
 | Add route protection | `apps/web/lib/routes.ts`, `middleware.ts` |
-| Add DB model | `apps/web/prisma/schema.prisma` |
+| Add DB model | `packages/db/prisma/schema.prisma` |
 | Add mutation | `apps/web/actions/*.ts` |
 | Add API endpoint | `apps/web/app/api/**/route.ts` |
 | Check plan limits | `apps/web/lib/subscription.ts`, `accessControl.ts` |
@@ -389,7 +400,7 @@ pnpm turbo run typecheck lint build
 1. **Read relevant action + guard + schema** before editing UI.
 2. **Check Prisma schema** if touching data shape — add migration.
 3. **Update both sides** if changing processor ↔ web app contract (`/api/update_feedback` payload, queue message JSON).
-4. **Keep `INTERNAL_API_KEY` in sync** across `apps/web` and `apps/processor` envs.
+4. **Keep `INTERNAL_API_KEY` in sync** in the root `.env` (shared by web and processor).
 5. **Test public vs protected paths** — middleware behavior differs for pages vs API.
 6. **Do not commit** `.env` files or secrets.
 7. **Minimize scope** — match existing patterns; no drive-by refactors.

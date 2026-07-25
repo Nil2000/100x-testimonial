@@ -1,5 +1,5 @@
 
-import { PlanType, SubscriptionStatus } from "@/generated/prisma/enums";
+import { PlanType, SubscriptionStatus } from "@repo/db/enums";
 import { getSubscriptionDetails } from "@/actions/subscriptionActions";
 import { create } from "zustand";
 

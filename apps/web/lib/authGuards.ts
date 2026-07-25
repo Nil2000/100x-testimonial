@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { db } from "@repo/db";
 import { toPublicTestimonial } from "@/lib/publicData";
-import type { Feedback, Space, ThankYouSpace } from "@/generated/prisma/client";
+import type { Feedback, Space, ThankYouSpace } from "@repo/db/client";
 import type { TestimonialResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import type { Session } from "next-auth";

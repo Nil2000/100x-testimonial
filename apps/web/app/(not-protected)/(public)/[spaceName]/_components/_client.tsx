@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React from "react";
-import { CollectionType } from "@/generated/prisma/enums";
+import { CollectionType } from "@repo/db/enums";
 import { Button } from "@/components/ui/button";
 import { Pen, Video } from "lucide-react";
 import ThankYouDialog from "./thanks-dialog";

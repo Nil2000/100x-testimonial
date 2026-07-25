@@ -4,7 +4,7 @@ import {
   FeedbackType,
   SentimentType,
   SourceType,
-} from "@/generated/prisma/enums";
+} from "@repo/db/enums";
 import { IconType } from "react-icons/lib";
 
 export interface CreateSpaceQuestion {

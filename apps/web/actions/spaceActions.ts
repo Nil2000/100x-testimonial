@@ -1,5 +1,5 @@
 "use server";
-import { db } from "@/lib/db";
+import { db } from "@repo/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
 import { checkUserAccess } from "@/lib/accessControl";
 import {

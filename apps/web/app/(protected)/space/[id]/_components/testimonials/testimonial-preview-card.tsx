@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Pen, Video } from "lucide-react";
 import { useSpaceStore } from "@/store/spaceStore";
 import Image from "next/image";
-import { CollectionType } from "@/generated/prisma/enums";
+import { CollectionType } from "@repo/db/enums";
 import { Question } from "@/lib/types";
 
 export default function TestimonialPreview() {

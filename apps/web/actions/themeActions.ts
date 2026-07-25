@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/lib/db";
+import { db } from "@repo/db";
 import { assertSpaceOwnership, requireAuth } from "@/lib/authGuards";
 
 type ThemeProps = {
