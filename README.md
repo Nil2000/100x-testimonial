@@ -133,6 +133,8 @@ It listens on `REDIS_QUEUE`, routes by `feedback.isVideo`, and `PUT`s results to
 | `pnpm db:studio` | Prisma Studio |
 | `pnpm processor:start` | Start the analysis worker (text + video) |
 
+CI: path-filtered `ci_web`, `ci_processor`, and `ci_db` workflows (see `.github/workflows/`).
+
 ---
 
 ## Key URLs

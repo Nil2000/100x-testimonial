@@ -1,25 +1,24 @@
-name: "CI: Web"
+name: "CI: DB"
 
 on:
   pull_request:
     branches:
       - "**"
     paths:
-      - "apps/web/**"
       - "packages/db/**"
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "turbo.json"
-      - ".github/workflows/ci_web.yml"
+      - ".github/workflows/ci_db.yml"
 
 concurrency:
-  group: ci-web-${{ github.ref }}
+  group: ci-db-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   check:
-    name: Web typecheck, lint, build
+    name: DB generate and typecheck
     runs-on: ubuntu-latest
 
     steps:
@@ -41,11 +40,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Prisma generate
+        run: pnpm exec dotenv -e .env -- turbo run db:generate --filter=@repo/db
+
       - name: Typecheck
-        run: pnpm exec dotenv -e .env -- turbo run typecheck --filter=web
-
-      - name: Lint
-        run: pnpm exec turbo run lint --filter=web
-
-      - name: Build
-        run: pnpm exec dotenv -e .env -- turbo run build --filter=web
+        run: pnpm exec dotenv -e .env -- turbo run typecheck --filter=@repo/db

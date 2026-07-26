@@ -366,9 +366,20 @@ pnpm processor:start
 
 ### CI checks (match before PR)
 
+Path-filtered workflows under `.github/workflows/`:
+
+| Workflow | Paths | Commands |
+|----------|-------|----------|
+| `ci_web.yml` | `apps/web/**`, `packages/db/**` | typecheck, lint, build (`--filter=web`) |
+| `ci_processor.yml` | `apps/processor/**` | typecheck, lint, build (`--filter=processor`) |
+| `ci_db.yml` | `packages/db/**` | `db:generate`, typecheck (`--filter=@repo/db`) |
+
+Locally (same idea):
+
 ```bash
-# from repo root
-pnpm turbo run typecheck lint build
+pnpm exec dotenv -e .env -- turbo run typecheck lint build --filter=web
+pnpm exec turbo run typecheck lint build --filter=processor
+pnpm exec dotenv -e .env -- turbo run db:generate typecheck --filter=@repo/db
 ```
 
 ---
