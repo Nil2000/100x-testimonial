@@ -305,7 +305,7 @@ export default function TestimonialPage() {
                     : "text-foreground"
                 )}
               >
-                100xTestimonials
+                TestiFlow
               </h2>
             </div>
             <div

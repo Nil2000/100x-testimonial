@@ -54,7 +54,7 @@ export default function LandingPageNavbarV2({ session }: Props) {
       <Link href="/" className="flex items-center gap-2">
         <AppLogo width={32} height={32} />
         <span className="text-lg font-semibold tracking-tight sm:text-xl">
-          100x<span className="text-primary">Testimonials</span>
+          Testi<span className="text-primary">Flow</span>
         </span>
       </Link>
 

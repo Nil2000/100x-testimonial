@@ -1,4 +1,4 @@
-# Testimonial 100x
+# TestiFlow
 
 Collect, manage, and showcase testimonials — text and video — from a single space.
 
@@ -20,7 +20,7 @@ Admins create a **Space**, share a public link, review submissions in a dashboar
 ## Monorepo layout
 
 ```
-testimonial-100x/
+testiflow/
 ├── apps/
 │   ├── web/          # Next.js 15 app (UI, server actions, API)
 │   └── processor/    # Bun workers (text + video queue consumers)
@@ -75,7 +75,7 @@ docker compose -f docker-compose.dev.yml up -d
 | MinIO API | `9000` (console `9001`, user/pass `minio` / `minio123`) |
 | Redis | `6379` |
 
-Compose also creates the `100xtestimonials` bucket with a public prefix for uploads.
+Compose also creates the `testiflow` bucket with a public prefix for uploads.
 
 ### 2. Environment
 

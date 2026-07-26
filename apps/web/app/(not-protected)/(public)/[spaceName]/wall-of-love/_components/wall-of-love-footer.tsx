@@ -38,7 +38,7 @@ export default function WallOfLoveFooter({ spaceName }: Props) {
 
         <div className="mt-4 pt-4 border-t border-border w-full max-w-xl">
           <p className="text-center text-xs text-muted-foreground font-poppins">
-            Powered by 100x Testimonial
+            Powered by TestiFlow
           </p>
         </div>
       </div>

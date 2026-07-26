@@ -1,4 +1,4 @@
-# AGENTS.md — AI Agent Guide for Testimonial 100x
+# AGENTS.md — AI Agent Guide for TestiFlow
 
 This file is the **source of truth for AI coding agents** working in this repository. Read it before making changes. When unsure, **verify in the codebase** — do not invent APIs, env vars, routes, or dependencies that are not documented here or present in code.
 
@@ -6,7 +6,7 @@ This file is the **source of truth for AI coding agents** working in this reposi
 
 ## What This Project Is
 
-**Testimonial 100x** is a testimonials collection and showcase platform. Users (admins) create **Spaces** to collect text and/or video testimonials from the public, manage them in a dashboard, and publish a **Wall of Love** (embeddable testimonial wall).
+**TestiFlow** is a testimonials collection and showcase platform. Users (admins) create **Spaces** to collect text and/or video testimonials from the public, manage them in a dashboard, and publish a **Wall of Love** (embeddable testimonial wall).
 
 ### Core user flows
 
@@ -20,7 +20,7 @@ This file is the **source of truth for AI coding agents** working in this reposi
 ## Repository Layout
 
 ```
-testimonial-100x/
+testiflow/
 ├── package.json            # Root workspace (pnpm + turbo)
 ├── pnpm-workspace.yaml     # apps/*, packages/*
 ├── turbo.json

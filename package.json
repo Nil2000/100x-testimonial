@@ -1,5 +1,5 @@
 {
-  "name": "testimonial-100x",
+  "name": "testiflow",
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env -- turbo run dev",
