@@ -13,11 +13,9 @@
   },
   "scripts": {
     "start": "dotenv -e ../../.env -- bun run src/index.ts",
-    "text_processor": "dotenv -e ../../.env -- bun run src/text_processor.ts",
-    "video_processor": "dotenv -e ../../.env -- bun run src/video_processor.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "build": "bun build src/text_processor.ts src/video_processor.ts --outdir=dist --target=bun"
+    "build": "bun build src/index.ts --outdir=dist --target=bun"
   },
   "dependencies": {
     "ioredis": "^5.4.1"

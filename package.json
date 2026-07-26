@@ -9,8 +9,7 @@
     "db:generate": "dotenv -e .env -- turbo run db:generate",
     "db:migrate": "dotenv -e .env -- pnpm --filter @repo/db db:migrate",
     "db:studio": "dotenv -e .env -- pnpm --filter @repo/db db:studio",
-    "processor:text": "dotenv -e .env -- pnpm --filter processor text_processor",
-    "processor:video": "dotenv -e .env -- pnpm --filter processor video_processor"
+    "processor:start": "dotenv -e .env -- pnpm --filter processor start"
   },
   "devDependencies": {
     "dotenv-cli": "^11.0.0",

@@ -1,135 +1,179 @@
 # Testimonial 100x
 
-## Overview
+Collect, manage, and showcase testimonials — text and video — from a single space.
 
-Testimonial 100x is a testimonials collection and showcase platform.
+Admins create a **Space**, share a public link, review submissions in a dashboard, and publish a **Wall of Love** (or embed individual testimonials). Optional background workers can run spam/sentiment analysis and video transcription via OpenRouter.
 
-It lets you:
+---
 
-- create a “space” for a product/service
-- collect text and/or video testimonials via a public link
-- manage testimonials in an admin dashboard
-- publish a “Wall of Love” (embeddable testimonial wall)
-- optionally enrich testimonials with background analysis (spam/sentiment/transcription) via a worker
+## What you can do
 
-The repo contains:
+| Role | Flow |
+|------|------|
+| **Admin** | Sign in with Google → create a Space → set questions, theme, and collection type → publish |
+| **Visitor** | Open `/{spaceName}` → submit text and/or video → thank-you page |
+| **Admin** | Review in `/space/[id]` → Wall of Love, archive, embeds, analytics |
+| **Worker** (optional) | Redis queue → analyze feedback → callback to the web API |
 
-- `web_app/`: Next.js application (UI + server actions + API routes)
-- `processor/`: background worker (Bun) consuming Redis messages for async processing
+---
 
-## Services / Infrastructure Used
+## Monorepo layout
 
-- **PostgreSQL**: Primary database for users, spaces, questions, and testimonials/feedback.
-- **Prisma**: ORM + migrations for type-safe database access.
-- **NextAuth (Auth.js v5 beta)**: Dashboard authentication (Google OAuth) and session/JWT handling.
-- **MinIO (S3-compatible storage)**: Stores uploaded assets (logos, images, videos) and imported media in local/dev.
-- **Redis**: Message queue for async processing between `web_app` and `processor`.
-- **OpenAI (optional)**: Used by `processor` for analysis/transcription (requires `OPENAI_API_KEY`).
-- **PostHog (optional)**: Analytics and metrics queries (requires PostHog env vars).
+```
+testimonial-100x/
+├── apps/
+│   ├── web/          # Next.js 15 app (UI, server actions, API)
+│   └── processor/    # Bun workers (text + video queue consumers)
+├── packages/
+│   └── db/           # Prisma schema, migrations, client (@repo/db)
+├── docker-compose.dev.yml
+├── package.json      # pnpm + Turborepo scripts
+├── .env.example      # single env template for the whole repo
+└── AGENTS.md         # deeper architecture notes for contributors / agents
+```
 
-## Local Development Setup
+| Package | Role |
+|---------|------|
+| `apps/web` | Dashboard, public collection pages, Wall of Love, embeds |
+| `apps/processor` | Async spam/sentiment/transcription (Bun + OpenRouter) |
+| `packages/db` | Shared Prisma client — import as `@repo/db` |
 
-### Prerequisites
+---
 
-- Node.js (for `web_app/`)
-- pnpm (recommended) or npm/yarn
-- Docker + Docker Compose
-- Bun (for `processor/`) if you want to run background workers locally
+## Stack
 
-### 1) Start local infrastructure (Postgres + MinIO + Redis)
+- **Web:** Next.js 15 (App Router), React 19, Tailwind, shadcn/ui
+- **Auth:** NextAuth v5 (Google OAuth)
+- **DB:** PostgreSQL 17 + Prisma 7 (`@repo/db`)
+- **Storage:** MinIO (S3-compatible) for logos, images, videos
+- **Queue:** Redis lists (`rpush` / `blpop`)
+- **AI:** OpenRouter (`OPENROUTER_API_KEY`) — not direct OpenAI
+- **Tooling:** pnpm workspaces + Turborepo; Bun for the processor runtime
+- **Analytics (optional):** PostHog
 
-From the repo root:
+---
+
+## Prerequisites
+
+- **Node.js** 20+ and **pnpm** 11
+- **Docker** + Docker Compose (Postgres, MinIO, Redis)
+- **Bun** (only if you run the processor locally)
+
+---
+
+## Local setup
+
+### 1. Infrastructure
 
 ```bash
 docker compose -f docker-compose.dev.yml up -d
 ```
 
-This starts:
+| Service | Port |
+|---------|------|
+| Postgres | `5432` (db `testimonials`, password `testimonials`) |
+| MinIO API | `9000` (console `9001`, user/pass `minio` / `minio123`) |
+| Redis | `6379` |
 
-- Postgres on `localhost:5432`
-- MinIO on `localhost:9000` (console `localhost:9001`)
-- Redis on `localhost:6379`
+Compose also creates the `100xtestimonials` bucket with a public prefix for uploads.
 
-### 2) Configure environment variables
+### 2. Environment
 
-Copy the example env files and then update the values as needed:
+One env file at the repo root (loaded by `dotenv-cli` in scripts):
 
 ```bash
-cp web_app/.env.example web_app/.env
-cp processor/.env.example processor/.env
+cp .env.example .env
 ```
 
-Make sure `INTERNAL_API_KEY` matches in both files (the processor calls `web_app` via `/api/update_feedback`).
+Fill in at least:
 
-This repo expects environment variables for:
+- `AUTH_SECRET` — random string for NextAuth
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — for sign-in
+- `INTERNAL_API_KEY` — shared secret for processor → web callbacks
+- `OPENROUTER_API_KEY` — only if you enable analysis workers
 
-- Database
+Defaults for `DATABASE_URL`, MinIO, and Redis match `docker-compose.dev.yml`.
 
-  - `DATABASE_URL`
+See [`.env.example`](.env.example) for the full list.
 
-- Auth (Google OAuth)
+### 3. Install, migrate, run
 
-  - `GOOGLE_CLIENT_ID`
-  - `GOOGLE_CLIENT_SECRET`
-
-- S3/MinIO
-
-  - `S3_ENDPOINT`
-  - `S3_PORT`
-  - `S3_USE_SSL`
-  - `S3_ACCESS_KEY`
-  - `S3_SECRET_KEY`
-  - `S3_BUCKET`
-  - `S3_PUBLIC_CUSTOM_DOMAIN` (optional)
-  - `S3_SSL` (used to build public URLs)
-
-- Redis
-
-  - `REDIS_HOST`
-  - `REDIS_PORT`
-  - `REDIS_PASSWORD` (optional)
-  - `REDIS_TEXT_CHANNEL` (optional)
-  - `REDIS_VIDEO_CHANNEL` (optional)
-  - `REDIS_TEXT_GROUP_ID` (processor)
-  - `REDIS_VIDEO_GROUP_ID` (processor)
-
-- Analytics (PostHog)
-
-  - `NEXT_PUBLIC_POSTHOG_KEY`
-  - `NEXT_PUBLIC_POSTHOG_HOST`
-  - `POSTHOG_METRICS_QUERY_URL`
-  - `POSTHOG_QUERY_TOKEN`
-
-- Optional worker/AI
-  - `OPENAI_API_KEY`
-
-Notes:
-
-- The concrete `.env` files live inside `web_app/` and `processor/` (they are gitignored).
-- Use `docker-compose.dev.yml` defaults for local MinIO/Redis/Postgres values.
-
-### 3) Setup and run the web app
+From the **repo root**:
 
 ```bash
-cd web_app
 pnpm install
-pnpm prisma generate
-pnpm prisma migrate dev
+pnpm db:generate
+pnpm db:migrate
 pnpm dev
 ```
 
-App will be available at `http://localhost:3000`.
+App: [http://localhost:3000](http://localhost:3000)
 
-### 4) (Optional) Run the background processor
+### 4. Background worker (optional)
 
-In another terminal:
+Needed when a Space has spam/sentiment analysis enabled. One process handles both text and video:
 
 ```bash
-cd processor
-bun install
-bun run text_processor
-# and/or
-bun run video_processor
+pnpm processor:start
 ```
 
-The worker consumes messages from Redis and performs async processing.
+It listens on `REDIS_QUEUE`, routes by `feedback.isVideo`, and `PUT`s results to `/api/update_feedback` using `INTERNAL_API_KEY`.
+
+---
+
+## Useful scripts (root)
+
+| Command | What it does |
+|---------|----------------|
+| `pnpm dev` | Turbo dev (web; prisma generate first) |
+| `pnpm build` | Production build |
+| `pnpm typecheck` / `pnpm lint` | Checks across packages |
+| `pnpm db:generate` | `prisma generate` in `@repo/db` |
+| `pnpm db:migrate` | `prisma migrate dev` |
+| `pnpm db:studio` | Prisma Studio |
+| `pnpm processor:start` | Start the analysis worker (text + video) |
+
+---
+
+## Key URLs
+
+| Path | Who | Purpose |
+|------|-----|---------|
+| `/` | Public | Landing |
+| `/auth/signin` | Public | Google sign-in |
+| `/dashboard` | Admin | Your spaces |
+| `/dashboard/spaces/create` | Admin | New space |
+| `/space/[id]` | Admin | Manage testimonials & settings |
+| `/{spaceName}` | Public | Collection form |
+| `/{spaceName}/wall-of-love` | Public | Published wall |
+| `/embed/[feedbackId]` | Public | Single-testimonial embed |
+
+---
+
+## How the pieces talk
+
+```
+Visitor submits feedback
+        │
+        ▼
+   apps/web (Prisma via @repo/db)
+        │
+        │  if spam/sentiment enabled → Redis rpush
+        ▼
+ apps/processor (blpop → OpenRouter; text or video by payload)
+        │
+        │  PUT /api/update_feedback + INTERNAL_API_KEY
+        ▼
+   Feedback row updated (spam / sentiment / transcript)
+```
+
+Uploads go to MinIO under `public/…`; public URLs are built from `S3_*` env vars.
+
+---
+
+## Contributing notes
+
+- Prefer **server actions** in `apps/web/actions/` for dashboard mutations.
+- DB schema lives in `packages/db/prisma/` — change it there, then `pnpm db:migrate`.
+- Import the client as `import { db } from "@repo/db"` (enums: `@repo/db/enums`).
+- For architecture, env quirks, and coding conventions, see [AGENTS.md](AGENTS.md).

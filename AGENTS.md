@@ -30,7 +30,7 @@ testimonial-100x/
 ├── packages/
 │   └── db/                 # Prisma schema, migrations, client (`@repo/db`)
 ├── docker-compose.dev.yml  # Local Postgres, MinIO, Redis
-├── README.md               # Human-oriented setup guide (some env names may be outdated)
+├── README.md               # Human-oriented setup guide
 └── AGENTS.md               # This file
 ```
 
@@ -196,10 +196,10 @@ Public form submit (feedbackActions)
   → db.feedback updated
 ```
 
-Processor entry points:
+Processor entry point:
 
-- `apps/processor/src/text_processor.ts` — listens on `REDIS_TEXT_QUEUE` (default `text-queue`)
-- `apps/processor/src/video_processor.ts` — listens on `REDIS_VIDEO_QUEUE` (default `video-queue`)
+- `apps/processor/src/index.ts` — single worker; listens on `REDIS_QUEUE`, dispatches text vs video via `feedback.isVideo`
+- Run from root: `pnpm processor:start`
 
 ---
 
@@ -227,8 +227,8 @@ Scripts load it via `dotenv-cli` (`dotenv -e .env -- …` at root, `dotenv -e ..
 | `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` | Yes | Storage credentials |
 | `S3_PUBLIC_CUSTOM_DOMAIN` | No | Custom CDN domain for public URLs |
 | `REDIS_URL` | Yes (if using analysis) | e.g. `redis://localhost:6379` |
-| `REDIS_QUEUE` | Yes (if using analysis) | List used by `sendMessageToQueue` |
-| `REDIS_TEXT_QUEUE`, `REDIS_VIDEO_QUEUE` | Yes (processor) | Queues processors `blpop` |
+| `REDIS_QUEUE` | Yes (if using analysis) | Single Redis list; web `rpush`, processor `blpop` |
+| `REDIS_TEXT_QUEUE`, `REDIS_VIDEO_QUEUE` | Legacy / unused by unified worker | Prefer `REDIS_QUEUE` |
 | `APP_URL` | Yes (processor) | Web app base URL for callbacks |
 | `OPENROUTER_API_KEY` | Yes (if analysis enabled) | AI provider |
 | `NEXT_PUBLIC_POSTHOG_*`, `POSTHOG_*` | No | Analytics |
@@ -241,9 +241,9 @@ Scripts load it via `dotenv-cli` (`dotenv -e .env -- …` at root, `dotenv -e ..
 
 **Verify these in code before assuming they are fixed.**
 
-1. **Redis queue split:** Web `sendMessageToQueue` pushes to `REDIS_QUEUE`; processors listen on `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`. Root `.env.example` sets them to the same default for local text flow — video still needs the matching queue name or split publish logic.
+1. **Queue naming leftovers:** Root `.env.example` still lists `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`, but the unified worker and web publisher both use `REDIS_QUEUE`. Keep those three aligned or drop the unused pair.
 
-2. **README env vars are partially outdated:** Root `README.md` mentions `REDIS_HOST`, `REDIS_PORT`, `OPENAI_API_KEY`. Actual code uses `REDIS_URL` and `OPENROUTER_API_KEY`.
+2. **README env vars:** Prefer root `.env.example` over any leftover mentions of `REDIS_HOST` / `OPENAI_API_KEY` in old docs; code uses `REDIS_URL` and `OPENROUTER_API_KEY`.
 
 3. **Kafka constants are dead code:** `KAFKA_QUEUE` in `apps/web/lib/constants.ts` is legacy naming. The system uses Redis lists, not Kafka.
 
@@ -360,10 +360,8 @@ pnpm db:studio
 ### Processor (optional)
 
 ```bash
-# from root (loads root .env)
-pnpm processor:text
-pnpm processor:video
-# or: cd apps/processor && pnpm text_processor
+# from root (loads root .env) — one worker for text + video
+pnpm processor:start
 ```
 
 ### CI checks (match before PR)
@@ -387,8 +385,8 @@ pnpm turbo run typecheck lint build
 | Check plan limits | `apps/web/lib/subscription.ts`, `accessControl.ts` |
 | Public data shaping | `apps/web/lib/publicData.ts` |
 | Queue publish | `apps/web/lib/queue/sendMessage.ts` |
-| Queue consume | `apps/processor/src/queue/client.ts` |
-| AI analysis | `apps/processor/src/ai/`, `apps/processor/src/utility/processTextMessage.ts` |
+| Queue consume | `apps/processor/src/index.ts`, `apps/processor/src/queue/client.ts` |
+| AI analysis | `apps/processor/src/ai/`, `apps/processor/src/utility/processTextMessage.ts` / `processVideoMessage.ts` |
 | Upload files | `apps/web/actions/fileAction.ts`, `lib/storage/` |
 | UI primitives | `apps/web/components/ui/` |
 | App logo | `apps/web/components/app-logo.tsx` |
