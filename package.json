@@ -1,0 +1,19 @@
+{
+  "name": "testimonial-100x",
+  "private": true,
+  "scripts": {
+    "dev": "dotenv -e .env -- turbo run dev",
+    "build": "dotenv -e .env -- turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "dotenv -e .env -- turbo run typecheck",
+    "db:generate": "dotenv -e .env -- turbo run db:generate",
+    "db:migrate": "dotenv -e .env -- pnpm --filter @repo/db db:migrate",
+    "db:studio": "dotenv -e .env -- pnpm --filter @repo/db db:studio",
+    "processor:start": "dotenv -e .env -- pnpm --filter processor start"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^11.0.0",
+    "turbo": "^2"
+  },
+  "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
+}
