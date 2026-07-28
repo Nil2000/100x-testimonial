@@ -6,7 +6,7 @@ import {
   getUserPlanInfo,
 } from "@/lib/accessControl";
 import { requireAuth } from "@/lib/authGuards";
-import { db } from "@repo/db";
+import { PlanType, SubscriptionStatus } from "@repo/db/enums";
 
 export async function startUserTrial() {
   const authResult = await requireAuth();
@@ -66,29 +66,20 @@ export async function getSubscriptionDetails() {
     return { error: authResult.error };
   }
 
-  const user = await db.user.findUnique({
-    where: { id: authResult.userId },
-    select: {
-      plan: true,
-      subscriptionStatus: true,
-      trialStartDate: true,
-      trialEndDate: true,
-      subscriptionId: true,
-    },
-  });
+  const planInfo = await getUserPlanInfo(authResult.userId);
 
-  if (!user) {
+  if (!planInfo) {
     return { error: "User not found" };
   }
 
   return {
     success: true,
     data: {
-      plan: user.plan,
-      subscriptionStatus: user.subscriptionStatus,
-      trialStartDate: user.trialStartDate?.toISOString() ?? null,
-      trialEndDate: user.trialEndDate?.toISOString() ?? null,
-      subscriptionId: user.subscriptionId ?? null,
+      plan: planInfo.plan as PlanType,
+      subscriptionStatus: planInfo.subscriptionStatus as SubscriptionStatus,
+      trialStartDate: planInfo.trialStartDate?.toISOString() ?? null,
+      trialEndDate: planInfo.trialEndDate?.toISOString() ?? null,
+      subscriptionId: planInfo.subscriptionId,
     },
   };
 }

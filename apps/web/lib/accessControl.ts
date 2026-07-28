@@ -14,6 +14,7 @@ export interface UserPlanInfo {
   subscriptionStatus: string;
   trialStartDate: Date | null;
   trialEndDate: Date | null;
+  subscriptionId: string | null;
   isTrialActive: boolean;
   isTrialExpired: boolean;
   daysLeftInTrial: number;
@@ -209,6 +210,7 @@ export async function getUserPlanInfo(
       subscriptionStatus: true,
       trialStartDate: true,
       trialEndDate: true,
+      subscriptionId: true,
     },
   });
 
@@ -236,6 +238,7 @@ export async function getUserPlanInfo(
     subscriptionStatus: user.subscriptionStatus,
     trialStartDate: user.trialStartDate,
     trialEndDate: user.trialEndDate,
+    subscriptionId: user.subscriptionId ?? null,
     isTrialActive,
     isTrialExpired,
     daysLeftInTrial,
