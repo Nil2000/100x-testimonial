@@ -529,14 +529,19 @@ export const getSpaces = async () => {
     return { error: authResult.error };
   }
 
-  const spaces = await db.space.findMany({
-    where: { createdById: authResult.userId, deletedAt: null },
-    select: {
-      id: true,
-      name: true,
-      logo: true,
-    },
-  });
+  try {
+    const spaces = await db.space.findMany({
+      where: { createdById: authResult.userId, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+      },
+    });
 
-  return spaces;
+    return spaces;
+  } catch (error) {
+    console.error("GET_SPACES_ERROR", error);
+    return { error: "Failed to load spaces. Please try again." };
+  }
 };

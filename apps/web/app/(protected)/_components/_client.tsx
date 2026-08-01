@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import SpaceCard from "./space-card";
 import UpgradeDialog from "@/components/upgrade-dialog";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Space {
   id: string;
@@ -17,15 +18,23 @@ interface DashboardPageProps {
   userPlan: string;
   spaceLimit: number;
   spaces: Space[];
+  errorMessage?: string;
 }
 
 export default function DashboardPage({
   userPlan,
   spaceLimit,
   spaces,
+  errorMessage,
 }: DashboardPageProps) {
   const router = useRouter();
   const [showUpgradeDialog, setShowUpgradeDialog] = React.useState(false);
+
+  React.useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage);
+    }
+  }, [errorMessage]);
 
   const handleCreateSpaceClick = (e: React.MouseEvent) => {
     e.preventDefault();

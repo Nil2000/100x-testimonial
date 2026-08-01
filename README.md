@@ -23,11 +23,13 @@ Admins create a **Space**, share a public link, review submissions in a dashboar
 testiflow/
 ├── apps/
 │   ├── web/          # Next.js 15 app (UI, server actions, API)
-│   └── processor/    # Bun workers (text + video queue consumers)
+│   └── processor/    # Bun background worker (Redis consumer, AI analysis)
 ├── packages/
 │   └── db/           # Prisma schema, migrations, client (@repo/db)
 ├── docker-compose.dev.yml
-├── package.json      # pnpm + Turborepo scripts
+├── package.json      # Root workspace (pnpm + turbo)
+├── pnpm-workspace.yaml
+├── turbo.json
 ├── .env.example      # single env template for the whole repo
 └── AGENTS.md         # deeper architecture notes for contributors / agents
 ```
@@ -35,7 +37,7 @@ testiflow/
 | Package | Role |
 |---------|------|
 | `apps/web` | Dashboard, public collection pages, Wall of Love, embeds |
-| `apps/processor` | Async spam/sentiment/transcription (Bun + OpenRouter) |
+| `apps/processor` | Async spam/sentiment/transcription worker (Bun + OpenRouter) |
 | `packages/db` | Shared Prisma client — import as `@repo/db` |
 
 ---
@@ -87,9 +89,11 @@ cp .env.example .env
 
 Fill in at least:
 
+- `NEXT_PUBLIC_BASE_URL` — e.g. `http://localhost:3000`
 - `AUTH_SECRET` — random string for NextAuth
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — for sign-in
 - `INTERNAL_API_KEY` — shared secret for processor → web callbacks
+- `APP_URL` — base URL for processor callbacks (same as `NEXT_PUBLIC_BASE_URL` locally)
 - `OPENROUTER_API_KEY` — only if you enable analysis workers
 
 Defaults for `DATABASE_URL`, MinIO, and Redis match `docker-compose.dev.yml`.
@@ -111,13 +115,15 @@ App: [http://localhost:3000](http://localhost:3000)
 
 ### 4. Background worker (optional)
 
-Needed when a Space has spam/sentiment analysis enabled. One process handles both text and video:
+Needed when a Space has spam/sentiment analysis enabled. One unified process handles both text and video:
 
 ```bash
 pnpm processor:start
 ```
 
 It listens on `REDIS_QUEUE`, routes by `feedback.isVideo`, and `PUT`s results to `/api/update_feedback` using `INTERNAL_API_KEY`.
+
+Note: `.env.example` still lists legacy `REDIS_TEXT_QUEUE` / `REDIS_VIDEO_QUEUE`, but the unified worker only uses `REDIS_QUEUE`.
 
 ---
 
@@ -146,8 +152,10 @@ CI: path-filtered `ci_web`, `ci_processor`, and `ci_db` workflows (see `.github/
 | `/dashboard` | Admin | Your spaces |
 | `/dashboard/spaces/create` | Admin | New space |
 | `/space/[id]` | Admin | Manage testimonials & settings |
+| `/buy-premium` | Admin | Upgrade subscription |
 | `/{spaceName}` | Public | Collection form |
 | `/{spaceName}/wall-of-love` | Public | Published wall |
+| `/{spaceName}/testimonial/[testimonialId]` | Public | Single testimonial view |
 | `/embed/[feedbackId]` | Public | Single-testimonial embed |
 
 ---

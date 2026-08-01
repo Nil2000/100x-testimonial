@@ -28,7 +28,7 @@ export async function checkUserAccess(
     | "textTestimonial"
     | "aiSpam"
     | "aiSentiment",
-  spaceId?: string
+  spaceId?: string,
 ): Promise<AccessCheckResult> {
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -111,7 +111,8 @@ export async function checkUserAccess(
       }
 
       const videoCount = space.feedbacks.filter(
-        (f) => f.feedbackType === "VIDEO" || f.feedbackType === "TEXT_AND_VIDEO"
+        (f) =>
+          f.feedbackType === "VIDEO" || f.feedbackType === "TEXT_AND_VIDEO",
       ).length;
 
       const videoLimit = planLimits.videoFeedbacksPerSpace;
@@ -149,7 +150,7 @@ export async function checkUserAccess(
       }
 
       const textCount = space.feedbacks.filter(
-        (f) => f.feedbackType === "TEXT" || f.feedbackType === "TEXT_AND_VIDEO"
+        (f) => f.feedbackType === "TEXT" || f.feedbackType === "TEXT_AND_VIDEO",
       ).length;
 
       const textLimit = planLimits.textTestimonialsPerSpace;
@@ -201,8 +202,8 @@ export async function checkUserAccess(
 }
 
 export async function getUserPlanInfo(
-  userId: string
-): Promise<UserPlanInfo | null> {
+  userId: string,
+): Promise<UserPlanInfo | { error: string }> {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: {
@@ -215,7 +216,9 @@ export async function getUserPlanInfo(
   });
 
   if (!user) {
-    return null;
+    return {
+      error: "User not found",
+    };
   }
 
   const now = new Date();
@@ -246,7 +249,7 @@ export async function getUserPlanInfo(
 }
 
 export async function startTrial(
-  userId: string
+  userId: string,
 ): Promise<{ success: boolean; error?: string }> {
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -288,7 +291,7 @@ export async function startTrial(
 export async function upgradeToPaid(
   userId: string,
   plan: "PROFESSIONAL" | "ENTERPRISE",
-  subscriptionId: string
+  subscriptionId: string,
 ): Promise<{ success: boolean; error?: string }> {
   const user = await db.user.findUnique({
     where: { id: userId },
