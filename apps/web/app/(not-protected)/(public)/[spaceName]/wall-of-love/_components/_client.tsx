@@ -63,7 +63,7 @@ export default function WallOfLovePage({
                 </div>
               </div>
               <span className="font-poppins font-semibold text-sm sm:text-base">
-                100xTestimonials
+                TestiFlow
               </span>
             </Link>
 
@@ -208,7 +208,7 @@ export default function WallOfLovePage({
           >
             Powered by{" "}
             <span className="font-semibold text-foreground">
-              100xTestimonials
+              TestiFlow
             </span>
             <ArrowUpRight size={12} />
           </Link>

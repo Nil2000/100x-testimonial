@@ -115,7 +115,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
 
 export const updateSpace = async (
   id: string,
-  values: z.infer<typeof spaceSchema>
+  values: z.infer<typeof spaceSchema>,
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {
@@ -179,7 +179,7 @@ export const updateSpace = async (
 };
 
 export const updateThanksSpace = async (
-  values: z.infer<typeof thankyouSchema>
+  values: z.infer<typeof thankyouSchema>,
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {
@@ -329,7 +329,7 @@ export const saveWallOfLoveSettings = async (
       showDate?: string;
       gap?: string;
     };
-  }
+  },
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {
@@ -520,5 +520,28 @@ export const deleteSpace = async (id: string) => {
     return {
       error: error,
     };
+  }
+};
+
+export const getSpaces = async () => {
+  const authResult = await requireAuth();
+  if ("error" in authResult) {
+    return { error: authResult.error };
+  }
+
+  try {
+    const spaces = await db.space.findMany({
+      where: { createdById: authResult.userId, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+      },
+    });
+
+    return spaces;
+  } catch (error) {
+    console.error("GET_SPACES_ERROR", error);
+    return { error: "Failed to load spaces. Please try again." };
   }
 };

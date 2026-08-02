@@ -20,7 +20,7 @@ export default function SignInForm() {
           <AppLogo width={80} height={80} className="w-full h-full" />
         </div>
         <div className="space-y-2">
-          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+          <CardTitle className="text-3xl font-bold">Welcome to TestiFlow</CardTitle>
           <CardDescription className="text-base">
             Sign in to manage your testimonials
           </CardDescription>

@@ -46,7 +46,7 @@ export default function RequestTestimonialPageNavbar({ themeType }: Props) {
               : "text-foreground"
           )}
         >
-          100xTestimonials
+          TestiFlow
         </h2>
       </div>
     </nav>

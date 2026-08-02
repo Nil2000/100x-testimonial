@@ -29,7 +29,7 @@ export default function PublicNavbar() {
               />
             </div>
             <span className="font-poppins font-bold text-xl sm:text-2xl">
-              100xTestimonials
+              TestiFlow
             </span>
           </Link>
 

@@ -3,11 +3,10 @@ import React from "react";
 import SmallCardWrapper from "./overview-card-wrapper";
 import { FolderOpen, Luggage, PlusIcon, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LoadingSpaceCard from "./loading-space-card-wrapper";
 import SpaceCard from "./space-card";
 import UpgradeDialog from "@/components/upgrade-dialog";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Space {
   id: string;
@@ -18,31 +17,24 @@ interface Space {
 interface DashboardPageProps {
   userPlan: string;
   spaceLimit: number;
+  spaces: Space[];
+  errorMessage?: string;
 }
 
-export default function DashboardPage({ userPlan, spaceLimit }: DashboardPageProps) {
+export default function DashboardPage({
+  userPlan,
+  spaceLimit,
+  spaces,
+  errorMessage,
+}: DashboardPageProps) {
   const router = useRouter();
-  const [spaces, setSpaces] = React.useState<Space[]>([]);
-  const [loading, setLoading] = React.useState(true);
   const [showUpgradeDialog, setShowUpgradeDialog] = React.useState(false);
 
-  const fetchSpaces = async () => {
-    axios
-      .get("/api/spaces")
-      .then((res) => {
-        // console.log(res.data);
-        setSpaces(res.data.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  };
-
   React.useEffect(() => {
-    fetchSpaces();
-  }, []);
+    if (errorMessage) {
+      toast.error(errorMessage);
+    }
+  }, [errorMessage]);
 
   const handleCreateSpaceClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -114,13 +106,7 @@ export default function DashboardPage({ userPlan, spaceLimit }: DashboardPagePro
           </Button>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <LoadingSpaceCard />
-            <LoadingSpaceCard />
-            <LoadingSpaceCard />
-          </div>
-        ) : spaces.length > 0 ? (
+        {spaces.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {spaces.map((space) => (
               <SpaceCard
