@@ -42,7 +42,7 @@ export default function LandingPageNavbarV2({ session }: Props) {
       )}
       animate={{
         y: visible ? "1rem" : 0,
-        width: visible ? "min(90%, 64rem)" : "100%",
+        width: visible ? "80%" : "100%",
         borderRadius: visible ? "4rem" : "0rem",
         backdropFilter: visible ? "blur(12px)" : "blur(0px)",
         boxShadow: visible
