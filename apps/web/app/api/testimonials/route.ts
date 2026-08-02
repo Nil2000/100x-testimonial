@@ -31,10 +31,10 @@ export async function GET(req: NextRequest) {
 
   const userPlanInfo = await getUserPlanInfo(authResult.userId);
 
-  if (!userPlanInfo) {
+  if ("error" in userPlanInfo) {
     console.error("Error retrieving plan info");
     return NextResponse.json(
-      { error: "Error retrieving plan info" },
+      { error: userPlanInfo.error },
       { status: 404 }
     );
   }

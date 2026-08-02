@@ -23,7 +23,7 @@ export default async function Navbar() {
               />
             </div>
             <span className="font-poppins font-bold text-xl hidden sm:inline-block">
-              100xTestimonials
+              TestiFlow
             </span>
           </Link>
 

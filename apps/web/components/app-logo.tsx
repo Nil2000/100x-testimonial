@@ -21,7 +21,7 @@ export default function AppLogo({
   width = 32,
   height = 32,
   className,
-  alt = "100xTestimonials logo",
+  alt = "TestiFlow logo",
   themeOverride,
 }: AppLogoProps) {
   const { resolvedTheme } = useTheme();
