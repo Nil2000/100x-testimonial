@@ -53,8 +53,8 @@ export async function getUserPlan() {
 
   const planInfo = await getUserPlanInfo(authResult.userId);
 
-  if (!planInfo) {
-    return { error: "User not found" };
+  if ("error" in planInfo) {
+    return { error: planInfo.error };
   }
 
   return { success: true, data: planInfo };
@@ -68,8 +68,8 @@ export async function getSubscriptionDetails() {
 
   const planInfo = await getUserPlanInfo(authResult.userId);
 
-  if (!planInfo) {
-    return { error: "User not found" };
+  if ("error" in planInfo) {
+    return { error: planInfo.error };
   }
 
   return {
