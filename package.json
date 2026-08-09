@@ -2,7 +2,7 @@
   "name": "testiflow",
   "private": true,
   "scripts": {
-    "dev": "dotenv -e .env -- turbo run dev --concurrency 4",
+    "dev": "dotenv -e .env -- turbo run dev --concurrency 2",
     "build": "dotenv -e .env -- turbo run build",
     "lint": "turbo run lint",
     "typecheck": "dotenv -e .env -- turbo run typecheck",
