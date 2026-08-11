@@ -91,8 +91,8 @@ body {
     --muted-foreground: 0 0% 53.3333%;
     --accent: 0 0% 20%;
     --accent-foreground: 0 0% 75.6863%;
-    --destructive: 180 17.3913% 45.0980%;
-    --destructive-foreground: 270 5.5556% 7.0588%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
     --border: 0 0% 13.3333%;
     --input: 0 0% 13.3333%;
     --ring: 22.2973 75.5102% 61.5686%;
