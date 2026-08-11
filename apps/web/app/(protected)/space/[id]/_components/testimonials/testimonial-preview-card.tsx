@@ -36,7 +36,7 @@ export default function TestimonialPreview() {
               width={100}
               height={100}
               alt={spaceInfo.name}
-              className="relative"
+              className="relative rounded-lg w-20 h-20 object-cover"
             />
           </div>
           {/* Header */}
