@@ -27,6 +27,14 @@ export default function DragAndDropQuestions({
     setItems(reorderedItems);
   };
 
+  if (items.length === 0) {
+    return (
+      <p className="rounded-lg border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
+        No questions yet. Add one to tell people what to talk about.
+      </p>
+    );
+  }
+
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
       <Droppable droppableId="droppable-list">
@@ -34,20 +42,23 @@ export default function DragAndDropQuestions({
           <ul
             {...provided.droppableProps}
             ref={provided.innerRef}
-            style={{ listStyleType: "none", padding: 0 }}
+            className="list-none p-0"
           >
             {items.map((item, index: number) => (
               <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(provided) => (
+                {(provided, snapshot) => (
                   <li
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="py-1"
+                    className={
+                      snapshot.isDragging ? "py-1 opacity-90" : "py-1"
+                    }
                   >
                     <QuestionItem
                       question={item.title}
                       maxLength={item.maxLength}
+                      position={index + 1}
+                      dragHandleProps={provided.dragHandleProps}
                       handleDelete={() => {
                         const updatedItems = items.filter(
                           (i) => i.id !== item.id
