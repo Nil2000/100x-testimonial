@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import React from "react";
 import SpacePageHorizontalTabs from "./space-page-horizontal-tabs";
 import { useSpaceStore } from "@/store/spaceStore";
@@ -16,8 +15,12 @@ export default function SpacePage({ id }: { id: string }) {
 
   const fetchSpaceInfo = async () => {
     try {
-      const res = await axios.get(`/api/space/${id}`);
-      setSpaceInfo(res.data.space);
+      const res = await fetch(`/api/space/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch space info");
+      }
+      const data = await res.json();
+      setSpaceInfo(data.space);
     } catch (error) {
       console.error("Failed to fetch space info", error);
       setError("Failed to load space. Please try again.");

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { POSTHOG_METRIC_EVENTS } from "./constants";
 
 export const generateOptions = (event: string) => {
@@ -83,18 +82,20 @@ export const postHogExecQuery = async (
   url: string
 ) => {
   const query = generateQuery(days, event, url);
-  // console.log("PostHog query", JSON.stringify(query));
-  const posthogResponse = await axios.post(
+  const posthogResponse = await fetch(
     process.env.POSTHOG_METRICS_QUERY_URL || "",
-    query,
     {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.POSTHOG_QUERY_TOKEN}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify(query),
     }
   );
-  if (posthogResponse.status !== 200) {
+  if (!posthogResponse.ok) {
     throw new Error("PostHog query failed");
   }
-  return posthogResponse.data.results;
+  const data = await posthogResponse.json();
+  return data.results;
 };
