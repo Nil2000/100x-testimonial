@@ -49,6 +49,7 @@ export default function TestimonialEditFormView() {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, isDirty },
   } = useForm<z.infer<typeof spaceSchema>>({
     resolver: zodResolver(spaceSchema),
@@ -144,9 +145,19 @@ export default function TestimonialEditFormView() {
         if (res.error) {
           console.error(res.error);
           toast.error("Failed to update space. Please try again.");
-        } else {
-          toast.success("Space updated successfully!");
+          return;
         }
+        const savedLogo = data.logo || initialLogoRef.current || "";
+        initialLogoRef.current = savedLogo || null;
+        if (savedLogo) {
+          updateSpaceField("logo", savedLogo);
+        }
+        setFileSelected(null);
+        reset({
+          ...data,
+          logo: savedLogo,
+        });
+        toast.success("Space updated successfully!");
       });
     });
   };
@@ -383,7 +394,7 @@ export default function TestimonialEditFormView() {
         <Button
           type="submit"
           className="w-full sm:max-w-[300px]"
-          disabled={isPending}
+          disabled={isPending || (!isDirty && !fileSelected)}
         >
           {isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -391,8 +402,10 @@ export default function TestimonialEditFormView() {
             "Update space"
           )}
         </Button>
-        {isDirty && !isPending && (
-          <span className="text-xs text-muted-foreground">Unsaved changes</span>
+        {(isDirty || fileSelected) && !isPending && (
+          <span className="text-xs text-muted-foreground">
+            You have unsaved changes
+          </span>
         )}
       </div>
     </form>

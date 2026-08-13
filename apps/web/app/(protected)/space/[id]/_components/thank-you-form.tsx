@@ -20,7 +20,8 @@ export default function ThankYouForm() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isDirty },
   } = useForm<z.infer<typeof thankyouSchema>>({
     resolver: zodResolver(thankyouSchema),
     defaultValues: {
@@ -31,7 +32,6 @@ export default function ThankYouForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof thankyouSchema>) => {
-    console.log(data);
     startTransition(() => {
       updateThanksSpace(data).then((res) => {
         if (res.error) {
@@ -39,14 +39,18 @@ export default function ThankYouForm() {
           toast.error("Failed to update thank you page. Please try again.");
           return;
         }
-        console.log("Thanks space updated successfully");
+        reset(data);
         toast.success("Thank you page updated successfully!");
       });
     });
   };
 
+  const onInvalid = () => {
+    toast.error("Please fix the highlighted fields before saving.");
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full">
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4 w-full">
       <div className="space-y-2">
         <Label htmlFor="title">
           Thank you title<span className="text-destructive">*</span>
@@ -92,17 +96,17 @@ export default function ThankYouForm() {
                 }}
               />
               <p className="text-destructive text-xs">
-                {errors.title && errors.title.message}
+                {errors.message && errors.message.message}
               </p>
             </>
           )}
         />
       </div>
-      <div className="flex">
+      <div className="flex items-center gap-3">
         <Button
           type="submit"
           className="w-full sm:max-w-[300px]"
-          disabled={isPending}
+          disabled={isPending || !isDirty}
         >
           {isPending ? (
             <Loader2 className="animate-spin" />
@@ -110,6 +114,11 @@ export default function ThankYouForm() {
             "Save thanks view"
           )}
         </Button>
+        {isDirty && !isPending && (
+          <span className="text-xs text-muted-foreground">
+            You have unsaved changes
+          </span>
+        )}
       </div>
     </form>
   );
