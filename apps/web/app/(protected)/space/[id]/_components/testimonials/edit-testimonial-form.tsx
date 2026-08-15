@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { z } from "zod";
 import { spaceSchema } from "@/schemas/spaceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,17 +25,33 @@ import { updateSpace } from "@/actions/spaceActions";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
+import { CollectionType } from "@repo/db/enums";
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="text-xs text-destructive">{message}</p>;
+}
+
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      {children}
+    </h3>
+  );
+}
 
 export default function TestimonialEditFormView() {
   const { spaceInfo, updateSpaceField } = useSpaceStore();
   const [isPending, startTransition] = useTransition();
   const [fileSelected, setFileSelected] = React.useState<File | null>(null);
   const initialLogoRef = React.useRef<string | null>(spaceInfo.logo || null);
+  const objectUrlRef = React.useRef<string | null>(null);
   const {
     control,
     handleSubmit,
     setValue,
-    formState: { errors },
+    reset,
+    formState: { errors, isDirty },
   } = useForm<z.infer<typeof spaceSchema>>({
     resolver: zodResolver(spaceSchema),
     defaultValues: {
@@ -48,55 +65,70 @@ export default function TestimonialEditFormView() {
     },
   });
 
+  // Object URLs for the live logo preview leak unless we hand them back.
+  const setLogoPreview = React.useCallback(
+    (file: File | null) => {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      if (!file) {
+        updateSpaceField("logo", initialLogoRef.current || "");
+        return;
+      }
+      const previewUrl = URL.createObjectURL(file);
+      objectUrlRef.current = previewUrl;
+      updateSpaceField("logo", previewUrl);
+    },
+    [updateSpaceField],
+  );
+
+  React.useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    };
+  }, []);
+
   const handleQuestionsSequenceChange = (
-    items: { id: string; title: string; maxLength: number }[]
+    items: { id: string; title: string; maxLength: number }[],
   ) => {
-    setValue("questionList", items);
+    setValue("questionList", items, { shouldDirty: true });
     updateSpaceField("questions", items);
   };
 
   const handleNewQuestion = () => {
     const newQuestion = {
-      id: Math.random().toString(36).substring(7),
+      id: createId(),
       title: "",
       maxLength: 100,
     };
-    setValue("questionList", [...spaceInfo.questions, newQuestion]);
-    updateSpaceField("questions", [...spaceInfo.questions, newQuestion]);
+    handleQuestionsSequenceChange([...spaceInfo.questions, newQuestion]);
   };
 
   const uploadFile = async (file: File, spaceName: string) => {
-    if (!file) return;
-    console.log(file);
-    try {
-      const url = await uploadFileToBucket({
-        file: file,
-        key: `space/${spaceName}/space-logo/${createId() + createId()}.${
-          file.type.split("/")[1]
-        }`,
-        mimeType: file.type,
-        size: file.size,
-        validation: {
-          type: "space-owner-by-name",
-          spaceName,
-        },
-      });
-      toast.success("Logo uploaded successfully!");
-      return url;
-    } catch (error) {
-      toast.error("Failed to upload logo. Please try again.");
-      throw error;
-    }
+    return uploadFileToBucket({
+      file: file,
+      key: `space/${spaceName}/space-logo/${createId() + createId()}.${
+        file.type.split("/")[1]
+      }`,
+      mimeType: file.type,
+      size: file.size,
+      validation: {
+        type: "space-owner-by-name",
+        spaceName,
+      },
+    });
   };
 
   const onSubmit = async (data: z.infer<typeof spaceSchema>) => {
     if (!fileSelected) {
-      data.logo = initialLogoRef.current || "";
+      // undefined (not "") so Prisma leaves an existing logo untouched and
+      // spaces without one can still be saved.
+      data.logo = initialLogoRef.current || undefined;
     } else {
       try {
         const fileUrl = await uploadFile(fileSelected, spaceInfo.name);
         if (!fileUrl) {
-          console.error("File upload failed");
           toast.error("Failed to upload logo. Please try again.");
           return;
         }
@@ -114,198 +146,270 @@ export default function TestimonialEditFormView() {
         if (res.error) {
           console.error(res.error);
           toast.error("Failed to update space. Please try again.");
-        } else {
-          console.log(res.message);
-          toast.success("Space updated successfully!");
+          return;
         }
+        const savedLogo = data.logo || initialLogoRef.current || "";
+        initialLogoRef.current = savedLogo || null;
+        if (savedLogo) {
+          updateSpaceField("logo", savedLogo);
+        }
+        setFileSelected(null);
+        reset({
+          ...data,
+          logo: savedLogo,
+        });
+        toast.success("Space updated successfully!");
       });
     });
   };
 
+  const onInvalid = () => {
+    toast.error("Please fix the highlighted fields before saving.");
+  };
+
+  const questionListError = errors.questionList
+    ? (errors.questionList.message ?? "Every question needs a title.")
+    : undefined;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full">
-      <div className="space-y-2">
-        <Label htmlFor="spaceName">Space name</Label>
-        <Controller
-          name="spaceName"
-          control={control}
-          render={({ field }) => (
-            <>
-              <Input placeholder="Space name" {...field} disabled />
-              <h1 className="text-muted-foreground text-sm">
-                Public url will be {process.env.NEXT_PUBLIC_BASE_URL}/
-                {field.value || "your-space-name"}
-              </h1>
-              <p className="text-destructive text-xs">
-                {errors.spaceName && errors.spaceName.message}
-              </p>
-            </>
-          )}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="spaceLogoUrl">Space logo</Label>
-        <Controller
-          name="logo"
-          control={control}
-          render={({ field }) => (
-            <>
-              <Input
-                id="file"
-                className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  field.onChange(e);
-                  if (e.target.files && e.target.files[0]) {
-                    setFileSelected(e.target.files[0]);
-                    const file = e.target.files[0];
-                    updateSpaceField("logo", URL.createObjectURL(file));
-                  }
-                }}
-                // {...field}
-              />
-              {fileSelected && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setFileSelected(null);
-                    console.log(initialLogoRef.current);
-                    setValue("logo", initialLogoRef.current || "");
-                    updateSpaceField("logo", initialLogoRef.current || "");
-                    const node = document.getElementById(
-                      "file"
-                    ) as HTMLInputElement;
-                    if (node) node.value = "";
+    <form
+      onSubmit={(event) => {
+        void handleSubmit(onSubmit, onInvalid)(event);
+      }}
+      className="w-full space-y-8"
+    >
+      <section className="space-y-4">
+        <SectionHeading>Page content</SectionHeading>
+
+        <div className="space-y-2">
+          <Label htmlFor="spaceName">Space name</Label>
+          <Controller
+            name="spaceName"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input
+                  id="spaceName"
+                  placeholder="Space name"
+                  {...field}
+                  disabled
+                />
+                <p className="text-xs text-muted-foreground">
+                  The name is fixed after creation. Your public page lives at{" "}
+                  <span className="font-mono">
+                    {process.env.NEXT_PUBLIC_BASE_URL}/
+                    {field.value || "your-space-name"}
+                  </span>
+                </p>
+                <FieldError message={errors.spaceName?.message} />
+              </>
+            )}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="spaceLogo">Space logo</Label>
+          <Controller
+            name="logo"
+            control={control}
+            render={({ field }) => (
+              <>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="spaceLogo"
+                    className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      const file = e.target.files?.[0] ?? null;
+                      setFileSelected(file);
+                      setLogoPreview(file);
+                    }}
+                  />
+                  {fileSelected && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setFileSelected(null);
+                        setLogoPreview(null);
+                        setValue("logo", initialLogoRef.current || "");
+                        const node = document.getElementById(
+                          "spaceLogo",
+                        ) as HTMLInputElement | null;
+                        if (node) node.value = "";
+                      }}
+                      className="shrink-0 text-muted-foreground hover:text-destructive"
+                    >
+                      <XCircle size={16} className="-ms-1 me-2 opacity-60" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
+                <FieldError message={errors.logo?.message} />
+              </>
+            )}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="headerTitle">Header title</Label>
+          <Controller
+            name="headerTitle"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input
+                  id="headerTitle"
+                  placeholder="Would you like to give a shoutout for xyz?"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    updateSpaceField("headerTitle", e.target.value);
                   }}
-                  className="text-muted-foreground hover:text-red-500 "
-                >
-                  <XCircle size={16} className="-ms-1 me-2 opacity-60" />
-                  Remove
-                </Button>
-              )}
-            </>
-          )}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="headerTitle">Header title</Label>
-        <Controller
-          name="headerTitle"
-          control={control}
-          render={({ field }) => (
-            <>
-              <Input
-                placeholder="Would you like to give a shoutout for xyz?"
-                onChange={(e) => {
-                  field.onChange(e);
-                  updateSpaceField("headerTitle", e.target.value);
-                }}
-                defaultValue={spaceInfo.headerTitle}
-                // {...field}
-              />
-              <p className="text-destructive text-xs">
-                {errors.headerTitle && errors.headerTitle.message}
-              </p>
-            </>
-          )}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="customMessage">Your custom message</Label>
-        <Controller
-          name="customMessage"
-          control={control}
-          render={({ field }) => (
-            <>
-              <Textarea
-                placeholder="Leave a message"
-                required
-                onChange={(e) => {
-                  field.onChange(e);
-                  updateSpaceField("headerSubtitle", e.target.value);
-                }}
-                defaultValue={spaceInfo.headerSubtitle}
-              />
-              <p className="text-destructive text-xs">
-                {errors.customMessage && errors.customMessage.message}
-              </p>
-            </>
-          )}
-        />
-      </div>
-      <div className="h-max space-y-2">
-        <Label htmlFor="">Questions</Label>
+                  defaultValue={spaceInfo.headerTitle}
+                />
+                <FieldError message={errors.headerTitle?.message} />
+              </>
+            )}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="customMessage">Your custom message</Label>
+          <Controller
+            name="customMessage"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Textarea
+                  id="customMessage"
+                  placeholder="Leave a message"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    updateSpaceField("headerSubtitle", e.target.value);
+                  }}
+                  defaultValue={spaceInfo.headerSubtitle}
+                />
+                <FieldError message={errors.customMessage?.message} />
+              </>
+            )}
+          />
+        </div>
+      </section>
+
+      <Separator />
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <SectionHeading>Questions</SectionHeading>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNewQuestion}
+            type="button"
+            className="text-muted-foreground"
+          >
+            <PlusCircle size={14} className="-ms-1 me-2 opacity-60" />
+            Add question
+          </Button>
+        </div>
         <DragAndDropQuestions
           items={spaceInfo.questions}
           setItems={handleQuestionsSequenceChange}
-          handleDeleteItem={() => {}}
         />
-        <Button
-          variant={"outline"}
-          onClick={handleNewQuestion}
-          type="button"
-          className="text-muted-foreground"
-        >
-          <PlusCircle size={16} className="-ms-1 me-2 opacity-60" />
-          Add one more
-        </Button>
-      </div>
-      <div className="grid sm:grid-cols-2 grid-cols-1 w-full items-center">
-        <Label htmlFor="options">Collection type</Label>
-        <Controller
-          name="collectionType"
-          control={control}
-          render={({ field }) => (
-            <Select
-              onValueChange={(e) => {
-                field.onChange(e);
-                updateSpaceField("collectionType", e);
-              }}
-              value={field.value}
-            >
-              <SelectTrigger
-                name="options"
-                className="w-full md:w-56 bg-background"
-              >
-                <SelectValue placeholder="Select style" />
-              </SelectTrigger>
-              <SelectContent className="font-sans">
-                {dropDownOptionsTextVideo.map((item) => (
-                  <SelectItem key={item.id} value={item.value}>
-                    {item.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </div>
-      <div className="grid sm:grid-cols-2 grid-cols-1 w-full items-center">
-        <Label htmlFor="collectStarRatings">Collect star ratings</Label>
-        <Controller
-          name="collectStarRating"
-          control={control}
-          defaultValue={false}
-          render={({ field }) => (
-            <Switch
-              checked={field.value}
-              onCheckedChange={(e) => {
-                field.onChange(e);
-                updateSpaceField("collectStar", field.value);
-              }}
+        <FieldError message={questionListError} />
+        {spaceInfo.questions.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            Drag the handle to reorder.
+          </p>
+        )}
+      </section>
+
+      <Separator />
+
+      <section className="space-y-1">
+        <SectionHeading>Collection</SectionHeading>
+        <div className="divide-y">
+          <div className="flex items-center justify-between gap-4 py-4">
+            <div className="min-w-0 space-y-0.5">
+              <Label htmlFor="collectionType">Collection type</Label>
+              <p className="text-sm text-muted-foreground">
+                What visitors are allowed to submit.
+              </p>
+            </div>
+            <Controller
+              name="collectionType"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    updateSpaceField("collectionType", e as CollectionType);
+                  }}
+                  value={field.value}
+                >
+                  <SelectTrigger
+                    id="collectionType"
+                    className="w-44 shrink-0 bg-background"
+                  >
+                    <SelectValue placeholder="Select style" />
+                  </SelectTrigger>
+                  <SelectContent className="font-sans">
+                    {dropDownOptionsTextVideo.map((item) => (
+                      <SelectItem key={item.id} value={item.value}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
-          )}
-        />
-      </div>
-      <div className="flex justify-start">
+          </div>
+
+          <div className="flex items-center justify-between gap-4 py-4">
+            <div className="min-w-0 space-y-0.5">
+              <Label htmlFor="collectStarRating">Collect star ratings</Label>
+              <p className="text-sm text-muted-foreground">
+                Ask for a 1–5 star score alongside the testimonial.
+              </p>
+            </div>
+            <Controller
+              name="collectStarRating"
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <Switch
+                  id="collectStarRating"
+                  checked={field.value}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked);
+                    updateSpaceField("collectStar", checked);
+                  }}
+                />
+              )}
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="flex items-center gap-3 border-t py-3">
         <Button
           type="submit"
           className="w-full sm:max-w-[300px]"
-          disabled={isPending}
+          disabled={isPending || (!isDirty && !fileSelected)}
         >
-          {isPending ? <Loader2 className="animate-spin" /> : "Update space"}
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            "Update space"
+          )}
         </Button>
+        {(isDirty || fileSelected) && !isPending && (
+          <span className="text-xs text-muted-foreground">
+            You have unsaved changes
+          </span>
+        )}
       </div>
     </form>
   );

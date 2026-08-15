@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getUserPlanInfo } from "@/lib/accessControl";
 import {
   assertSpaceOwnership,
   forbiddenJsonResponse,
@@ -6,6 +7,7 @@ import {
 } from "@/lib/authGuards";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { postHogExecQuery } from "@/lib/posthogUtils";
+import { PlanType } from "@/lib/subscription";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -53,6 +55,21 @@ export async function GET(req: NextRequest) {
     const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
     if ("error" in ownership) {
       return forbiddenJsonResponse(ownership.error);
+    }
+
+    const planInfo = await getUserPlanInfo(authResult.userId);
+    if ("error" in planInfo) {
+      return NextResponse.json({ error: planInfo.error }, { status: 404 });
+    }
+
+    // Analytics is premium-only (matches analytics-dashboard UI gate).
+    if (
+      planInfo.plan === PlanType.FREE ||
+      planInfo.isTrialExpired
+    ) {
+      return forbiddenJsonResponse(
+        "Analytics is not available on the Free plan. Please upgrade to continue."
+      );
     }
 
     const spaceExists = ownership.space;

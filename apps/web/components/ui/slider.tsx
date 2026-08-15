@@ -24,18 +24,20 @@ function Slider({
   showTooltip?: boolean;
   tooltipContent?: (value: number) => React.ReactNode;
 }) {
-  const [internalValues, setInternalValues] = React.useState<number[]>(
-    Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max],
+  const isControlled = value !== undefined;
+  const [uncontrolledValues, setUncontrolledValues] = React.useState<number[]>(
+    Array.isArray(defaultValue) ? defaultValue : [min, max],
   );
-
-  React.useEffect(() => {
-    if (value !== undefined) {
-      setInternalValues(Array.isArray(value) ? value : [value]);
-    }
-  }, [value]);
+  const internalValues = isControlled
+    ? Array.isArray(value)
+      ? value
+      : [value]
+    : uncontrolledValues;
 
   const handleValueChange = (newValue: number[]) => {
-    setInternalValues(newValue);
+    if (!isControlled) {
+      setUncontrolledValues(newValue);
+    }
     props.onValueChange?.(newValue);
   };
 

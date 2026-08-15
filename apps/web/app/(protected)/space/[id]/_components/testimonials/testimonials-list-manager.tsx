@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import axios from "axios";
 import { useSpaceStore } from "@/store/spaceStore";
 import Loading from "@/components/loader";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -93,18 +92,19 @@ export default function TestimonialsListManager({
   React.useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await axios.get("/api/testimonials", {
-          params: {
-            category,
-            spaceId: spaceInfo.id,
-            addToWallOfLove: wallOfLove,
-            archived,
-          },
-        });
-        setTestimonials(response.data.records ?? []);
+        const params = new URLSearchParams({ spaceId: spaceInfo.id });
+        if (category) params.set("category", category);
+        if (wallOfLove != null) params.set("addToWallOfLove", String(wallOfLove));
+        if (archived != null) params.set("archived", String(archived));
+        const response = await fetch(`/api/testimonials?${params}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch testimonials");
+        }
+        const data = await response.json();
+        setTestimonials(data.records ?? []);
         setQuotaTotals({
-          text: response.data.meta?.text?.total ?? 0,
-          video: response.data.meta?.video?.total ?? 0,
+          text: data.meta?.text?.total ?? 0,
+          video: data.meta?.video?.total ?? 0,
         });
       } catch (error) {
         console.error("Failed to fetch testimonials", error);

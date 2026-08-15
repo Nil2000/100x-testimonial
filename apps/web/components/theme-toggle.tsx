@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useIsClient } from "@/hooks/useIsClient";
 
 type ThemeToggleProps = {
   className?: string;
@@ -12,11 +12,7 @@ type ThemeToggleProps = {
 
 export default function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   const isDark = resolvedTheme === "dark";
 

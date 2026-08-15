@@ -7,6 +7,29 @@ interface Question {
   maxLength: number;
 }
 
+type ThemeOptions = {
+  showBrandLogo?: boolean;
+  font?: string;
+};
+
+type WallOfLoveSettings = {
+  style: string;
+  styleOptions: {
+    columns?: string;
+    rows?: string;
+    cardVariant?: string;
+    showRating?: string;
+    showDate?: string;
+    gap?: string;
+  };
+};
+
+type SpaceTheme = {
+  theme: string | null;
+  themeOptions: ThemeOptions;
+  wallOfLove?: WallOfLoveSettings;
+};
+
 type SpaceInfo = {
   id: string;
   collectStar: boolean;
@@ -24,40 +47,32 @@ type SpaceInfo = {
   };
   isSentimentEnabled?: boolean;
   isSpamEnabled?: boolean;
-  theme: {
-    theme: string | null;
-    themeOptions: any;
-    wallOfLove?: {
-      style: string;
-      styleOptions: {
-        columns?: string;
-        rows?: string;
-        cardVariant?: string;
-        showRating?: string;
-        showDate?: string;
-        gap?: string;
-      };
-    };
-  };
+  theme: SpaceTheme;
+};
+
+/** API space payload uses Prisma's `thankyouSpace` name. */
+type SpaceApiPayload = Omit<SpaceInfo, "thanksSpace" | "questions" | "theme"> & {
+  thankyouSpace: SpaceInfo["thanksSpace"];
+  questions: Array<{ id?: string; title: string }>;
+  theme?: SpaceTheme | null;
 };
 
 interface SpaceStore {
   spaceInfo: SpaceInfo;
-  setSpaceInfo: (info: SpaceInfo) => void;
-  updateSpaceField: (field: any, value: any) => void;
-  updateThanksField: (field: any, value: any) => void;
-  updateThemeField: (field: any, value: any) => void;
-  updateWallOfLoveSettings: (settings: {
-    style: string;
-    styleOptions: {
-      columns?: string;
-      rows?: string;
-      cardVariant?: string;
-      showRating?: string;
-      showDate?: string;
-      gap?: string;
-    };
-  }) => void;
+  setSpaceInfo: (info: SpaceApiPayload) => void;
+  updateSpaceField: <K extends keyof SpaceInfo>(
+    field: K,
+    value: SpaceInfo[K],
+  ) => void;
+  updateThanksField: <K extends keyof SpaceInfo["thanksSpace"]>(
+    field: K,
+    value: SpaceInfo["thanksSpace"][K],
+  ) => void;
+  updateThemeField: <K extends keyof SpaceInfo["theme"]>(
+    field: K,
+    value: SpaceInfo["theme"][K],
+  ) => void;
+  updateWallOfLoveSettings: (settings: WallOfLoveSettings) => void;
 }
 
 export const useSpaceStore = create<SpaceStore>((set) => ({
@@ -78,8 +93,6 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
       title: "",
       message: "",
     },
-    createdAt: new Date(Date.now()),
-    updatedAt: new Date(Date.now()),
     theme: {
       theme: null,
       themeOptions: {
@@ -87,11 +100,11 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
       },
     },
   },
-  setSpaceInfo: (info: any) =>
+  setSpaceInfo: (info) =>
     set({
       spaceInfo: {
         ...info,
-        questions: info.questions.map((q: any, index: number) => ({
+        questions: info.questions.map((q, index) => ({
           id: q.id || index.toString(),
           title: q.title,
           maxLength: 50,
@@ -101,16 +114,20 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
           title: info.thankyouSpace.title,
           message: info.thankyouSpace.message,
         },
+        theme: info.theme ?? {
+          theme: null,
+          themeOptions: { showBrandLogo: true },
+        },
       },
     }),
-  updateSpaceField: (field: any, value: any) =>
+  updateSpaceField: (field, value) =>
     set((state) => ({
       spaceInfo: {
         ...state.spaceInfo,
         [field]: value,
       },
     })),
-  updateThanksField: (field: any, value: any) =>
+  updateThanksField: (field, value) =>
     set((state) => ({
       spaceInfo: {
         ...state.spaceInfo,
@@ -120,7 +137,7 @@ export const useSpaceStore = create<SpaceStore>((set) => ({
         },
       },
     })),
-  updateThemeField: (field: any, value: any) =>
+  updateThemeField: (field, value) =>
     set((state) => ({
       spaceInfo: {
         ...state.spaceInfo,

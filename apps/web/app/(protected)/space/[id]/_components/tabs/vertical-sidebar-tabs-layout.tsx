@@ -68,7 +68,7 @@ export default function VerticalSidebarTabsLayout({
           >
             {showContentHeader ? (
               <div className="rounded-lg border bg-card p-4 md:p-6">
-                <div className="border-b pb-4">
+                <div className="border-b pb-4 mb-4">
                   <h2 className="text-lg font-semibold">{tab.label}</h2>
                   {tab.description && (
                     <p className="mt-1 text-sm text-muted-foreground">
