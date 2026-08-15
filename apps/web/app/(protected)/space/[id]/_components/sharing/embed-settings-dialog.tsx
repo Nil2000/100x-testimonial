@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useTransition, useEffect } from "react";
+import React, { useState, useTransition } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,6 @@ import BorderTabContent from "./customization/BorderTabContent";
 import ShadowTabContent from "./customization/ShadowTabContent";
 import BackgroundTabContent from "./customization/BackgroundTabContent";
 import TextTabContent from "./customization/TextTabContent";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import CodeBlock from "./code-block";
 import { updateFeedbackStyleSettings } from "@/actions/feedbackActions";
@@ -41,8 +40,6 @@ export default function EmbedSettingsDialog({
   onClose,
   testimonial,
 }: EmbedSettingsDialogProps) {
-  const { theme } = useTheme();
-
   const [isPending, startTransition] = useTransition();
 
   // Default settings object
@@ -74,7 +71,21 @@ export default function EmbedSettingsDialog({
   const [initialSettings, setInitialSettings] = useState<StyleSettings | null>(
     null
   );
-  const [hasChanges, setHasChanges] = useState(false);
+  const [appliedTestimonialId, setAppliedTestimonialId] = useState<
+    string | undefined
+  >(undefined);
+
+  if (testimonial && testimonial.id !== appliedTestimonialId) {
+    const savedSettings = testimonial.styleSettings || {};
+    const mergedSettings = { ...getDefaultSettings(), ...savedSettings };
+    setAppliedTestimonialId(testimonial.id);
+    setInitialSettings(mergedSettings);
+    setSettings(mergedSettings);
+  }
+
+  const hasChanges =
+    initialSettings !== null &&
+    JSON.stringify(settings) !== JSON.stringify(initialSettings);
 
   // Helper function to update settings
   const updateSetting = (
@@ -83,25 +94,6 @@ export default function EmbedSettingsDialog({
   ) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
-
-  // Initialize settings from testimonial
-  useEffect(() => {
-    if (testimonial && !initialSettings) {
-      const savedSettings = testimonial.styleSettings || {};
-      const mergedSettings = { ...getDefaultSettings(), ...savedSettings };
-      setInitialSettings(mergedSettings);
-      setSettings(mergedSettings);
-    }
-  }, [testimonial, theme, initialSettings]);
-
-  // Check for changes
-  useEffect(() => {
-    if (initialSettings) {
-      const changed =
-        JSON.stringify(settings) !== JSON.stringify(initialSettings);
-      setHasChanges(changed);
-    }
-  }, [settings, initialSettings]);
 
   if (!testimonial) return null;
 

@@ -14,6 +14,7 @@ import {
   requireAuth,
 } from "@/lib/authGuards";
 import { toPublicTestimonial } from "@/lib/publicData";
+import { StyleSettings } from "@/lib/types";
 
 export const submitTextFeedback = async (
   spaceId: string,
@@ -262,7 +263,7 @@ export const getFeedbackById = async (feedbackId: string) => {
 
 export const updateFeedbackStyleSettings = async (
   feedbackId: string,
-  styleSettings: any
+  styleSettings: StyleSettings
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {

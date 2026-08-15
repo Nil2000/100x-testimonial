@@ -172,7 +172,9 @@ export default function TestimonialEditFormView() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, onInvalid)}
+      onSubmit={(event) => {
+        void handleSubmit(onSubmit, onInvalid)(event);
+      }}
       className="w-full space-y-8"
     >
       <section className="space-y-4">

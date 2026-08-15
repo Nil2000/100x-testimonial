@@ -343,7 +343,12 @@ export const saveWallOfLoveSettings = async (
 
   try {
     const { space } = ownership;
-    const currentTheme = (space.theme as any) || {};
+    const currentTheme =
+      space.theme !== null &&
+      typeof space.theme === "object" &&
+      !Array.isArray(space.theme)
+        ? space.theme
+        : {};
     const updatedTheme = {
       ...currentTheme,
       wallOfLove: wallOfLoveSettings,
@@ -358,7 +363,7 @@ export const saveWallOfLoveSettings = async (
       error: null,
       success: true,
     };
-  } catch (error) {
+  } catch {
     return {
       error: "Failed to save wall of love settings",
     };

@@ -8,9 +8,10 @@ import { CreateSpaceQuestion } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CollectionType } from "@repo/db/enums";
+import { useIsClient } from "@/hooks/useIsClient";
 
 export default function CreateSpacePage() {
-  const [isMounted, setIsMounted] = React.useState(false);
+  const isMounted = useIsClient();
   const [fileSelected, setFileSelected] = React.useState<File | null>(null);
   const [headerTitlePreview, setHeaderTitlePreview] =
     React.useState<string>("");
@@ -20,10 +21,6 @@ export default function CreateSpacePage() {
     React.useState<CreateSpaceQuestion[]>(sampleQuestions);
   const [collectionTypePreview, setCollectionTypePreview] =
     React.useState<CollectionType>(CollectionType.TEXT);
-
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted) {
     return (

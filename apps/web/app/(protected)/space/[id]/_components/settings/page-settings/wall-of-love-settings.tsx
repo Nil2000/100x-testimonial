@@ -18,44 +18,46 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
+const SWITCH_DEFAULTS = {
+  showRating: "true",
+  showDate: "true",
+};
+
+function extraOptionsForStyle(styleValue: string) {
+  const initialOptions: Record<string, string | number | boolean> = {
+    ...SWITCH_DEFAULTS,
+  };
+  const selectedStyle = WALL_OF_LOVE_STYLE_CHOICES.find(
+    (choice) => choice.value === styleValue
+  );
+  if (selectedStyle?.extraOptions) {
+    selectedStyle.extraOptions.forEach((optionObj) => {
+      initialOptions[optionObj.key] = optionObj.options[0].value;
+    });
+  }
+  return initialOptions;
+}
+
 export default function WallOfLovePage() {
   const { spaceInfo, updateWallOfLoveSettings } = useSpaceStore();
 
-  const SWITCH_DEFAULTS = React.useMemo(
-    () => ({
-      showRating: "true",
-      showDate: "true",
-    }),
-    []
-  );
-
-  // Initialize state from store or defaults
   const currentWallOfLoveSettings = spaceInfo.theme?.wallOfLove;
   const [selectedStyleOption, setSelectedStyleOption] = React.useState<string>(
     currentWallOfLoveSettings?.style || WALL_OF_LOVE_STYLE_CHOICES[0].value
   );
   const [selectedExtraOptions, setSelectedExtraOptions] = React.useState<
     Record<string, string | number | boolean>
-  >(currentWallOfLoveSettings?.styleOptions || {});
+  >(() => ({
+    ...extraOptionsForStyle(
+      currentWallOfLoveSettings?.style || WALL_OF_LOVE_STYLE_CHOICES[0].value
+    ),
+    ...currentWallOfLoveSettings?.styleOptions,
+  }));
   const [isSaving, setIsSaving] = React.useState(false);
 
   const selectedStyle = WALL_OF_LOVE_STYLE_CHOICES.find(
     (choice) => choice.value === selectedStyleOption
   );
-
-  React.useEffect(() => {
-    const initialOptions: Record<string, string | number | boolean> = {
-      ...SWITCH_DEFAULTS,
-    };
-
-    if (selectedStyle?.extraOptions) {
-      selectedStyle.extraOptions.forEach((optionObj) => {
-        initialOptions[optionObj.key] = optionObj.options[0].value;
-      });
-    }
-
-    setSelectedExtraOptions(initialOptions);
-  }, [selectedStyleOption, SWITCH_DEFAULTS]);
 
   // Function to check if current settings are different from saved settings
   const hasChanges = () => {
@@ -138,6 +140,7 @@ export default function WallOfLovePage() {
                 }))}
                 onChange={(value) => {
                   setSelectedStyleOption(value);
+                  setSelectedExtraOptions(extraOptionsForStyle(value));
                 }}
                 disabled={isSaving}
               />

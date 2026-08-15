@@ -13,24 +13,30 @@ export default function SpacePage({ id }: { id: string }) {
   const [error, setError] = React.useState<string | null>(null);
   const { spaceInfo, setSpaceInfo } = useSpaceStore();
 
-  const fetchSpaceInfo = async () => {
-    try {
-      const res = await fetch(`/api/space/${id}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch space info");
-      }
-      const data = await res.json();
-      setSpaceInfo(data.space);
-    } catch (error) {
-      console.error("Failed to fetch space info", error);
-      setError("Failed to load space. Please try again.");
-    }
-    setIsMounted(true);
-  };
+  const fetchSpaceInfo = React.useCallback(() => {
+    fetch(`/api/space/${id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch space info");
+        }
+        return res.json();
+      })
+      .then((data: { space: Parameters<typeof setSpaceInfo>[0] }) => {
+        setSpaceInfo(data.space);
+        setError(null);
+      })
+      .catch((err: unknown) => {
+        console.error("Failed to fetch space info", err);
+        setError("Failed to load space. Please try again.");
+      })
+      .finally(() => {
+        setIsMounted(true);
+      });
+  }, [id, setSpaceInfo]);
 
   React.useEffect(() => {
     fetchSpaceInfo();
-  }, []);
+  }, [fetchSpaceInfo]);
 
   if (!isMounted) {
     return (

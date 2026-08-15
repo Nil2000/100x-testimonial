@@ -13,6 +13,7 @@ import { usePostHog } from "posthog-js/react";
 import { POSTHOG_METRIC_CLIENT_EVENTS } from "@/lib/constants";
 import { THEME_CHOICES } from "@/components/theme-constant";
 import { useFont } from "@/hooks/useFont";
+import { useIsClient } from "@/hooks/useIsClient";
 import CollectionPageView from "@/components/collection-page/collection-page-view";
 
 type PublicSpaceViewProps = {
@@ -48,7 +49,7 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
       console.warn("PostHog not initialized");
     }
   };
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useIsClient();
 
   const handleUplaodFile = () => {
     setOpenRecord(false);
@@ -64,11 +65,6 @@ export default function PublicSpaceView({ space }: PublicSpaceViewProps) {
       handleFontSelect("Roboto");
     }
   }, [space]);
-
-  // setting this so that the navbar is not rendered until the font is loaded
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted) {
     return <Loader2 className="w-4 h-4 animate-spin" />;
