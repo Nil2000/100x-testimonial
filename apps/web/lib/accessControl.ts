@@ -27,7 +27,8 @@ export async function checkUserAccess(
     | "videoFeedback"
     | "textTestimonial"
     | "aiSpam"
-    | "aiSentiment",
+    | "aiSentiment"
+    | "customBranding",
   spaceId?: string,
 ): Promise<AccessCheckResult> {
   const user = await db.user.findUnique({
@@ -187,6 +188,17 @@ export async function checkUserAccess(
         return {
           hasAccess: false,
           reason: `AI sentiment analysis is not available on the ${effectivePlan} plan. Please upgrade to Professional or Enterprise.`,
+        };
+      }
+
+      return { hasAccess: true };
+    }
+
+    case "customBranding": {
+      if (!planLimits.customBranding) {
+        return {
+          hasAccess: false,
+          reason: `Custom branding (themes, fonts, and logo) is not available on the ${effectivePlan} plan. Please upgrade to Professional or Enterprise.`,
         };
       }
 

@@ -71,7 +71,7 @@ export default function CreateSpaceForm({
 
   const handleNewQuestion = () => {
     const question = {
-      id: Math.random().toString(36),
+      id: createId(),
       title: "",
       maxLength: 50,
     };

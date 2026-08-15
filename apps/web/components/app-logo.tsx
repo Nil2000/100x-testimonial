@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useIsClient } from "@/hooks/useIsClient";
 
 export function getAppLogoSrc(isDark: boolean) {
   return isDark ? "/new-logo-white.png" : "/new-logo.png";
@@ -25,11 +25,7 @@ export default function AppLogo({
   themeOverride,
 }: AppLogoProps) {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   const isDark =
     themeOverride !== undefined

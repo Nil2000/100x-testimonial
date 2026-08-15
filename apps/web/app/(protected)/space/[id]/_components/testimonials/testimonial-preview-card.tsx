@@ -2,15 +2,21 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import LivePreviewbadge from "@/components/live-preview-badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Pen, Video } from "lucide-react";
+import { CheckCircle2, ImageIcon, Pen, Star, Video } from "lucide-react";
 import { useSpaceStore } from "@/store/spaceStore";
-import Image from "next/image";
 import { CollectionType } from "@repo/db/enums";
 import { Question } from "@/lib/types";
 
 export default function TestimonialPreview() {
   const { spaceInfo } = useSpaceStore();
-  const { headerTitle, headerSubtitle, questions, collectionType } = spaceInfo;
+  const {
+    headerTitle,
+    headerSubtitle,
+    questions,
+    collectionType,
+    collectStar,
+    logo,
+  } = spaceInfo;
 
   const showText =
     collectionType === CollectionType.TEXT ||
@@ -26,19 +32,24 @@ export default function TestimonialPreview() {
         </h3>
         <LivePreviewbadge location="Testimonial" />
       </div>
-      <Card className="relative w-full overflow-hidden border-2 border-dashed border-muted-foreground/20 bg-gradient-to-b from-muted/30 to-background">
+      <Card className="relative w-full overflow-hidden border-2 border-dashed border-muted-foreground/20">
         <div className="flex flex-col items-center h-full gap-5 p-6 pt-8">
           {/* Logo */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-            <Image
-              src={spaceInfo.logo}
-              width={100}
-              height={100}
+          {logo ? (
+            /* ponytail: plain img, not next/image — the picked-file preview is a
+               blob: URL that next/image refuses to parse, and an 80px logo gains
+               nothing from optimization. */
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logo}
               alt={spaceInfo.name}
-              className="relative"
+              className="h-20 w-20 rounded-lg object-cover"
             />
-          </div>
+          ) : (
+            <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <ImageIcon className="h-7 w-7" />
+            </div>
+          )}
           {/* Header */}
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold tracking-tight">
@@ -69,7 +80,7 @@ export default function TestimonialPreview() {
                     className="flex items-start gap-2 text-sm text-foreground/80"
                   >
                     <CheckCircle2 className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                    <span>{question.title}</span>
+                    <span>{question.title || "Untitled question"}</span>
                   </li>
                 ))
               ) : (
@@ -79,6 +90,18 @@ export default function TestimonialPreview() {
               )}
             </ul>
           </div>
+          {/* Star rating */}
+          {collectStar && (
+            <div className="flex items-center gap-1" aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Star
+                  key={index}
+                  className="h-5 w-5 text-muted-foreground/40"
+                  strokeWidth={2}
+                />
+              ))}
+            </div>
+          )}
           {/* CTA Buttons */}
           <div className="w-full pt-2">
             <div className="flex flex-col sm:flex-row justify-center gap-3">

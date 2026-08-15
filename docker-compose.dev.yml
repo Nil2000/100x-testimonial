@@ -11,6 +11,7 @@ services:
       MINIO_ROOT_PASSWORD: minio123
     volumes:
       - s3_data:/data
+    mem_limit: 512m
 
   # This service just make sure a bucket with the right policies is created
   createbuckets:
@@ -35,6 +36,7 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
+    mem_limit: 256m
 
   # Database for local development
   db:
@@ -46,6 +48,7 @@ services:
       POSTGRES_DB: testimonials
     volumes:
       - db_data:/var/lib/postgresql/data
+    mem_limit: 512m
 
 volumes:
   s3_data:

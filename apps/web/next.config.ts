@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@repo/db"],
   reactStrictMode: false,
   images: {
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       {
         protocol: "https",

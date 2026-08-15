@@ -1,5 +1,6 @@
 "use client";
 import { useSpaceStore } from "@/store/spaceStore";
+import { usePlanStore } from "@/store/planStore";
 import React from "react";
 import PublishSpaceSwitch from "../space-settings-controls/publish-space-switch";
 import SentimentSwitch from "../space-settings-controls/sentiment-switch";
@@ -7,115 +8,199 @@ import SpamSwitch from "../space-settings-controls/spam-switch";
 import DeleteSpaceDialog from "../space-settings-controls/delete-space-dialog";
 import { deleteSpace } from "@/actions/spaceActions";
 import { useRouter } from "next/navigation";
-import { Globe, Brain, Shield, AlertTriangle } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Check, Copy } from "lucide-react";
+import { toast } from "sonner";
+
+type SettingRowProps = {
+  id: string;
+  label: string;
+  description: string;
+  badge?: React.ReactNode;
+  control: React.ReactNode;
+  children?: React.ReactNode;
+};
+
+function SettingRow({
+  id,
+  label,
+  description,
+  badge,
+  control,
+  children,
+}: SettingRowProps) {
+  return (
+    <div className="py-4 first:pt-0 last:pb-0">
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0 space-y-0.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <Label htmlFor={id} className="cursor-pointer text-sm font-medium">
+              {label}
+            </Label>
+            {badge}
+          </div>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+        <div className="shrink-0">{control}</div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function CollectionUrlRow({ spaceName }: { spaceName: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${spaceName}`;
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setCopied(true);
+        toast.success("Link copied to clipboard!");
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => toast.error("Failed to copy link. Please try again."));
+  };
+
+  return (
+    <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-muted/50 px-3 py-2">
+      <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">
+        {url}
+      </span>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="h-7 shrink-0 px-2"
+        onClick={handleCopy}
+      >
+        {copied ? (
+          <Check className="h-3.5 w-3.5 text-green-500" />
+        ) : (
+          <Copy className="h-3.5 w-3.5" />
+        )}
+      </Button>
+    </div>
+  );
+}
 
 export default function SpaceControlView() {
   const { spaceInfo } = useSpaceStore();
+  const { subscription } = usePlanStore();
   const router = useRouter();
+  const isFreePlan = (subscription?.plan ?? "FREE") === "FREE";
 
   const handleDelete = async () => {
     try {
-      await deleteSpace(spaceInfo.id);
+      const res = await deleteSpace(spaceInfo.id);
+      if (res?.error) {
+        toast.error("Failed to delete space. Please try again.");
+        return false;
+      }
       router.push("/dashboard");
+      return true;
     } catch (error) {
       console.error("Failed to delete space:", error);
+      toast.error("Failed to delete space. Please try again.");
+      return false;
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Visibility Section */}
-        <div className="rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-start gap-4 p-6">
-            <div className="rounded-lg bg-primary/10 p-3">
-              <Globe className="h-5 w-5 text-primary" />
-            </div>
-            <div className="flex-1 space-y-2">
-              <h3 className="font-semibold text-lg">Space Visibility</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Control whether your testimonial collection form is publicly
-                accessible. When published, anyone with the link can submit
-                testimonials.
-              </p>
-            </div>
-            <div className="flex-shrink-0">
-              <PublishSpaceSwitch />
-            </div>
-          </div>
+    <div className="space-y-8">
+      <section>
+        <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          General
+        </h3>
+        <div className="mt-2 divide-y">
+          <SettingRow
+            id="publish-space"
+            label="Publish space"
+            description="Anyone with the link can submit testimonials while your space is published."
+            badge={
+              spaceInfo.isPublished ? (
+                <Badge>Live</Badge>
+              ) : (
+                <Badge variant="outline">Draft</Badge>
+              )
+            }
+            control={<PublishSpaceSwitch id="publish-space" />}
+          >
+            {spaceInfo.isPublished && (
+              <CollectionUrlRow spaceName={spaceInfo.name} />
+            )}
+          </SettingRow>
         </div>
+      </section>
 
-        {/* Sentiment Analysis Section */}
-        <div className="rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-start gap-4 p-6">
-            <div className="rounded-lg bg-violet-500/10 p-3">
-              <Brain className="h-5 w-5 text-violet-500" />
-            </div>
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-lg">Sentiment Analysis</h3>
-                <span className="text-xs bg-violet-500/10 text-violet-600 dark:text-violet-400 px-2 py-0.5 rounded-full font-medium">
-                  Beta
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Enable AI-powered sentiment analysis for your testimonials. Get
-                automated feedback categorization and emotional tone detection.
-              </p>
-            </div>
-            <div className="flex-shrink-0">
-              <SentimentSwitch />
-            </div>
-          </div>
-        </div>
+      <Separator />
 
-        {/* Spam Detection Section */}
-        <div className="rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-start gap-4 p-6">
-            <div className="rounded-lg bg-orange-500/10 p-3">
-              <Shield className="h-5 w-5 text-orange-500" />
-            </div>
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-lg">Spam Detection</h3>
-                <span className="text-xs bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2 py-0.5 rounded-full font-medium">
-                  Beta
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Automatically detect and filter spam testimonials. Protect your
-                wall of love from low-quality or irrelevant submissions.
-              </p>
-            </div>
-            <div className="flex-shrink-0">
-              <SpamSwitch />
-            </div>
-          </div>
+      <section>
+        <div className="flex items-center gap-2">
+          <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            AI analysis
+          </h3>
+          <Badge variant="outline" className="text-[10px] font-normal">
+            Beta
+          </Badge>
         </div>
+        <div className="mt-2 divide-y">
+          <SettingRow
+            id="sentiment-analysis"
+            label="Sentiment analysis"
+            description={
+              isFreePlan
+                ? "Automatically detect emotional tone and categorize testimonials. Available on paid plans."
+                : "Automatically detect emotional tone and categorize testimonials."
+            }
+            badge={
+              isFreePlan && (
+                <Badge variant="outline" className="text-[10px] font-normal">
+                  Pro
+                </Badge>
+              )
+            }
+            control={<SentimentSwitch id="sentiment-analysis" />}
+          />
+          <SettingRow
+            id="spam-detection"
+            label="Spam detection"
+            description={
+              isFreePlan
+                ? "Automatically flag low-quality or irrelevant submissions. Available on paid plans."
+                : "Automatically flag low-quality or irrelevant submissions."
+            }
+            badge={
+              isFreePlan && (
+                <Badge variant="outline" className="text-[10px] font-normal">
+                  Pro
+                </Badge>
+              )
+            }
+            control={<SpamSwitch id="spam-detection" />}
+          />
+        </div>
+      </section>
 
-        {/* Danger Zone */}
-        <div className="rounded-lg border-2 border-destructive/30 bg-destructive/5 shadow-sm">
-          <div className="p-6 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-destructive/10 p-2.5">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-              </div>
-              <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-lg text-destructive">
-                  Danger Zone
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Permanently delete this space and all its testimonials. This
-                  action cannot be undone and all data will be lost forever.
-                </p>
-              </div>
-            </div>
-            <div className="pt-2">
-              <DeleteSpaceDialog handleDelete={handleDelete} />
-            </div>
-          </div>
+      <Separator />
+
+      <section className="flex items-center justify-between gap-4">
+        <div className="min-w-0 space-y-0.5">
+          <h3 className="text-sm font-medium text-destructive">
+            Danger zone
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Permanently delete this space and all its testimonials.
+          </p>
         </div>
-      </div>
+        <DeleteSpaceDialog
+          spaceName={spaceInfo.name}
+          handleDelete={handleDelete}
+        />
+      </section>
     </div>
   );
 }

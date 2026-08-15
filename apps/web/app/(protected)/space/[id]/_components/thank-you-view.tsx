@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import ThankYouForm from "./thank-you-form";
 import ThankYouViewPreview from "./thank-you-live-preview";
 

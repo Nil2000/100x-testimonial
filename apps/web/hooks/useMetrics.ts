@@ -1,5 +1,4 @@
 import { Metric } from "@/lib/types";
-import axios from "axios";
 import React from "react";
 
 export function useMetrics() {
@@ -18,13 +17,17 @@ export function useMetrics() {
   ) => {
     setLoading(true);
     try {
-      const response = await axios.get(
+      const response = await fetch(
         `/api/metrics?spaceId=${spaceId}&days=${dayUpperLimit}&page=${pageType}`
       );
-      setMetrics(response.data.metrics);
-      setTotalPageViewMetrics(response.data.totalPageViews);
-      setTotalUniqueVisitorMetrics(response.data.totalVisitors);
-      setTotalSpecialCount(response.data.countMetric);
+      if (!response.ok) {
+        throw new Error("Failed to fetch metrics");
+      }
+      const data = await response.json();
+      setMetrics(data.metrics);
+      setTotalPageViewMetrics(data.totalPageViews);
+      setTotalUniqueVisitorMetrics(data.totalVisitors);
+      setTotalSpecialCount(data.countMetric);
     } catch (error) {
       console.error("Error fetching metrics:", error);
     } finally {

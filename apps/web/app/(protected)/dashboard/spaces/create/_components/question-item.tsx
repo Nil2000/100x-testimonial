@@ -1,50 +1,47 @@
 "use client";
 
-import { useCharacterLimit } from "@/hooks/useCharacterLimit";
 import { Input } from "@/components/ui/input";
 import { useId } from "react";
 import { GripVerticalIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 
 export default function QuestionItem({
   question,
   maxLength,
+  position,
+  dragHandleProps,
   handleDelete,
   handleInputChange,
 }: {
   maxLength: number;
   question: string;
+  position?: number;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
   handleDelete: () => void;
   handleInputChange: (value: string) => void;
 }) {
   const id = useId();
-  const {
-    value,
-    characterCount,
-    handleChange,
-    maxLength: limit,
-  } = useCharacterLimit({ maxLength, initialValue: question });
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChange(e.target.value);
-    handleChange(e);
-  };
+  const label = position ? `Question ${position}` : "Question";
 
   return (
-    <div className="flex items-center space-x-3">
-      <GripVerticalIcon
-        className="cursor-move text-muted-foreground"
-        height={20}
-        width={20}
-      />
+    <div className="flex items-center gap-2">
+      <span
+        {...dragHandleProps}
+        aria-label={`Reorder ${label.toLowerCase()}`}
+        className="flex h-9 w-5 shrink-0 cursor-grab items-center justify-center text-muted-foreground active:cursor-grabbing"
+      >
+        <GripVerticalIcon size={16} />
+      </span>
       <div className="relative flex-1">
         <Input
           id={id}
           className="peer pe-14"
           type="text"
-          value={value}
+          value={question}
           maxLength={maxLength}
-          onChange={handleInput}
+          onChange={(e) => handleInputChange(e.target.value)}
+          aria-label={label}
           aria-describedby={`${id}-description`}
           placeholder="Keep it short"
         />
@@ -54,15 +51,18 @@ export default function QuestionItem({
           aria-live="polite"
           role="status"
         >
-          {characterCount}/{limit}
+          {question.length}/{maxLength}
         </div>
       </div>
       <Button
-        variant={"ghost"}
-        className="text-muted-foreground hover:text-red-500 p-0 mx-3"
+        type="button"
+        variant="ghost"
+        size="icon"
         onClick={handleDelete}
+        aria-label={`Delete ${label.toLowerCase()}`}
+        className="shrink-0 text-muted-foreground hover:text-destructive"
       >
-        <Trash2 />
+        <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   );

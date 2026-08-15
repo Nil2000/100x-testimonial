@@ -2,9 +2,7 @@
 
 import { forwardRef, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useForwardedRef } from "@/lib/useForwardedRef";
-import type { ButtonProps } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -26,7 +24,6 @@ const ColorPicker = forwardRef<
     { disabled, value, onChange, onBlur, name, className, ...props },
     forwardedRef
   ) => {
-    const ref = useForwardedRef(forwardedRef);
     const [open, setOpen] = useState(false);
 
     const parsedValue = useMemo(() => {
@@ -58,7 +55,7 @@ const ColorPicker = forwardRef<
             onChange={(e) => {
               onChange(e?.currentTarget?.value);
             }}
-            ref={ref}
+            ref={forwardedRef}
             value={parsedValue}
           />
         </PopoverContent>

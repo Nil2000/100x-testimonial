@@ -393,7 +393,6 @@ const popularGoogleFonts = [
 
 export const useFont = () => {
   const [fontSelected, setFontSelected] = useState<string>("Roboto");
-  const [fontLoaded, setFontLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     const font = popularGoogleFonts.find(
@@ -409,7 +408,6 @@ export const useFont = () => {
         link.rel = "stylesheet";
         link.crossOrigin = "anonymous";
         document.head.appendChild(link);
-        setFontLoaded(true);
       }
     } catch (error) {
       console.error("Error loading font:", error);
@@ -421,7 +419,6 @@ export const useFont = () => {
   };
   return {
     fontSelected,
-    fontLoaded,
     handleFontSelect,
     fontList: popularGoogleFonts,
   };
