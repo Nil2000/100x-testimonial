@@ -25,6 +25,7 @@ import { updateSpace } from "@/actions/spaceActions";
 import { uploadFileToBucket } from "@/actions/fileAction";
 import { createId } from "@paralleldrive/cuid2";
 import { toast } from "sonner";
+import { CollectionType } from "@repo/db/enums";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -344,7 +345,7 @@ export default function TestimonialEditFormView() {
                 <Select
                   onValueChange={(e) => {
                     field.onChange(e);
-                    updateSpaceField("collectionType", e);
+                    updateSpaceField("collectionType", e as CollectionType);
                   }}
                   value={field.value}
                 >

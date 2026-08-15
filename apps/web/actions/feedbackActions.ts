@@ -19,7 +19,7 @@ import { StyleSettings } from "@/lib/types";
 export const submitTextFeedback = async (
   spaceId: string,
   values: Feedback,
-  feedbackType: FeedbackType
+  feedbackType: FeedbackType,
 ) => {
   const validateFields = feedbackSchema.safeParse(values);
 
@@ -60,7 +60,7 @@ export const submitTextFeedback = async (
           isSentimentEnabled: space.isSentimentEnabled,
           isSpamEnabled: space.isSpamEnabled,
           isVideo: false,
-        })
+        }),
       );
 
       if (response.error) {
@@ -91,7 +91,7 @@ export const submitTextFeedback = async (
 
 export const toggleWallOfLove = async (
   feedbackId: string,
-  addToWallOfLove: boolean
+  addToWallOfLove: boolean,
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {
@@ -100,7 +100,7 @@ export const toggleWallOfLove = async (
 
   const ownership = await assertFeedbackOwnership(
     authResult.userId,
-    feedbackId
+    feedbackId,
   );
   if ("error" in ownership) {
     return { error: ownership.error };
@@ -124,7 +124,7 @@ export const toggleWallOfLove = async (
 
 export const submitVideoFeedback = async (
   spaceId: string,
-  values: VideoFeedback
+  values: VideoFeedback,
 ) => {
   const validateFields = videoFeedbackSchema.safeParse(values);
 
@@ -165,7 +165,7 @@ export const submitVideoFeedback = async (
           isSentimentEnabled: space.isSentimentEnabled,
           isSpamEnabled: space.isSpamEnabled,
           isVideo: true,
-        })
+        }),
       );
 
       if (response.error) {
@@ -202,7 +202,7 @@ export const deleteFeedback = async (feedbackId: string) => {
 
   const ownership = await assertFeedbackOwnership(
     authResult.userId,
-    feedbackId
+    feedbackId,
   );
   if ("error" in ownership) {
     return { error: ownership.error };
@@ -225,7 +225,7 @@ export const deleteFeedback = async (feedbackId: string) => {
 
 export const getFeedbackByIdAndSpaceNameWithSpaceLogo = async (
   spaceName: string,
-  feedbackId: string
+  feedbackId: string,
 ) => {
   const result = await assertPublicFeedbackInSpace(spaceName, feedbackId);
   if ("error" in result) {
@@ -263,7 +263,7 @@ export const getFeedbackById = async (feedbackId: string) => {
 
 export const updateFeedbackStyleSettings = async (
   feedbackId: string,
-  styleSettings: StyleSettings
+  styleSettings: StyleSettings,
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {
@@ -272,7 +272,7 @@ export const updateFeedbackStyleSettings = async (
 
   const ownership = await assertFeedbackOwnership(
     authResult.userId,
-    feedbackId
+    feedbackId,
   );
   if ("error" in ownership) {
     return { error: ownership.error };
@@ -284,7 +284,9 @@ export const updateFeedbackStyleSettings = async (
         id: feedbackId,
       },
       data: {
-        styleSettings,
+        styleSettings: {
+          ...styleSettings,
+        },
       },
     });
     return {
@@ -306,7 +308,7 @@ export const archiveFeedback = async (feedbackId: string) => {
 
   const ownership = await assertFeedbackOwnership(
     authResult.userId,
-    feedbackId
+    feedbackId,
   );
   if ("error" in ownership) {
     return { error: ownership.error };
@@ -336,7 +338,7 @@ export const unarchiveFeedback = async (feedbackId: string) => {
 
   const ownership = await assertFeedbackOwnership(
     authResult.userId,
-    feedbackId
+    feedbackId,
   );
   if ("error" in ownership) {
     return { error: ownership.error };
