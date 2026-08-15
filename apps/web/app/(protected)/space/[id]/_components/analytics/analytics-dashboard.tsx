@@ -22,7 +22,6 @@ export default function AnalyticsTabView() {
   const [selectedDate, setSelectedDate] = React.useState(
     DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS[1].value
   );
-  const [isLoading, setIsLoading] = React.useState(true);
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -48,7 +47,6 @@ export default function AnalyticsTabView() {
                   onChange={(value) => {
                     setSelectedPage(value);
                   }}
-                  disabled={isLoading}
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -60,7 +58,6 @@ export default function AnalyticsTabView() {
                   onChange={(value) => {
                     setSelectedDate(value);
                   }}
-                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -70,9 +67,6 @@ export default function AnalyticsTabView() {
           <MetricsContainer
             pageTitle={selectedPage}
             dateRange={selectedDate}
-            changePending={(status) => {
-              setIsLoading(status);
-            }}
           />
         </div>
 
