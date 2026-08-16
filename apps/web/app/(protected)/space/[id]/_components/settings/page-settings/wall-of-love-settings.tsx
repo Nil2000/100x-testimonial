@@ -62,7 +62,10 @@ export default function WallOfLovePage() {
   const handleShowRatingChange = (checked: boolean) => {
     setDraft((prev) => ({
       ...prev,
-      styleOptions: { ...prev.styleOptions, showRating: checked ? "true" : "false" },
+      styleOptions: {
+        ...prev.styleOptions,
+        showRating: checked ? "true" : "false",
+      },
     }));
   };
 
@@ -122,10 +125,19 @@ export default function WallOfLovePage() {
 
         <Separator />
 
-        <div className="flex justify-end">
-          <Button onClick={saveSettings} disabled={isSaving || isPristine} size="lg">
+        <div className="flex items-center gap-3 justify-start">
+          <Button
+            onClick={saveSettings}
+            disabled={isSaving || isPristine}
+            size="lg"
+          >
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
+          {!isPristine && !isSaving && (
+            <span className="text-xs text-muted-foreground">
+              You have unsaved changes
+            </span>
+          )}
         </div>
       </div>
 

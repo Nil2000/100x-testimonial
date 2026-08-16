@@ -100,9 +100,7 @@ export default function TestimonialPage() {
         />
 
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-foreground">
-            Appearance
-          </h3>
+          <h3 className="text-sm font-semibold text-foreground">Appearance</h3>
           <ThemePicker
             selectedValue={theme?.value ?? null}
             noTheme={noTheme}
@@ -114,9 +112,9 @@ export default function TestimonialPage() {
         {/* Save Button */}
         <div className="flex items-center gap-3 pt-2">
           <Button
-            className="px-6"
             disabled={isSaving || isPristine}
             onClick={submitTheme}
+            size="lg"
           >
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>

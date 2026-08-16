@@ -50,7 +50,10 @@ export default function ThankYouForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4 w-full">
+    <form
+      onSubmit={handleSubmit(onSubmit, onInvalid)}
+      className="space-y-4 w-full"
+    >
       <div className="space-y-2">
         <Label htmlFor="title">
           Thank you title<span className="text-destructive">*</span>
@@ -103,11 +106,7 @@ export default function ThankYouForm() {
         />
       </div>
       <div className="flex items-center gap-3">
-        <Button
-          type="submit"
-          className="w-full sm:max-w-[300px]"
-          disabled={isPending || !isDirty}
-        >
+        <Button type="submit" size="lg" disabled={isPending || !isDirty}>
           {isPending ? (
             <Loader2 className="animate-spin" />
           ) : (
