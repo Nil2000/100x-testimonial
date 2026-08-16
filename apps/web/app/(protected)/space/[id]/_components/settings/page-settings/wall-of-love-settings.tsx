@@ -1,120 +1,88 @@
 "use client";
 import React from "react";
-import { WALL_OF_LOVE_STYLE_CHOICES } from "@/lib/constants";
-import SelectWrapper from "@/components/dropdown-wrapper";
-import WallOfLovePreview from "./wall-of-love-preview";
 import { useSpaceStore } from "@/store/spaceStore";
+import { usePlanStore } from "@/store/planStore";
 import { saveWallOfLoveSettings } from "@/actions/spaceActions";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-
-const SWITCH_DEFAULTS = {
-  showRating: "true",
-  showDate: "true",
-};
-
-function extraOptionsForStyle(styleValue: string) {
-  const initialOptions: Record<string, string | number | boolean> = {
-    ...SWITCH_DEFAULTS,
-  };
-  const selectedStyle = WALL_OF_LOVE_STYLE_CHOICES.find(
-    (choice) => choice.value === styleValue
-  );
-  if (selectedStyle?.extraOptions) {
-    selectedStyle.extraOptions.forEach((optionObj) => {
-      initialOptions[optionObj.key] = optionObj.options[0].value;
-    });
-  }
-  return initialOptions;
-}
+import {
+  normalizeWallOfLoveSettings,
+  isWallOfLovePristine,
+  type WallOfLoveCount,
+  type WallOfLoveSettings,
+} from "@/lib/wall-of-love-settings";
+import type { WallOfLoveLayout } from "@/lib/constants";
+import { PlanType, PLAN_LIMITS } from "@/lib/subscription";
+import WallOfLoveLayoutPicker from "./wall-of-love-layout-picker";
+import WallOfLoveChromeOptions from "./wall-of-love-chrome-options";
+import WallOfLovePreview from "./wall-of-love-preview";
 
 export default function WallOfLovePage() {
   const { spaceInfo, updateWallOfLoveSettings } = useSpaceStore();
+  const { subscription } = usePlanStore();
 
-  const currentWallOfLoveSettings = spaceInfo.theme?.wallOfLove;
-  const [selectedStyleOption, setSelectedStyleOption] = React.useState<string>(
-    currentWallOfLoveSettings?.style || WALL_OF_LOVE_STYLE_CHOICES[0].value
+  const plan = (subscription?.plan as unknown as PlanType) ?? PlanType.FREE;
+  const canCustomBrand = PLAN_LIMITS[plan]?.customBranding ?? false;
+
+  const savedSettings = React.useMemo(
+    () => normalizeWallOfLoveSettings(spaceInfo.theme),
+    [spaceInfo.theme],
   );
-  const [selectedExtraOptions, setSelectedExtraOptions] = React.useState<
-    Record<string, string | number | boolean>
-  >(() => ({
-    ...extraOptionsForStyle(
-      currentWallOfLoveSettings?.style || WALL_OF_LOVE_STYLE_CHOICES[0].value
-    ),
-    ...currentWallOfLoveSettings?.styleOptions,
-  }));
+
+  const [draft, setDraft] = React.useState<WallOfLoveSettings>(savedSettings);
   const [isSaving, setIsSaving] = React.useState(false);
 
-  const selectedStyle = WALL_OF_LOVE_STYLE_CHOICES.find(
-    (choice) => choice.value === selectedStyleOption
-  );
+  const isPristine = isWallOfLovePristine(draft, savedSettings);
 
-  // Function to check if current settings are different from saved settings
-  const hasChanges = () => {
-    const currentStyle =
-      currentWallOfLoveSettings?.style || WALL_OF_LOVE_STYLE_CHOICES[0].value;
-    const currentStyleOptions = currentWallOfLoveSettings?.styleOptions || {};
-
-    // Check if style has changed
-    if (selectedStyleOption !== currentStyle) {
-      return true;
-    }
-
-    // Check if style options have changed
-    const currentKeys = Object.keys(currentStyleOptions);
-    const selectedKeys = Object.keys(selectedExtraOptions);
-
-    // If number of keys is different
-    if (currentKeys.length !== selectedKeys.length) {
-      return true;
-    }
-
-    // Check if any option value has changed
-    for (const key of selectedKeys) {
-      if (
-        (currentStyleOptions as Record<string, string | number | boolean>)[
-          key
-        ] !== selectedExtraOptions[key]
-      ) {
-        return true;
-      }
-    }
-
-    return false;
+  const handleStyleChange = (style: WallOfLoveLayout["value"]) => {
+    setDraft((prev) => ({
+      ...prev,
+      style,
+      styleOptions: {
+        showRating: prev.styleOptions.showRating,
+        ...(style === "infiniteScrollHorizontal"
+          ? { rows: "1" }
+          : { columns: style === "carousel" ? "2" : "3" }),
+      },
+    }));
   };
 
-  // Save settings function
+  const handleCountChange = (value: WallOfLoveCount) => {
+    setDraft((prev) => ({
+      ...prev,
+      styleOptions: {
+        ...prev.styleOptions,
+        [prev.style === "infiniteScrollHorizontal" ? "rows" : "columns"]: value,
+      },
+    }));
+  };
+
+  const handleShowRatingChange = (checked: boolean) => {
+    setDraft((prev) => ({
+      ...prev,
+      styleOptions: { ...prev.styleOptions, showRating: checked ? "true" : "false" },
+    }));
+  };
+
   const saveSettings = async () => {
     if (!spaceInfo.id) return;
 
     setIsSaving(true);
     try {
-      const settings = {
-        style: selectedStyleOption,
-        styleOptions: selectedExtraOptions,
-      };
-
-      const result = await saveWallOfLoveSettings(spaceInfo.id, settings);
+      const result = await saveWallOfLoveSettings(spaceInfo.id, draft);
 
       if (result.error) {
         console.error("Failed to save settings:", result.error);
-        toast.error("Failed to save settings");
+        toast.error(result.error);
       } else {
-        updateWallOfLoveSettings(settings);
+        updateWallOfLoveSettings(draft);
         toast.success("Wall of love settings saved!");
       }
     } catch (error) {
       console.error("Failed to save settings:", error);
+      toast.error("Failed to save settings");
     } finally {
       setIsSaving(false);
     }
@@ -123,159 +91,50 @@ export default function WallOfLovePage() {
   return (
     <div className="space-y-6">
       <div className="space-y-6">
-        {/* Layout Style Section */}
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-sm font-semibold mb-3">Layout Style</h3>
-            <div className="grid sm:grid-cols-[200px_1fr] gap-4 items-center">
-              <Label htmlFor="page-style" className="text-sm font-medium">
-                Display Style
-              </Label>
-              <SelectWrapper
-                key="page-style-select"
-                defaultValue={selectedStyleOption}
-                listOfItems={WALL_OF_LOVE_STYLE_CHOICES.map((choice) => ({
-                  name: choice.label,
-                  value: choice.value,
-                }))}
-                onChange={(value) => {
-                  setSelectedStyleOption(value);
-                  setSelectedExtraOptions(extraOptionsForStyle(value));
-                }}
-                disabled={isSaving}
-              />
-            </div>
-          </div>
-
-          {/* Style-specific options */}
-          {selectedStyle && selectedStyle.extraOptions && (
-            <div className="space-y-3">
-              {selectedStyle.extraOptions.map((optionObj) => (
-                <div
-                  key={optionObj.key}
-                  className="grid sm:grid-cols-[200px_1fr] gap-4 items-center"
-                >
-                  <Label className="text-sm font-medium capitalize">
-                    {optionObj.key === "cardVariant"
-                      ? "Card Style"
-                      : optionObj.key}
-                  </Label>
-                  <SelectWrapper
-                    defaultValue={
-                      (selectedExtraOptions[optionObj.key] as string) ||
-                      optionObj.options[0].value
-                    }
-                    listOfItems={optionObj.options.map(
-                      (opt: { label: string; value: string }) => ({
-                        name: opt.label,
-                        value: opt.value,
-                      })
-                    )}
-                    onChange={(value) => {
-                      setSelectedExtraOptions(
-                        (prev: Record<string, string | number | boolean>) => ({
-                          ...prev,
-                          [optionObj.key]: value,
-                        })
-                      );
-                    }}
-                    disabled={isSaving}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <WallOfLoveLayoutPicker
+          selectedStyle={draft.style}
+          styleOptions={draft.styleOptions}
+          onStyleChange={handleStyleChange}
+          onCountChange={handleCountChange}
+          onShowRatingChange={handleShowRatingChange}
+          disabled={isSaving}
+        />
 
         <Separator />
 
-        {/* Display Options Section */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold">Display Options</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label
-                  htmlFor="wol-showRating"
-                  className="text-sm font-medium cursor-pointer"
-                >
-                  Show Rating
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Display star ratings on testimonial cards
-                </p>
-              </div>
-              <Switch
-                checked={selectedExtraOptions.showRating !== "false"}
-                onCheckedChange={(checked) => {
-                  setSelectedExtraOptions(
-                    (prev: Record<string, string | number | boolean>) => ({
-                      ...prev,
-                      showRating: checked ? "true" : "false",
-                    })
-                  );
-                }}
-                disabled={isSaving}
-                id="wol-showRating"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label
-                  htmlFor="wol-showDate"
-                  className="text-sm font-medium cursor-pointer"
-                >
-                  Show Date
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Display submission date on testimonial cards
-                </p>
-              </div>
-              <Switch
-                checked={selectedExtraOptions.showDate !== "false"}
-                onCheckedChange={(checked) => {
-                  setSelectedExtraOptions(
-                    (prev: Record<string, string | number | boolean>) => ({
-                      ...prev,
-                      showDate: checked ? "true" : "false",
-                    })
-                  );
-                }}
-                disabled={isSaving}
-                id="wol-showDate"
-              />
-            </div>
-          </div>
-        </div>
+        <WallOfLoveChromeOptions
+          spaceName={spaceInfo.name}
+          headline={draft.headline ?? ""}
+          subtitle={draft.subtitle ?? ""}
+          onHeadlineChange={(headline) =>
+            setDraft((prev) => ({ ...prev, headline }))
+          }
+          onSubtitleChange={(subtitle) =>
+            setDraft((prev) => ({ ...prev, subtitle }))
+          }
+          hideBranding={Boolean(draft.hideBranding)}
+          onHideBrandingChange={(hideBranding) =>
+            setDraft((prev) => ({ ...prev, hideBranding }))
+          }
+          canCustomBrand={canCustomBrand}
+          disabled={isSaving}
+        />
 
         <Separator />
 
-        {/* Save Button */}
         <div className="flex justify-end">
-          <Button
-            onClick={saveSettings}
-            disabled={isSaving || !hasChanges()}
-            size="lg"
-          >
+          <Button onClick={saveSettings} disabled={isSaving || isPristine} size="lg">
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </div>
 
-      {/* Preview Section */}
       <Card>
         <CardHeader>
           <CardTitle>Preview</CardTitle>
-          <CardDescription>
-            See how your Wall of Love will look with the current settings
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <WallOfLovePreview
-            selectedStyle={selectedStyleOption}
-            selectedStyleOption={selectedExtraOptions}
-          />
+          <WallOfLovePreview spaceId={spaceInfo.id} settings={draft} />
         </CardContent>
       </Card>
     </div>

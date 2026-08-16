@@ -1,5 +1,6 @@
 import { CollectionType } from "@repo/db/enums";
 import { create } from "zustand";
+import type { WallOfLoveSettings } from "@/lib/wall-of-love-settings";
 
 interface Question {
   id: string;
@@ -10,18 +11,6 @@ interface Question {
 type ThemeOptions = {
   showBrandLogo?: boolean;
   font?: string;
-};
-
-type WallOfLoveSettings = {
-  style: string;
-  styleOptions: {
-    columns?: string;
-    rows?: string;
-    cardVariant?: string;
-    showRating?: string;
-    showDate?: string;
-    gap?: string;
-  };
 };
 
 type SpaceTheme = {

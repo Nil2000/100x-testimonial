@@ -1,5 +1,7 @@
 "use client";
+
 import React from "react";
+import Image from "next/image";
 import TestimonialsList from "./testimonials-list";
 import EmptyState from "./empty-state";
 import { Button } from "@/components/ui/button";
@@ -13,31 +15,42 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { TestimonialResponse } from "@/lib/types";
+import type { WallOfLoveSettings } from "@/lib/wall-of-love-settings";
 import ThemeToggle from "@/components/theme-toggle";
+
+export type WallOfLoveSpaceBranding = {
+  logo: string | null;
+  showBrandLogo: boolean;
+  font: string | null;
+  themeType: "light" | "dark";
+};
 
 type Props = {
   spaceName: string;
   testimonialList: TestimonialResponse[];
-  wallOfLoveSettings?: {
-    style: string;
-    styleOptions: {
-      columns?: string;
-      rows?: string;
-      cardVariant?: string;
-      showRating?: string;
-      showDate?: string;
-      gap?: string;
-    };
-  };
+  wallOfLoveSettings?: WallOfLoveSettings;
+  space: WallOfLoveSpaceBranding;
 };
 
 export default function WallOfLovePage({
   spaceName,
   testimonialList,
   wallOfLoveSettings,
+  space,
 }: Props) {
   const total = testimonialList.length;
   const hasTestimonials = total > 0;
+  const hideBranding = Boolean(wallOfLoveSettings?.hideBranding);
+  const brandLogoSrc =
+    space.showBrandLogo && space.logo ? space.logo : null;
+  const fontFamily = space.font || undefined;
+
+  const headline =
+    wallOfLoveSettings?.headline?.trim() ||
+    `What people say about ${spaceName}`;
+  const subtitle =
+    wallOfLoveSettings?.subtitle?.trim() ||
+    "Real stories from real people. Every testimonial below is a genuine voice from our community.";
 
   const averageRating = hasTestimonials
     ? testimonialList.reduce((sum, t) => sum + (t.rating || 0), 0) /
@@ -55,17 +68,37 @@ export default function WallOfLovePage({
       <header className="z-50 border-b border-border/40 bg-background/70 backdrop-blur-md sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/30 transition-colors" />
-                <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm">
-                  <Heart className="w-4 h-4 text-primary-foreground fill-primary-foreground" />
+            {brandLogoSrc ? (
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-9 h-9 rounded-xl overflow-hidden ring-1 ring-border">
+                  <Image
+                    src={brandLogoSrc}
+                    alt={spaceName}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
+                <span className="font-poppins font-semibold text-sm sm:text-base">
+                  {spaceName}
+                </span>
               </div>
+            ) : !hideBranding ? (
+              <Link href="/" className="flex items-center gap-2.5 group">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/30 transition-colors" />
+                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm">
+                    <Heart className="w-4 h-4 text-primary-foreground fill-primary-foreground" />
+                  </div>
+                </div>
+                <span className="font-poppins font-semibold text-sm sm:text-base">
+                  TestiFlow
+                </span>
+              </Link>
+            ) : (
               <span className="font-poppins font-semibold text-sm sm:text-base">
-                TestiFlow
+                {spaceName}
               </span>
-            </Link>
+            )}
 
             <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -74,12 +107,14 @@ export default function WallOfLovePage({
                   Leave a testimonial
                 </Button>
               </Link>
-              <Link href="/">
-                <Button size="sm" className="font-poppins shadow-sm">
-                  Create yours
-                  <ArrowUpRight size={14} className="ml-1" />
-                </Button>
-              </Link>
+              {!hideBranding && (
+                <Link href="/">
+                  <Button size="sm" className="font-poppins shadow-sm">
+                    Create yours
+                    <ArrowUpRight size={14} className="ml-1" />
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -96,22 +131,18 @@ export default function WallOfLovePage({
               Wall of Love
             </Badge>
 
-            <h1 className="font-dm_serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]">
-              What people say about{" "}
-              <span className="relative inline-block">
-                <span className="relative z-10 bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent">
-                  {spaceName}
-                </span>
-                <span
-                  className="absolute -bottom-1 left-0 right-0 h-3 bg-primary/15 -z-0 rounded-sm"
-                  aria-hidden="true"
-                />
-              </span>
+            <h1
+              className="font-dm_serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]"
+              style={{ fontFamily }}
+            >
+              {headline}
             </h1>
 
-            <p className="font-poppins text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              Real stories from real people. Every testimonial below is a
-              genuine voice from our community.
+            <p
+              className="font-poppins text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+              style={{ fontFamily }}
+            >
+              {subtitle}
             </p>
 
             {hasTestimonials && (
@@ -149,6 +180,7 @@ export default function WallOfLovePage({
             testimonials={testimonialList}
             style={wallOfLoveSettings?.style}
             styleOptions={wallOfLoveSettings?.styleOptions}
+            themeType={space.themeType}
           />
         ) : (
           <EmptyState spaceName={spaceName} />
@@ -182,15 +214,17 @@ export default function WallOfLovePage({
                   Submit Your Testimonial
                 </Button>
               </Link>
-              <Link href="/">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full sm:w-auto font-poppins"
-                >
-                  Build Your Own Wall
-                </Button>
-              </Link>
+              {!hideBranding && (
+                <Link href="/">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-auto font-poppins"
+                  >
+                    Build Your Own Wall
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </section>
@@ -202,16 +236,18 @@ export default function WallOfLovePage({
             © {new Date().getFullYear()} {spaceName}. All testimonials are
             shared with permission.
           </p>
-          <Link
-            href="/"
-            className="font-poppins text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
-          >
-            Powered by{" "}
-            <span className="font-semibold text-foreground">
-              TestiFlow
-            </span>
-            <ArrowUpRight size={12} />
-          </Link>
+          {!hideBranding && (
+            <Link
+              href="/"
+              className="font-poppins text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+            >
+              Powered by{" "}
+              <span className="font-semibold text-foreground">
+                TestiFlow
+              </span>
+              <ArrowUpRight size={12} />
+            </Link>
+          )}
         </div>
       </footer>
     </div>

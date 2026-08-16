@@ -18,40 +18,37 @@ type Props = {
   styleOptions?: {
     columns?: string;
     rows?: string;
-    cardVariant?: string;
     showRating?: string;
-    showDate?: string;
-    gap?: string;
   };
+  themeType?: "light" | "dark";
 };
 
 export default function TestimonialsList({
   testimonials,
   style = "list",
   styleOptions = {},
+  themeType = "light",
 }: Props) {
   if (!testimonials || testimonials.length === 0) return null;
 
   const renderListStyle = () => {
     const columns = parseInt(styleOptions.columns || "3");
-    const gapClass = getGapClass(styleOptions.gap);
     const dividedTestimonials = divideTestimonials(testimonials, columns);
     const columnWidthClass = getColumnWidthClass(columns);
 
     return (
-      <div
-        className={`flex ${gapClass} flex-col md:flex-row justify-center w-full`}
-      >
+      <div className="flex gap-5 flex-col md:flex-row justify-center w-full">
         {dividedTestimonials.map((column, colIndex) => (
           <div
             key={colIndex}
-            className={`flex flex-col ${gapClass} w-full ${columnWidthClass}`}
+            className={`flex flex-col gap-5 w-full ${columnWidthClass}`}
           >
             {column.map((testimonial) => (
               <WallOfLoveCard
                 key={testimonial.id}
                 testimonial={testimonial}
                 styleOptions={styleOptions}
+                themeType={themeType}
               />
             ))}
           </div>
@@ -94,6 +91,7 @@ export default function TestimonialsList({
                   <WallOfLoveCard
                     testimonial={testimonial}
                     styleOptions={styleOptions}
+                    themeType={themeType}
                   />
                 </div>
               </CarouselItem>
@@ -108,13 +106,12 @@ export default function TestimonialsList({
 
   const renderInfiniteScrollHorizontal = () => {
     const rows = parseInt(styleOptions.rows || "1");
-    const gapClass = getGapClass(styleOptions.gap);
     const dividedByRows = divideTestimonialsIntoRows(testimonials, rows);
     const duplicatedTestimonials = dividedByRows.map((row) => [...row, ...row]);
 
     return (
       <div className="w-full overflow-hidden relative">
-        <div className={`flex flex-col ${gapClass} overflow-hidden`}>
+        <div className="flex flex-col gap-5 overflow-hidden">
           {duplicatedTestimonials.map((row, rowIndex) => (
             <Marquee key={rowIndex} pauseOnHover reverse={rowIndex % 2 === 0}>
               {row.map((testimonial, index) => (
@@ -125,6 +122,7 @@ export default function TestimonialsList({
                   <WallOfLoveCard
                     testimonial={testimonial}
                     styleOptions={styleOptions}
+                    themeType={themeType}
                   />
                 </div>
               ))}
@@ -137,56 +135,12 @@ export default function TestimonialsList({
     );
   };
 
-  const renderInfiniteScrollVertical = () => {
-    const columns = parseInt(styleOptions.columns || "2");
-    const gapClass = getGapClass(styleOptions.gap);
-    const dividedTestimonials = divideTestimonials(testimonials, columns);
-    const duplicatedColumns = dividedTestimonials.map((column) => [
-      ...column,
-      ...column,
-    ]);
-
-    return (
-      <div className="w-full overflow-hidden relative h-[600px]">
-        <div
-          className={`flex ${gapClass} overflow-hidden h-full justify-center w-full`}
-        >
-          {duplicatedColumns.map((column, colIndex) => (
-            <Marquee
-              key={colIndex}
-              vertical={true}
-              pauseOnHover
-              reverse={colIndex % 2 === 0}
-              className={`w-1/3`}
-            >
-              {column.map((testimonial, index) => (
-                <div
-                  key={`${testimonial.id}-${index}`}
-                  className="flex-shrink-0 w-full h-min"
-                >
-                  <WallOfLoveCard
-                    testimonial={testimonial}
-                    styleOptions={styleOptions}
-                  />
-                </div>
-              ))}
-            </Marquee>
-          ))}
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-background"></div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-background"></div>
-      </div>
-    );
-  };
-
   const renderContent = () => {
     switch (style) {
       case "carousel":
         return renderCarouselStyle();
       case "infiniteScrollHorizontal":
         return renderInfiniteScrollHorizontal();
-      case "infiniteScrollVertical":
-        return renderInfiniteScrollVertical();
       case "list":
       default:
         return renderListStyle();
@@ -195,18 +149,6 @@ export default function TestimonialsList({
 
   return <div className="w-full z-20 sm:px-5 px-2">{renderContent()}</div>;
 }
-
-const getGapClass = (gap?: string) => {
-  switch (gap) {
-    case "tight":
-      return "gap-3";
-    case "relaxed":
-      return "gap-8";
-    case "normal":
-    default:
-      return "gap-5";
-  }
-};
 
 const getColumnWidthClass = (columns: number) => {
   switch (columns) {
@@ -222,7 +164,6 @@ const getColumnWidthClass = (columns: number) => {
   }
 };
 
-// Helper function to divide testimonials into columns
 const divideTestimonials = (
   testimonials: TestimonialResponse[],
   columns: number
@@ -240,7 +181,6 @@ const divideTestimonials = (
   return result;
 };
 
-// Helper function to divide testimonials into rows for horizontal scroll
 const divideTestimonialsIntoRows = (
   testimonials: TestimonialResponse[],
   rows: number

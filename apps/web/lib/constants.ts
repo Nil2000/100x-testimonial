@@ -109,125 +109,43 @@ export const POSTHOG_METRIC_CLIENT_EVENTS = {
   TIME_SPENT_ON_WALL_OF_LOVE: "time-spent-on-wall-of-love",
 };
 
-export const WALL_OF_LOVE_STYLE_CHOICES = [
+export const WALL_OF_LOVE_LAYOUTS = [
   {
-    label: "List",
+    label: "Grid",
     value: "list",
-    extraOptions: [
-      {
-        key: "columns",
-        options: [
-          { label: "1 Column", value: "1" },
-          { label: "2 Columns", value: "2" },
-          { label: "3 Columns", value: "3" },
-        ],
-      },
-      {
-        key: "cardVariant",
-        options: [
-          { label: "Classic", value: "classic" },
-          { label: "Glass", value: "glass" },
-          { label: "Dark", value: "dark" },
-        ],
-      },
-      {
-        key: "gap",
-        options: [
-          { label: "Compact", value: "tight" },
-          { label: "Cozy", value: "normal" },
-          { label: "Comfy", value: "relaxed" },
-        ],
-      },
+    description: "Testimonials arranged in a static column grid.",
+    countOption: "columns",
+    countLabel: "Columns",
+    countChoices: [
+      { label: "1", value: "1" },
+      { label: "2", value: "2" },
+      { label: "3", value: "3" },
     ],
   },
   {
     label: "Carousel",
     value: "carousel",
-    extraOptions: [
-      {
-        key: "columns",
-        options: [
-          { label: "1 Column", value: "1" },
-          { label: "2 Columns", value: "2" },
-          { label: "3 Columns", value: "3" },
-        ],
-      },
-      {
-        key: "cardVariant",
-        options: [
-          { label: "Classic", value: "classic" },
-          { label: "Glass", value: "glass" },
-          { label: "Dark", value: "dark" },
-        ],
-      },
-      {
-        key: "gap",
-        options: [
-          { label: "Compact", value: "tight" },
-          { label: "Cozy", value: "normal" },
-          { label: "Comfy", value: "relaxed" },
-        ],
-      },
+    description: "One row visitors can page through.",
+    countOption: "columns",
+    countLabel: "Visible at once",
+    countChoices: [
+      { label: "1", value: "1" },
+      { label: "2", value: "2" },
+      { label: "3", value: "3" },
     ],
   },
   {
-    label: "Infinite Scroll Horizontal",
+    label: "Marquee",
     value: "infiniteScrollHorizontal",
-    extraOptions: [
-      {
-        key: "rows",
-        options: [
-          { label: "1 Row", value: "1" },
-          { label: "2 Rows", value: "2" },
-          { label: "3 Rows", value: "3" },
-        ],
-      },
-      {
-        key: "cardVariant",
-        options: [
-          { label: "Classic", value: "classic" },
-          { label: "Glass", value: "glass" },
-          { label: "Dark", value: "dark" },
-        ],
-      },
-      {
-        key: "gap",
-        options: [
-          { label: "Compact", value: "tight" },
-          { label: "Cozy", value: "normal" },
-          { label: "Comfy", value: "relaxed" },
-        ],
-      },
+    description: "Cards scroll continuously across the page.",
+    countOption: "rows",
+    countLabel: "Rows",
+    countChoices: [
+      { label: "1", value: "1" },
+      { label: "2", value: "2" },
+      { label: "3", value: "3" },
     ],
   },
-  {
-    label: "Infinite Scroll Vertical",
-    value: "infiniteScrollVertical",
-    extraOptions: [
-      {
-        key: "columns",
-        options: [
-          { label: "1 Column", value: "1" },
-          { label: "2 Columns", value: "2" },
-          { label: "3 Columns", value: "3" },
-        ],
-      },
-      {
-        key: "cardVariant",
-        options: [
-          { label: "Classic", value: "classic" },
-          { label: "Glass", value: "glass" },
-          { label: "Dark", value: "dark" },
-        ],
-      },
-      {
-        key: "gap",
-        options: [
-          { label: "Compact", value: "tight" },
-          { label: "Cozy", value: "normal" },
-          { label: "Comfy", value: "relaxed" },
-        ],
-      },
-    ],
-  },
-];
+] as const;
+
+export type WallOfLoveLayout = (typeof WALL_OF_LOVE_LAYOUTS)[number];
