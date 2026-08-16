@@ -76,6 +76,7 @@ export default {
         dm_serif: ["var(--font-dm-serif)", "serif"],
         poppins: ["var(--font-poppins)", "ui-sans-serif", "sans-serif"],
         geist: ["var(--font-geist-sans)", "ui-sans-serif", "sans-serif"],
+        geist_mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
       },
       listStyleType: {
         square: "square",
@@ -114,12 +115,23 @@ export default {
             transform: "translateY(calc(-100% - var(--gap)))",
           },
         },
+        "wol-enter": {
+          from: {
+            opacity: "0",
+            transform: "translateY(0.5rem)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         marquee: "marquee var(--duration) infinite linear",
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
+        "wol-enter": "wol-enter 0.5s ease-out both",
       },
     },
   },

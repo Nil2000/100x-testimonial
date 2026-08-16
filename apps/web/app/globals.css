@@ -21,7 +21,8 @@ body {
 } */
 
 @layer base {
-  :root {
+  :root,
+  .light {
     --background: 0 0% 100%;
     --foreground: 220.9091 39.2857% 10.9804%;
     --card: 0 0% 100%;

@@ -5,18 +5,12 @@ import Image from "next/image";
 import TestimonialsList from "./testimonials-list";
 import EmptyState from "./empty-state";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowUpRight,
-  Heart,
-  MessageSquareHeart,
-  Sparkles,
-  Star,
-} from "lucide-react";
+import { ArrowUpRight, Heart, Moon, Star, Sun } from "lucide-react";
 import Link from "next/link";
 import { TestimonialResponse } from "@/lib/types";
 import type { WallOfLoveSettings } from "@/lib/wall-of-love-settings";
-import ThemeToggle from "@/components/theme-toggle";
+import { pickFeaturedTestimonial } from "@/lib/wall-of-love-featured";
+import { cn } from "@/lib/utils";
 
 export type WallOfLoveSpaceBranding = {
   logo: string | null;
@@ -38,78 +32,100 @@ export default function WallOfLovePage({
   wallOfLoveSettings,
   space,
 }: Props) {
+  const [override, setOverride] = React.useState<"light" | "dark" | null>(null);
+  const scheme = override ?? space.themeType;
+
   const total = testimonialList.length;
   const hasTestimonials = total > 0;
   const hideBranding = Boolean(wallOfLoveSettings?.hideBranding);
-  const brandLogoSrc =
-    space.showBrandLogo && space.logo ? space.logo : null;
-  const fontFamily = space.font || undefined;
+  const brandLogoSrc = space.showBrandLogo && space.logo ? space.logo : null;
+  const bodyFont = space.font
+    ? { fontFamily: `'${space.font}', ui-sans-serif, sans-serif` }
+    : undefined;
 
   const headline =
     wallOfLoveSettings?.headline?.trim() ||
     `What people say about ${spaceName}`;
   const subtitle =
     wallOfLoveSettings?.subtitle?.trim() ||
-    "Real stories from real people. Every testimonial below is a genuine voice from our community.";
+    "Stories from people who used this product.";
 
-  const averageRating = hasTestimonials
-    ? testimonialList.reduce((sum, t) => sum + (t.rating || 0), 0) /
-      testimonialList.filter((t) => t.rating > 0).length
+  const rated = testimonialList.filter((t) => t.rating > 0);
+  const averageRating = rated.length
+    ? rated.reduce((sum, t) => sum + t.rating, 0) / rated.length
     : 0;
-
   const videoCount = testimonialList.filter(
     (t) => t.feedbackType === "VIDEO",
   ).length;
 
-  return (
-    <div className="relative min-h-screen bg-background overflow-hidden">
-      <DecorativeBackground />
+  const featured = pickFeaturedTestimonial(testimonialList);
+  const wallTestimonials = featured
+    ? testimonialList.filter((t) => t.id !== featured.id)
+    : testimonialList;
 
-      <header className="z-50 border-b border-border/40 bg-background/70 backdrop-blur-md sticky top-0">
+  const showRating = wallOfLoveSettings?.styleOptions?.showRating !== "false";
+  const featuredRating = Math.max(
+    0,
+    Math.min(5, Math.round(featured?.rating || 0)),
+  );
+
+  return (
+    <div
+      className={cn(
+        "relative min-h-screen bg-background text-foreground",
+        !space.font && "font-geist",
+        scheme === "dark" ? "dark" : "light",
+      )}
+      style={bodyFont}
+    >
+      <header className="sticky top-0 z-50 border-b border-border bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {brandLogoSrc ? (
-              <div className="flex items-center gap-2.5">
-                <div className="relative w-9 h-9 rounded-xl overflow-hidden ring-1 ring-border">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="relative w-9 h-9 rounded-md overflow-hidden border border-border shrink-0">
                   <Image
                     src={brandLogoSrc}
                     alt={spaceName}
                     fill
+                    sizes="36px"
                     className="object-cover"
                   />
                 </div>
-                <span className="font-poppins font-semibold text-sm sm:text-base">
+                <span className="font-medium text-sm sm:text-base truncate">
                   {spaceName}
                 </span>
               </div>
             ) : !hideBranding ? (
               <Link href="/" className="flex items-center gap-2.5 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/30 transition-colors" />
-                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm">
-                    <Heart className="w-4 h-4 text-primary-foreground fill-primary-foreground" />
-                  </div>
+                <div className="w-9 h-9 rounded-md border border-border flex items-center justify-center">
+                  <Heart className="w-4 h-4 fill-foreground" />
                 </div>
-                <span className="font-poppins font-semibold text-sm sm:text-base">
+                <span className="font-medium text-sm sm:text-base">
                   TestiFlow
                 </span>
               </Link>
             ) : (
-              <span className="font-poppins font-semibold text-sm sm:text-base">
+              <span className="font-medium text-sm sm:text-base truncate">
                 {spaceName}
               </span>
             )}
 
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
+            <div className="flex items-center gap-1 sm:gap-2">
+              <SchemeToggle
+                scheme={scheme}
+                onToggle={() =>
+                  setOverride(scheme === "dark" ? "light" : "dark")
+                }
+              />
               <Link href={`/${spaceName}`} className="hidden sm:block">
-                <Button variant="ghost" size="sm" className="font-poppins">
+                <Button variant="ghost" size="sm">
                   Leave a testimonial
                 </Button>
               </Link>
               {!hideBranding && (
                 <Link href="/">
-                  <Button size="sm" className="font-poppins shadow-sm">
+                  <Button size="sm" variant="outline">
                     Create yours
                     <ArrowUpRight size={14} className="ml-1" />
                   </Button>
@@ -120,131 +136,107 @@ export default function WallOfLovePage({
         </div>
       </header>
 
-      <section className="relative z-10 pt-16 pb-12 sm:pt-24 sm:pb-16">
+      <section className="relative z-10 pt-12 pb-8 sm:pt-20 sm:pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-6">
-            <Badge
-              variant="secondary"
-              className="px-4 py-1.5 font-poppins text-xs rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15"
-            >
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              Wall of Love
-            </Badge>
-
-            <h1
-              className="font-dm_serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]"
-              style={{ fontFamily }}
-            >
+          <FadeIn delay={0}>
+            <h1 className="font-dm_serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] max-w-[20ch]">
               {headline}
             </h1>
-
-            <p
-              className="font-poppins text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
-              style={{ fontFamily }}
-            >
+            <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-[60ch] leading-relaxed">
               {subtitle}
             </p>
+          </FadeIn>
 
-            {hasTestimonials && (
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 pt-4">
-                <StatChip
-                  icon={<MessageSquareHeart className="w-4 h-4" />}
-                  value={total.toString()}
-                  label={total === 1 ? "testimonial" : "testimonials"}
-                />
-                {!Number.isNaN(averageRating) && averageRating > 0 && (
-                  <StatChip
-                    icon={
-                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    }
-                    value={averageRating.toFixed(1)}
-                    label="avg. rating"
-                  />
-                )}
-                {videoCount > 0 && (
-                  <StatChip
-                    icon={<Sparkles className="w-4 h-4" />}
-                    value={videoCount.toString()}
-                    label={videoCount === 1 ? "video" : "videos"}
-                  />
-                )}
-              </div>
-            )}
-          </div>
+          {hasTestimonials && (
+            <FadeIn delay={60}>
+              <StatsRule
+                total={total}
+                averageRating={averageRating}
+                videoCount={videoCount}
+              />
+            </FadeIn>
+          )}
         </div>
       </section>
 
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
-        {hasTestimonials ? (
-          <TestimonialsList
-            testimonials={testimonialList}
-            style={wallOfLoveSettings?.style}
-            styleOptions={wallOfLoveSettings?.styleOptions}
-            themeType={space.themeType}
-          />
-        ) : (
-          <EmptyState spaceName={spaceName} />
-        )}
-      </section>
-
-      {hasTestimonials && (
-        <section className="relative z-10 border-t border-border/40 bg-gradient-to-b from-transparent via-primary/[0.03] to-primary/[0.06]">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6 shadow-sm">
-              <Heart
-                className="w-7 h-7 text-primary fill-primary/30"
-                strokeWidth={1.5}
-              />
-            </div>
-            <h3 className="font-dm_serif text-3xl sm:text-4xl font-bold mb-3">
-              Got something nice to say?
-            </h3>
-            <p className="font-poppins text-muted-foreground text-base sm:text-lg max-w-lg mx-auto mb-8">
-              Join the conversation and share how{" "}
-              <span className="text-foreground font-medium">{spaceName}</span>{" "}
-              made a difference for you.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href={`/${spaceName}`}>
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto shadow-md font-poppins"
+      {featured && featured.answer && (
+        <section className="relative z-10 pb-12 sm:pb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <FadeIn delay={120}>
+              <blockquote className="relative max-w-3xl pl-2 sm:pl-4">
+                <span
+                  className="font-dm_serif text-7xl sm:text-8xl leading-none text-primary select-none absolute -left-1 -top-6 sm:-left-3"
+                  aria-hidden="true"
                 >
-                  <MessageSquareHeart className="w-4 h-4 mr-2" />
-                  Submit Your Testimonial
-                </Button>
-              </Link>
-              {!hideBranding && (
-                <Link href="/">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full sm:w-auto font-poppins"
-                  >
-                    Build Your Own Wall
-                  </Button>
-                </Link>
-              )}
-            </div>
+                  “
+                </span>
+                <p className="font-dm_serif text-2xl sm:text-3xl lg:text-4xl leading-snug tracking-tight pt-8">
+                  {featured.answer.trim()}
+                </p>
+                <footer className="mt-6 flex items-center gap-3 text-sm">
+                  <cite className="not-italic font-medium">{featured.name}</cite>
+                  {showRating && featuredRating > 0 && (
+                    <span
+                      className="inline-flex items-center gap-0.5"
+                      aria-label={`${featuredRating} out of 5 stars`}
+                    >
+                      {Array.from({ length: featuredRating }, (_, index) => (
+                        <Star
+                          key={index}
+                          size={14}
+                          className="fill-amber-400 text-amber-400"
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </span>
+                  )}
+                </footer>
+              </blockquote>
+            </FadeIn>
           </div>
         </section>
       )}
 
-      <footer className="relative z-10 border-t border-border/40 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="font-poppins text-xs text-muted-foreground">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
+        {hasTestimonials ? (
+          <FadeIn delay={180}>
+            <TestimonialsList
+              testimonials={wallTestimonials}
+              style={wallOfLoveSettings?.style}
+              styleOptions={wallOfLoveSettings?.styleOptions}
+            />
+          </FadeIn>
+        ) : (
+          <EmptyState spaceName={spaceName} hideBranding={hideBranding} />
+        )}
+      </section>
+
+      {hasTestimonials && (
+        <section className="relative z-10 border-t border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h2 className="font-dm_serif text-2xl sm:text-3xl tracking-tight">
+              Got something to add?
+            </h2>
+            <Link href={`/${spaceName}`}>
+              <Button size="lg">Leave a testimonial</Button>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      <footer className="relative z-10 border-t border-border py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <p className="font-geist_mono text-[11px] uppercase tracking-wider text-muted-foreground">
             © {new Date().getFullYear()} {spaceName}. All testimonials are
             shared with permission.
           </p>
           {!hideBranding && (
             <Link
               href="/"
-              className="font-poppins text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+              className="font-geist_mono text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
             >
               Powered by{" "}
-              <span className="font-semibold text-foreground">
-                TestiFlow
-              </span>
+              <span className="text-foreground">TestiFlow</span>
               <ArrowUpRight size={12} />
             </Link>
           )}
@@ -254,36 +246,93 @@ export default function WallOfLovePage({
   );
 }
 
-function StatChip({
-  icon,
-  value,
-  label,
+function FadeIn({
+  delay,
+  children,
 }: {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
+  delay: number;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 border border-border/60 shadow-sm backdrop-blur-sm">
-      <span className="text-primary">{icon}</span>
-      <span className="font-poppins text-sm font-semibold">{value}</span>
-      <span className="font-poppins text-sm text-muted-foreground">
-        {label}
-      </span>
+    <div
+      className="motion-safe:animate-wol-enter motion-reduce:animate-none"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
     </div>
   );
 }
 
-function DecorativeBackground() {
+function StatsRule({
+  total,
+  averageRating,
+  videoCount,
+}: {
+  total: number;
+  averageRating: number;
+  videoCount: number;
+}) {
+  const parts: { value: string; label: string }[] = [
+    {
+      value: total.toString(),
+      label: total === 1 ? "testimonial" : "testimonials",
+    },
+  ];
+  if (averageRating > 0) {
+    parts.push({ value: averageRating.toFixed(1), label: "avg" });
+  }
+  if (videoCount > 0) {
+    parts.push({
+      value: videoCount.toString(),
+      label: videoCount === 1 ? "video" : "videos",
+    });
+  }
+
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/[0.07] rounded-full blur-3xl -translate-y-1/2" />
-      <div className="absolute top-1/4 -left-32 w-[400px] h-[400px] bg-primary/[0.04] rounded-full blur-3xl" />
-      <div className="absolute top-1/3 -right-32 w-[400px] h-[400px] bg-amber-200/[0.08] rounded-full blur-3xl" />
-      <div
-        className="absolute inset-0 opacity-[0.015] [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:24px_24px]"
-        aria-hidden="true"
+    <p className="mt-8 pt-4 border-t border-border font-geist_mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
+      {parts.map((part, index) => (
+        <span key={part.label}>
+          {index > 0 && (
+            <span className="mr-4 text-border" aria-hidden="true">
+              ·
+            </span>
+          )}
+          <span className="text-foreground">{part.value}</span> {part.label}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+function SchemeToggle({
+  scheme,
+  onToggle,
+}: {
+  scheme: "light" | "dark";
+  onToggle: () => void;
+}) {
+  const isDark = scheme === "dark";
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="relative h-9 w-9"
+      onClick={onToggle}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+    >
+      <Sun
+        className={cn(
+          "h-4 w-4 transition-all",
+          isDark ? "scale-0 rotate-90 absolute" : "scale-100 rotate-0",
+        )}
       />
-    </div>
+      <Moon
+        className={cn(
+          "h-4 w-4 transition-all",
+          isDark ? "scale-100 rotate-0" : "scale-0 -rotate-90 absolute",
+        )}
+      />
+    </Button>
   );
 }

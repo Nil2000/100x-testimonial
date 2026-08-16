@@ -20,14 +20,12 @@ type Props = {
     rows?: string;
     showRating?: string;
   };
-  themeType?: "light" | "dark";
 };
 
 export default function TestimonialsList({
   testimonials,
   style = "list",
   styleOptions = {},
-  themeType = "light",
 }: Props) {
   if (!testimonials || testimonials.length === 0) return null;
 
@@ -48,7 +46,6 @@ export default function TestimonialsList({
                 key={testimonial.id}
                 testimonial={testimonial}
                 styleOptions={styleOptions}
-                themeType={themeType}
               />
             ))}
           </div>
@@ -61,7 +58,7 @@ export default function TestimonialsList({
     const columns = parseInt(styleOptions.columns || "2");
 
     return (
-      <div className="w-full flex items-center justify-center p-10 h-max">
+      <div className="w-full flex items-center justify-center py-6 h-max">
         <Carousel
           opts={{
             align: "start",
@@ -70,28 +67,27 @@ export default function TestimonialsList({
             columns == 3
               ? "w-full"
               : columns == 2
-              ? "max-w-[40rem]"
-              : "max-w-sm",
+                ? "max-w-[40rem]"
+                : "max-w-sm",
             "w-full"
           )}
         >
           <CarouselContent className="-ml-1">
-            {testimonials.map((testimonial, index) => (
+            {testimonials.map((testimonial) => (
               <CarouselItem
-                key={index}
+                key={testimonial.id}
                 className={`pl-1 flex items-center justify-center ${
                   columns == 3
                     ? "sm:basis-1/3 basis-full"
                     : columns == 2
-                    ? "sm:basis-1/2 basis-full"
-                    : ""
+                      ? "sm:basis-1/2 basis-full"
+                      : ""
                 }`}
               >
                 <div className="w-full p-1">
                   <WallOfLoveCard
                     testimonial={testimonial}
                     styleOptions={styleOptions}
-                    themeType={themeType}
                   />
                 </div>
               </CarouselItem>
@@ -107,22 +103,27 @@ export default function TestimonialsList({
   const renderInfiniteScrollHorizontal = () => {
     const rows = parseInt(styleOptions.rows || "1");
     const dividedByRows = divideTestimonialsIntoRows(testimonials, rows);
-    const duplicatedTestimonials = dividedByRows.map((row) => [...row, ...row]);
 
     return (
       <div className="w-full overflow-hidden relative">
-        <div className="flex flex-col gap-5 overflow-hidden">
-          {duplicatedTestimonials.map((row, rowIndex) => (
+        <ul className="sr-only">
+          {testimonials.map((testimonial) => (
+            <li key={testimonial.id}>
+              {testimonial.name}: {testimonial.answer}
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-col gap-5 overflow-hidden" aria-hidden="true">
+          {dividedByRows.map((row, rowIndex) => (
             <Marquee key={rowIndex} pauseOnHover reverse={rowIndex % 2 === 0}>
-              {row.map((testimonial, index) => (
+              {row.map((testimonial) => (
                 <div
-                  key={`${testimonial.id}-${index}`}
+                  key={testimonial.id}
                   className="flex-shrink-0 w-[320px] h-min mx-2"
                 >
                   <WallOfLoveCard
                     testimonial={testimonial}
                     styleOptions={styleOptions}
-                    themeType={themeType}
                   />
                 </div>
               ))}
@@ -147,7 +148,7 @@ export default function TestimonialsList({
     }
   };
 
-  return <div className="w-full z-20 sm:px-5 px-2">{renderContent()}</div>;
+  return <div className="w-full z-20">{renderContent()}</div>;
 }
 
 const getColumnWidthClass = (columns: number) => {

@@ -11,6 +11,7 @@ import {
   SentimentType,
   SourceType,
 } from "@repo/db/enums";
+import { cn } from "@/lib/utils";
 
 type Props = {
   spaceId: string;
@@ -89,27 +90,34 @@ export default function WallOfLovePreview({ spaceId, settings }: Props) {
       }))
     : testimonials ?? [];
 
-  const themeType: "light" | "dark" =
+  const scheme: "light" | "dark" =
     THEME_CHOICES.find((t) => t.value === spaceInfo.theme?.theme)?.type ??
     "light";
 
-  const headline = settings.headline?.trim() || `What people say about ${spaceInfo.name || "your space"}`;
+  const headline =
+    settings.headline?.trim() ||
+    `What people say about ${spaceInfo.name || "your space"}`;
   const subtitle =
     settings.subtitle?.trim() ||
-    "Real stories from real people. Every testimonial below is a genuine voice from our community.";
+    "Stories from people who used this product.";
 
   return (
-    <div className="relative w-full bg-gradient-to-br from-background via-background to-muted/20 rounded-lg border overflow-hidden">
-      <div className="w-full bg-background/80 backdrop-blur-sm border-b px-6 py-8 text-center">
-        <div className="max-w-2xl mx-auto space-y-2">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {headline}
-          </h2>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
-        </div>
+    <div
+      className={cn(
+        "relative w-full rounded-lg border overflow-hidden bg-background text-foreground",
+        scheme === "dark" ? "dark" : "light",
+      )}
+    >
+      <div className="w-full border-b border-border px-6 py-8">
+        <h2 className="font-dm_serif text-2xl tracking-tight max-w-[20ch]">
+          {headline}
+        </h2>
+        <p className="text-sm text-muted-foreground mt-2 max-w-[60ch]">
+          {subtitle}
+        </p>
       </div>
 
-      <div className="w-full p-6 min-h-[400px] flex items-center justify-center">
+      <div className="w-full p-6 min-h-[400px] flex items-center justify-center bg-background">
         {testimonials === null ? (
           <p className="text-sm text-muted-foreground">Loading preview...</p>
         ) : (
@@ -117,14 +125,13 @@ export default function WallOfLovePreview({ spaceId, settings }: Props) {
             testimonials={previewTestimonials}
             style={settings.style}
             styleOptions={settings.styleOptions}
-            themeType={themeType}
           />
         )}
       </div>
 
       {showPlaceholders && (
-        <p className="px-6 pb-4 text-xs text-center text-muted-foreground">
-          Showing sample testimonials - add some to your Wall of Love to see real ones here.
+        <p className="px-6 pb-4 text-xs text-muted-foreground">
+          Showing sample testimonials. Add some to your Wall of Love to see real ones here.
         </p>
       )}
     </div>
