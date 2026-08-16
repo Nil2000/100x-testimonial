@@ -2,7 +2,6 @@
 import React from "react";
 import TestimonialsList from "@/app/(not-protected)/(public)/[spaceName]/wall-of-love/_components/testimonials-list";
 import { useSpaceStore } from "@/store/spaceStore";
-import { THEME_CHOICES } from "@/components/theme-constant";
 import type { TestimonialResponse } from "@/lib/types";
 import type { WallOfLoveSettings } from "@/lib/wall-of-love-settings";
 import {
@@ -11,7 +10,6 @@ import {
   SentimentType,
   SourceType,
 } from "@repo/db/enums";
-import { cn } from "@/lib/utils";
 
 type Props = {
   spaceId: string;
@@ -90,10 +88,6 @@ export default function WallOfLovePreview({ spaceId, settings }: Props) {
       }))
     : testimonials ?? [];
 
-  const scheme: "light" | "dark" =
-    THEME_CHOICES.find((t) => t.value === spaceInfo.theme?.theme)?.type ??
-    "light";
-
   const headline =
     settings.headline?.trim() ||
     `What people say about ${spaceInfo.name || "your space"}`;
@@ -102,12 +96,7 @@ export default function WallOfLovePreview({ spaceId, settings }: Props) {
     "Stories from people who used this product.";
 
   return (
-    <div
-      className={cn(
-        "relative w-full rounded-lg border overflow-hidden bg-background text-foreground",
-        scheme === "dark" ? "dark" : "light",
-      )}
-    >
+    <div className="relative w-full rounded-lg border overflow-hidden bg-background text-foreground">
       <div className="w-full border-b border-border px-6 py-8">
         <h2 className="font-dm_serif text-2xl tracking-tight max-w-[20ch]">
           {headline}

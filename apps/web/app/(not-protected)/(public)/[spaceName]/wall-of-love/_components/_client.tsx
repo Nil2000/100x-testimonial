@@ -5,18 +5,18 @@ import Image from "next/image";
 import TestimonialsList from "./testimonials-list";
 import EmptyState from "./empty-state";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Heart, Moon, Star, Sun } from "lucide-react";
+import { ArrowUpRight, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { TestimonialResponse } from "@/lib/types";
 import type { WallOfLoveSettings } from "@/lib/wall-of-love-settings";
 import { pickFeaturedTestimonial } from "@/lib/wall-of-love-featured";
+import ThemeToggle from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 export type WallOfLoveSpaceBranding = {
   logo: string | null;
   showBrandLogo: boolean;
   font: string | null;
-  themeType: "light" | "dark";
 };
 
 type Props = {
@@ -32,9 +32,6 @@ export default function WallOfLovePage({
   wallOfLoveSettings,
   space,
 }: Props) {
-  const [override, setOverride] = React.useState<"light" | "dark" | null>(null);
-  const scheme = override ?? space.themeType;
-
   const total = testimonialList.length;
   const hasTestimonials = total > 0;
   const hideBranding = Boolean(wallOfLoveSettings?.hideBranding);
@@ -74,7 +71,6 @@ export default function WallOfLovePage({
       className={cn(
         "relative min-h-screen bg-background text-foreground",
         !space.font && "font-geist",
-        scheme === "dark" ? "dark" : "light",
       )}
       style={bodyFont}
     >
@@ -112,12 +108,7 @@ export default function WallOfLovePage({
             )}
 
             <div className="flex items-center gap-1 sm:gap-2">
-              <SchemeToggle
-                scheme={scheme}
-                onToggle={() =>
-                  setOverride(scheme === "dark" ? "light" : "dark")
-                }
-              />
+              <ThemeToggle />
               <Link href={`/${spaceName}`} className="hidden sm:block">
                 <Button variant="ghost" size="sm">
                   Leave a testimonial
@@ -304,35 +295,3 @@ function StatsRule({
   );
 }
 
-function SchemeToggle({
-  scheme,
-  onToggle,
-}: {
-  scheme: "light" | "dark";
-  onToggle: () => void;
-}) {
-  const isDark = scheme === "dark";
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      className="relative h-9 w-9"
-      onClick={onToggle}
-      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
-    >
-      <Sun
-        className={cn(
-          "h-4 w-4 transition-all",
-          isDark ? "scale-0 rotate-90 absolute" : "scale-100 rotate-0",
-        )}
-      />
-      <Moon
-        className={cn(
-          "h-4 w-4 transition-all",
-          isDark ? "scale-100 rotate-0" : "scale-0 -rotate-90 absolute",
-        )}
-      />
-    </Button>
-  );
-}

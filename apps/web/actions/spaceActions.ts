@@ -17,7 +17,6 @@ import {
   toPublicTestimonial,
 } from "@/lib/publicData";
 import { isReservedSpaceSegment } from "@/lib/routes";
-import { THEME_CHOICES } from "@/components/theme-constant";
 import * as z from "zod";
 
 export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
@@ -318,7 +317,6 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
     const themeRecord = space.theme as Record<string, unknown> | null;
     const themeOptions =
       (themeRecord?.themeOptions as { showBrandLogo?: boolean; font?: string } | undefined) ?? {};
-    const themeValue = typeof themeRecord?.theme === "string" ? themeRecord.theme : null;
 
     return {
       data: feedbacks.map(toPublicTestimonial),
@@ -331,7 +329,6 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
         logo: space.logo,
         showBrandLogo: Boolean(themeOptions.showBrandLogo),
         font: themeOptions.font ?? null,
-        themeType: THEME_CHOICES.find((t) => t.value === themeValue)?.type ?? "light",
       },
     };
   } catch (error) {
