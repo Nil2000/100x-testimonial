@@ -69,8 +69,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
-        serif: ["var(--font-serif)"],
+        sans: ["var(--font-poppins)", "ui-sans-serif", "sans-serif"],
+        serif: ["var(--font-dm-serif)", "serif"],
         mono: ["var(--font-mono)"],
         display: ["var(--font-dm-serif)", "serif"],
         dm_serif: ["var(--font-dm-serif)", "serif"],

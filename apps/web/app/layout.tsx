@@ -28,8 +28,7 @@ const poppins = Poppins({
 });
 export const metadata: Metadata = {
   title: "TestiFlow",
-  description:
-    "Collect, manage, and showcase testimonials with TestiFlow.",
+  description: "Collect, manage, and showcase testimonials with TestiFlow.",
 };
 
 export default function RootLayout({
@@ -40,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${dmSerif.variable} ${poppins.variable} antialiased min-h-screen relative`}
+        className={`${geistSans.variable} ${geistMono.variable} ${dmSerif.variable} ${poppins.variable} font-sans antialiased min-h-screen relative`}
       >
         <PostHogProvider>
           <ThemeProvider
