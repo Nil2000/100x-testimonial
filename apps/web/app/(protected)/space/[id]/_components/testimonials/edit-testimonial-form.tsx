@@ -396,8 +396,8 @@ export default function TestimonialEditFormView() {
       <div className="flex items-center gap-3 border-t py-3">
         <Button
           type="submit"
-          className="w-full sm:max-w-[300px]"
           disabled={isPending || (!isDirty && !fileSelected)}
+          size="lg"
         >
           {isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />

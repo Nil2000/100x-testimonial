@@ -51,7 +51,7 @@ export default function CreateSpacePage() {
           <div className="p-2 rounded-lg bg-primary/10">
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="font-serif text-3xl font-bold tracking-tight">
             Create a New Space
           </h1>
         </div>

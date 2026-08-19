@@ -20,7 +20,7 @@ import QuotaLimitWarning from "./quota-limit-warning";
 // Sorting function
 const sortTestimonials = (
   testimonials: TestimonialResponse[],
-  sortBy: string
+  sortBy: string,
 ) => {
   switch (sortBy) {
     case "name-asc":
@@ -30,12 +30,12 @@ const sortTestimonials = (
     case "newest-first":
       return [...testimonials].sort(
         (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       );
     case "oldest-first":
       return [...testimonials].sort(
         (a, b) =>
-          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
       );
     default:
       return testimonials;
@@ -57,7 +57,7 @@ export default function TestimonialsListManager({
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [testimonials, setTestimonials] = React.useState<TestimonialResponse[]>(
-    []
+    [],
   );
   const [isOpenShareImage, setIsOpenShareImage] = React.useState(false);
   const [isOpenEmbedTestimonial, setIsOpenEmbedTestimonial] =
@@ -94,7 +94,8 @@ export default function TestimonialsListManager({
       try {
         const params = new URLSearchParams({ spaceId: spaceInfo.id });
         if (category) params.set("category", category);
-        if (wallOfLove != null) params.set("addToWallOfLove", String(wallOfLove));
+        if (wallOfLove != null)
+          params.set("addToWallOfLove", String(wallOfLove));
         if (archived != null) params.set("archived", String(archived));
         const response = await fetch(`/api/testimonials?${params}`);
         if (!response.ok) {
@@ -126,7 +127,7 @@ export default function TestimonialsListManager({
 
     if (wallOfLove) {
       setTestimonials((prev) =>
-        prev.filter((t: TestimonialResponse) => t.id !== id)
+        prev.filter((t: TestimonialResponse) => t.id !== id),
       );
       toast.success("Testimonial removed from wall of love");
     }
@@ -135,7 +136,7 @@ export default function TestimonialsListManager({
   const removeFromList = (id: string) => {
     if (!id) return;
     setTestimonials((prev) =>
-      prev.filter((t: TestimonialResponse) => t.id !== id)
+      prev.filter((t: TestimonialResponse) => t.id !== id),
     );
     toast.success("Testimonial deleted successfully");
   };
@@ -167,12 +168,12 @@ export default function TestimonialsListManager({
   const localTextCount = testimonials.filter(
     (testimonial) =>
       testimonial.feedbackType === "TEXT" ||
-      testimonial.feedbackType === "TEXT_AND_VIDEO"
+      testimonial.feedbackType === "TEXT_AND_VIDEO",
   ).length;
   const localVideoCount = testimonials.filter(
     (testimonial) =>
       testimonial.feedbackType === "VIDEO" ||
-      testimonial.feedbackType === "TEXT_AND_VIDEO"
+      testimonial.feedbackType === "TEXT_AND_VIDEO",
   ).length;
 
   const textCount = quotaTotals.text || localTextCount;
@@ -189,7 +190,7 @@ export default function TestimonialsListManager({
   const quotaCategory = getQuotaCategory();
 
   return (
-    <div key={`list-testimonials-${category}`} className="w-full p-3 space-y-3">
+    <div key={`list-testimonials-${category}`} className="w-full space-y-3">
       {quotaCategory && (
         <QuotaLimitWarning
           textCount={textCount}
@@ -245,7 +246,7 @@ export default function TestimonialsListManager({
             }}
             removeFromList={removeFromList}
           />
-        )
+        ),
       )}
       {filteredTestimonials.length > 0 && (
         <div className="w-full flex justify-center">

@@ -1,7 +1,9 @@
 "use server";
 import { db } from "@repo/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
+import { wallOfLoveSchema } from "@/schemas/wallOfLoveSchema";
 import { checkUserAccess } from "@/lib/accessControl";
+import { PLAN_LIMITS, PlanType } from "@/lib/subscription";
 import {
   assertSpaceOwnership,
   assertThankYouSpaceOwnership,
@@ -286,7 +288,9 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
       },
       select: {
         id: true,
+        logo: true,
         theme: true,
+        createdBy: { select: { plan: true } },
       },
     });
     if (!space) {
@@ -306,9 +310,26 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
       },
     });
 
+    const wallOfLoveSettings = getWallOfLoveSettings(space.theme);
+    const canCustomBrand =
+      PLAN_LIMITS[space.createdBy.plan as unknown as PlanType]?.customBranding ?? false;
+
+    const themeRecord = space.theme as Record<string, unknown> | null;
+    const themeOptions =
+      (themeRecord?.themeOptions as { showBrandLogo?: boolean; font?: string } | undefined) ?? {};
+
     return {
       data: feedbacks.map(toPublicTestimonial),
-      wallOfLoveSettings: getWallOfLoveSettings(space.theme),
+      wallOfLoveSettings: {
+        ...wallOfLoveSettings,
+        // A downgrade after enabling white-label must not leave stale branding removed.
+        hideBranding: wallOfLoveSettings.hideBranding && canCustomBrand,
+      },
+      space: {
+        logo: space.logo,
+        showBrandLogo: Boolean(themeOptions.showBrandLogo),
+        font: themeOptions.font ?? null,
+      },
     };
   } catch (error) {
     return {
@@ -319,21 +340,24 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
 
 export const saveWallOfLoveSettings = async (
   spaceId: string,
-  wallOfLoveSettings: {
-    style: string;
-    styleOptions: {
-      columns?: string;
-      rows?: string;
-      cardVariant?: string;
-      showRating?: string;
-      showDate?: string;
-      gap?: string;
-    };
-  },
+  wallOfLoveSettings: z.infer<typeof wallOfLoveSchema>,
 ) => {
   const authResult = await requireAuth();
   if ("error" in authResult) {
     return { error: authResult.error };
+  }
+
+  const validateFields = wallOfLoveSchema.safeParse(wallOfLoveSettings);
+  if (validateFields.error) {
+    return { error: "Invalid fields" };
+  }
+  const settings = validateFields.data;
+
+  if (settings.hideBranding) {
+    const accessCheck = await checkUserAccess(authResult.userId, "customBranding");
+    if (!accessCheck.hasAccess) {
+      return { error: accessCheck.reason };
+    }
   }
 
   const ownership = await assertSpaceOwnership(authResult.userId, spaceId);
@@ -351,7 +375,7 @@ export const saveWallOfLoveSettings = async (
         : {};
     const updatedTheme = {
       ...currentTheme,
-      wallOfLove: wallOfLoveSettings,
+      wallOfLove: settings,
     };
 
     await db.space.update({
