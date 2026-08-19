@@ -1,5 +1,11 @@
 import type { Feedback, Prisma } from "@repo/db/client";
 import type { SpaceResponse, TestimonialResponse } from "@/lib/types";
+import {
+  normalizeWallOfLoveSettings,
+  type WallOfLoveSettings,
+} from "@/lib/wall-of-love-settings";
+
+export type { WallOfLoveSettings };
 
 export type PublicSpaceRecord = Prisma.SpaceGetPayload<{
   select: typeof publicSpaceSelect;
@@ -40,28 +46,8 @@ export function getPublicSpaceSelect() {
   return publicSpaceSelect;
 }
 
-export type WallOfLoveSettings = {
-  style: string;
-  styleOptions: {
-    columns?: string;
-    rows?: string;
-    cardVariant?: string;
-    showRating?: string;
-    showDate?: string;
-    gap?: string;
-  };
-};
-
 export function getWallOfLoveSettings(theme: unknown): WallOfLoveSettings {
-  const record = theme as Record<string, unknown> | null;
-  const settings = record?.wallOfLove as WallOfLoveSettings | undefined;
-
-  return (
-    settings ?? {
-      style: "list",
-      styleOptions: { columns: "3" },
-    }
-  );
+  return normalizeWallOfLoveSettings(theme);
 }
 
 /** Strip internal theme keys not needed on public collection pages. */

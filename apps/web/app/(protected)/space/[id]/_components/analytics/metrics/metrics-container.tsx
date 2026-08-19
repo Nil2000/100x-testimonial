@@ -5,19 +5,13 @@ import { useSpaceStore } from "@/store/spaceStore";
 import { DROPDOWN_ANALYTICS_PAGE_OPTIONS } from "@/lib/constants";
 import MetricsChart from "./metrics-chart";
 import { useMetrics } from "@/hooks/useMetrics";
-import { toast } from "sonner";
 
 type Props = {
   pageTitle: string;
   dateRange: string;
-  changePending: (pending: boolean) => void;
 };
 
-export default function MetricsContainer({
-  pageTitle,
-  dateRange,
-  changePending,
-}: Props) {
+export default function MetricsContainer({ pageTitle, dateRange }: Props) {
   const { spaceInfo } = useSpaceStore();
   const {
     fetchMetrics,
@@ -28,28 +22,12 @@ export default function MetricsContainer({
     totalUniqueVisitorMetrics,
   } = useMetrics();
 
-  const fetchMetricsData = async () => {
-    changePending(true);
-    fetchMetrics(pageTitle, dateRange, spaceInfo.id)
-      .catch(() => {
-        toast.error("Error fetching metrics");
-      })
-      .finally(() => {
-        changePending(false);
-      });
-  };
-
   React.useEffect(() => {
-    fetchMetricsData();
-  }, [dateRange, pageTitle]);
-
-  // if (loading) {
-  //   return <Loading />;
-  // }
+    void fetchMetrics(pageTitle, dateRange, spaceInfo.id);
+  }, [dateRange, pageTitle, spaceInfo.id, fetchMetrics]);
 
   return (
     <div className="space-y-6">
-      {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <MetricsCard
           icon={Eye}
@@ -76,7 +54,6 @@ export default function MetricsContainer({
         )}
       </div>
 
-      {/* Chart */}
       {loading ? (
         <div className="rounded-lg border bg-card shadow-sm">
           <div className="p-6">

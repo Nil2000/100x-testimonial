@@ -122,7 +122,7 @@ export default function SpacePage({ id }: { id: string }) {
               <span className="truncate">Spaces</span>
             </div>
             {/* Space Name */}
-            <h1 className="text-xl font-semibold truncate">
+            <h1 className="font-serif text-xl font-semibold truncate">
               {spaceInfo.name || "Untitled Space"}
             </h1>
           </div>

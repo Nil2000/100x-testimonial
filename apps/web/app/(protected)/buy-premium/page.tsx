@@ -134,7 +134,7 @@ export default function BuyPremiumPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+        <h1 className="font-serif text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
           Upgrade to Premium
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

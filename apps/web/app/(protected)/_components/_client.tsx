@@ -50,7 +50,9 @@ export default function DashboardPage({
     <div className="flex flex-col gap-8 p-4 md:p-6 max-w-7xl mx-auto w-full">
       {/* Header Section */}
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="font-serif text-3xl font-bold tracking-tight">
+          Dashboard
+        </h1>
         <p className="text-muted-foreground">
           Manage your testimonial spaces and track your progress.
         </p>
@@ -73,15 +75,15 @@ export default function DashboardPage({
             userPlan === "FREE"
               ? "Starter"
               : userPlan === "TRIAL"
-              ? "Trial"
-              : userPlan
+                ? "Trial"
+                : userPlan
           }
           subText={
             userPlan === "FREE"
               ? "Free tier"
               : userPlan === "TRIAL"
-              ? "7-day trial"
-              : "Premium"
+                ? "7-day trial"
+                : "Premium"
           }
           icon={Luggage}
           enableButton

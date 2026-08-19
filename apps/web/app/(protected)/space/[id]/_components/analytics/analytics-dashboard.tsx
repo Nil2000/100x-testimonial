@@ -17,17 +17,21 @@ export default function AnalyticsTabView() {
   const isFreePlan = (subscription?.plan ?? "FREE") === "FREE";
   const router = useRouter();
   const [selectedPage, setSelectedPage] = React.useState(
-    DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value
+    DROPDOWN_ANALYTICS_PAGE_OPTIONS[0].value,
   );
   const [selectedDate, setSelectedDate] = React.useState(
-    DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS[1].value
+    DROPDOWN_ANALYTICS_PAGE_DATE_OPTIONS[1].value,
   );
-  const [isLoading, setIsLoading] = React.useState(true);
 
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="relative max-w-7xl mx-auto">
-        <div className={cn("space-y-6",isFreePlan ? "pointer-events-none blur-md" : "")}>
+        <div
+          className={cn(
+            "space-y-6",
+            isFreePlan ? "pointer-events-none blur-md" : "",
+          )}
+        >
           {/* Filters Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-lg bg-card border shadow-sm">
             <div className="flex items-center gap-2">
@@ -48,7 +52,6 @@ export default function AnalyticsTabView() {
                   onChange={(value) => {
                     setSelectedPage(value);
                   }}
-                  disabled={isLoading}
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -60,35 +63,33 @@ export default function AnalyticsTabView() {
                   onChange={(value) => {
                     setSelectedDate(value);
                   }}
-                  disabled={isLoading}
                 />
               </div>
             </div>
           </div>
 
           {/* Metrics */}
-          <MetricsContainer
-            pageTitle={selectedPage}
-            dateRange={selectedDate}
-            changePending={(status) => {
-              setIsLoading(status);
-            }}
-          />
+          <MetricsContainer pageTitle={selectedPage} dateRange={selectedDate} />
         </div>
 
         {isFreePlan && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-full max-w-lg rounded-xl border bg-background/80 p-6 text-center shadow-lg backdrop-blur">
-              <h3 className="text-lg font-semibold">Analytics is a Premium feature</h3>
+              <h3 className="text-lg font-semibold">
+                Analytics is a Premium feature
+              </h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Upgrade your plan to unlock analytics and track page views, visitors, and
-                conversion metrics.
+                Upgrade your plan to unlock analytics and track page views,
+                visitors, and conversion metrics.
               </p>
               <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Button onClick={() => router.push("/buy-premium")}>
                   Upgrade to unlock
                 </Button>
-                <Button variant="outline" onClick={() => router.push("/buy-premium")}>
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/buy-premium")}
+                >
                   View plans
                 </Button>
               </div>
