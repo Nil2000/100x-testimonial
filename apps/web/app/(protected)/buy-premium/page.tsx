@@ -83,6 +83,7 @@ export default function BuyPremiumPage() {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [userPlan, setUserPlan] = useState<string>("FREE");
+  const [isTrialActive, setIsTrialActive] = useState(false);
   const [daysLeftInTrial, setDaysLeftInTrial] = useState(0);
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export default function BuyPremiumPage() {
       const result = await getUserPlan();
       if (result.success && result.data) {
         setUserPlan(result.data.plan);
+        setIsTrialActive(result.data.isTrialActive);
         setDaysLeftInTrial(result.data.daysLeftInTrial);
       }
     };
@@ -105,9 +107,7 @@ export default function BuyPremiumPage() {
     }
 
     if (planName === "Professional" || planName === "Enterprise") {
-      if (userPlan === "FREE") {
-        setIsDialogOpen(true);
-      } else if (userPlan === "TRIAL") {
+      if (userPlan === "FREE" || isTrialActive) {
         setIsDialogOpen(true);
       } else {
         toast.info("Payment integration coming soon!");
@@ -218,7 +218,7 @@ export default function BuyPremiumPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {userPlan === "FREE"
+              {userPlan === "FREE" && !isTrialActive
                 ? "Start Your 7-Day Free Trial"
                 : "Upgrade Your Plan"}
             </DialogTitle>
@@ -227,7 +227,7 @@ export default function BuyPremiumPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
-            {userPlan === "FREE" ? (
+            {userPlan === "FREE" && !isTrialActive ? (
               <>
                 <p className="text-sm text-muted-foreground">
                   Start your 7-day free trial to unlock all {selectedPlan}{" "}
@@ -256,7 +256,7 @@ export default function BuyPremiumPage() {
                   unless you upgrade.
                 </p>
               </>
-            ) : userPlan === "TRIAL" ? (
+            ) : isTrialActive ? (
               <>
                 <p className="text-sm text-muted-foreground">
                   You&apos;re currently on a trial with{" "}
@@ -278,7 +278,7 @@ export default function BuyPremiumPage() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            {userPlan === "FREE" ? (
+            {userPlan === "FREE" && !isTrialActive ? (
               <Button onClick={handleStartTrial} disabled={isLoading}>
                 {isLoading ? (
                   <>

@@ -1,12 +1,12 @@
 
-import { PlanType, SubscriptionStatus } from "@repo/db/enums";
+import { PlanType } from "@/lib/subscription";
+import { SubscriptionStatus } from "@repo/db/enums";
 import { getSubscriptionDetails } from "@/actions/subscriptionActions";
 import { create } from "zustand";
 
 export type SubscriptionDetails = {
   plan: PlanType;
   subscriptionStatus: SubscriptionStatus;
-  trialStartDate: string | null;
   trialEndDate: string | null;
   subscriptionId: string | null;
 };

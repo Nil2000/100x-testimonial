@@ -1,5 +1,9 @@
 import { db } from "@repo/db";
-import { PlanType, PLAN_LIMITS, TRIAL_DURATION_DAYS } from "@/lib/subscription";
+import {
+  PlanType,
+  PLAN_LIMITS,
+  resolveEffectivePlan,
+} from "@/lib/subscription";
 
 export interface AccessCheckResult {
   hasAccess: boolean;
@@ -10,9 +14,8 @@ export interface AccessCheckResult {
 }
 
 export interface UserPlanInfo {
-  plan: string;
+  plan: PlanType;
   subscriptionStatus: string;
-  trialStartDate: Date | null;
   trialEndDate: Date | null;
   subscriptionId: string | null;
   isTrialActive: boolean;
@@ -36,7 +39,6 @@ export async function checkUserAccess(
     select: {
       plan: true,
       subscriptionStatus: true,
-      trialStartDate: true,
       trialEndDate: true,
       spaces: {
         select: {
@@ -58,20 +60,7 @@ export async function checkUserAccess(
     };
   }
 
-  let effectivePlan = user.plan as PlanType;
-  const now = new Date();
-
-  if (user.plan === "TRIAL" && user.trialEndDate) {
-    if (now > user.trialEndDate) {
-      effectivePlan = PlanType.FREE;
-      return {
-        hasAccess: false,
-        reason: "Trial period has expired. Please upgrade to continue.",
-        isTrialExpired: true,
-      };
-    }
-  }
-
+  const effectivePlan = resolveEffectivePlan(user);
   const planLimits = PLAN_LIMITS[effectivePlan];
 
   switch (checkType) {
@@ -221,7 +210,6 @@ export async function getUserPlanInfo(
     select: {
       plan: true,
       subscriptionStatus: true,
-      trialStartDate: true,
       trialEndDate: true,
       subscriptionId: true,
     },
@@ -234,24 +222,22 @@ export async function getUserPlanInfo(
   }
 
   const now = new Date();
-  let isTrialActive = false;
-  let isTrialExpired = false;
-  let daysLeftInTrial = 0;
-
-  if (user.plan === "TRIAL" && user.trialStartDate && user.trialEndDate) {
-    isTrialActive = now >= user.trialStartDate && now <= user.trialEndDate;
-    isTrialExpired = now > user.trialEndDate;
-
-    if (isTrialActive) {
-      const timeDiff = user.trialEndDate.getTime() - now.getTime();
-      daysLeftInTrial = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-    }
-  }
+  const plan = resolveEffectivePlan(user);
+  const isTrialActive =
+    user.trialEndDate != null && user.trialEndDate >= now;
+  const isTrialExpired =
+    user.trialEndDate != null && user.trialEndDate < now;
+  const daysLeftInTrial =
+    isTrialActive && user.trialEndDate
+      ? Math.ceil(
+          (user.trialEndDate.getTime() - now.getTime()) /
+            (1000 * 60 * 60 * 24),
+        )
+      : 0;
 
   return {
-    plan: user.plan,
+    plan,
     subscriptionStatus: user.subscriptionStatus,
-    trialStartDate: user.trialStartDate,
     trialEndDate: user.trialEndDate,
     subscriptionId: user.subscriptionId ?? null,
     isTrialActive,
@@ -260,49 +246,9 @@ export async function getUserPlanInfo(
   };
 }
 
-export async function startTrial(
-  userId: string,
-): Promise<{ success: boolean; error?: string }> {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: {
-      plan: true,
-      trialStartDate: true,
-    },
-  });
-
-  if (!user) {
-    return { success: false, error: "User not found" };
-  }
-
-  if (user.trialStartDate) {
-    return { success: false, error: "Trial has already been used" };
-  }
-
-  if (user.plan !== "FREE") {
-    return { success: false, error: "Trial is only available for free users" };
-  }
-
-  const now = new Date();
-  const trialEndDate = new Date(now);
-  trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DURATION_DAYS);
-
-  await db.user.update({
-    where: { id: userId },
-    data: {
-      plan: "TRIAL",
-      trialStartDate: now,
-      trialEndDate: trialEndDate,
-      subscriptionStatus: "ACTIVE",
-    },
-  });
-
-  return { success: true };
-}
-
 export async function upgradeToPaid(
   userId: string,
-  plan: "PROFESSIONAL" | "ENTERPRISE",
+  plan: PlanType.PRO | PlanType.ENTERPRISE,
   subscriptionId: string,
 ): Promise<{ success: boolean; error?: string }> {
   const user = await db.user.findUnique({
@@ -319,25 +265,9 @@ export async function upgradeToPaid(
       plan: plan,
       subscriptionStatus: "ACTIVE",
       subscriptionId: subscriptionId,
+      trialEndDate: null,
     },
   });
 
   return { success: true };
-}
-
-export async function checkAndExpireTrials(): Promise<void> {
-  const now = new Date();
-
-  await db.user.updateMany({
-    where: {
-      plan: "TRIAL",
-      trialEndDate: {
-        lt: now,
-      },
-    },
-    data: {
-      plan: "FREE",
-      subscriptionStatus: "EXPIRED",
-    },
-  });
 }

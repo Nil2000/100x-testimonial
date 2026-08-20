@@ -4,6 +4,7 @@ import { db } from "@repo/db";
 import { getUserById } from "@/data/user";
 import authConfig from "./auth.config";
 import { Role } from "@repo/db/enums";
+import { startUserTrial } from "./subscription";
 
 declare module "next-auth" {
   interface Session {
@@ -19,6 +20,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/auth/error",
   },
   events: {
+    createUser: async ({ user }) => {
+      if (!user.id) return;
+      await startUserTrial(user.id);
+    },
     // Google and Github users are verified by the provider
     linkAccount: async ({ user }) => {
       await db.user.update({

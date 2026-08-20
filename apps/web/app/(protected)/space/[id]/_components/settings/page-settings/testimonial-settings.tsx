@@ -20,10 +20,7 @@ export default function TestimonialPage() {
   const { subscription } = usePlanStore();
   const { fontSelected, handleFontSelect, fontList } = useFont();
 
-  // usePlanStore's PlanType (from @repo/db/enums) and lib/subscription's PlanType
-  // are distinct nominal types with the same string members; cast the same way
-  // accessControl.ts does when bridging the two.
-  const plan = (subscription?.plan as unknown as PlanType) ?? PlanType.FREE;
+  const plan = subscription?.plan ?? PlanType.FREE;
   const canCustomBrand = PLAN_LIMITS[plan]?.customBranding ?? false;
 
   const [theme, setTheme] = React.useState<Theme | null>(

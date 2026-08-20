@@ -5,9 +5,9 @@ import {
   requireAuthApi,
 } from "@/lib/authGuards";
 import { db } from "@repo/db";
-import { PLAN_LIMITS } from "@/lib/subscription";
+import { PLAN_LIMITS, PlanType } from "@/lib/subscription";
 import { NextRequest, NextResponse } from "next/server";
-import { FeedbackType, PlanType } from "@repo/db/enums";
+import { FeedbackType } from "@repo/db/enums";
 
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;

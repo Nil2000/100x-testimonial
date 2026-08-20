@@ -23,7 +23,7 @@ export default function WallOfLovePage() {
   const { spaceInfo, updateWallOfLoveSettings } = useSpaceStore();
   const { subscription } = usePlanStore();
 
-  const plan = (subscription?.plan as unknown as PlanType) ?? PlanType.FREE;
+  const plan = subscription?.plan ?? PlanType.FREE;
   const canCustomBrand = PLAN_LIMITS[plan]?.customBranding ?? false;
 
   const savedSettings = React.useMemo(

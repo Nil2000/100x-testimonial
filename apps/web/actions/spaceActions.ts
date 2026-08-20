@@ -3,7 +3,12 @@ import { db } from "@repo/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
 import { wallOfLoveSchema } from "@/schemas/wallOfLoveSchema";
 import { checkUserAccess } from "@/lib/accessControl";
-import { PLAN_LIMITS, PlanType } from "@/lib/subscription";
+import {
+  PLAN_LIMITS,
+  PlanType,
+  getEffectivePlan,
+  resolveEffectivePlan,
+} from "@/lib/subscription";
 import {
   assertSpaceOwnership,
   assertThankYouSpaceOwnership,
@@ -290,7 +295,9 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
         id: true,
         logo: true,
         theme: true,
-        createdBy: { select: { plan: true } },
+        createdBy: {
+          select: { plan: true, subscriptionStatus: true, trialEndDate: true },
+        },
       },
     });
     if (!space) {
@@ -312,7 +319,8 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
 
     const wallOfLoveSettings = getWallOfLoveSettings(space.theme);
     const canCustomBrand =
-      PLAN_LIMITS[space.createdBy.plan as unknown as PlanType]?.customBranding ?? false;
+      PLAN_LIMITS[resolveEffectivePlan(space.createdBy)]?.customBranding ??
+      false;
 
     const themeRecord = space.theme as Record<string, unknown> | null;
     const themeOptions =
@@ -405,18 +413,12 @@ export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
     return { error: ownership.error };
   }
 
-  const user = await db.user.findUnique({
-    where: { id: authResult.userId },
-    select: { plan: true },
-  });
-
-  if (!user) {
-    return {
-      error: "User not found",
-    };
+  const plan = await getEffectivePlan(authResult.userId);
+  if (typeof plan !== "string") {
+    return { error: plan.error };
   }
 
-  if (user.plan === "FREE") {
+  if (plan === PlanType.FREE) {
     return {
       error:
         "Sentiment analysis is not available on the Free plan. Please upgrade to continue.",
@@ -453,18 +455,12 @@ export const toggleSpamDetection = async (id: string, status: boolean) => {
     return { error: ownership.error };
   }
 
-  const user = await db.user.findUnique({
-    where: { id: authResult.userId },
-    select: { plan: true },
-  });
-
-  if (!user) {
-    return {
-      error: "User not found",
-    };
+  const plan = await getEffectivePlan(authResult.userId);
+  if (typeof plan !== "string") {
+    return { error: plan.error };
   }
 
-  if (user.plan === "FREE") {
+  if (plan === PlanType.FREE) {
     return {
       error:
         "Spam detection is not available on the Free plan. Please upgrade to continue.",
