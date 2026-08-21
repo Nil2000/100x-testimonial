@@ -4,7 +4,7 @@ import { db } from "@repo/db";
 import { getUserById } from "@/data/user";
 import authConfig from "./auth.config";
 import { Role } from "@repo/db/enums";
-import { startUserTrial } from "./subscription";
+import { startUserTrial } from "./subscription.server";
 
 declare module "next-auth" {
   interface Session {

@@ -2,7 +2,8 @@
 
 import { upgradeToPaid, getUserPlanInfo } from "@/lib/accessControl";
 import { requireAuth } from "@/lib/authGuards";
-import { PlanType, startUserTrial as grantUserTrial } from "@/lib/subscription";
+import { PlanType } from "@/lib/subscription";
+import { startUserTrial as grantUserTrial } from "@/lib/subscription.server";
 import { SubscriptionStatus } from "@repo/db/enums";
 
 export async function startUserTrial() {

@@ -6,9 +6,9 @@ import { checkUserAccess } from "@/lib/accessControl";
 import {
   PLAN_LIMITS,
   PlanType,
-  getEffectivePlan,
   resolveEffectivePlan,
 } from "@/lib/subscription";
+import { getEffectivePlan } from "@/lib/subscription.server";
 import {
   assertSpaceOwnership,
   assertThankYouSpaceOwnership,
