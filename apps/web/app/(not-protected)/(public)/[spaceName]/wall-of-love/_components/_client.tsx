@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils";
 export type WallOfLoveSpaceBranding = {
   logo: string | null;
   showBrandLogo: boolean;
-  font: string | null;
 };
 
 type Props = {
@@ -36,9 +35,6 @@ export default function WallOfLovePage({
   const hasTestimonials = total > 0;
   const hideBranding = Boolean(wallOfLoveSettings?.hideBranding);
   const brandLogoSrc = space.showBrandLogo && space.logo ? space.logo : null;
-  const bodyFont = space.font
-    ? { fontFamily: `'${space.font}', ui-sans-serif, sans-serif` }
-    : undefined;
 
   const headline =
     wallOfLoveSettings?.headline?.trim() ||
@@ -67,13 +63,7 @@ export default function WallOfLovePage({
   );
 
   return (
-    <div
-      className={cn(
-        "relative min-h-screen bg-background text-foreground",
-        !space.font && "font-geist",
-      )}
-      style={bodyFont}
-    >
+    <div className={cn("relative min-h-screen bg-background text-foreground")}>
       <header className="sticky top-0 z-50 border-b border-border bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -165,7 +155,9 @@ export default function WallOfLovePage({
                   {featured.answer.trim()}
                 </p>
                 <footer className="mt-6 flex items-center gap-3 text-sm">
-                  <cite className="not-italic font-medium">{featured.name}</cite>
+                  <cite className="not-italic font-medium">
+                    {featured.name}
+                  </cite>
                   {showRating && featuredRating > 0 && (
                     <span
                       className="inline-flex items-center gap-0.5"
@@ -226,8 +218,7 @@ export default function WallOfLovePage({
               href="/"
               className="font-geist_mono text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
             >
-              Powered by{" "}
-              <span className="text-foreground">TestiFlow</span>
+              Powered by <span className="text-foreground">TestiFlow</span>
               <ArrowUpRight size={12} />
             </Link>
           )}
@@ -294,4 +285,3 @@ function StatsRule({
     </p>
   );
 }
-
