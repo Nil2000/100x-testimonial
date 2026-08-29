@@ -12,7 +12,7 @@ export default function TestimonialView() {
 
       {/* Preview Section */}
       <div className="w-full">
-        <div className="sticky top-4">
+        <div className="sticky top-20">
           <TestimonialPreviewCard />
         </div>
       </div>

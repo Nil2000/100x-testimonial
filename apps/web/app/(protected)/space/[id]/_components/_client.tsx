@@ -130,17 +130,17 @@ export default function SpacePage({ id }: { id: string }) {
         {/* Status Badge */}
         <Badge
           variant={spaceInfo.isPublished ? "default" : "secondary"}
-          className="flex items-center gap-1.5 px-3 py-1 self-start sm:self-center"
+          className="flex items-center gap-1.5 px-3 py-1 self-start sm:self-center rounded-full"
         >
           {spaceInfo.isPublished ? (
             <>
               <Globe className="h-3.5 w-3.5" />
-              <span>Published</span>
+              <span className="text-center">Published</span>
             </>
           ) : (
             <>
               <GlobeLock className="h-3.5 w-3.5" />
-              <span>Draft</span>
+              <span className="text-center">Draft</span>
             </>
           )}
         </Badge>
