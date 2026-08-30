@@ -87,7 +87,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
         },
         collectionType,
         collectStar: collectStarRating,
-        logo: logo,
+        logo: logo || null,
         createdAt: new Date(Date.now()),
         updatedAt: new Date(Date.now()),
         createdBy: {

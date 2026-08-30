@@ -2,7 +2,7 @@ import { CollectionType } from "@repo/db/enums";
 import * as z from "zod";
 export const spaceSchema = z.object({
   spaceName: z.string().nonempty("Space name is required"),
-  logo: z.string().nonempty("Space logo is required").optional(),
+  logo: z.string().optional(),
   headerTitle: z.string().nonempty("Header title is required"),
   customMessage: z.string().nonempty("Custom message is required"),
   questionList: z.array(

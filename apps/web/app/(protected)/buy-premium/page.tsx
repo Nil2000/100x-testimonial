@@ -143,7 +143,7 @@ export default function BuyPremiumPage() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {pricingPlans.map((plan) => {
           const Icon = plan.icon;
           return (

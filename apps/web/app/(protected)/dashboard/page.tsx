@@ -24,6 +24,7 @@ export default async function Page() {
     if ("error" in planResult) {
       errors.push(planResult.error);
     } else {
+      console.log(planResult);
       userPlan = planResult.plan as PlanType;
     }
 

@@ -87,6 +87,8 @@ export default function CreateSpaceForm({
 
   const uploadFile = async (file: File, spaceName: string) => {
     try {
+      console.log(file);
+      console.log(spaceName);
       if (!file) {
         throw new Error("No file selected");
       }
@@ -107,6 +109,8 @@ export default function CreateSpaceForm({
   const onSubmit = (data: z.infer<typeof spaceSchema>) => {
     startTransition(async () => {
       try {
+        console.log(data);
+        console.log(isFileSelected);
         if (isFileSelected) {
           const msg = await uploadFile(isFileSelected, data.spaceName);
           if (msg.error || !msg.url) {
