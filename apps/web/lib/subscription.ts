@@ -53,6 +53,45 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
 
 export const TRIAL_DURATION_DAYS = 7;
 
+export const PLAN_DISPLAY_NAMES: Record<PlanType, string> = {
+  [PlanType.FREE]: "Starter",
+  [PlanType.PRO]: "Professional",
+  [PlanType.ENTERPRISE]: "Enterprise",
+};
+
+function formatLimit(n: number, singular: string, plural: string) {
+  if (n === -1) return `Unlimited ${plural}`;
+  return `${n} ${n === 1 ? singular : plural}`;
+}
+
+export function getPlanFeatureList(plan: PlanType): string[] {
+  const limits = PLAN_LIMITS[plan];
+  const features = [
+    formatLimit(limits.spaces, "space", "spaces"),
+    formatLimit(
+      limits.videoFeedbacksPerSpace,
+      "video feedback per space",
+      "video feedbacks per space",
+    ),
+    formatLimit(
+      limits.textTestimonialsPerSpace,
+      "text testimonial per space",
+      "text testimonials per space",
+    ),
+  ];
+
+  if (limits.aiSpamDetection) features.push("AI spam detection");
+  if (limits.aiSentimentAnalysis) features.push("AI sentiment analysis");
+  features.push(
+    limits.customBranding ? "Custom branding" : "Basic customization",
+  );
+  features.push("Wall of love widget");
+  if (limits.apiAccess) features.push("API access");
+  features.push(limits.prioritySupport ? "Priority support" : "Email support");
+
+  return features;
+}
+
 export type PlanFields = {
   plan: PlanType | DbPlanType;
   subscriptionStatus: SubscriptionStatus;

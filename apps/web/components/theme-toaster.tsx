@@ -5,5 +5,5 @@ import { useTheme } from "next-themes";
 
 export function ThemeToaster() {
   const { theme } = useTheme();
-  return <Toaster theme={theme as "system" | "light" | "dark"} />;
+  return <Toaster richColors theme={theme as "system" | "light" | "dark"} />;
 }
