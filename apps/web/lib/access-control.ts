@@ -23,31 +23,25 @@ export interface UserPlanInfo {
   daysLeftInTrial: number;
 }
 
+const planFieldsSelect = {
+  plan: true,
+  subscriptionStatus: true,
+  trialEndDate: true,
+  subscriptionId: true,
+  currentPeriodEnd: true,
+} as const;
+
 export async function checkUserAccess(
   userId: string,
-  checkType:
-    | "space"
-    | "videoFeedback"
-    | "textTestimonial"
-    | "aiSpam"
-    | "aiSentiment"
-    | "customBranding",
-  spaceId?: string,
+  checkType: "space" | "aiSpam" | "aiSentiment" | "customBranding",
 ): Promise<AccessCheckResult> {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: {
-      plan: true,
-      subscriptionStatus: true,
-      trialEndDate: true,
+      ...planFieldsSelect,
       spaces: {
         select: {
           id: true,
-          feedbacks: {
-            select: {
-              feedbackType: true,
-            },
-          },
         },
       },
     },
@@ -78,83 +72,6 @@ export async function checkUserAccess(
           reason: `You have reached the maximum number of spaces (${spaceLimit}) for your ${effectivePlan} plan.`,
           currentUsage: currentSpaces,
           limit: spaceLimit,
-        };
-      }
-
-      return { hasAccess: true };
-    }
-
-    case "videoFeedback": {
-      if (!spaceId) {
-        return {
-          hasAccess: false,
-          reason: "Space ID is required to check video feedback access",
-        };
-      }
-
-      const space = user.spaces.find((s) => s.id === spaceId);
-      if (!space) {
-        return {
-          hasAccess: false,
-          reason: "Space not found",
-        };
-      }
-
-      const videoCount = space.feedbacks.filter(
-        (f) =>
-          f.feedbackType === "VIDEO" || f.feedbackType === "TEXT_AND_VIDEO",
-      ).length;
-
-      const videoLimit = planLimits.videoFeedbacksPerSpace;
-
-      if (videoLimit === -1) {
-        return { hasAccess: true };
-      }
-
-      if (videoCount >= videoLimit) {
-        return {
-          hasAccess: false,
-          reason: `You have reached the maximum number of video feedbacks (${videoLimit}) for this space on your ${effectivePlan} plan.`,
-          currentUsage: videoCount,
-          limit: videoLimit,
-        };
-      }
-
-      return { hasAccess: true };
-    }
-
-    case "textTestimonial": {
-      if (!spaceId) {
-        return {
-          hasAccess: false,
-          reason: "Space ID is required to check text testimonial access",
-        };
-      }
-
-      const space = user.spaces.find((s) => s.id === spaceId);
-      if (!space) {
-        return {
-          hasAccess: false,
-          reason: "Space not found",
-        };
-      }
-
-      const textCount = space.feedbacks.filter(
-        (f) => f.feedbackType === "TEXT" || f.feedbackType === "TEXT_AND_VIDEO",
-      ).length;
-
-      const textLimit = planLimits.textTestimonialsPerSpace;
-
-      if (textLimit === -1) {
-        return { hasAccess: true };
-      }
-
-      if (textCount >= textLimit) {
-        return {
-          hasAccess: false,
-          reason: `You have reached the maximum number of text testimonials (${textLimit}) for this space on your ${effectivePlan} plan.`,
-          currentUsage: textCount,
-          limit: textLimit,
         };
       }
 
@@ -207,12 +124,7 @@ export async function getUserPlanInfo(
 ): Promise<UserPlanInfo | { error: string }> {
   const user = await db.user.findUnique({
     where: { id: userId },
-    select: {
-      plan: true,
-      subscriptionStatus: true,
-      trialEndDate: true,
-      subscriptionId: true,
-    },
+    select: planFieldsSelect,
   });
 
   if (!user) {
@@ -246,10 +158,13 @@ export async function getUserPlanInfo(
   };
 }
 
+// webhook-only; never expose via a server action
 export async function upgradeToPaid(
   userId: string,
   plan: PlanType.PRO | PlanType.ENTERPRISE,
   subscriptionId: string,
+  currentPeriodEnd: Date,
+  customerId?: string,
 ): Promise<{ success: boolean; error?: string }> {
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -265,7 +180,8 @@ export async function upgradeToPaid(
       plan: plan,
       subscriptionStatus: "ACTIVE",
       subscriptionId: subscriptionId,
-      trialEndDate: null,
+      currentPeriodEnd,
+      ...(customerId !== undefined ? { customerId } : {}),
     },
   });
 

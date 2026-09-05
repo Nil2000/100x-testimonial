@@ -54,6 +54,8 @@ export async function getEffectivePlan(userId: string) {
         plan: true,
         subscriptionStatus: true,
         trialEndDate: true,
+        subscriptionId: true,
+        currentPeriodEnd: true,
       },
     });
 

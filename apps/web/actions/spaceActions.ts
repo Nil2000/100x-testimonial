@@ -2,7 +2,7 @@
 import { db } from "@repo/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
 import { wallOfLoveSchema } from "@/schemas/wallOfLoveSchema";
-import { checkUserAccess } from "@/lib/accessControl";
+import { checkUserAccess } from "@/lib/access-control";
 import {
   PLAN_LIMITS,
   PlanType,
@@ -13,7 +13,7 @@ import {
   assertSpaceOwnership,
   assertThankYouSpaceOwnership,
   requireAuth,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import {
   getPublicSpaceSelect,
   getWallOfLoveSettings,
@@ -296,7 +296,13 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
         logo: true,
         theme: true,
         createdBy: {
-          select: { plan: true, subscriptionStatus: true, trialEndDate: true },
+          select: {
+            plan: true,
+            subscriptionStatus: true,
+            trialEndDate: true,
+            subscriptionId: true,
+            currentPeriodEnd: true,
+          },
         },
       },
     });
@@ -324,7 +330,9 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
 
     const themeRecord = space.theme as Record<string, unknown> | null;
     const themeOptions =
-      (themeRecord?.themeOptions as { showBrandLogo?: boolean; font?: string } | undefined) ?? {};
+      (themeRecord?.themeOptions as
+        | { showBrandLogo?: boolean; font?: string }
+        | undefined) ?? {};
 
     return {
       data: feedbacks.map(toPublicTestimonial),
@@ -362,7 +370,10 @@ export const saveWallOfLoveSettings = async (
   const settings = validateFields.data;
 
   if (settings.hideBranding) {
-    const accessCheck = await checkUserAccess(authResult.userId, "customBranding");
+    const accessCheck = await checkUserAccess(
+      authResult.userId,
+      "customBranding",
+    );
     if (!accessCheck.hasAccess) {
       return { error: accessCheck.reason };
     }

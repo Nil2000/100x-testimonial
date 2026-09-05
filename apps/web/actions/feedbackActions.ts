@@ -12,7 +12,7 @@ import {
   assertPublicFeedbackInSpace,
   assertPublishedSpace,
   requireAuth,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import { toPublicTestimonial } from "@/lib/publicData";
 import { StyleSettings } from "@/lib/types";
 
@@ -34,7 +34,7 @@ export const submitTextFeedback = async (
     return { error: spaceCheck.error };
   }
 
-  const { space } = spaceCheck;
+  const { space, planLimits } = spaceCheck;
 
   try {
     const feedback = await db.feedback.create({
@@ -49,7 +49,11 @@ export const submitTextFeedback = async (
       },
     });
 
-    if (space.isSentimentEnabled || space.isSpamEnabled) {
+    const spamOn = space.isSpamEnabled && planLimits.aiSpamDetection;
+    const sentimentOn =
+      space.isSentimentEnabled && planLimits.aiSentimentAnalysis;
+
+    if (sentimentOn || spamOn) {
       const response = await sendMessageToQueue(
         JSON.stringify({
           id: feedback.id,
@@ -57,8 +61,8 @@ export const submitTextFeedback = async (
           name: feedback.name,
           email: feedback.email,
           spaceId: feedback.spaceId,
-          isSentimentEnabled: space.isSentimentEnabled,
-          isSpamEnabled: space.isSpamEnabled,
+          isSentimentEnabled: sentimentOn,
+          isSpamEnabled: spamOn,
           isVideo: false,
         }),
       );
@@ -139,7 +143,7 @@ export const submitVideoFeedback = async (
     return { error: spaceCheck.error };
   }
 
-  const { space } = spaceCheck;
+  const { space, planLimits } = spaceCheck;
 
   try {
     const feedback = await db.feedback.create({
@@ -154,7 +158,11 @@ export const submitVideoFeedback = async (
       },
     });
 
-    if (space.isSentimentEnabled || space.isSpamEnabled) {
+    const spamOn = space.isSpamEnabled && planLimits.aiSpamDetection;
+    const sentimentOn =
+      space.isSentimentEnabled && planLimits.aiSentimentAnalysis;
+
+    if (sentimentOn || spamOn) {
       const response = await sendMessageToQueue(
         JSON.stringify({
           id: feedback.id,
@@ -162,8 +170,8 @@ export const submitVideoFeedback = async (
           name: feedback.name,
           email: feedback.email,
           spaceId: feedback.spaceId,
-          isSentimentEnabled: space.isSentimentEnabled,
-          isSpamEnabled: space.isSpamEnabled,
+          isSentimentEnabled: sentimentOn,
+          isSpamEnabled: spamOn,
           isVideo: true,
         }),
       );

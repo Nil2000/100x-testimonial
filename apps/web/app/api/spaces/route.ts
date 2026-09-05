@@ -1,4 +1,4 @@
-import { requireAuthApi } from "@/lib/authGuards";
+import { requireAuthApi } from "@/lib/auth-guards";
 import { db } from "@repo/db";
 import { NextResponse } from "next/server";
 
@@ -25,13 +25,13 @@ export async function GET() {
       {
         data: spaces,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error fetching spaces:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

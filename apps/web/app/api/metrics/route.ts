@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getUserPlanInfo } from "@/lib/accessControl";
+import { getUserPlanInfo } from "@/lib/access-control";
 import {
   assertSpaceOwnership,
   forbiddenJsonResponse,
   requireAuthApi,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import { METRIC_PAGE, POSTHOG_METRIC_EVENTS } from "@/lib/constants";
 import { postHogExecQuery } from "@/lib/posthogUtils";
 import { PlanType } from "@/lib/subscription";
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       { error: "spaceId is required" },
       {
         status: 400,
-      }
+      },
     );
   }
 
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
       { error: "days is required" },
       {
         status: 400,
-      }
+      },
     );
   }
 
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
       { error: "event is required" },
       {
         status: 400,
-      }
+      },
     );
   }
 
@@ -63,12 +63,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Analytics is premium-only (matches analytics-dashboard UI gate).
-    if (
-      planInfo.plan === PlanType.FREE ||
-      planInfo.isTrialExpired
-    ) {
+    if (planInfo.plan === PlanType.FREE) {
       return forbiddenJsonResponse(
-        "Analytics is not available on the Free plan. Please upgrade to continue."
+        "Analytics is not available on the Free plan. Please upgrade to continue.",
       );
     }
 
@@ -80,7 +77,7 @@ export async function GET(req: NextRequest) {
     const pageViewMetricResponse = await postHogExecQuery(
       days,
       POSTHOG_METRIC_EVENTS.PAGE_VIEW,
-      url
+      url,
     );
     // console.log("pageViewMetricResponse", pageViewMetricResponse);
 
@@ -89,14 +86,14 @@ export async function GET(req: NextRequest) {
         { error: "Unable to fetch page view metrics." },
         {
           status: 500,
-        }
+        },
       );
     }
 
     const uniqueVisitorMetricResponse = await postHogExecQuery(
       days,
       POSTHOG_METRIC_EVENTS.UNIQUE_VISITORS,
-      url
+      url,
     );
     // console.log("uniqueVisitorMetricResponse", uniqueVisitorMetricResponse);
 
@@ -105,7 +102,7 @@ export async function GET(req: NextRequest) {
         { error: "Unable to fetch unique visitor metrics." },
         {
           status: 500,
-        }
+        },
       );
     }
 
@@ -114,7 +111,7 @@ export async function GET(req: NextRequest) {
       const completedTestimonialResponse = await postHogExecQuery(
         days,
         POSTHOG_METRIC_EVENTS.COMPLETED_TESTIMONIAL,
-        url
+        url,
       );
 
       // console.log("completedTestimonialResponse", completedTestimonialResponse);
@@ -124,19 +121,19 @@ export async function GET(req: NextRequest) {
           { error: "Unable to fetch completed testimonial metrics." },
           {
             status: 500,
-          }
+          },
         );
       }
 
       countMetric = completedTestimonialResponse[0].data.reduce(
         (acc: number, item: number) => acc + item,
-        0
+        0,
       );
     } else {
       const timeSpentResponse = await postHogExecQuery(
         days,
         POSTHOG_METRIC_EVENTS.TIME_SPENT_ON_WALL_OF_LOVE,
-        url
+        url,
       );
       // console.log("timeSpentResponse", timeSpentResponse);
       if (!timeSpentResponse) {
@@ -144,13 +141,13 @@ export async function GET(req: NextRequest) {
           { error: "Unable to fetch time spent metrics." },
           {
             status: 500,
-          }
+          },
         );
       }
 
       countMetric = timeSpentResponse.reduce(
         (acc: number, item: any[]) => acc + (item[1] ?? 0),
-        0
+        0,
       );
     }
 
@@ -174,7 +171,7 @@ export async function GET(req: NextRequest) {
       },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     console.error("Error fetching PostHog data:", error);
@@ -182,7 +179,7 @@ export async function GET(req: NextRequest) {
       { error: "Internal server error" },
       {
         status: 500,
-      }
+      },
     );
   }
 }

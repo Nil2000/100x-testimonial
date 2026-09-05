@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { requireAuth } from "@/lib/authGuards";
-import { getUserPlanInfo } from "@/lib/accessControl";
+import { requireAuth } from "@/lib/auth-guards";
+import { getUserPlanInfo } from "@/lib/access-control";
 import { PLAN_LIMITS, PlanType } from "@/lib/subscription";
 import DashboardPage from "../_components/_client";
 import { getSpaces } from "@/actions/spaceActions";
@@ -24,7 +24,6 @@ export default async function Page() {
     if ("error" in planResult) {
       errors.push(planResult.error);
     } else {
-      console.log(planResult);
       userPlan = planResult.plan as PlanType;
     }
 

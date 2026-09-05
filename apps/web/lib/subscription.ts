@@ -96,19 +96,32 @@ export type PlanFields = {
   plan: PlanType | DbPlanType;
   subscriptionStatus: SubscriptionStatus;
   trialEndDate: Date | null;
+  subscriptionId: string | null;
+  currentPeriodEnd: Date | null;
 };
 
-export function resolveEffectivePlan(user: PlanFields): PlanType {
-  if (
-    user.subscriptionStatus === SubscriptionStatus.CANCELLED ||
-    user.subscriptionStatus === SubscriptionStatus.EXPIRED
-  ) {
-    return PlanType.FREE;
+export function resolveEffectivePlan(
+  user: PlanFields,
+  now = new Date(),
+): PlanType {
+  if (user.plan === PlanType.FREE) return PlanType.FREE;
+
+  // Trial-only user (never paid): trialEndDate is the only clock.
+  if (!user.subscriptionId) {
+    return user.trialEndDate && user.trialEndDate < now
+      ? PlanType.FREE
+      : (user.plan as PlanType);
   }
 
-  if (user.trialEndDate && user.trialEndDate < new Date()) {
+  // Paid user: trialEndDate is history only. ACTIVE keeps access;
+  // ON_HOLD / CANCELLED keep access through the paid period; EXPIRED is FREE.
+  if (user.subscriptionStatus === SubscriptionStatus.ACTIVE) {
+    return user.plan as PlanType;
+  }
+  if (user.subscriptionStatus === SubscriptionStatus.EXPIRED) {
     return PlanType.FREE;
   }
-
-  return user.plan as PlanType;
+  return user.currentPeriodEnd && user.currentPeriodEnd >= now
+    ? (user.plan as PlanType)
+    : PlanType.FREE;
 }
