@@ -18,101 +18,99 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Check, Sparkles, Zap, Crown, Loader2 } from "lucide-react";
+import {
+  Check,
+  Crown,
+  Loader2,
+  Sparkles,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { startUserTrial, getUserPlan } from "@/actions/subscriptionActions";
+import {
+  PlanType,
+  PLAN_DISPLAY_NAMES,
+  TRIAL_DURATION_DAYS,
+  getPlanFeatureList,
+} from "@/lib/subscription";
 import { toast } from "sonner";
 
-const pricingPlans = [
+const pricingPlans: {
+  id: PlanType;
+  price: string;
+  period: string;
+  description: string;
+  icon: LucideIcon;
+  popular: boolean;
+}[] = [
   {
-    name: "Starter",
+    id: PlanType.FREE,
     price: "Free",
     period: "",
     description: "Perfect for trying out the platform",
     icon: Sparkles,
-    features: [
-      "1 space",
-      "3 video feedbacks",
-      "15 text testimonials",
-      "Basic customization",
-      "Wall of love widget",
-      "Email support",
-    ],
     popular: false,
   },
   {
-    name: "Professional",
+    id: PlanType.PRO,
     price: "$20",
     period: "/month",
     description: "Best for growing businesses and agencies",
     icon: Zap,
-    features: [
-      "3 spaces",
-      "5 video feedbacks per space",
-      "20 text testimonials per space",
-      "AI spam detection",
-      "AI sentiment analysis",
-      "Advanced customization",
-      "Wall of love widget",
-      "Priority support",
-    ],
     popular: true,
   },
   {
-    name: "Enterprise",
+    id: PlanType.ENTERPRISE,
     price: "$30",
-    period: "/space/month",
+    period: "/month",
     description: "For large teams and organizations",
     icon: Crown,
-    features: [
-      "Unlimited spaces",
-      "Unlimited video feedbacks",
-      "Unlimited text testimonials",
-      "AI spam detection",
-      "AI sentiment analysis",
-      "Custom branding",
-      "API access",
-      "Dedicated support",
-      "Team collaboration",
-    ],
     popular: false,
   },
 ];
 
+const trialFeatures = getPlanFeatureList(PlanType.PRO);
+
 export default function BuyPremiumPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [selectedPlan, setSelectedPlan] = useState<PlanType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [userPlan, setUserPlan] = useState<string>("FREE");
+  const [userPlan, setUserPlan] = useState<PlanType>(PlanType.FREE);
+  const [isTrialActive, setIsTrialActive] = useState(false);
+  const [isTrialExpired, setIsTrialExpired] = useState(false);
   const [daysLeftInTrial, setDaysLeftInTrial] = useState(0);
 
   useEffect(() => {
     const fetchUserPlan = async () => {
       const result = await getUserPlan();
       if (result.success && result.data) {
-        setUserPlan(result.data.plan);
+        setUserPlan(result.data.plan as PlanType);
+        setIsTrialActive(result.data.isTrialActive);
+        setIsTrialExpired(result.data.isTrialExpired);
         setDaysLeftInTrial(result.data.daysLeftInTrial);
       }
     };
     fetchUserPlan();
   }, []);
 
-  const handleSelectPlan = async (planName: string) => {
-    setSelectedPlan(planName);
+  const canStartTrial =
+    userPlan === PlanType.FREE && !isTrialActive && !isTrialExpired;
 
-    if (planName === "Starter") {
-      toast.info("You're already on the free plan!");
+  const handleSelectPlan = (planId: PlanType) => {
+    setSelectedPlan(planId);
+
+    if (planId === PlanType.FREE) {
+      if (isTrialActive) {
+        toast.info("You're currently on a Professional trial.");
+      } else if (userPlan === PlanType.FREE) {
+        toast.info("You're already on the Starter plan!");
+      } else {
+        toast.info("You're already on a higher plan.");
+      }
       return;
     }
 
-    if (planName === "Professional" || planName === "Enterprise") {
-      if (userPlan === "FREE") {
-        setIsDialogOpen(true);
-      } else if (userPlan === "TRIAL") {
-        setIsDialogOpen(true);
-      } else {
-        toast.info("Payment integration coming soon!");
-      }
-    }
+    setIsDialogOpen(true);
   };
 
   const handleStartTrial = async () => {
@@ -131,6 +129,22 @@ export default function BuyPremiumPage() {
     }
   };
 
+  const ctaLabel = (planId: PlanType) => {
+    if (planId === PlanType.FREE) {
+      return userPlan === PlanType.FREE && !isTrialActive
+        ? "Current plan"
+        : "Get Started";
+    }
+    if (planId === userPlan && !isTrialActive) {
+      return "Current plan";
+    }
+    return canStartTrial ? "Start Free Trial" : "Select plan";
+  };
+
+  const selectedPlanName = selectedPlan
+    ? PLAN_DISPLAY_NAMES[selectedPlan]
+    : "";
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="text-center mb-12">
@@ -141,14 +155,25 @@ export default function BuyPremiumPage() {
           Choose the perfect plan for your needs and unlock powerful features to
           collect and showcase testimonials
         </p>
+        {isTrialActive && (
+          <p className="mt-4 text-sm text-primary">
+            You&apos;re on a {PLAN_DISPLAY_NAMES[PlanType.PRO]} trial with{" "}
+            <strong>
+              {daysLeftInTrial} day{daysLeftInTrial === 1 ? "" : "s"}
+            </strong>{" "}
+            remaining.
+          </p>
+        )}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {pricingPlans.map((plan) => {
           const Icon = plan.icon;
+          const name = PLAN_DISPLAY_NAMES[plan.id];
+          const features = getPlanFeatureList(plan.id);
           return (
             <Card
-              key={plan.name}
+              key={plan.id}
               className={`relative flex flex-col ${
                 plan.popular
                   ? "border-primary shadow-lg shadow-primary/20 scale-105"
@@ -158,7 +183,9 @@ export default function BuyPremiumPage() {
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                    Most Popular
+                    {isTrialActive && plan.id === PlanType.PRO
+                      ? "Your trial"
+                      : "Most Popular"}
                   </span>
                 </div>
               )}
@@ -167,7 +194,7 @@ export default function BuyPremiumPage() {
                 <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <Icon className="w-6 h-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                <CardTitle className="text-2xl">{name}</CardTitle>
                 <CardDescription className="mt-2">
                   {plan.description}
                 </CardDescription>
@@ -179,8 +206,8 @@ export default function BuyPremiumPage() {
 
               <CardContent className="flex-1">
                 <ul className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
+                  {features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
                       <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                       <span className="text-sm">{feature}</span>
                     </li>
@@ -193,9 +220,14 @@ export default function BuyPremiumPage() {
                   className="w-full"
                   variant={plan.popular ? "default" : "outline"}
                   size="lg"
-                  onClick={() => handleSelectPlan(plan.name)}
+                  onClick={() => handleSelectPlan(plan.id)}
+                  disabled={
+                    plan.id === PlanType.FREE &&
+                    userPlan === PlanType.FREE &&
+                    !isTrialActive
+                  }
                 >
-                  {plan.name === "Starter" ? "Get Started" : "Start Free Trial"}
+                  {ctaLabel(plan.id)}
                 </Button>
               </CardFooter>
             </Card>
@@ -218,45 +250,36 @@ export default function BuyPremiumPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {userPlan === "FREE"
-                ? "Start Your 7-Day Free Trial"
-                : "Upgrade Your Plan"}
+              {canStartTrial
+                ? `Start Your ${TRIAL_DURATION_DAYS}-Day Free Trial`
+                : "Select a plan"}
             </DialogTitle>
             <DialogDescription>
-              You selected the <strong>{selectedPlan}</strong> plan.
+              You selected the <strong>{selectedPlanName}</strong> plan.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
-            {userPlan === "FREE" ? (
+            {canStartTrial ? (
               <>
                 <p className="text-sm text-muted-foreground">
-                  Start your 7-day free trial to unlock all {selectedPlan}{" "}
-                  features:
+                  Start your {TRIAL_DURATION_DAYS}-day free trial to unlock{" "}
+                  {PLAN_DISPLAY_NAMES[PlanType.PRO]} features:
                 </p>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>3 spaces with full customization</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>5 video feedbacks per space</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>AI spam detection & sentiment analysis</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>Priority support</span>
-                  </li>
+                  {trialFeatures.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
                 </ul>
                 <p className="text-xs text-muted-foreground">
-                  After 7 days, you&apos;ll be moved back to the free plan
-                  unless you upgrade.
+                  After {TRIAL_DURATION_DAYS} days, you&apos;ll be moved back to
+                  the {PLAN_DISPLAY_NAMES[PlanType.FREE]} plan unless you
+                  upgrade.
                 </p>
               </>
-            ) : userPlan === "TRIAL" ? (
+            ) : isTrialActive ? (
               <>
                 <p className="text-sm text-muted-foreground">
                   You&apos;re currently on a trial with{" "}
@@ -278,7 +301,7 @@ export default function BuyPremiumPage() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            {userPlan === "FREE" ? (
+            {canStartTrial ? (
               <Button onClick={handleStartTrial} disabled={isLoading}>
                 {isLoading ? (
                   <>

@@ -2,13 +2,18 @@
 import { db } from "@repo/db";
 import { spaceSchema, thankyouSchema } from "@/schemas/spaceSchema";
 import { wallOfLoveSchema } from "@/schemas/wallOfLoveSchema";
-import { checkUserAccess } from "@/lib/accessControl";
-import { PLAN_LIMITS, PlanType } from "@/lib/subscription";
+import { checkUserAccess } from "@/lib/access-control";
+import {
+  PLAN_LIMITS,
+  PlanType,
+  resolveEffectivePlan,
+} from "@/lib/subscription";
+import { getEffectivePlan } from "@/lib/subscription.server";
 import {
   assertSpaceOwnership,
   assertThankYouSpaceOwnership,
   requireAuth,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import {
   getPublicSpaceSelect,
   getWallOfLoveSettings,
@@ -82,7 +87,7 @@ export const createSpace = async (values: z.infer<typeof spaceSchema>) => {
         },
         collectionType,
         collectStar: collectStarRating,
-        logo: logo,
+        logo: logo || null,
         createdAt: new Date(Date.now()),
         updatedAt: new Date(Date.now()),
         createdBy: {
@@ -290,7 +295,15 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
         id: true,
         logo: true,
         theme: true,
-        createdBy: { select: { plan: true } },
+        createdBy: {
+          select: {
+            plan: true,
+            subscriptionStatus: true,
+            trialEndDate: true,
+            subscriptionId: true,
+            currentPeriodEnd: true,
+          },
+        },
       },
     });
     if (!space) {
@@ -312,11 +325,14 @@ export const getTestimonialsForWallOfLove = async (spaceName: string) => {
 
     const wallOfLoveSettings = getWallOfLoveSettings(space.theme);
     const canCustomBrand =
-      PLAN_LIMITS[space.createdBy.plan as unknown as PlanType]?.customBranding ?? false;
+      PLAN_LIMITS[resolveEffectivePlan(space.createdBy)]?.customBranding ??
+      false;
 
     const themeRecord = space.theme as Record<string, unknown> | null;
     const themeOptions =
-      (themeRecord?.themeOptions as { showBrandLogo?: boolean; font?: string } | undefined) ?? {};
+      (themeRecord?.themeOptions as
+        | { showBrandLogo?: boolean; font?: string }
+        | undefined) ?? {};
 
     return {
       data: feedbacks.map(toPublicTestimonial),
@@ -354,7 +370,10 @@ export const saveWallOfLoveSettings = async (
   const settings = validateFields.data;
 
   if (settings.hideBranding) {
-    const accessCheck = await checkUserAccess(authResult.userId, "customBranding");
+    const accessCheck = await checkUserAccess(
+      authResult.userId,
+      "customBranding",
+    );
     if (!accessCheck.hasAccess) {
       return { error: accessCheck.reason };
     }
@@ -405,18 +424,12 @@ export const toggleSentimentAnalysis = async (id: string, status: boolean) => {
     return { error: ownership.error };
   }
 
-  const user = await db.user.findUnique({
-    where: { id: authResult.userId },
-    select: { plan: true },
-  });
-
-  if (!user) {
-    return {
-      error: "User not found",
-    };
+  const plan = await getEffectivePlan(authResult.userId);
+  if (typeof plan !== "string") {
+    return { error: plan.error };
   }
 
-  if (user.plan === "FREE") {
+  if (plan === PlanType.FREE) {
     return {
       error:
         "Sentiment analysis is not available on the Free plan. Please upgrade to continue.",
@@ -453,18 +466,12 @@ export const toggleSpamDetection = async (id: string, status: boolean) => {
     return { error: ownership.error };
   }
 
-  const user = await db.user.findUnique({
-    where: { id: authResult.userId },
-    select: { plan: true },
-  });
-
-  if (!user) {
-    return {
-      error: "User not found",
-    };
+  const plan = await getEffectivePlan(authResult.userId);
+  if (typeof plan !== "string") {
+    return { error: plan.error };
   }
 
-  if (user.plan === "FREE") {
+  if (plan === PlanType.FREE) {
     return {
       error:
         "Spam detection is not available on the Free plan. Please upgrade to continue.",

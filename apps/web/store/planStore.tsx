@@ -1,12 +1,11 @@
-
-import { PlanType, SubscriptionStatus } from "@repo/db/enums";
+import { PlanType } from "@/lib/subscription";
+import { SubscriptionStatus } from "@repo/db/enums";
 import { getSubscriptionDetails } from "@/actions/subscriptionActions";
 import { create } from "zustand";
 
 export type SubscriptionDetails = {
   plan: PlanType;
   subscriptionStatus: SubscriptionStatus;
-  trialStartDate: string | null;
   trialEndDate: string | null;
   subscriptionId: string | null;
 };
@@ -38,11 +37,11 @@ export const usePlanStore = create<SubscriptionStore>((set) => ({
 
       set({ loading: false, subscription: result.data });
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Failed to fetch subscription details";
+      const message =
+        e instanceof Error ? e.message : "Failed to fetch subscription details";
       set({ loading: false, error: message });
     }
   },
   setSubscriptionDetails: (details) => set({ subscription: details }),
   clearSubscriptionError: () => set({ error: null }),
 }));
-

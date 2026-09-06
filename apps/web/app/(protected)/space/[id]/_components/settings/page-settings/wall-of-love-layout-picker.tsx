@@ -74,7 +74,7 @@ export default function WallOfLoveLayoutPicker({
       </div>
 
       {selectedLayout && (
-        <div className="grid sm:grid-cols-[200px_1fr] gap-4 items-center">
+        <div className="grid justify-between items-center gap-2">
           <Label className="text-sm font-medium">
             {selectedLayout.countLabel}
           </Label>

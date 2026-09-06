@@ -1,4 +1,4 @@
-import { getOwnedSpace } from "@/lib/authGuards";
+import { getOwnedSpace } from "@/lib/auth-guards";
 import { auth } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import React from "react";

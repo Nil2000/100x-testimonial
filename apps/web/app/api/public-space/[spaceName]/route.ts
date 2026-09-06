@@ -2,13 +2,13 @@ import {
   assertSpaceOwnershipByName,
   forbiddenJsonResponse,
   requireAuthApi,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import { db } from "@repo/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ spaceName: string }> }
+  { params }: { params: Promise<{ spaceName: string }> },
 ) {
   const { spaceName } = await params;
 
@@ -19,7 +19,7 @@ export async function GET(
 
   const ownership = await assertSpaceOwnershipByName(
     authResult.userId,
-    spaceName
+    spaceName,
   );
   if ("error" in ownership) {
     return forbiddenJsonResponse(ownership.error);
@@ -28,7 +28,7 @@ export async function GET(
   if (!spaceName) {
     return NextResponse.json(
       { error: "Space name is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

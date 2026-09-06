@@ -153,7 +153,7 @@ export default function SubmitTextFeedbackDialog({
           ))}
         </ul>
         <form
-          className="space-y-3"
+          className="space-y-2"
           onSubmit={(e) => {
             handleSubmit(onSubmit)();
             e.preventDefault();
@@ -173,19 +173,19 @@ export default function SubmitTextFeedbackDialog({
               </>
             )}
           />
-          <Label htmlFor="name">Your name</Label>
           <Controller
             name="name"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="space-y-1">
+                <Label htmlFor="name">Your name</Label>
                 <Input placeholder="Tommy Shelby" {...field} />
                 {errors.name && (
                   <p className="text-destructive text-xs">
                     {errors.name.message}
                   </p>
                 )}
-              </>
+              </div>
             )}
           />
           <Label htmlFor="email">Your email</Label>
@@ -193,23 +193,23 @@ export default function SubmitTextFeedbackDialog({
             name="email"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="space-y-1">
                 <Input placeholder="tommy@gmail.com" {...field} />
                 {errors.email && (
                   <p className="text-destructive text-xs">
                     {errors.email.message}
                   </p>
                 )}
-              </>
+              </div>
             )}
           />
 
-          <Label htmlFor="profileImageUrl">Your profile picture</Label>
           <Controller
             name="profileImageUrl"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="space-y-1">
+                <Label htmlFor="profileImageUrl">Your profile picture</Label>
                 <Input
                   id="file"
                   className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
@@ -243,7 +243,7 @@ export default function SubmitTextFeedbackDialog({
                       setFileSelected(null);
                       setValue("imageUrl", "");
                       const node = document.getElementById(
-                        "file"
+                        "file",
                       ) as HTMLInputElement;
                       if (node) node.value = "";
                     }}
@@ -253,7 +253,7 @@ export default function SubmitTextFeedbackDialog({
                     Remove
                   </Button>
                 )}
-              </>
+              </div>
             )}
           />
 
