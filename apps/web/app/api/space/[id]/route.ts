@@ -2,13 +2,13 @@ import {
   assertSpaceOwnership,
   forbiddenJsonResponse,
   requireAuthApi,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import { db } from "@repo/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const authResult = await requireAuthApi();

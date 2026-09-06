@@ -3,6 +3,11 @@ import { db } from "@repo/db";
 import { toPublicTestimonial } from "@/lib/publicData";
 import type { Feedback, Space, ThankYouSpace } from "@repo/db/client";
 import type { TestimonialResponse } from "@/lib/types";
+import {
+  PLAN_LIMITS,
+  resolveEffectivePlan,
+  type PlanLimits,
+} from "@/lib/subscription";
 import { NextResponse } from "next/server";
 import type { Session } from "next-auth";
 
@@ -131,12 +136,23 @@ export async function assertThankYouSpaceOwnership(
 
 export async function assertPublishedSpace(
   spaceId: string
-): Promise<{ space: Space } | GuardError> {
+): Promise<{ space: Space; planLimits: PlanLimits } | GuardError> {
   const space = await db.space.findFirst({
     where: {
       id: spaceId,
       isPublished: true,
       deletedAt: null,
+    },
+    include: {
+      createdBy: {
+        select: {
+          plan: true,
+          subscriptionStatus: true,
+          trialEndDate: true,
+          subscriptionId: true,
+          currentPeriodEnd: true,
+        },
+      },
     },
   });
 
@@ -144,7 +160,10 @@ export async function assertPublishedSpace(
     return { error: "Space not found or not available" };
   }
 
-  return { space };
+  return {
+    space,
+    planLimits: PLAN_LIMITS[resolveEffectivePlan(space.createdBy)],
+  };
 }
 
 export async function assertPublishedSpaceByName(

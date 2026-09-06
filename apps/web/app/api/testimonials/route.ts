@@ -1,13 +1,13 @@
-import { getUserPlanInfo } from "@/lib/accessControl";
+import { getUserPlanInfo } from "@/lib/access-control";
 import {
   assertSpaceOwnership,
   forbiddenJsonResponse,
   requireAuthApi,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import { db } from "@repo/db";
-import { PLAN_LIMITS } from "@/lib/subscription";
+import { PLAN_LIMITS, PlanType } from "@/lib/subscription";
 import { NextRequest, NextResponse } from "next/server";
-import { FeedbackType, PlanType } from "@repo/db/enums";
+import { FeedbackType } from "@repo/db/enums";
 
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
@@ -33,10 +33,7 @@ export async function GET(req: NextRequest) {
 
   if ("error" in userPlanInfo) {
     console.error("Error retrieving plan info");
-    return NextResponse.json(
-      { error: userPlanInfo.error },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: userPlanInfo.error }, { status: 404 });
   }
 
   const planLimits = PLAN_LIMITS[userPlanInfo.plan as PlanType];
@@ -48,7 +45,6 @@ export async function GET(req: NextRequest) {
     NextResponse.json({ records, meta });
 
   try {
-
     // Handle archived testimonials
     if (archived === "true") {
       const where = {
@@ -191,7 +187,7 @@ export async function GET(req: NextRequest) {
 
     const records = [...textRecords, ...videoRecords].sort(
       (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
 
     return respond(records, {

@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@repo/db";
-import { assertSpaceOwnership, requireAuth } from "@/lib/authGuards";
-import { checkUserAccess } from "@/lib/accessControl";
+import { assertSpaceOwnership, requireAuth } from "@/lib/auth-guards";
+import { checkUserAccess } from "@/lib/access-control";
 import { THEME_CHOICES } from "@/components/theme-constant";
 
 type ThemeOptions = {

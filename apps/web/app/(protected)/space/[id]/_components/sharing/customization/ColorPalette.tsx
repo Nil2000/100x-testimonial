@@ -1,8 +1,10 @@
 "use client";
-import React from "react";
-import { Input } from "@/components/ui/input";
+
+import { memo, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
+import { ColorPicker, expandHex } from "@/components/ui/color-picker";
+import { cn } from "@/lib/utils";
 
 type ColorPaletteProps = {
   selectedColor: string;
@@ -10,7 +12,7 @@ type ColorPaletteProps = {
   title: string;
 };
 
-const colorPalette = [
+const COLOR_PALETTE = [
   "#000000",
   "#FFFFFF",
   "#FF6900",
@@ -23,60 +25,63 @@ const colorPalette = [
   "#EB144C",
   "#F78DA7",
   "#5D5DFF",
-];
+] as const;
 
-export default function ColorPalette({
+function isLight(hex: string) {
+  const h = hex.replace("#", "");
+  if (h.length !== 6) return false;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 160;
+}
+
+function ColorPalette({
   selectedColor,
   setSelectedColor,
   title,
 }: ColorPaletteProps) {
+  const selected = expandHex(selectedColor);
+  const onPick = useCallback(
+    (color: string) => setSelectedColor(color),
+    [setSelectedColor],
+  );
+
   return (
     <div className="space-y-2">
       <Label className="text-xs font-medium text-muted-foreground">
         {title}
       </Label>
-      <div className="flex gap-2 flex-wrap items-center">
-        {colorPalette.map((color) => (
-          <button
-            key={color}
-            type="button"
-            className={`relative w-9 h-9 cursor-pointer rounded-md ring-2 transition-all hover:scale-110 ${
-              selectedColor.toUpperCase() === color.toUpperCase()
-                ? "ring-primary ring-offset-2"
-                : "ring-border hover:ring-primary/50"
-            }`}
-            style={{ backgroundColor: color }}
-            onClick={() => setSelectedColor(color)}
-            title={color}
-          >
-            {selectedColor.toUpperCase() === color.toUpperCase() && (
-              <Check
-                className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow-md"
-                style={{
-                  color: color === "#FFFFFF" ? "#000000" : "#FFFFFF",
-                }}
-              />
-            )}
-          </button>
-        ))}
-        <div className="flex items-center gap-2">
-          <Input
-            type="color"
-            value={selectedColor}
-            onChange={(e) => setSelectedColor(e.target.value)}
-            className="w-12 h-12 cursor-pointer rounded-md"
-            title="Pick custom color"
-          />
-          <Input
-            type="text"
-            maxLength={7}
-            value={selectedColor}
-            onChange={(e) => setSelectedColor(e.target.value)}
-            placeholder="#000000"
-            className="w-24 h-9 font-mono text-xs"
-          />
-        </div>
+      <div className="flex flex-wrap items-center gap-2">
+        {COLOR_PALETTE.map((color) => {
+          const isSelected = selected === color;
+          return (
+            <button
+              key={color}
+              type="button"
+              aria-label={color}
+              aria-pressed={isSelected}
+              title={color}
+              onClick={() => onPick(color)}
+              className={cn(
+                "relative size-9 rounded-md ring-2 ring-offset-2 ring-offset-background transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-ring",
+                isSelected ? "ring-primary" : "ring-border hover:ring-primary/50",
+              )}
+              style={{ backgroundColor: color }}
+            >
+              {isSelected && (
+                <Check
+                  className="absolute inset-0 m-auto size-4 drop-shadow-md"
+                  style={{ color: isLight(color) ? "#111111" : "#FFFFFF" }}
+                />
+              )}
+            </button>
+          );
+        })}
+        <ColorPicker value={selectedColor} onChange={onPick} />
       </div>
     </div>
   );
 }
+
+export default memo(ColorPalette);

@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { SingleTestimonialWithSpaceLogo } from "@/lib/types";
 import { Star } from "lucide-react";
 import Image from "next/image";
-import React from "react";
 
 type Props = {
   testimonial: SingleTestimonialWithSpaceLogo;
@@ -16,7 +15,7 @@ export default function TestimonialCard({ testimonial }: Props) {
         <Image
           src={testimonial.space!.logo!}
           alt="Space Logo"
-          className="w-16 h-16 rounded-full"
+          className="w-16 h-16 rounded-full object-cover"
           width={64}
           height={64}
         />

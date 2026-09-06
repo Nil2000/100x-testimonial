@@ -1,12 +1,10 @@
 "use server";
 
-import {
-  startTrial,
-  upgradeToPaid,
-  getUserPlanInfo,
-} from "@/lib/accessControl";
-import { requireAuth } from "@/lib/authGuards";
-import { PlanType, SubscriptionStatus } from "@repo/db/enums";
+import { getUserPlanInfo } from "@/lib/access-control";
+import { requireAuth } from "@/lib/auth-guards";
+import { PlanType } from "@/lib/subscription";
+import { startUserTrial as grantUserTrial } from "@/lib/subscription.server";
+import { SubscriptionStatus } from "@repo/db/enums";
 
 export async function startUserTrial() {
   const authResult = await requireAuth();
@@ -14,9 +12,9 @@ export async function startUserTrial() {
     return { error: authResult.error };
   }
 
-  const result = await startTrial(authResult.userId);
+  const result = await grantUserTrial(authResult.userId);
 
-  if (!result.success) {
+  if ("error" in result) {
     return { error: result.error };
   }
 
@@ -25,24 +23,6 @@ export async function startUserTrial() {
     message:
       "Trial started successfully! You now have 7 days to explore all features.",
   };
-}
-
-export async function upgradeUserToPaid(
-  plan: "PROFESSIONAL" | "ENTERPRISE",
-  subscriptionId: string
-) {
-  const authResult = await requireAuth();
-  if ("error" in authResult) {
-    return { error: authResult.error };
-  }
-
-  const result = await upgradeToPaid(authResult.userId, plan, subscriptionId);
-
-  if (!result.success) {
-    return { error: result.error };
-  }
-
-  return { success: true, message: `Successfully upgraded to ${plan} plan!` };
 }
 
 export async function getUserPlan() {
@@ -77,7 +57,6 @@ export async function getSubscriptionDetails() {
     data: {
       plan: planInfo.plan as PlanType,
       subscriptionStatus: planInfo.subscriptionStatus as SubscriptionStatus,
-      trialStartDate: planInfo.trialStartDate?.toISOString() ?? null,
       trialEndDate: planInfo.trialEndDate?.toISOString() ?? null,
       subscriptionId: planInfo.subscriptionId,
     },

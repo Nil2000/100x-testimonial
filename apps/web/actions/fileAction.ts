@@ -5,7 +5,7 @@ import {
   assertSpaceOwnership,
   assertSpaceOwnershipByName,
   requireAuth,
-} from "@/lib/authGuards";
+} from "@/lib/auth-guards";
 import { withRetry } from "@/lib/retry";
 import { initClient } from "@/lib/storage/initClient";
 import { parseS3PublicBaseUrl } from "@/lib/storage/parseS3publicBaseUrl";
@@ -45,7 +45,10 @@ async function assertUploadAllowed(validation: UploadValidation) {
       if ("error" in authResult) {
         return authResult;
       }
-      return assertSpaceOwnershipByName(authResult.userId, validation.spaceName);
+      return assertSpaceOwnershipByName(
+        authResult.userId,
+        validation.spaceName,
+      );
     }
     case "public-space": {
       return assertPublishedSpaceByName(validation.spaceName);
@@ -82,9 +85,9 @@ export const uploadFileToBucket = async ({
           {
             "Content-Type": mimeType,
             "Cache-Control": "public, max-age=86400",
-          }
+          },
         ),
-      { label: "upload file to S3" }
+      { label: "upload file to S3" },
     );
 
     return {
@@ -113,6 +116,6 @@ export const getFileTempUrl = async ({ key, expires }: GetFileTempUrlProps) => {
   return s3client.presignedGetObject(
     process.env.S3_BUCKET!,
     key,
-    expires ?? 24 * 3600
+    expires ?? 24 * 3600,
   );
 };
