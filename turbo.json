@@ -7,9 +7,17 @@
       "inputs": ["prisma/schema.prisma", "prisma.config.ts"],
       "outputs": ["generated/**"]
     },
+    "vercel:generate": {
+      "inputs": ["prisma/schema.prisma", "prisma.config.ts"],
+      "outputs": ["generated/**"]
+    },
     "build": {
       "dependsOn": ["^build", "^db:generate", "db:generate"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "vercel:build": {
+      "dependsOn": ["^vercel:generate"],
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,
