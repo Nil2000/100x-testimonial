@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: process.env.S3_PUBLIC_CUSTOM_DOMAIN!,
+        hostname: "storage.testiflow.nilabhra.info",
       },
     ],
   },
