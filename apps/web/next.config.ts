@@ -31,6 +31,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "pbs.twimg.com",
       },
+      {
+        protocol: "https",
+        hostname: process.env.S3_PUBLIC_CUSTOM_DOMAIN!,
+      },
     ],
   },
   experimental: {

@@ -4,6 +4,7 @@ import "./globals.css";
 import { PostHogProvider } from "./provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeToaster } from "@/components/theme-toaster";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +53,7 @@ export default function RootLayout({
             <ThemeToaster />
           </ThemeProvider>
         </PostHogProvider>
+        <Analytics />
       </body>
     </html>
   );
