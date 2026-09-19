@@ -1,0 +1,24 @@
+services:
+  redis:
+    image: redis:7-alpine
+    # ponytail: Redis is on the public internet with a password, no TLS.
+    # Ceiling: password can leak in transit. Upgrade path: stunnel/Caddy TLS, then rediss://.
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    mem_limit: 256m
+
+  processor:
+    image: ghcr.io/nil2000/testiflow-processor:latest
+    env_file: .env
+    environment:
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis_data:

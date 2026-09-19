@@ -1,0 +1,15 @@
+# Used when building from repo root:
+#   docker build -f apps/processor/Dockerfile .
+.git
+node_modules
+**/node_modules
+.turbo
+**/.turbo
+.env
+**/.env
+dist
+**/dist
+apps/web/*
+!apps/web/package.json
+packages/db/*
+!packages/db/package.json
