@@ -373,6 +373,7 @@ Path-filtered workflows under `.github/workflows/`:
 | `ci_web.yml` | `apps/web/**`, `packages/db/**` | typecheck, lint, build (`--filter=web`) |
 | `ci_processor.yml` | `apps/processor/**` | typecheck, lint, build (`--filter=processor`) |
 | `ci_db.yml` | `packages/db/**` | `db:generate`, typecheck (`--filter=@repo/db`) |
+| `deploy_processor.yml` | manual (`workflow_dispatch`) | Build processor image to GHCR, write VPS `.env` from GitHub secrets, `docker compose pull && up -d` |
 
 Locally (same idea):
 
