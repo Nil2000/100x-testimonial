@@ -19,7 +19,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GH_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -60,7 +60,7 @@ jobs:
       - name: Write env, pull, restart
         uses: appleboy/ssh-action@v1.2.2
         env:
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_TOKEN: ${{ secrets.GH_TOKEN }}
           GHCR_USER: ${{ github.actor }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           REDIS_QUEUE: ${{ secrets.REDIS_QUEUE }}
