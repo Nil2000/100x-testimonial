@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script: mkdir -p /opt/testiflow
+          script: mkdir -p "$HOME/testiflow"
 
       - name: Copy compose file
         uses: appleboy/scp-action@v0.1.7
@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: deploy/docker-compose.yml
-          target: /opt/testiflow
+          target: testiflow
           strip_components: 1
           overwrite: true
 
@@ -80,8 +80,8 @@ jobs:
               printf 'APP_URL=%s\n' "$APP_URL"
               printf 'INTERNAL_API_KEY=%s\n' "$INTERNAL_API_KEY"
               printf 'OPENROUTER_API_KEY=%s\n' "$OPENROUTER_API_KEY"
-            } > /opt/testiflow/.env
-            cd /opt/testiflow
+            } > "$HOME/testiflow/.env"
+            cd "$HOME/testiflow"
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             docker compose pull
             docker compose up -d --remove-orphans
