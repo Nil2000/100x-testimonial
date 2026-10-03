@@ -59,6 +59,12 @@ export const PLAN_DISPLAY_NAMES: Record<PlanType, string> = {
   [PlanType.ENTERPRISE]: "Enterprise",
 };
 
+export const PLAN_PRICES: Record<PlanType, string> = {
+  [PlanType.FREE]: "Free",
+  [PlanType.PRO]: "$20",
+  [PlanType.ENTERPRISE]: "$30",
+};
+
 function formatLimit(n: number, singular: string, plural: string) {
   if (n === -1) return `Unlimited ${plural}`;
   return `${n} ${n === 1 ? singular : plural}`;

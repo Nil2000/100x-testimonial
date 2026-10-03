@@ -30,7 +30,6 @@ export default function LandingPageNavbarV2({ session }: Props) {
   const navLinks = [
     { label: "Features", href: "#features" },
     { label: "Pricing", href: "#pricing" },
-    { label: "Contact", href: "#contact" },
   ];
 
   return (
