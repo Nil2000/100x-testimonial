@@ -1,5 +1,11 @@
-import { Quote, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { WALL_OF_LOVE_LAYOUTS } from "@/lib/constants";
+import Reveal from "./reveal";
+import {
+  CollectVisual,
+  ManageVisual,
+  ShowcaseVisual,
+} from "./landing-stage-visuals";
 
 function layoutPhrase() {
   const labels = WALL_OF_LOVE_LAYOUTS.map((layout) => layout.label.toLowerCase());
@@ -41,93 +47,29 @@ const stages = [
   },
 ] as const;
 
-function CollectVisual() {
-  return (
-    <div className="rounded-lg border border-border bg-background p-3" aria-hidden="true">
-      <p className="font-geist_mono text-[11px] text-muted-foreground">
-        testiflow.app/your-brand
-      </p>
-      <p className="mt-3 text-sm text-foreground">How was working with us?</p>
-      <span className="mt-2 flex">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            className="h-3.5 w-3.5 fill-primary text-primary"
-          />
-        ))}
-      </span>
-      <div className="mt-3 flex h-8 items-center rounded-md border border-dashed border-border px-2 text-xs text-muted-foreground">
-        Write, or record a video
-      </div>
-    </div>
-  );
-}
-
-function ManageVisual() {
-  const rows = [
-    { label: "5 stars", tag: "Positive", tone: "bg-secondary text-secondary-foreground" },
-    { label: "Video", tag: "Neutral", tone: "border border-border text-foreground" },
-    { label: "Archived", tag: "Spam", tone: "bg-destructive text-destructive-foreground" },
-  ];
-
-  return (
-    <ul className="space-y-2" aria-hidden="true">
-      {rows.map((row) => (
-        <li
-          key={row.tag}
-          className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-xs"
-        >
-          <span className="text-muted-foreground">{row.label}</span>
-          <span className={`rounded-md px-1.5 py-0.5 font-medium ${row.tone}`}>
-            {row.tag}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ShowcaseVisual() {
-  return (
-    <div className="grid grid-cols-2 gap-2" aria-hidden="true">
-      {["Same-day replies.", "Two minutes.", "Kept this one.", "In their words."].map(
-        (line) => (
-          <div
-            key={line}
-            className="rounded-lg border border-border bg-background p-2"
-          >
-            <Quote className="h-3 w-3 text-primary" />
-            <p className="mt-1.5 text-[11px] leading-snug text-foreground/80">
-              {line}
-            </p>
-          </div>
-        ),
-      )}
-    </div>
-  );
-}
-
 const visuals = [CollectVisual, ManageVisual, ShowcaseVisual];
 
 export default function LandingFeatures() {
   return (
     <section id="features" className="scroll-mt-24 px-4 pb-20">
       <div className="mx-auto max-w-6xl">
-        <h2 className="max-w-xl font-display text-3xl tracking-tight text-foreground sm:text-4xl">
-          From a link to a page that shows the proof.
-        </h2>
-        <p className="mt-3 max-w-lg text-muted-foreground">
-          A space is the link you send, the inbox you review, and the page you
-          publish.
-        </p>
+        <Reveal>
+          <h2 className="max-w-xl font-display text-3xl tracking-tight text-foreground sm:text-4xl">
+            From a link to a page that shows the proof.
+          </h2>
+          <p className="mt-3 max-w-lg text-muted-foreground">
+            A space is the link you send, the inbox you review, and the page you
+            publish.
+          </p>
+        </Reveal>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {stages.map((stage, index) => {
             const Visual = visuals[index];
             return (
+              <Reveal key={stage.title} delay={index * 0.1} className="h-full">
               <article
-                key={stage.title}
-                className="flex flex-col rounded-xl border border-border bg-card p-5"
+                className="flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-[transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/60 motion-reduce:hover:translate-y-0"
               >
                 <p className="font-geist_mono text-xs text-secondary">
                   {stage.step}
@@ -150,11 +92,13 @@ export default function LandingFeatures() {
                   ))}
                 </ul>
               </article>
+              </Reveal>
             );
           })}
         </div>
 
-        <div className="mt-4 grid items-center gap-6 rounded-xl border border-border bg-card p-5 sm:p-6 lg:grid-cols-2">
+        <Reveal delay={0.15} className="mt-4">
+        <div className="grid items-center gap-6 rounded-xl border border-border bg-card p-5 sm:p-6 lg:grid-cols-2">
           <div>
             <h3 className="font-display text-2xl tracking-tight text-foreground">
               Paste one testimonial where you already sell.
@@ -189,6 +133,7 @@ export default function LandingFeatures() {
             </figcaption>
           </figure>
         </div>
+        </Reveal>
       </div>
     </section>
   );

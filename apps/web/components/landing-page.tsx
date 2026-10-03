@@ -8,6 +8,7 @@ import HeroSection from "./hero-section";
 import LandingFeatures from "./landing-features";
 import LandingPricing from "./landing-pricing";
 import { Button } from "./ui/button";
+import Reveal from "./reveal";
 
 type Props = {
   session: Session | null;
@@ -25,7 +26,7 @@ export default function LandingPage({ session }: Props) {
       <LandingPricing loggedIn={loggedIn} />
 
       <section className="px-4 pb-20">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 rounded-xl border border-border bg-card px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+        <Reveal className="mx-auto flex max-w-6xl flex-col items-start gap-6 rounded-xl border border-border bg-card px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <h2 className="max-w-md font-display text-3xl tracking-tight text-foreground sm:text-4xl">
             Open a space and send the link.
           </h2>
@@ -40,7 +41,7 @@ export default function LandingPage({ session }: Props) {
               />
             </Link>
           </Button>
-        </div>
+        </Reveal>
       </section>
 
       <footer className="border-t border-border px-4 py-8">

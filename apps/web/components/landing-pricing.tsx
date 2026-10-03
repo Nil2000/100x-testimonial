@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import Reveal from "./reveal";
 import {
   PlanType,
   PLAN_DISPLAY_NAMES,
@@ -35,26 +36,29 @@ export default function LandingPricing({ loggedIn }: { loggedIn: boolean }) {
   return (
     <section id="pricing" className="scroll-mt-24 border-t border-border px-4 py-20">
       <div className="mx-auto max-w-6xl">
-        <h2 className="font-display text-3xl tracking-tight text-foreground sm:text-4xl">
-          Start free. Add room when you need it.
-        </h2>
-        <p className="mt-3 max-w-lg text-muted-foreground">
-          Paid plans include a {TRIAL_DURATION_DAYS}-day trial. No card on the
-          free plan.
-        </p>
+        <Reveal>
+          <h2 className="font-display text-3xl tracking-tight text-foreground sm:text-4xl">
+            Start free. Add room when you need it.
+          </h2>
+          <p className="mt-3 max-w-lg text-muted-foreground">
+            Paid plans include a {TRIAL_DURATION_DAYS}-day trial. No card on the
+            free plan.
+          </p>
+        </Reveal>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
-          {PLANS.map((plan) => {
+          {PLANS.map((plan, index) => {
             const popular = plan === PlanType.PRO;
             const action = planAction(plan, loggedIn);
             const price = PLAN_PRICES[plan];
 
             return (
-              <article
+              <Reveal
                 key={plan}
+                delay={index * 0.1}
+                highlight={popular}
                 className={cn(
-                  "flex flex-col rounded-xl border bg-card p-5",
-                  popular ? "border-primary" : "border-border",
+                  "flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-[transform,border-color] duration-700 hover:-translate-y-0.5 hover:border-primary/60 motion-reduce:hover:translate-y-0",
                 )}
               >
                 <div className="flex items-baseline justify-between gap-3">
@@ -96,7 +100,7 @@ export default function LandingPricing({ loggedIn }: { loggedIn: boolean }) {
                 >
                   <Link href={action.href}>{action.label}</Link>
                 </Button>
-              </article>
+              </Reveal>
             );
           })}
         </div>
