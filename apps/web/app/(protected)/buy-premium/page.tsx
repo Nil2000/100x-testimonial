@@ -30,6 +30,7 @@ import { startUserTrial, getUserPlan } from "@/actions/subscriptionActions";
 import {
   PlanType,
   PLAN_DISPLAY_NAMES,
+  PLAN_PRICES,
   TRIAL_DURATION_DAYS,
   getPlanFeatureList,
 } from "@/lib/subscription";
@@ -45,7 +46,7 @@ const pricingPlans: {
 }[] = [
   {
     id: PlanType.FREE,
-    price: "Free",
+    price: PLAN_PRICES[PlanType.FREE],
     period: "",
     description: "Perfect for trying out the platform",
     icon: Sparkles,
@@ -53,7 +54,7 @@ const pricingPlans: {
   },
   {
     id: PlanType.PRO,
-    price: "$20",
+    price: PLAN_PRICES[PlanType.PRO],
     period: "/month",
     description: "Best for growing businesses and agencies",
     icon: Zap,
@@ -61,7 +62,7 @@ const pricingPlans: {
   },
   {
     id: PlanType.ENTERPRISE,
-    price: "$30",
+    price: PLAN_PRICES[PlanType.ENTERPRISE],
     period: "/month",
     description: "For large teams and organizations",
     icon: Crown,
